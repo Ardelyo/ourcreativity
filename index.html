@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Our Creativity.</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        as="style">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="root">
+        <!-- App Shell / Loading Skeleton for FCP -->
+        <style>
+            body {
+                background-color: #030303;
+                margin: 0;
+                font-family: 'Inter', sans-serif;
+            }
+
+            .shell-loader {
+                position: fixed;
+                inset: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #030303 100%);
+                z-index: 9999;
+            }
+
+            .shell-logo {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #222;
+                margin-bottom: 20px;
+                animation: pulse 2s infinite;
+            }
+
+            .shell-text {
+                width: 120px;
+                height: 12px;
+                background: #222;
+                border-radius: 6px;
+            }
+
+            @keyframes pulse {
+                0% {
+                    opacity: 0.5;
+                    transform: scale(0.95);
+                }
+
+                50% {
+                    opacity: 1;
+                    transform: scale(1.05);
+                }
+
+                100% {
+                    opacity: 0.5;
+                    transform: scale(0.95);
+                }
+            }
+        </style>
+        <div class="shell-loader">
+            <div class="shell-logo"></div>
+            <div class="shell-text"></div>
+        </div>
+    </div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>

@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎨 OurCreativities
+# 🎨 OurCreativity
 
 ### Revolution Edition v5.0
 
@@ -237,7 +237,7 @@ Kontribusi sangat kami hargai! Untuk berkontribusi:
 ## 📄 Lisensi
 
 ```
-Hak Cipta © 2025 OurCreativities
+Hak Cipta © 2025 OurCreativity
 
 Proyek ini dilisensikan di bawah Lisensi MIT.
 Lihat file LICENSE untuk informasi lebih lanjut.
@@ -249,7 +249,7 @@ Lihat file LICENSE untuk informasi lebih lanjut.
 
 <div align="center">
 
-**Dibuat dengan ❤️ dan ☕ oleh Tim OurCreativities**
+**Dibuat dengan ❤️ dan ☕ oleh Tim OurCreativity Edisi Coding**
 
 *"Merangkai Imajinasi Kita."*
 

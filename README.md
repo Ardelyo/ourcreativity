@@ -234,7 +234,28 @@ Kontribusi sangat kami hargai! Untuk berkontribusi:
 
 <br/>
 
+## ⚠️ Penggunaan Brand & Lisensi
+
+### 📝 Penting Dibaca!
+
+**OurCreativity adalah proyek open source untuk edukasi**, dengan aturan sederhana:
+
+✅ **Kode: Bebas dipakai** (MIT License)
+- Gratis untuk belajar, modifikasi, dan pakai di project sendiri
+- Boleh untuk komersial
+- Boleh fork dan distribute
+
+⚠️ **Brand: Dilindungi**
+- **JANGAN pakai** nama "OurCreativity" untuk website/project kamu
+- **JANGAN copy** logo dan identitas visual kami
+- Tujuan: Menghindari kebingungan di komunitas
+
+> 📖 **Baca detail lengkap:** [BRAND_USAGE.md](./BRAND_USAGE.md) (Bahasa Indonesia, mudah dipahami!)
+
+<br/>
+
 ## 📄 Lisensi
+
 
 ```
 Hak Cipta © 2025 OurCreativity

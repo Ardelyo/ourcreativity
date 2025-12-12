@@ -27,34 +27,41 @@ ourcreativity/
 ├── components/           # Komponen yang dapat digunakan kembali
 │   ├── BentoGrid/
 │   ├── CreationStudio/
-│   ├── BottomCTA.tsx
-│   ├── Footer.tsx
-│   ├── Hero.tsx
-│   └── Navbar.tsx
-├── pages/               # Halaman utama aplikasi
+│   └── ...
+├── pages/                # Halaman utama aplikasi
 │   ├── Home.tsx
 │   ├── Karya.tsx
 │   ├── Tim.tsx
-│   ├── Story.tsx
-│   ├── Announcement.tsx
-│   └── Info.tsx
-├── lib/                 # Utilities & Helpers
-│   └── supabase.ts      # Supabase client
-├── docs/                # Dokumentasi
-│   ├── versions/        # Riwayat versi
-│   ├── ARSITEKTUR.md    # File ini
+│   └── ...
+├── lib/                  # Utilities & Helpers
+│   └── supabase.ts       # Supabase client
+├── data/                 # Data statis (konten lokal, config, dsb.)
+├── public/               # Aset publik (termasuk _redirects untuk SPA fallback)
+├── supabase/             # Konfigurasi Supabase (lokal, functions, dsb.)
+├── docs/                 # Dokumentasi
+│   ├── versions/         # Riwayat versi
+│   ├── ARSITEKTUR.md     # File ini
 │   ├── KOMPONEN.md
 │   ├── HALAMAN.md
+│   ├── ROUTING.md
 │   ├── PANDUAN_DEPLOYMENT.md
 │   └── KONTRIBUSI.md
-├── App.tsx              # Komponen Root
-├── index.tsx            # Titik Masuk (Entry point)
-├── index.html           # Template HTML
-├── index.css            # Gaya Global
-├── tailwind.config.ts   # Konfigurasi Tailwind CSS
-├── vite.config.ts       # Konfigurasi Vite
-├── tsconfig.json        # Konfigurasi TypeScript
-└── package.json         # Dependensi
+├── supabase_schema.sql   # Schema database
+├── supabase_seed.sql     # Seed data (opsional)
+├── supabase_seed_refocused.sql
+├── supabase_seed_changelog.sql
+├── .env.example          # Template env vars (Supabase)
+├── App.tsx               # Komponen Root
+├── index.tsx             # Titik Masuk (Entry point)
+├── index.html            # Template HTML
+├── index.css             # Gaya Global
+├── tailwind.config.ts    # Konfigurasi Tailwind CSS
+├── vite.config.ts        # Konfigurasi Vite
+├── tsconfig.json         # Konfigurasi TypeScript
+├── netlify.toml          # Config Netlify (SPA fallback)
+├── vercel.json           # Config Vercel (SPA fallback)
+├── package.json          # Dependensi
+└── package-lock.json     # Lockfile npm
 ```
 
 ## Arsitektur Komponen

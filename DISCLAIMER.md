@@ -275,7 +275,7 @@ Content on the Platform is for:
 ## 📞 Questions About This Disclaimer
 
 **For clarification or questions:**
-- GitHub Issues: [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
+- GitHub Issues: [github.com/ardelyo/ourcreativity/issues](https://github.com/ardelyo/ourcreativity/issues)
 - Tag: `[DISCLAIMER-QUESTION]`
 
 ---

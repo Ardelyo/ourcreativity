@@ -229,9 +229,9 @@ Closes #123
 
 ### Getting Help
 
-- **General Questions?** → [GitHub Discussions](https://github.com/ardelyo/ourcreativities/discussions)
-- **Issues with Setup?** → [GitHub Issues with `help-wanted` label](https://github.com/ardelyo/ourcreativities/issues)
-- **Documentation Issues?** → [GitHub Issues with `[DOCS]` tag](https://github.com/ardelyo/ourcreativities/issues)
+- **General Questions?** → [GitHub Discussions](https://github.com/ardelyo/ourcreativity/discussions)
+- **Issues with Setup?** → [GitHub Issues with `help-wanted` label](https://github.com/ardelyo/ourcreativity/issues)
+- **Documentation Issues?** → [GitHub Issues with `[DOCS]` tag](https://github.com/ardelyo/ourcreativity/issues)
 
 ### Escalation Process
 
@@ -251,10 +251,10 @@ If you need to escalate a decision or request:
 
 Before contributing, please read these documents:
 
-- **[MAINTAINERS.md](../MAINTAINERS.md)** — Understand project governance and how decisions are made
-- **[ROADMAP.md](../ROADMAP.md)** — See where the project is headed
-- **[CHANGELOG.md](../CHANGELOG.md)** — Learn what has changed recently
-- **[CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md)** — Community standards and expectations
+- **[MAINTAINERS.md](./MAINTAINERS.md)** — Understand project governance and how decisions are made
+- **[ROADMAP.md](./ROADMAP.md)** — See where the project is headed
+- **[CHANGELOG.md](./CHANGELOG.md)** — Learn what has changed recently
+- **[CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)** — Community standards and expectations
 
 ---
 

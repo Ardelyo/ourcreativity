@@ -1,10 +1,10 @@
 # Panduan Routing
 
-> Dokumentasi lengkap tentang sistem routing di OurCreativities
+> Dokumentasi lengkap tentang sistem routing di OurCreativity
 
 ## Ringkasan
 
-OurCreativities menggunakan **React Router v6** dengan `BrowserRouter` untuk navigasi client-side dengan URL yang persisten dan shareable.
+OurCreativity menggunakan **React Router v6** dengan `BrowserRouter` untuk navigasi client-side dengan URL yang persisten dan shareable.
 
 ## Arsitektur Routing
 
@@ -355,4 +355,4 @@ Jika upgrade dari versi lama yang pakai MemoryRouter:
 
 **Terakhir Diperbarui:** November 2025  
 **Versi:** 5.0  
-**Pemelihara:** Tim OurCreativities
+**Pemelihara:** Tim OurCreativity

@@ -292,6 +292,6 @@ This roadmap is reviewed quarterly and updated based on:
 
 **Excited about OurCreativity's future?** ⭐
 
-[Join the Community](./CONTRIBUTING.md) · [Report Issues](https://github.com/ardelyo/ourcreativities/issues) · [Start Contributing](./CONTRIBUTING.md)
+[Join the Community](./CONTRIBUTING.md) · [Report Issues](https://github.com/ardelyo/ourcreativity/issues) · [Start Contributing](./CONTRIBUTING.md)
 
 </div>

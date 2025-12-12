@@ -111,7 +111,11 @@ vercel --prod
 - Dukungan domain kustom
 
 **Variabel Lingkungan:**
-Saat ini tidak ada env vars, tapi untuk masa depan:
+OurCreativity memerlukan env vars Supabase berikut:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+Tambahkan di Vercel:
 ```
 Dashboard → Project → Settings → Environment Variables
 ```
@@ -291,13 +295,15 @@ www → your-site.netlify.app
 
 ## Variabel Lingkungan
 
-Untuk pengembangan masa depan dengan env vars:
+OurCreativity membutuhkan environment variables berikut (lihat `.env.example`):
 
-**Pengembangan (.env.local):**
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+**Pengembangan Lokal (`.env`):**
 ```bash
-VITE_API_URL=http://localhost:3000
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_KEY=your_key
+VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 **Produksi:**
@@ -310,7 +316,8 @@ Site Settings → Build & Deploy → Environment
 
 **Akses dalam Kode:**
 ```typescript
-const apiUrl = import.meta.env.VITE_API_URL;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 ```
 
 ---

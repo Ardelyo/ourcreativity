@@ -97,7 +97,7 @@ Want to contribute? We'd love to have you!
 ### Getting Started
 1. Read [CONTRIBUTING.md](./CONTRIBUTING.md)
 2. Check [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
-3. Browse [open issues](https://github.com/Ardelyo/ourcreativity/issues)
+3. Browse [open issues](https://github.com/ardelyo/ourcreativity/issues)
 4. Join discussions
 
 ### Recognition
@@ -156,8 +156,8 @@ See [COPYRIGHT.md](./COPYRIGHT.md) for details.
 - Via: GitHub Issues with tag `[DOCS]`
 
 **General Inquiries:**
-- GitHub Discussions: [github.com/Ardelyo/ourcreativity/discussions](https://github.com/Ardelyo/ourcreativity/discussions)
-- Issues: [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
+- GitHub Discussions: [github.com/ardelyo/ourcreativity/discussions](https://github.com/ardelyo/ourcreativity/discussions)
+- Issues: [github.com/ardelyo/ourcreativity/issues](https://github.com/ardelyo/ourcreativity/issues)
 
 ---
 

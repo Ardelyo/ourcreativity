@@ -175,7 +175,6 @@ Pastikan Anda telah menginstal:
 | `npm run dev` | Menjalankan server pengembangan |
 | `npm run build` | Build untuk produksi |
 | `npm run preview` | Preview build produksi |
-| `npm run lint` | Menjalankan ESLint |
 
 <br/>
 
@@ -263,8 +262,8 @@ OurCreativity is governed transparently with clear ownership and decision-making
 
 ### Escalation & Support
 
-- **Questions?** [GitHub Discussions](https://github.com/ardelyo/ourcreativities/discussions)
-- **Bug Reports?** [GitHub Issues](https://github.com/ardelyo/ourcreativities/issues)
+- **Questions?** [GitHub Discussions](https://github.com/ardelyo/ourcreativity/discussions)
+- **Bug Reports?** [GitHub Issues](https://github.com/ardelyo/ourcreativity/issues)
 - **Security Issues?** See [SECURITY.md](./SECURITY.md)
 
 <br/>

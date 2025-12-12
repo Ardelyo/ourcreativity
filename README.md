@@ -22,7 +22,7 @@
 
 <br/>
 
-[Lihat Demo](https://ourcreativity.vercel.app) · [Laporkan Bug](https://github.com/ardelyo/ourcreativities/issues) · [Ajukan Fitur](https://github.com/ardelyo/ourcreativities/issues)
+[Lihat Demo](https://ourcreativity.vercel.app) · [Laporkan Bug](https://github.com/ardelyo/ourcreativity/issues) · [Ajukan Fitur](https://github.com/ardelyo/ourcreativity/issues)
 
 ---
 
@@ -30,8 +30,28 @@
 
 <br/>
 
+## 🌐 English Quick Start
+
+**OurCreativity** is a creative community platform built with React 19, TypeScript, and Tailwind CSS. It showcases creative works across five divisions: Graphics, Coding, Video, Writing, and Memes.
+
+### Quick Setup
+```bash
+git clone https://github.com/ardelyo/ourcreativity.git
+cd ourcreativity
+npm install
+cp .env.example .env  # Add your Supabase credentials
+npm run dev
+```
+
+📖 **For detailed setup instructions, see [docs/SETUP.md](docs/SETUP.md)** (available in Indonesian with key technical details)
+
+---
+
+<br/>
+
 ## 📋 Daftar Isi
 
+- [English Quick Start](#-english-quick-start)
 - [Tentang Proyek](#-tentang-proyek)
 - [Fitur Utama](#-fitur-utama)
 - [Tech Stack](#-tech-stack)
@@ -46,7 +66,7 @@
 
 ## 🌟 Tentang Proyek
 
-**OurCreativities** adalah platform ekosistem digital yang dirancang untuk menjadi wadah utama bagi para kreator dari berbagai disiplin ilmu. Dibangun dengan filosofi **"Luminous Design"**, platform ini menawarkan pengalaman visual yang mendalam, elegan, dan futuristik.
+**OurCreativity** adalah platform ekosistem digital yang dirancang untuk menjadi wadah utama bagi para kreator dari berbagai disiplin ilmu. Dibangun dengan filosofi **"Luminous Design"**, platform ini menawarkan pengalaman visual yang mendalam, elegan, dan futuristik.
 
 Versi 5.0 (**Revolution Edition**) menandai transformasi total dari antarmuka pengguna, menghadirkan:
 
@@ -88,10 +108,12 @@ Proyek ini dibangun di atas fondasi teknologi web modern:
 | **Framework** | React v19 |
 | **Bahasa** | TypeScript v5.8 |
 | **Build Tool** | Vite v6 |
-| **Styling** | Tailwind CSS v3 (Custom Config) |
+| **Styling** | Tailwind CSS v3 (File-based Config) |
 | **Animasi** | Framer Motion |
 | **Routing** | React Router DOM |
 | **Ikon** | Lucide React |
+| **Database** | Supabase |
+| **Analytics** | Vercel Analytics & Speed Insights |
 
 <br/>
 
@@ -107,12 +129,12 @@ Pastikan Anda telah menginstal:
 
 1. **Clone repositori**
    ```bash
-   git clone https://github.com/ardelyo/ourcreativities.git
+   git clone https://github.com/ardelyo/ourcreativity.git
    ```
 
 2. **Masuk ke direktori proyek**
    ```bash
-   cd ourcreativities
+   cd ourcreativity
    ```
 
 3. **Instal dependensi**
@@ -156,18 +178,22 @@ Pastikan Anda telah menginstal:
 ## 📂 Struktur Proyek
 
 ```
-ourcreativities/
+ourcreativity/
 │
 ├── 📁 components/        # Komponen UI Reusable
 │   ├── BentoGrid/
 │   ├── Navbar/
+│   ├── CreationStudio/
 │   └── ...
 │
 ├── 📁 pages/             # Halaman Aplikasi
-│   ├── Home/
-│   ├── Karya/
-│   ├── Tim/
+│   ├── Home.tsx
+│   ├── Karya.tsx
+│   ├── Tim.tsx
 │   └── ...
+│
+├── 📁 lib/               # Utilities & Helpers
+│   └── supabase.ts       # Supabase client
 │
 ├── 📁 docs/              # Dokumentasi (Bahasa Indonesia)
 │   ├── versions/         # Arsip Riwayat Versi
@@ -175,10 +201,9 @@ ourcreativities/
 │   ├── KOMPONEN.md
 │   └── ...
 │
-├── 📁 public/            # Aset Statis
-│
 ├── 📄 App.tsx            # Komponen Root & Routing
 ├── 📄 index.css          # Global Styles
+├── 📄 tailwind.config.ts # Konfigurasi Tailwind
 ├── 📄 vite.config.ts     # Konfigurasi Vite
 └── 📄 README.md
 ```
@@ -276,7 +301,6 @@ Lihat file LICENSE untuk informasi lebih lanjut.
 
 <br/>
 
-[![GitHub Stars](https://img.shields.io/github/stars/username/ourcreativities?style=social)](https://github.com/ardelyo/ourcreativities)
+[![GitHub Stars](https://img.shields.io/github/stars/ardelyo/ourcreativity?style=social)](https://github.com/ardelyo/ourcreativity)
 
 </div>
-```

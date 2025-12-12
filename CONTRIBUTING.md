@@ -1,14 +1,38 @@
 # Panduan Kontribusi
 
-Terima kasih telah tertarik untuk berkontribusi ke **OurCreativities**! 🎨
+> **English Contributors:** Thank you for your interest in contributing to OurCreativity! This guide is primarily in Indonesian, but the key technical requirements are:
+> - Fork the repo, create a feature branch, and submit a Pull Request
+> - Follow TypeScript & React best practices (see code examples below)
+> - Use conventional commit messages (e.g., `feat:`, `fix:`, `docs:`)
+> - Test locally before submitting
+> - See [docs/SETUP.md](docs/SETUP.md) for development setup
+
+---
+
+Terima kasih telah tertarik untuk berkontribusi ke **OurCreativity**! 🎨
 
 ## 📋 Daftar Isi
 
+- [English Quick Guide](#english-quick-guide)
 - [Memulai](#-memulai)
 - [Proses Kontribusi](#-proses-kontribusi)
 - [Standar Kode](#-standar-kode)
 - [Commit Messages](#-commit-messages)
 - [Pull Request](#-pull-request)
+
+---
+
+## 🌐 English Quick Guide
+
+**Basic Workflow:**
+1. Fork and clone: `git clone https://github.com/YOUR_USERNAME/ourcreativity.git`
+2. Install: `npm install`
+3. Create branch: `git checkout -b feat/your-feature`
+4. Make changes and test locally: `npm run dev`
+5. Commit: `git commit -m "feat: add your feature"`
+6. Push and create Pull Request
+
+**Code Standards:** TypeScript strict mode, functional React components, Tailwind CSS for styling.
 
 ---
 
@@ -26,8 +50,8 @@ Terima kasih telah tertarik untuk berkontribusi ke **OurCreativities**! 🎨
 # 1. Fork repositori ini di GitHub
 
 # 2. Clone fork kamu
-git clone https://github.com/USERNAME_KAMU/ourcreativities.git
-cd ourcreativities
+git clone https://github.com/USERNAME_KAMU/ourcreativity.git
+cd ourcreativity
 
 # 3. Install dependencies
 npm install
@@ -52,7 +76,7 @@ npm run dev
 
 ### 1. Cari atau Buat Issue
 
-- Cek [Issues](https://github.com/ardelyo/ourcreativities/issues) yang ada
+- Cek [Issues](https://github.com/ardelyo/ourcreativity/issues) yang ada
 - Untuk fitur baru, buat issue dulu untuk diskusi
 - Untuk bug, pastikan belum dilaporkan sebelumnya
 

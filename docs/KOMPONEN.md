@@ -1,10 +1,10 @@
 # Dokumentasi Komponen
 
-> Referensi API dan panduan penggunaan komponen OurCreativities v5.0
+> Referensi API dan panduan penggunaan komponen OurCreativity v5.0
 
 ## Ringkasan
 
-Dokumentasi ini menjelaskan setiap komponen yang ada di aplikasi OurCreativities, termasuk props, penggunaan, dan contoh implementasi.
+Dokumentasi ini menjelaskan setiap komponen yang ada di aplikasi OurCreativity, termasuk props, penggunaan, dan contoh implementasi.
 
 ## Komponen Tata Letak
 
@@ -504,4 +504,4 @@ const handleClick = useCallback(() => {
 
 **Terakhir Diperbarui:** November 2025  
 **Versi:** 5.0  
-**Pemelihara:** Tim OurCreativities
+**Pemelihara:** Tim OurCreativity

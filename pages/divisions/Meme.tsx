@@ -20,7 +20,7 @@ export const Meme = () => {
             <div className="bg-yellow-300 border-b-4 border-red-600 p-1">
                 {/* @ts-ignore */}
                 <marquee scrollamount="15" className="text-2xl font-bold text-red-600 font-[Comic_Sans_MS]">
-                    SELAMAT DATANG DI WEBSITE TERBURUK DI DUNIA!!! DIVISI MEME OURCREATIVITIES MEMPERSEMBAHKAN KEKACAUAN DIGITAL INI!!! JANGAN LUPA SUBSCRIBE!!! KLIK IKLAN DI BAWAH!!!
+                    SELAMAT DATANG DI WEBSITE TERBURUK DI DUNIA!!! DIVISI MEME OURCREATIVITY MEMPERSEMBAHKAN KEKACAUAN DIGITAL INI!!! JANGAN LUPA SUBSCRIBE!!! KLIK IKLAN DI BAWAH!!!
                     {/* @ts-ignore */}
                 </marquee>
             </div>
@@ -148,7 +148,7 @@ export const Meme = () => {
             <div className="bg-black text-white p-2 border-t-4 border-white">
                 {/* @ts-ignore */}
                 <marquee scrollamount="20" direction="right" className="font-mono text-sm">
-                    COPYRIGHT (C) 1990-2025 OURCREATIVITIES INC. ALL RIGHTS RESERVED. DESIGNED BY INTERN YANG DIBAYAR PAKE UCAPAN TERIMA KASIH. JANGAN LUPA MINUM AIR PUTIH.
+                    COPYRIGHT (C) 1990-2025 OURCREATIVITY INC. ALL RIGHTS RESERVED. DESIGNED BY INTERN YANG DIBAYAR PAKE UCAPAN TERIMA KASIH. JANGAN LUPA MINUM AIR PUTIH.
                     {/* @ts-ignore */}
                 </marquee>
             </div>

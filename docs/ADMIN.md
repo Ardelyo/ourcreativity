@@ -1,4 +1,4 @@
-# 👑 Panduan Admin - OurCreativities
+# 👑 Panduan Admin - OurCreativity
 
 Panduan lengkap untuk admin dalam mengelola konten dan database.
 
@@ -17,7 +17,7 @@ Panduan lengkap untuk admin dalam mengelola konten dan database.
 
 1. Buka [supabase.com/dashboard](https://supabase.com/dashboard)
 2. Login dengan akun yang memiliki akses project
-3. Pilih project **ourcreativities**
+3. Pilih project **ourcreativity**
 
 ### Quick Links
 

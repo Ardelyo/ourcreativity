@@ -1,6 +1,6 @@
-# Dokumentasi OurCreativities
+# Dokumentasi OurCreativity
 
-Selamat datang di dokumentasi resmi OurCreativities. Semua dokumentasi kini tersedia sepenuhnya dalam Bahasa Indonesia.
+Selamat datang di dokumentasi resmi OurCreativity. Semua dokumentasi kini tersedia sepenuhnya dalam Bahasa Indonesia.
 
 ## Daftar Isi
 

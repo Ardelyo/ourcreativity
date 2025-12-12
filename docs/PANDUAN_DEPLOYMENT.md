@@ -1,10 +1,10 @@
 # Panduan Deployment
 
-> Langkah-langkah deploy OurCreativities ke produksi
+> Langkah-langkah deploy OurCreativity ke produksi
 
 ## Ringkasan
 
-OurCreativities adalah aplikasi React statis yang dapat di-deploy ke berbagai platform hosting modern. Panduan ini mencakup deployment ke Vercel, Netlify, dan alternatif lainnya.
+OurCreativity adalah aplikasi React statis yang dapat di-deploy ke berbagai platform hosting modern. Panduan ini mencakup deployment ke Vercel, Netlify, dan alternatif lainnya.
 
 ## Prasyarat
 
@@ -190,7 +190,7 @@ npm install --save-dev gh-pages
 **Langkah 2: Perbarui package.json**
 ```json
 {
-  "homepage": "https://username.github.io/ourcreativities",
+  "homepage": "https://username.github.io/ourcreativity",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
@@ -201,7 +201,7 @@ npm install --save-dev gh-pages
 **Langkah 3: Perbarui vite.config.ts**
 ```typescript
 export default defineConfig({
-  base: '/ourcreativities/', // nama repositori
+  base: '/ourcreativity/', // nama repositori
   // ... konfigurasi lainnya
 })
 ```
@@ -213,7 +213,7 @@ npm run deploy
 
 **Catatan:** Perlu update Router dari MemoryRouter ke BrowserRouter + basename:
 ```typescript
-<BrowserRouter basename="/ourcreativities">
+<BrowserRouter basename="/ourcreativity">
 ```
 
 ---
@@ -579,4 +579,4 @@ vercel rollback
 
 **Terakhir Diperbarui:** November 2025  
 **Rekomendasi Platform:** Vercel  
-**Pemelihara:** Tim OurCreativities
+**Pemelihara:** Tim OurCreativity

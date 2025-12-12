@@ -1,10 +1,10 @@
-# Arsitektur Sistem OurCreativities
+# Arsitektur Sistem OurCreativity
 
-> Dokumentasi arsitektur teknis platform OurCreativities v5.0
+> Dokumentasi arsitektur teknis platform OurCreativity v5.0
 
 ## Ringkasan
 
-OurCreativities dibangun sebagai *Single Page Application* (SPA) menggunakan React dengan routing di sisi klien (*client-side*). Arsitektur dirancang untuk skalabilitas, kemudahan pemeliharaan (*maintainability*), dan performa optimal.
+OurCreativity dibangun sebagai *Single Page Application* (SPA) menggunakan React dengan routing di sisi klien (*client-side*). Arsitektur dirancang untuk skalabilitas, kemudahan pemeliharaan (*maintainability*), dan performa optimal.
 
 ## Arsitektur Tingkat Tinggi
 
@@ -23,9 +23,10 @@ graph TB
 ## Struktur Folder
 
 ```
-ourcreativities/
+ourcreativity/
 ├── components/           # Komponen yang dapat digunakan kembali
-│   ├── BentoGrid.tsx
+│   ├── BentoGrid/
+│   ├── CreationStudio/
 │   ├── BottomCTA.tsx
 │   ├── Footer.tsx
 │   ├── Hero.tsx
@@ -35,7 +36,10 @@ ourcreativities/
 │   ├── Karya.tsx
 │   ├── Tim.tsx
 │   ├── Story.tsx
+│   ├── Announcement.tsx
 │   └── Info.tsx
+├── lib/                 # Utilities & Helpers
+│   └── supabase.ts      # Supabase client
 ├── docs/                # Dokumentasi
 │   ├── versions/        # Riwayat versi
 │   ├── ARSITEKTUR.md    # File ini
@@ -47,6 +51,7 @@ ourcreativities/
 ├── index.tsx            # Titik Masuk (Entry point)
 ├── index.html           # Template HTML
 ├── index.css            # Gaya Global
+├── tailwind.config.ts   # Konfigurasi Tailwind CSS
 ├── vite.config.ts       # Konfigurasi Vite
 ├── tsconfig.json        # Konfigurasi TypeScript
 └── package.json         # Dependensi
@@ -125,13 +130,15 @@ App
 ### Sistem Tailwind CSS
 
 **Konfigurasi:**
-- Tailwind CSS berbasis CDN
-- Konfigurasi kustom di `index.html`
+- Tailwind CSS berbasis file (`tailwind.config.ts`)
+- PostCSS processing pipeline
 - Palet warna yang diperluas
 - Keluarga font kustom
+- Custom background gradients dan efek
 
 **Tema Kustom:**
-```javascript
+```typescript
+// tailwind.config.ts
 {
   colors: {
     background: '#050505',
@@ -144,6 +151,11 @@ App
   fontFamily: {
     sans: ['Inter', 'sans-serif'],
     serif: ['Playfair Display', 'serif']
+  },
+  backgroundImage: {
+    'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+    'hero-glow': 'conic-gradient(...)',
+    'noise': 'url(...)'
   }
 }
 ```
@@ -407,6 +419,6 @@ graph LR
 
 ---
 
-**Terakhir Diperbarui:** November 2025  
+**Terakhir Diperbarui:** Desember 2025  
 **Versi:** 5.0  
-**Pemelihara:** Tim OurCreativities
+**Pemelihara:** Tim OurCreativity

@@ -47,6 +47,28 @@ Jika Anda menemukan kerentanan keamanan di OurCreativity, silakan laporkan melal
 cp .env.example .env
 ```
 
+**Keamanan Environment Variables:**
+- Hanya variabel dengan prefix `VITE_` yang dapat diakses di client-side bundle
+- Private API keys (tanpa prefix `VITE_`) tidak akan disisipkan ke dalam client bundle
+- Semua kredensial sensitif harus disimpan di server-side atau menggunakan layanan backend
+- GEMINI_API_KEY dan API keys lainnya tidak lagi dipaksa disisipkan ke client bundle
+
+### Iframe Security (Creation Studio)
+
+**IframeSandbox & WebsiteEmbed Components:**
+- Menggunakan permission sandbox yang ketat: `allow-scripts` dan `allow-forms` saja
+- **Dihapus untuk keamanan:**
+  - `allow-same-origin` (mencegah akses cross-origin)
+  - `allow-popups` (mencegah popup windows)
+  - `allow-modals` (mencegah modal dialogs)
+- Semua konten yang dijalankan dalam iframe terisolasi penuh
+- Website eksternal masih dapat memblokir embedding via X-Frame-Options atau CSP
+
+**Keterbatasan:**
+- Website dengan kebijakan frame-busting ketat tidak akan dimuat
+- Pembatasan form submission dalam iframe yang di-sandbox
+- Cross-origin restrictions tetap berlaku untuk konten yang di-sandbox
+
 ### Supabase Row Level Security
 
 Proyek ini menggunakan RLS (Row Level Security) untuk melindungi data. Pastikan:

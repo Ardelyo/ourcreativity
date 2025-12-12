@@ -5,6 +5,17 @@ interface WebsiteEmbedProps {
     url: string;
 }
 
+/**
+ * WebsiteEmbed - Embeds external websites in a restricted sandbox.
+ * 
+ * SECURITY CONSTRAINTS:
+ * - Uses restrictive sandbox with only "allow-scripts" and "allow-forms"
+ * - Removed "allow-same-origin" to prevent cross-origin access
+ * - Removed "allow-popups" to prevent popup windows
+ * - Content policies and CORS restrictions still apply
+ * - Websites may still block embedding via X-Frame-Options or CSP
+ */
+
 export const WebsiteEmbed: React.FC<WebsiteEmbedProps> = ({ url }) => {
     const [key, setKey] = useState(0); // To force reload
     const [loadError, setLoadError] = useState(false);
@@ -67,7 +78,7 @@ export const WebsiteEmbed: React.FC<WebsiteEmbedProps> = ({ url }) => {
                         key={key}
                         src={url}
                         className="w-full h-full border-none"
-                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                        sandbox="allow-scripts allow-forms"
                         onError={() => setLoadError(true)}
                     // Note: onError on iframe isn't reliable for X-Frame-Options blocks
                     // We mainly rely on the fallback UI if it looks broken, or users open manually

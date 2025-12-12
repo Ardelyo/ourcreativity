@@ -310,7 +310,7 @@ export const Karya = () => {
                     <div className="w-full h-full bg-black relative">
                       <iframe
                         srcDoc={generateCodePreview(selectedArtwork.content, selectedArtwork.code_language || 'html')}
-                        sandbox="allow-scripts allow-same-origin"
+                        sandbox="allow-scripts"
                         className="w-full h-full border-0"
                         title="Code Preview"
                       />

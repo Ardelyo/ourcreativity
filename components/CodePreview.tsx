@@ -9,6 +9,11 @@ interface CodePreviewProps {
 /**
  * CodePreview - Renders live HTML/JS/p5.js code in a sandboxed iframe.
  * 
+ * SECURITY CONSTRAINTS:
+ * - Uses restrictive sandbox with only "allow-scripts"
+ * - Removed "allow-same-origin" to prevent cross-origin access
+ * - All executed content is sandboxed and cannot escape the iframe
+ * 
  * Supports:
  * - HTML (with inline CSS/JS)
  * - JavaScript (wrapped in HTML)
@@ -97,7 +102,7 @@ export const CodePreview: React.FC<CodePreviewProps> = ({ code, language = 'html
     return (
         <iframe
             srcDoc={previewHTML}
-            sandbox="allow-scripts allow-same-origin"
+            sandbox="allow-scripts"
             className={`w-full h-full border-0 bg-white ${className}`}
             title="Code Preview"
         />

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ContributorCard } from '../components/ContributorCard';
 import { ContributorModal } from '../components/ContributorModal';
+import { FetchErrorState } from '../components/FetchErrorState';
 import { Users } from 'lucide-react';
 
 // --- Types ---
@@ -119,12 +120,13 @@ const generatePersona = (login: string, isOwner: boolean): CreativePersona => {
 export const Tim = () => {
   const [contributors, setContributors] = useState<EnhancedContributor[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedContributor, setSelectedContributor] = useState<EnhancedContributor | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
         // Cek cache terlebih dahulu
         const cached = localStorage.getItem(CACHE_KEY);
@@ -213,11 +215,13 @@ export const Tim = () => {
           });
           setContributors(fallbackEnhanced);
         }
+        setError('Terjadi kesalahan saat memuat data kontributor. Menampilkan data fallback atau cache.');
       } finally {
         setLoading(false);
       }
     };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -270,6 +274,26 @@ export const Tim = () => {
           Setiap commit adalah benang, setiap fitur adalah kenangan.
         </p>
       </motion.div>
+
+      {/* Error Banner */}
+      {error && !loading && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-4 flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
+            <p className="text-yellow-200/90 text-sm">{error}</p>
+          </div>
+          <button
+            onClick={fetchData}
+            className="text-yellow-400 hover:text-yellow-300 text-sm font-bold underline"
+          >
+            Coba Lagi
+          </button>
+        </motion.div>
+      )}
 
       {/* Loading */}
       {loading && (

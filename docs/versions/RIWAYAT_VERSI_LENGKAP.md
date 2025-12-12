@@ -1,4 +1,4 @@
-# OurCreativities: Era Luminous - Konsep Utama & Dokumentasi
+# OurCreativity: Era Luminous - Konsep Utama & Dokumentasi
 
 > **Versi Terbaru:** v5.0.0 (Edisi Revolusi)
 > **Filosofi Desain:** Desain Luminous (Berevolusi dari Glowar)
@@ -8,7 +8,7 @@
 
 ## 🌌 Visi: Desain Luminous
 
-**OurCreativities** bukan sekadar situs web portofolio; ini adalah kanvas digital yang mewujudkan filosofi **"Desain Luminous"**. Konsep ini melampaui estetika mode gelap tradisional dengan memperkenalkan kedalaman, atmosfer, dan "cahaya" ke dalam ruang digital.
+**OurCreativity** bukan sekadar situs web portofolio; ini adalah kanvas digital yang mewujudkan filosofi **"Desain Luminous"**. Konsep ini melampaui estetika mode gelap tradisional dengan memperkenalkan kedalaman, atmosfer, dan "cahaya" ke dalam ruang digital.
 
 ### Filosofi Inti
 Bahasa **Desain Luminous** dibangun di atas keyakinan bahwa antarmuka digital harus terasa hidup dan halus. Ini bergerak menjauh dari permukaan datar dan mati untuk menciptakan lingkungan yang terasa memiliki atmosfernya sendiri.
@@ -22,7 +22,7 @@ Bahasa **Desain Luminous** dibangun di atas keyakinan bahwa antarmuka digital ha
 
 ## 💎 Ekosistem: Fitur & Divisi
 
-OurCreativities adalah ekosistem fitur yang saling terhubung yang dirancang untuk menampilkan bakat di berbagai disiplin ilmu.
+OurCreativity adalah ekosistem fitur yang saling terhubung yang dirancang untuk menampilkan bakat di berbagai disiplin ilmu.
 
 ### 1. Pengalaman Inti
 

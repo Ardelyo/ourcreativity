@@ -10,7 +10,7 @@
 
 ## Melaporkan Kerentanan
 
-Jika Anda menemukan kerentanan keamanan di OurCreativities, silakan laporkan melalui:
+Jika Anda menemukan kerentanan keamanan di OurCreativity, silakan laporkan melalui:
 
 1. **Email**: Hubungi maintainer langsung (informasi di profil GitHub)
 2. **GitHub Security Advisories**: Gunakan fitur "Report a vulnerability" di tab Security

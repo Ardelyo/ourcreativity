@@ -1,6 +1,6 @@
 # 🗄️ Dokumentasi Database
 
-Panduan lengkap struktur database OurCreativities menggunakan Supabase (PostgreSQL).
+Panduan lengkap struktur database OurCreativity menggunakan Supabase (PostgreSQL).
 
 ## 📊 Schema Overview
 

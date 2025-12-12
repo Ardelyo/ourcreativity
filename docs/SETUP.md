@@ -1,6 +1,10 @@
 # 🚀 Panduan Setup
 
-Panduan lengkap untuk menjalankan OurCreativities di lingkungan lokal.
+> **English:** This guide provides step-by-step setup instructions for running OurCreativity locally. You'll need Node.js 18+, npm/yarn, and a free Supabase account. Follow the sections below for database configuration and environment setup.
+
+---
+
+Panduan lengkap untuk menjalankan OurCreativity di lingkungan lokal.
 
 ## 📋 Prasyarat
 
@@ -13,8 +17,8 @@ Panduan lengkap untuk menjalankan OurCreativities di lingkungan lokal.
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/ardelyo/ourcreativities.git
-cd ourcreativities
+git clone https://github.com/ardelyo/ourcreativity.git
+cd ourcreativity
 ```
 
 ### 2. Install Dependencies
@@ -31,7 +35,7 @@ yarn install
 
 1. Pergi ke [supabase.com](https://supabase.com) dan login
 2. Klik **"New Project"**
-3. Isi nama project (contoh: `ourcreativities`)
+3. Isi nama project (contoh: `ourcreativity`)
 4. Pilih region terdekat (contoh: `Southeast Asia (Singapore)`)
 5. Tunggu hingga project siap (~2 menit)
 
@@ -117,7 +121,7 @@ npm install
 ## 📁 Struktur File Environment
 
 ```
-ourcreativities/
+ourcreativity/
 ├── .env              # Kredensial lokal (JANGAN commit!)
 ├── .env.example      # Template untuk developer baru
 └── .gitignore        # Mengecualikan .env dari git

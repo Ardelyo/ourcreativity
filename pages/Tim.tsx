@@ -38,7 +38,7 @@ const REPO_OWNER = 'Ardelyo';
 const REPO_NAME = 'OurCreativity';
 
 // Cache untuk mengurangi API calls
-const CACHE_KEY = 'ourcreativities_contributors_cache';
+const CACHE_KEY = 'ourcreativity_contributors_cache';
 const CACHE_DURATION = 5 * 60 * 1000; // 5 menit
 
 // Fallback data dengan kontributor asli dari repo OurCreativity

@@ -1,0 +1,55 @@
+# GitHub CODEOWNERS file for OurCreativity
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for all files in the repo
+* @Ardelyo
+
+# Core architecture and infrastructure
+/App.tsx @Ardelyo
+/index.tsx @Ardelyo
+/index.css @Ardelyo
+/vite.config.ts @Ardelyo
+/tailwind.config.ts @Ardelyo
+/tsconfig.json @Ardelyo
+
+# Documentation
+/README.md @DoctorThink @Ardelyo
+/CONTRIBUTING.md @DoctorThink @Ardelyo
+/MAINTAINERS.md @Ardelyo
+/CHANGELOG.md @Ardelyo
+/ROADMAP.md @Ardelyo
+/docs/ @DoctorThink
+/docs/PLATFORM_BLUEPRINT.md @Ardelyo
+
+# Governance and legal
+/CODE_OF_CONDUCT.md @Ardelyo
+/SECURITY.md @Ardelyo
+/PRIVACY.md @Ardelyo
+/TERMS_OF_SERVICE.md @Ardelyo
+/LICENSE @Ardelyo
+/AUTHORS.md @DoctorThink @Ardelyo
+/ATTRIBUTION.md @Ardelyo
+/TRADEMARK.md @Ardelyo
+
+# Design system and components
+/components/ @Ardelyo
+/lib/ @Ardelyo
+/data/ @Ardelyo
+
+# Pages and features
+/pages/ @Ardelyo
+
+# Database
+/supabase/ @Ardelyo
+/supabase_*.sql @Ardelyo
+
+# Configuration
+/.env.example @Ardelyo
+/.gitignore @Ardelyo
+/package.json @Ardelyo
+/postcss.config.js @Ardelyo
+
+# GitHub configurations
+/.github/PULL_REQUEST_TEMPLATE.md @DoctorThink @Ardelyo
+/.github/CODEOWNERS @Ardelyo
+/.github/ISSUE_TEMPLATE/ @DoctorThink @Ardelyo

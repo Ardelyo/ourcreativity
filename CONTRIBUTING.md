@@ -1,14 +1,38 @@
 # Panduan Kontribusi
 
-Terima kasih telah tertarik untuk berkontribusi ke **OurCreativities**! 🎨
+> **English Contributors:** Thank you for your interest in contributing to OurCreativity! This guide is primarily in Indonesian, but the key technical requirements are:
+> - Fork the repo, create a feature branch, and submit a Pull Request
+> - Follow TypeScript & React best practices (see code examples below)
+> - Use conventional commit messages (e.g., `feat:`, `fix:`, `docs:`)
+> - Test locally before submitting
+> - See [docs/SETUP.md](docs/SETUP.md) for development setup
+
+---
+
+Terima kasih telah tertarik untuk berkontribusi ke **OurCreativity**! 🎨
 
 ## 📋 Daftar Isi
 
+- [English Quick Guide](#english-quick-guide)
 - [Memulai](#-memulai)
 - [Proses Kontribusi](#-proses-kontribusi)
 - [Standar Kode](#-standar-kode)
 - [Commit Messages](#-commit-messages)
 - [Pull Request](#-pull-request)
+
+---
+
+## 🌐 English Quick Guide
+
+**Basic Workflow:**
+1. Fork and clone: `git clone https://github.com/YOUR_USERNAME/ourcreativity.git`
+2. Install: `npm install`
+3. Create branch: `git checkout -b feat/your-feature`
+4. Make changes and test locally: `npm run dev`
+5. Commit: `git commit -m "feat: add your feature"`
+6. Push and create Pull Request
+
+**Code Standards:** TypeScript strict mode, functional React components, Tailwind CSS for styling.
 
 ---
 
@@ -26,8 +50,8 @@ Terima kasih telah tertarik untuk berkontribusi ke **OurCreativities**! 🎨
 # 1. Fork repositori ini di GitHub
 
 # 2. Clone fork kamu
-git clone https://github.com/USERNAME_KAMU/ourcreativities.git
-cd ourcreativities
+git clone https://github.com/USERNAME_KAMU/ourcreativity.git
+cd ourcreativity
 
 # 3. Install dependencies
 npm install
@@ -52,7 +76,7 @@ npm run dev
 
 ### 1. Cari atau Buat Issue
 
-- Cek [Issues](https://github.com/ardelyo/ourcreativities/issues) yang ada
+- Cek [Issues](https://github.com/ardelyo/ourcreativity/issues) yang ada
 - Untuk fitur baru, buat issue dulu untuk diskusi
 - Untuk bug, pastikan belum dilaporkan sebelumnya
 
@@ -201,9 +225,36 @@ Closes #123
 
 ---
 
-## ❓ Bantuan
+## ❓ Bantuan & Escalation
 
-Ada pertanyaan? Buat issue dengan label `question` atau hubungi maintainer.
+### Getting Help
+
+- **General Questions?** → [GitHub Discussions](https://github.com/ardelyo/ourcreativities/discussions)
+- **Issues with Setup?** → [GitHub Issues with `help-wanted` label](https://github.com/ardelyo/ourcreativities/issues)
+- **Documentation Issues?** → [GitHub Issues with `[DOCS]` tag](https://github.com/ardelyo/ourcreativities/issues)
+
+### Escalation Process
+
+If you need to escalate a decision or request:
+
+1. **Start with Discussion** — Post in GitHub Discussions
+2. **Create RFC (if major)** — See [MAINTAINERS.md](./MAINTAINERS.md#rfc-request-for-comments-process)
+3. **Contact Maintainers** — See [MAINTAINERS.md](./MAINTAINERS.md#communication-channels)
+
+### For Security Issues
+
+**DO NOT** open a public issue. See [SECURITY.md](./SECURITY.md) for how to report security vulnerabilities privately.
+
+---
+
+## 📚 Important Documents
+
+Before contributing, please read these documents:
+
+- **[MAINTAINERS.md](../MAINTAINERS.md)** — Understand project governance and how decisions are made
+- **[ROADMAP.md](../ROADMAP.md)** — See where the project is headed
+- **[CHANGELOG.md](../CHANGELOG.md)** — Learn what has changed recently
+- **[CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md)** — Community standards and expectations
 
 ---
 

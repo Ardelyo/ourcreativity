@@ -12,27 +12,30 @@
 
 Welcome to **OurCreativity**. We respect your privacy and are committed to protecting your personal data. This privacy policy explains how we collect, use, store, and protect your information when you use our platform.
 
+> **⚠️ IMPORTANT NOTE:** This policy describes the privacy framework for both current and planned features. **User authentication and account management features are currently in development.** The platform currently operates primarily as a showcase gallery with Supabase backend for content display. Full user account features will be rolled out in future updates.
+
 ---
 
 ## 🔍 Information We Collect
 
 ### 1. Information You Provide Directly
 
-#### Account Information
-When you create an account, we collect:
+#### Account Information (PLANNED - Not Yet Implemented)
+When account features are launched, we will collect:
 - Email address
 - Username/display name
 - Profile picture (optional)
 - Bio/description (optional)
 
-#### Content You Create
+#### Content Display (CURRENT)
+The platform currently displays creative works from a Supabase database:
 - Creative works (images, code, videos, text, memes)
-- Comments and interactions
 - Project descriptions and metadata
+- Public showcase content
 
-#### Communications
-- Messages sent through our platform
-- Support requests and feedback
+#### Communications (CURRENT)
+- Support requests via GitHub Issues
+- Bug reports and feedback
 - Survey responses (if applicable)
 
 ### 2. Information Collected Automatically
@@ -61,10 +64,10 @@ When you create an account, we collect:
 We use collected information for:
 
 ### 1. **Service Provision**
-- Creating and managing your account
-- Displaying your creative works
-- Enabling social features (likes, comments, follows)
-- Personalizing your experience
+- Creating and managing your account (PLANNED)
+- Displaying creative works gallery (CURRENT)
+- Enabling social features (likes, comments, follows) (PLANNED)
+- Personalizing your experience (PARTIAL)
 
 ### 2. **Platform Improvement**
 - Analyzing usage patterns
@@ -142,12 +145,15 @@ We use the following third-party services that may collect data:
 
 ### Cookies We Use
 
-#### Essential Cookies (Required)
-- **Authentication:** Session management and login state
-- **Security:** CSRF protection tokens
-- **Preferences:** Language and theme settings
+#### Essential Cookies (Minimal - Current Implementation)
+- **Preferences:** Theme settings (if implemented)
+- **Session Storage:** Temporary app state
 
-#### Analytics Cookies (Optional)
+#### Authentication Cookies (PLANNED - Not Yet Implemented)
+- **Authentication:** Session management and login state (future feature)
+- **Security:** CSRF protection tokens (future feature)
+
+#### Analytics Cookies (CURRENT)
 - **Vercel Analytics:** Anonymous usage tracking
 - **Performance Monitoring:** Speed insights
 

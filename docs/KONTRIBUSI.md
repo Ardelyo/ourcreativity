@@ -1,10 +1,10 @@
 # Panduan Kontribusi
 
-> Terima kasih telah tertarik berkontribusi pada OurCreativities!
+> Terima kasih telah tertarik berkontribusi pada OurCreativity!
 
 ## Selamat Datang
 
-Kami sangat menghargai kontribusi dari komunitas. Dokumen ini memberikan panduan untuk berkontribusi pada proyek OurCreativities.
+Kami sangat menghargai kontribusi dari komunitas. Dokumen ini memberikan panduan untuk berkontribusi pada proyek OurCreativity.
 
 ## Cara Berkontribusi
 
@@ -30,8 +30,8 @@ Ada beberapa cara untuk berkontribusi:
 **Langkah 1: Fork Repository**
 ```bash
 # Fork di GitHub, kemudian clone
-git clone https://github.com/USERNAME_ANDA/ourcreativities.git
-cd ourcreativities
+git clone https://github.com/USERNAME_ANDA/ourcreativity.git
+cd ourcreativity
 ```
 
 **Langkah 2: Instal Dependensi**
@@ -101,13 +101,13 @@ Pilih solusi sederhana daripada yang rumit.
 **Gunakan Anotasi Tipe:**
 ```typescript
 // Bagus
-const name: string = "OurCreativities";
+const name: string = "OurCreativity";
 function greet(name: string): string {
   return `Halo, ${name}`;
 }
 
 // Hindari
-const name = "OurCreativities"; // any implisit
+const name = "OurCreativity"; // any implisit
 function greet(name) { // tanpa tipe
   return `Halo, ${name}`;
 }
@@ -541,7 +541,7 @@ Jika ada pertanyaan tentang kontribusi:
 
 ---
 
-**Terima kasih telah berkontribusi pada OurCreativities!**
+**Terima kasih telah berkontribusi pada OurCreativity!**
 
 Setiap kontribusi, sekecil apapun, sangat berarti untuk proyek ini.
 
@@ -549,4 +549,4 @@ Setiap kontribusi, sekecil apapun, sangat berarti untuk proyek ini.
 
 **Terakhir Diperbarui:** November 2025  
 **Versi:** 5.0  
-**Pemelihara:** Tim OurCreativities
+**Pemelihara:** Tim OurCreativity

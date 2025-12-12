@@ -9,6 +9,12 @@ interface IframeSandboxProps {
 /**
  * IframeSandbox - Executes code in a sandboxed iframe.
  * 
+ * SECURITY CONSTRAINTS:
+ * - Uses restrictive sandbox with only "allow-scripts" and "allow-forms"
+ * - Removed "allow-same-origin" to prevent access to parent window
+ * - Removed "allow-popups" and "allow-modals" for security
+ * - All executed content is sandboxed and cannot escape the iframe
+ * 
  * Supports:
  * - HTML (with inline CSS/JS)
  * - JavaScript (wrapped in HTML)
@@ -114,7 +120,7 @@ export const IframeSandbox: React.FC<IframeSandboxProps> = ({ code, triggerRun, 
       ref={iframeRef}
       title="sandbox"
       className="w-full h-full border-none bg-white rounded-xl"
-      sandbox="allow-scripts allow-modals allow-forms allow-popups allow-same-origin"
+      sandbox="allow-scripts allow-forms"
     />
   );
 };

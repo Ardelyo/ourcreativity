@@ -1,6 +1,6 @@
 # 🚀 Git Workflow Cheat Sheet
 
-> Quick reference untuk workflow Git sehari-hari di OurCreativities
+> Quick reference untuk workflow Git sehari-hari di OurCreativity
 
 ## 📋 Workflow Lengkap (With Pull Request)
 

@@ -9,6 +9,8 @@
 
 ## ⚠️ General Disclaimer
 
+> **Important:** This document covers disclaimers for both current features and planned functionality. User account features, authentication, and user content uploads are currently under development. The platform presently operates as a showcase gallery with Supabase backend integration.
+
 ### No Warranty
 
 ```
@@ -67,14 +69,17 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ## 👤 User Content Disclaimer
 
-### No Responsibility for User Content
+> **Current Status:** User content upload features are under development. The platform currently displays curated content from a managed database.
 
-- **Users are solely responsible** for content they create, upload, or share
+### No Responsibility for User Content (APPLIES TO FUTURE UPLOADS)
+
+When user upload features are implemented:
+- **Users will be solely responsible** for content they create, upload, or share
 - **We do not endorse** any user-generated content
 - **We do not verify** accuracy, legality, or appropriateness of user content
 - **We are not liable** for offensive, infringing, or illegal user content
 
-### Content Moderation
+### Content Moderation (PLANNED FEATURE)
 
 - We may (but are not obligated to) moderate content
 - Removal of content does not imply liability or endorsement

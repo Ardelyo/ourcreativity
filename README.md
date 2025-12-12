@@ -59,6 +59,7 @@ npm run dev
 - [Struktur Proyek](#-struktur-proyek)
 - [Dokumentasi](#-dokumentasi)
 - [Kontribusi](#-kontribusi)
+- [Governance](#-governance)
 - [Tim Pengembang](#-tim-pengembang)
 - [Lisensi](#-lisensi)
 
@@ -238,7 +239,29 @@ Kontribusi sangat kami hargai! Untuk berkontribusi:
 4. Push ke branch (`git push origin fitur/FiturBaru`)
 5. Buat Pull Request
 
-> 📖 Baca [Panduan Kontribusi](docs/KONTRIBUSI.md) untuk informasi lebih detail.
+> 📖 Baca [Panduan Kontribusi](docs/KONTRIBUSI.md) dan [CONTRIBUTING.md](./CONTRIBUTING.md) untuk informasi lebih detail.
+
+<br/>
+
+## 🏛️ Governance
+
+OurCreativity is governed transparently with clear ownership and decision-making processes.
+
+### Key Governance Documents
+
+| Document | Purpose |
+|----------|---------|
+| **[MAINTAINERS.md](./MAINTAINERS.md)** | Project leadership, responsibilities, and decision framework |
+| **[ROADMAP.md](./ROADMAP.md)** | Future direction and planned features |
+| **[CHANGELOG.md](./CHANGELOG.md)** | Release history and what changed |
+| **[CONTRIBUTING.md](./CONTRIBUTING.md)** | How to contribute to the project |
+| **[AUTHORS.md](./AUTHORS.md)** | All contributors and their roles |
+
+### Escalation & Support
+
+- **Questions?** [GitHub Discussions](https://github.com/ardelyo/ourcreativities/discussions)
+- **Bug Reports?** [GitHub Issues](https://github.com/ardelyo/ourcreativities/issues)
+- **Security Issues?** See [SECURITY.md](./SECURITY.md)
 
 <br/>
 

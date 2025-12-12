@@ -202,7 +202,7 @@ Limit how we use your data
 
 **Contact Us:**
 - Email: [via GitHub Issues]
-- GitHub: [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues) with tag `[PRIVACY-REQUEST]`
+- GitHub: [github.com/ardelyo/ourcreativity/issues](https://github.com/ardelyo/ourcreativity/issues) with tag `[PRIVACY-REQUEST]`
 
 **Response Time:** Within 30 days of request
 
@@ -264,7 +264,7 @@ We may update this privacy policy periodically:
 ## 📞 Contact Us
 
 **Privacy Questions or Concerns:**
-- **GitHub Issues:** [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
+- **GitHub Issues:** [github.com/ardelyo/ourcreativity/issues](https://github.com/ardelyo/ourcreativity/issues)
   - Tag: `[PRIVACY-QUESTION]`
 - **Data Protection Officer:** [Contact via GitHub]
 
@@ -277,8 +277,8 @@ We may update this privacy policy periodically:
 
 - [Terms of Service](./TERMS_OF_SERVICE.md)
 - [Security Policy](./SECURITY.md)
-- [Cookie Policy](./COOKIES.md) (if separate)
-- [GDPR Compliance Statement](./GDPR.md) (if applicable)
+- Cookie Policy — currently covered in this Privacy Policy (no separate document)
+- GDPR Compliance Statement — will be added if/when applicable
 
 ---
 

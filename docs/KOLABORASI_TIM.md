@@ -30,7 +30,7 @@
 
 1. Pergi ke **Settings** → **Branches**
 2. Klik **Add rule**
-3. Branch name pattern: `main` atau `master`
+3. Branch name pattern: `main`
 4. Centang:
    - ✅ **Require a pull request before merging**
    - ✅ **Require approvals** (set minimal 1)

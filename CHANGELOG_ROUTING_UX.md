@@ -361,6 +361,6 @@ Jika deploy ke platform baru atau existing deployment:
 
 ---
 
-**Author:** OurCreativities Development Team  
+**Author:** OurCreativity Development Team  
 **Date:** November 2025  
 **Version:** v5.0

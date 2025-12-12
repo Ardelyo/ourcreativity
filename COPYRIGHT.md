@@ -162,7 +162,7 @@ This work is protected by:
 ## 📞 Copyright Inquiries
 
 **For copyright questions:**
-- GitHub Issues: [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
+- GitHub Issues: [github.com/ardelyo/ourcreativity/issues](https://github.com/ardelyo/ourcreativity/issues)
 - Tag: `[COPYRIGHT-QUESTION]`
 
 **For licensing inquiries:**

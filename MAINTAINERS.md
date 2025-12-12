@@ -384,7 +384,7 @@ COMMUNITY
 
 **Questions about maintenance or governance?**
 
-[Open an Issue](https://github.com/ardelyo/ourcreativities/issues) · [Start Discussion](https://github.com/ardelyo/ourcreativities/discussions) · [Read CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
+[Open an Issue](https://github.com/ardelyo/ourcreativity/issues) · [Start Discussion](https://github.com/ardelyo/ourcreativity/discussions) · [Read CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
 
 **Interested in becoming a maintainer?** Help us grow! 🌟
 

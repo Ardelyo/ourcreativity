@@ -7,9 +7,9 @@
 ### 1️⃣ Mulai Fitur/Fix Baru
 
 ```bash
-# Update master dulu
-git checkout master
-git pull origin master
+# Update main dulu
+git checkout main
+git pull origin main
 
 # Buat branch baru
 git checkout -b feature/nama-fitur
@@ -53,7 +53,7 @@ git push --set-upstream origin feature/nama-fitur
 ### 5️⃣ Buat Pull Request
 
 ```
-1. Buka GitHub.com/Ardelyo/ourcreativity
+1. Buka https://github.com/ardelyo/ourcreativity
 2. Klik banner "Compare & pull request"
 3. Isi title dan description
 4. Klik "Create pull request"
@@ -72,11 +72,11 @@ git push --set-upstream origin feature/nama-fitur
 ### 7️⃣ Update Local setelah Merge
 
 ```bash
-# Balik ke master
-git checkout master
+# Balik ke main
+git checkout main
 
 # Pull perubahan terbaru
-git pull origin master
+git pull origin main
 
 # Hapus branch lokal
 git branch -d feature/nama-fitur
@@ -98,8 +98,8 @@ git config --global alias.st status
 ### Workflow dengan Aliases
 
 ```bash
-git co master
-git pull origin master
+git co main
+git pull origin main
 git co -b feature/nama
 # coding...
 git add .
@@ -163,7 +163,7 @@ git checkout -b feature/nama-fitur
 git stash
 
 # Switch branch
-git checkout master
+git checkout main
 
 # Ambil kembali
 git stash pop
@@ -173,7 +173,7 @@ git stash pop
 
 ```bash
 # Jika ada conflict saat pull
-git pull origin master
+git pull origin main
 
 # Resolve conflict di VS Code
 # Edit file yang conflict
@@ -261,7 +261,7 @@ git push origin --delete nama-branch
 
 ### DON'Ts ❌
 
-- Commit langsung ke master
+- Commit langsung ke main
 - Commit file .env
 - Pesan commit tidak jelas ("update", "fix")
 - Push kode yang error
@@ -271,9 +271,9 @@ git push origin --delete nama-branch
 
 ## 🔗 Quick Links
 
-- Repository: https://github.com/Ardelyo/ourcreativity
-- Pull Requests: https://github.com/Ardelyo/ourcreativity/pulls
-- Issues: https://github.com/Ardelyo/ourcreativity/issues
+- Repository: https://github.com/ardelyo/ourcreativity
+- Pull Requests: https://github.com/ardelyo/ourcreativity/pulls
+- Issues: https://github.com/ardelyo/ourcreativity/issues
 
 ---
 

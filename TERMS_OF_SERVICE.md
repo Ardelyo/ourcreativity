@@ -298,7 +298,7 @@ In case of translation conflicts, the English version prevails.
 ## 📞 Contact Us
 
 **Questions about these Terms:**
-- **GitHub Issues:** [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
+- **GitHub Issues:** [github.com/ardelyo/ourcreativity/issues](https://github.com/ardelyo/ourcreativity/issues)
   - Tag: `[TERMS-QUESTION]`
 - **Legal Inquiries:** Tag: `[LEGAL]`
 

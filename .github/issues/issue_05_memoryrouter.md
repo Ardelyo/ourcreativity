@@ -1,6 +1,7 @@
 ## 🎯 Deskripsi
 
 Aplikasi menggunakan `MemoryRouter` yang **tidak mendukung persistensi URL**. Ini menyebabkan:
+
 - URL tidak berubah saat navigasi
 - Deep linking tidak berfungsi
 - Refresh halaman kembali ke home
@@ -9,6 +10,7 @@ Aplikasi menggunakan `MemoryRouter` yang **tidak mendukung persistensi URL**. In
 ## 📍 Lokasi
 
 File `App.tsx` line 2, 74:
+
 ```tsx
 import { MemoryRouter as Router, ... } from 'react-router-dom';
 // ...
@@ -18,7 +20,9 @@ import { MemoryRouter as Router, ... } from 'react-router-dom';
 ## ❓ Latar Belakang
 
 Dari dokumen `ARSITEKTUR.md`:
+
 > **Tipe Router:** MemoryRouter
+>
 > - Alasan: SPA tanpa routing sisi server
 > - **Tidak ada persistensi URL (dapat diubah ke BrowserRouter jika diperlukan)**
 
@@ -37,11 +41,10 @@ import { BrowserRouter as Router } from 'react-router-dom';
 ### Konfigurasi Vercel (jika diperlukan)
 
 Tambahkan `vercel.json`:
+
 ```json
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
 ```
 
@@ -53,13 +56,13 @@ import { HashRouter as Router } from 'react-router-dom';
 
 ## 💡 Pertimbangan
 
-| Router | URL | Refresh | Deep Link | SEO |
-|--------|-----|---------|-----------|-----|
-| MemoryRouter | ❌ | ❌ | ❌ | ❌ |
-| HashRouter | `#/karya` | ✅ | ✅ | ⚠️ |
-| BrowserRouter | `/karya` | ✅* | ✅ | ✅ |
+| Router        | URL       | Refresh | Deep Link | SEO |
+| ------------- | --------- | ------- | --------- | --- |
+| MemoryRouter  | ❌        | ❌      | ❌        | ❌  |
+| HashRouter    | `#/karya` | ✅      | ✅        | ⚠️  |
+| BrowserRouter | `/karya`  | ✅\*    | ✅        | ✅  |
 
-*Memerlukan konfigurasi server
+\*Memerlukan konfigurasi server
 
 ## 📋 Kriteria Selesai
 

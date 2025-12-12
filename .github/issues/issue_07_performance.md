@@ -7,6 +7,7 @@ Beberapa aspek performa dapat ditingkatkan untuk pengalaman pengguna yang lebih 
 ### 1. Code Splitting Bisa Ditingkatkan
 
 Saat ini lazy loading sudah diimplementasikan, tapi:
+
 - `ChangelogTimeline.tsx` (23KB) dan `Karya.tsx` (18KB) cukup besar
 - Komponen CreationStudio bisa di-split lebih lanjut
 
@@ -17,12 +18,14 @@ Build menunjukkan warning tentang chunk size limit.
 ### 3. Gambar Eksternal
 
 Banyak gambar dari Unsplash dan external URLs:
+
 ```tsx
 // components/BentoGrid.tsx
-src="https://images.unsplash.com/..."
+src = 'https://images.unsplash.com/...';
 ```
 
 Tidak ada:
+
 - Image optimization
 - Lazy loading untuk gambar
 - Placeholder/blur
@@ -30,8 +33,11 @@ Tidak ada:
 ### 4. Animasi di Mobile
 
 Dari komentar di `App.tsx`:
+
 ```tsx
-{/* Cahaya Utama - Statis di seluler untuk menghemat baterai/performa */}
+{
+  /* Cahaya Utama - Statis di seluler untuk menghemat baterai/performa */
+}
 ```
 
 Tapi belum ada deteksi `prefers-reduced-motion`.
@@ -42,13 +48,7 @@ Tapi belum ada deteksi `prefers-reduced-motion`.
 
 ```tsx
 // Tambahkan loading lazy dan dimensi
-<img 
-  src={url} 
-  loading="lazy" 
-  width={800} 
-  height={600}
-  alt="description"
-/>
+<img src={url} loading='lazy' width={800} height={600} alt='description' />
 ```
 
 ### 2. Respek Reduced Motion
@@ -59,14 +59,13 @@ const prefersReducedMotion = window.matchMedia(
 ).matches;
 
 // Di framer-motion
-<motion.div
-  animate={prefersReducedMotion ? {} : normalAnimation}
-/>
+<motion.div animate={prefersReducedMotion ? {} : normalAnimation} />;
 ```
 
 ### 3. Web Vitals Monitoring
 
 Tambahkan ke `index.tsx`:
+
 ```tsx
 import { onCLS, onFID, onLCP } from 'web-vitals';
 
@@ -78,6 +77,7 @@ onLCP(console.log);
 ### 4. Further Code Splitting
 
 Split komponen besar:
+
 - `ChangelogTimeline` → per-section
 - `CreationStudio` → per-step
 

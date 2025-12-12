@@ -21,12 +21,12 @@ Panduan lengkap untuk admin dalam mengelola konten dan database.
 
 ### Quick Links
 
-| Dashboard | Link |
-|-----------|------|
-| 📊 Table Editor | [Buka](https://supabase.com/dashboard/project/didjpfzpxwvamtlzgcbt/editor) |
-| 📝 SQL Editor | [Buka](https://supabase.com/dashboard/project/didjpfzpxwvamtlzgcbt/sql) |
+| Dashboard       | Link                                                                             |
+| --------------- | -------------------------------------------------------------------------------- |
+| 📊 Table Editor | [Buka](https://supabase.com/dashboard/project/didjpfzpxwvamtlzgcbt/editor)       |
+| 📝 SQL Editor   | [Buka](https://supabase.com/dashboard/project/didjpfzpxwvamtlzgcbt/sql)          |
 | ⚙️ API Settings | [Buka](https://supabase.com/dashboard/project/didjpfzpxwvamtlzgcbt/settings/api) |
-| 📈 Logs | [Buka](https://supabase.com/dashboard/project/didjpfzpxwvamtlzgcbt/logs) |
+| 📈 Logs         | [Buka](https://supabase.com/dashboard/project/didjpfzpxwvamtlzgcbt/logs)         |
 
 ---
 
@@ -41,14 +41,14 @@ Panduan lengkap untuk admin dalam mengelola konten dan database.
 3. Klik **+ Insert Row**
 4. Isi field yang diperlukan:
 
-| Field | Required | Contoh |
-|-------|----------|--------|
-| `title` | ✅ Ya | "Poster Event 2025" |
-| `description` | Tidak | "Desain poster..." |
-| `author` | Tidak | "Ardelyo" |
-| `division` | Tidak | graphics / video / writing / coding / meme |
-| `type` | Tidak | image / video / text / code / slide |
-| `image_url` | Tidak | "https://..." |
+| Field         | Required | Contoh                                     |
+| ------------- | -------- | ------------------------------------------ |
+| `title`       | ✅ Ya    | "Poster Event 2025"                        |
+| `description` | Tidak    | "Desain poster..."                         |
+| `author`      | Tidak    | "Ardelyo"                                  |
+| `division`    | Tidak    | graphics / video / writing / coding / meme |
+| `type`        | Tidak    | image / video / text / code / slide        |
+| `image_url`   | Tidak    | "https://..."                              |
 
 **Via SQL:**
 
@@ -80,9 +80,9 @@ VALUES (
 
 ```sql
 INSERT INTO announcements (
-  title, 
-  content, 
-  type, 
+  title,
+  content,
+  type,
   version,
   major_version,
   minor_version,
@@ -102,6 +102,7 @@ VALUES (
 ### Mengedit Data
 
 **Via Table Editor:**
+
 1. Klik row yang ingin diedit
 2. Ubah nilai di panel samping
 3. Klik **Save**
@@ -109,7 +110,7 @@ VALUES (
 **Via SQL:**
 
 ```sql
-UPDATE works 
+UPDATE works
 SET title = 'Judul Baru', description = 'Deskripsi baru'
 WHERE id = 'uuid-karya';
 ```
@@ -127,6 +128,7 @@ DELETE FROM works WHERE id = 'uuid-karya';
 ### Menggunakan API dari Aplikasi Lain
 
 **Base URL:**
+
 ```
 https://didjpfzpxwvamtlzgcbt.supabase.co
 ```
@@ -134,31 +136,29 @@ https://didjpfzpxwvamtlzgcbt.supabase.co
 ### Contoh Request (JavaScript)
 
 ```javascript
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   'https://didjpfzpxwvamtlzgcbt.supabase.co',
   'YOUR_ANON_KEY'
-)
+);
 
 // GET semua karya
 const { data, error } = await supabase
   .from('works')
   .select('*')
-  .order('created_at', { ascending: false })
+  .order('created_at', { ascending: false });
 
 // GET karya by division
 const graphics = await supabase
   .from('works')
   .select('*')
-  .eq('division', 'graphics')
+  .eq('division', 'graphics');
 
 // INSERT karya baru
 const { data, error } = await supabase
   .from('works')
-  .insert([
-    { title: 'Karya Baru', author: 'Admin' }
-  ])
+  .insert([{ title: 'Karya Baru', author: 'Admin' }]);
 ```
 
 ### Contoh Request (cURL)
@@ -185,6 +185,7 @@ curl 'https://didjpfzpxwvamtlzgcbt.supabase.co/rest/v1/works' \
 ### RLS (Row Level Security)
 
 Semua tabel sudah dilindungi RLS dengan policy:
+
 - **Public Read**: Semua orang bisa baca
 - **No Public Write**: Hanya via dashboard/service key yang bisa tulis
 
@@ -209,10 +210,10 @@ USING (auth.role() = 'authenticated');
 
 ### API Keys
 
-| Key Type | Akses | Gunakan Untuk |
-|----------|-------|---------------|
-| `anon` (public) | Read only | Frontend public |
-| `service_role` | Full access | Backend/Admin only |
+| Key Type        | Akses       | Gunakan Untuk      |
+| --------------- | ----------- | ------------------ |
+| `anon` (public) | Read only   | Frontend public    |
+| `service_role`  | Full access | Backend/Admin only |
 
 > ⚠️ **JANGAN** gunakan `service_role` key di frontend!
 

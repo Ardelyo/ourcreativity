@@ -9,6 +9,7 @@ OurCreativities adalah aplikasi React statis yang dapat di-deploy ke berbagai pl
 ## Prasyarat
 
 **Yang Dibutuhkan:**
+
 - Node.js 18+ terinstal
 - Repositori Git
 - Akun di platform hosting pilihan
@@ -19,21 +20,25 @@ OurCreativities adalah aplikasi React statis yang dapat di-deploy ke berbagai pl
 ### Build Lokal
 
 **Langkah 1: Instal Dependensi**
+
 ```bash
 npm install
 ```
 
 **Langkah 2: Jalankan Build Produksi**
+
 ```bash
 npm run build
 ```
 
 **Output:**
+
 - File build di folder `dist/`
 - Teroptimasi dan diminifikasi
 - Siap untuk deployment
 
 **Langkah 3: Uji Build Produksi**
+
 ```bash
 npm run preview
 ```
@@ -52,29 +57,32 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     minify: 'esbuild',
-  }
-})
+  },
+});
 ```
 
 ## Platform Deployment
 
 ### Vercel (Disarankan)
 
-Vercel adalah platform terbaik untuk aplikasi React dengan deployment tanpa konfigurasi (*zero-config*).
+Vercel adalah platform terbaik untuk aplikasi React dengan deployment tanpa konfigurasi (_zero-config_).
 
 **Metode 1: Deploy via CLI**
 
 **Langkah 1: Instal Vercel CLI**
+
 ```bash
 npm i -g vercel
 ```
 
 **Langkah 2: Login**
+
 ```bash
 vercel login
 ```
 
 **Langkah 3: Deploy**
+
 ```bash
 # Pratinjau Pengembangan
 vercel
@@ -94,6 +102,7 @@ vercel --prod
 **Langkah 4:** Impor repositori GitHub
 
 **Langkah 5:** Konfigurasi:
+
 - Framework Preset: Vite
 - Build Command: `npm run build`
 - Output Directory: `dist`
@@ -102,6 +111,7 @@ vercel --prod
 **Langkah 6:** Klik "Deploy"
 
 **Deployment Otomatis:**
+
 - Setiap push ke branch main = auto deploy ke produksi
 - Pull requests = preview deployments
 - HTTPS Otomatis
@@ -109,6 +119,7 @@ vercel --prod
 
 **Variabel Lingkungan:**
 Saat ini tidak ada env vars, tapi untuk masa depan:
+
 ```
 Dashboard → Project → Settings → Environment Variables
 ```
@@ -122,21 +133,25 @@ Alternatif populer dengan fitur serupa Vercel.
 **Metode 1: Netlify CLI**
 
 **Langkah 1: Instal Netlify CLI**
+
 ```bash
 npm i -g netlify-cli
 ```
 
 **Langkah 2: Login**
+
 ```bash
 netlify login
 ```
 
 **Langkah 3: Inisialisasi**
+
 ```bash
 netlify init
 ```
 
 **Langkah 4: Deploy**
+
 ```bash
 # Build dan deploy
 netlify deploy --prod
@@ -153,6 +168,7 @@ netlify deploy --prod
 **Langkah 4:** Hubungkan repositori
 
 **Langkah 5:** Pengaturan Build:
+
 ```
 Build command: npm run build
 Publish directory: dist
@@ -163,6 +179,7 @@ Publish directory: dist
 **File Konfigurasi:**
 
 Buat `netlify.toml` di root:
+
 ```toml
 [build]
   command = "npm run build"
@@ -183,11 +200,13 @@ Aturan pengalihan penting untuk routing SPA!
 Opsi hosting gratis via GitHub.
 
 **Langkah 1: Instal gh-pages**
+
 ```bash
 npm install --save-dev gh-pages
 ```
 
 **Langkah 2: Perbarui package.json**
+
 ```json
 {
   "homepage": "https://username.github.io/ourcreativities",
@@ -199,19 +218,22 @@ npm install --save-dev gh-pages
 ```
 
 **Langkah 3: Perbarui vite.config.ts**
+
 ```typescript
 export default defineConfig({
   base: '/ourcreativities/', // nama repositori
   // ... konfigurasi lainnya
-})
+});
 ```
 
 **Langkah 4: Deploy**
+
 ```bash
 npm run deploy
 ```
 
 **Catatan:** Perlu update Router dari MemoryRouter ke BrowserRouter + basename:
+
 ```typescript
 <BrowserRouter basename="/ourcreativities">
 ```
@@ -220,7 +242,7 @@ npm run deploy
 
 ### Cloudflare Pages
 
-Platform modern dengan komputasi tepi (*edge computing*).
+Platform modern dengan komputasi tepi (_edge computing_).
 
 **Langkah 1:** Push kode ke GitHub
 
@@ -231,6 +253,7 @@ Platform modern dengan komputasi tepi (*edge computing*).
 **Langkah 4:** Hubungkan repositori
 
 **Langkah 5:** Pengaturan Build:
+
 ```
 Build command: npm run build
 Build output directory: dist
@@ -239,6 +262,7 @@ Build output directory: dist
 **Langkah 6:** Deploy
 
 **Fitur:**
+
 - CDN Global
 - SSL Otomatis
 - Bandwidth tak terbatas gratis
@@ -260,6 +284,7 @@ Build output directory: dist
 Perbarui di registrar domain ke nameserver Vercel.
 
 **Opsi B - CNAME:**
+
 ```
 CNAME record:
 www → cname.vercel-dns.com
@@ -274,6 +299,7 @@ www → cname.vercel-dns.com
 **Langkah 2:** Tambahkan domain kustom
 
 **Langkah 3:** Konfigurasi DNS:
+
 ```
 A record:
 @ → 75.2.60.5
@@ -289,6 +315,7 @@ www → your-site.netlify.app
 Untuk pengembangan masa depan dengan env vars:
 
 **Pengembangan (.env.local):**
+
 ```bash
 VITE_API_URL=http://localhost:3000
 VITE_SUPABASE_URL=your_supabase_url
@@ -304,6 +331,7 @@ Dashboard → Settings → Environment Variables
 Site Settings → Build & Deploy → Environment
 
 **Akses dalam Kode:**
+
 ```typescript
 const apiUrl = import.meta.env.VITE_API_URL;
 ```
@@ -328,18 +356,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
           node-version: '18'
-      
+
       - name: Install dependencies
         run: npm install
-      
+
       - name: Build
         run: npm run build
-      
+
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20
         with:
@@ -355,6 +383,7 @@ jobs:
 ### Daftar Periksa Pra-Deployment
 
 **Optimasi Kode:**
+
 - [ ] Hapus console.logs
 - [ ] Hapus dependensi yang tidak digunakan
 - [ ] Optimalkan gambar
@@ -362,6 +391,7 @@ jobs:
 - [ ] Pemisahan kode diimplementasikan
 
 **Optimasi Build:**
+
 ```bash
 # Analisis ukuran bundle
 npm run build -- --mode production
@@ -378,10 +408,12 @@ Gunakan CDN untuk aset statis (gambar, font).
 **Header Caching:**
 
 **Vercel (ditangani otomatis):**
+
 - Aset statis: Cache 1 tahun
 - HTML: Tanpa cache
 
-**Netlify (file _headers):**
+**Netlify (file \_headers):**
+
 ```
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
@@ -397,18 +429,22 @@ Gunakan CDN untuk aset statis (gambar, font).
 ### Integrasi Analitik
 
 **Google Analytics:**
+
 ```html
 <!-- Di index.html -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=GA_ID"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+  function gtag() {
+    dataLayer.push(arguments);
+  }
   gtag('js', new Date());
   gtag('config', 'GA_ID');
 </script>
 ```
 
 **Vercel Analytics:**
+
 ```bash
 npm install @vercel/analytics
 ```
@@ -430,17 +466,18 @@ function App() {
 ### Pelacakan Kesalahan
 
 **Sentry (Disarankan):**
+
 ```bash
 npm install @sentry/react
 ```
 
 ```typescript
 // Di index.tsx
-import * as Sentry from "@sentry/react";
+import * as Sentry from '@sentry/react';
 
 Sentry.init({
-  dsn: "your-dsn",
-  environment: "production",
+  dsn: 'your-dsn',
+  environment: 'production',
 });
 ```
 
@@ -454,17 +491,17 @@ Sentry.init({
 
 **Solusi:** Tambahkan aturan pengalihan untuk SPA.
 
-Netlify (file _redirects):
+Netlify (file \_redirects):
+
 ```
 /*    /index.html   200
 ```
 
 Vercel (vercel.json):
+
 ```json
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
 ```
 
@@ -488,6 +525,7 @@ import logo from './assets/logo.png'
 **Masalah: Build gagal**
 
 **Cek:**
+
 - Kompatibilitas versi Node
 - Dependensi terinstal
 - Error TypeScript
@@ -500,11 +538,13 @@ import logo from './assets/logo.png'
 ### Vercel
 
 **Via Dashboard:**
+
 1. Pergi ke Deployments
 2. Temukan deployment yang berfungsi sebelumnya
 3. Klik "..." → "Promote to Production"
 
 **Via CLI:**
+
 ```bash
 vercel rollback
 ```
@@ -512,6 +552,7 @@ vercel rollback
 ### Netlify
 
 **Via Dashboard:**
+
 1. Pergi ke Deploys
 2. Temukan deploy sebelumnya
 3. Klik "Publish deploy"
@@ -529,6 +570,7 @@ vercel rollback
 ### Header Keamanan
 
 **Vercel (vercel.json):**
+
 ```json
 {
   "headers": [
@@ -554,6 +596,7 @@ vercel rollback
 ## Daftar Periksa Pra-Peluncuran
 
 **Teknis:**
+
 - [ ] Build berhasil secara lokal
 - [ ] Tidak ada error TypeScript
 - [ ] Tidak ada error konsol
@@ -563,12 +606,14 @@ vercel rollback
 - [ ] Performa teroptimasi
 
 **SEO:**
+
 - [ ] Meta tag dikonfigurasi
 - [ ] Sitemap dibuat
 - [ ] Robots.txt dikonfigurasi
 - [ ] Analitik disiapkan
 
 **Deployment:**
+
 - [ ] Platform dikonfigurasi
 - [ ] Domain terhubung
 - [ ] SSL berfungsi

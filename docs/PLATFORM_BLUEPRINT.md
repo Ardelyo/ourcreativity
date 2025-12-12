@@ -24,13 +24,15 @@
 
 ## 1.1 Who is OurCreativity?
 
-**OurCreativity** (stylized as *"Our Creativity."* with a period) is a next-generation creative community platform designed to be the ultimate home for creators across all disciplines. It is an **Indonesian-born digital ecosystem** that celebrates imagination, artistry, and collaborative creation.
+**OurCreativity** (stylized as _"Our Creativity."_ with a period) is a next-generation creative community platform designed to be the ultimate home for creators across all disciplines. It is an **Indonesian-born digital ecosystem** that celebrates imagination, artistry, and collaborative creation.
 
 ### Core Philosophy
-> *"Merangkai Imajinasi, Menghidupkan Karya."*  
+
+> _"Merangkai Imajinasi, Menghidupkan Karya."_  
 > (Weaving Imagination, Bringing Creations to Life.)
 
 ### Brand Personality
+
 - **Premium** — Everything feels high-end, polished, and intentional
 - **Fluid** — Smooth animations, seamless transitions, no jarring interactions
 - **Dark & Luminous** — Deep dark backgrounds with glowing accents
@@ -39,27 +41,29 @@
 
 ### The Five Creative Divisions
 
-| Division | Indonesian | Description | Icon Concept |
-|----------|-----------|-------------|--------------|
-| **Graphics** | Grafis | Digital art, UI/UX, illustration | 🖼️ Frame/Canvas |
-| **Coding** | Coding | Software engineering, creative coding | 💻 Terminal |
-| **Video** | Video | Film, motion graphics, cinematography | 🎬 Clapperboard |
-| **Writing** | Menulis | Literature, journalism, poetry | ✍️ Quill/Pen |
-| **Meme** | Meme | Internet culture, humor, trends | 😂 Comedy mask |
+| Division     | Indonesian | Description                           | Icon Concept    |
+| ------------ | ---------- | ------------------------------------- | --------------- |
+| **Graphics** | Grafis     | Digital art, UI/UX, illustration      | 🖼️ Frame/Canvas |
+| **Coding**   | Coding     | Software engineering, creative coding | 💻 Terminal     |
+| **Video**    | Video      | Film, motion graphics, cinematography | 🎬 Clapperboard |
+| **Writing**  | Menulis    | Literature, journalism, poetry        | ✍️ Quill/Pen    |
+| **Meme**     | Meme       | Internet culture, humor, trends       | 😂 Comedy mask  |
 
 ---
 
 ## 1.2 Existing Brand Assets
 
 ### Logo Concept
-- **Symbol**: An asterisk (*) inside a circle — represents a spark of creativity
+
+- **Symbol**: An asterisk (\*) inside a circle — represents a spark of creativity
 - **Wordmark**: "Our Creativity." in serif font (Playfair Display)
 - **Usage**: Symbol for compact spaces, full wordmark for hero sections
 
 ### Taglines
-- Primary: *"Merangkai Imajinasi, Menghidupkan Karya."*
-- Secondary: *"Platform Komunitas Kreatif Generasi Berikutnya"*
-- Short: *"Where creators come alive."*
+
+- Primary: _"Merangkai Imajinasi, Menghidupkan Karya."_
+- Secondary: _"Platform Komunitas Kreatif Generasi Berikutnya"_
+- Short: _"Where creators come alive."_
 
 ### Color Palette (Design Tokens)
 
@@ -85,12 +89,13 @@
 
 ### Typography
 
-| Use Case | Font | Weights |
-|----------|------|---------|
-| **Sans-Serif (Primary)** | Inter | 300, 400, 500, 600, 700 |
+| Use Case                   | Font             | Weights                   |
+| -------------------------- | ---------------- | ------------------------- |
+| **Sans-Serif (Primary)**   | Inter            | 300, 400, 500, 600, 700   |
 | **Serif (Accent/Display)** | Playfair Display | 400, 600, 700, 400 italic |
 
 **Typographic Hierarchy**:
+
 - Hero titles: Playfair Display, 48-72px, 600-700 weight
 - Section headings: Inter, 24-36px, 600 weight
 - Body text: Inter, 16px, 400 weight
@@ -102,17 +107,17 @@
 
 ## 2.1 What We're Building
 
-**OurCreativity Platform** (codename: *"Creativities"*) is a standalone social platform that extends the OurCreativity brand into an interactive, user-generated content ecosystem.
+**OurCreativity Platform** (codename: _"Creativities"_) is a standalone social platform that extends the OurCreativity brand into an interactive, user-generated content ecosystem.
 
 ### Platform vs. Portfolio Site
 
-| Aspect | Portfolio Site (Current) | Platform (New) |
-|--------|-------------------------|----------------|
-| **Purpose** | Showcase, landing, team info | User interaction, creation, socializing |
-| **Users** | Visitors (read-only) | Registered members (read/write) |
-| **Content** | Curated by team | User-generated |
-| **Features** | Static pages | Auth, Feed, Posting, Studio |
-| **Domain** | ourcreativities.com | app.ourcreativities.com |
+| Aspect       | Portfolio Site (Current)     | Platform (New)                          |
+| ------------ | ---------------------------- | --------------------------------------- |
+| **Purpose**  | Showcase, landing, team info | User interaction, creation, socializing |
+| **Users**    | Visitors (read-only)         | Registered members (read/write)         |
+| **Content**  | Curated by team              | User-generated                          |
+| **Features** | Static pages                 | Auth, Feed, Posting, Studio             |
+| **Domain**   | ourcreativities.com          | app.ourcreativities.com                 |
 
 ### Core Platform Pillars
 
@@ -139,6 +144,7 @@
 ## 2.2 Target Users
 
 ### Primary Audience
+
 - **Indonesian Gen-Z creators** (15-25 years old)
 - Digital artists, writers, coders, video editors, meme lords
 - Students exploring creative expression
@@ -147,16 +153,19 @@
 ### User Personas
 
 **1. Luna (17, High School Student)**
+
 - Posts digital art and sketches
 - Follows other artists for inspiration
 - Wants recognition and feedback
 
 **2. Raka (22, CS Student)**
+
 - Shares coding projects and experiments
 - Writes technical articles
 - Wants to build a portfolio
 
 **3. Dian (19, Content Creator)**
+
 - Creates memes and short-form content
 - High engagement, follows trends
 - Wants virality and community
@@ -169,7 +178,7 @@
 
 ### The "Luminous Dark" Paradigm
 
-OurCreativity embraces a **dark-first design** that isn't gloomy—it's *luminous*. Think of it as walking through a premium gallery at night with carefully placed spotlights highlighting each artwork.
+OurCreativity embraces a **dark-first design** that isn't gloomy—it's _luminous_. Think of it as walking through a premium gallery at night with carefully placed spotlights highlighting each artwork.
 
 **Key Principles**:
 
@@ -192,11 +201,13 @@ OurCreativity embraces a **dark-first design** that isn't gloomy—it's *luminou
 ### Cards (The Building Block)
 
 All content in the platform lives in cards. Cards should feel like:
+
 - **Framed artwork** — Subtle border, lifted from background
 - **Touchable** — Clear affordance for interaction
 - **Breathing** — Generous padding, content has room
 
 **Card Anatomy**:
+
 ```
 ┌─────────────────────────────────────────┐
 │  ┌─────────────────────────────────┐    │
@@ -215,6 +226,7 @@ All content in the platform lives in cards. Cards should feel like:
 ```
 
 **Card States**:
+
 - Default: `bg-surface` with `border-white/5`
 - Hover: Scale 1.02, `border-white/10`, subtle glow
 - Active: Border accent color
@@ -222,15 +234,16 @@ All content in the platform lives in cards. Cards should feel like:
 
 ### Buttons
 
-| Type | Use Case | Style |
-|------|----------|-------|
-| **Primary** | Main CTAs | Solid white bg, black text |
-| **Secondary** | Alt actions | Transparent bg, white border |
-| **Ghost** | Tertiary | Transparent, white text only |
-| **Accent** | Special | Gradient bg (rose → purple) |
-| **Icon** | Actions | Circle, subtle bg, centered icon |
+| Type          | Use Case    | Style                            |
+| ------------- | ----------- | -------------------------------- |
+| **Primary**   | Main CTAs   | Solid white bg, black text       |
+| **Secondary** | Alt actions | Transparent bg, white border     |
+| **Ghost**     | Tertiary    | Transparent, white text only     |
+| **Accent**    | Special     | Gradient bg (rose → purple)      |
+| **Icon**      | Actions     | Circle, subtle bg, centered icon |
 
 **Button Behavior**:
+
 - Hover: Slight scale up (1.05), background shift
 - Active: Scale down (0.98)
 - Loading: Replace text with spinner
@@ -239,6 +252,7 @@ All content in the platform lives in cards. Cards should feel like:
 ### Input Fields
 
 **Design**:
+
 - Dark background (`bg-surface`)
 - Subtle border (`border-white/10`)
 - Focus: Border accent color, subtle glow
@@ -246,6 +260,7 @@ All content in the platform lives in cards. Cards should feel like:
 - Error: Red border, error message below
 
 **Types**:
+
 - Text input
 - Textarea (multi-line)
 - Select/Dropdown
@@ -256,12 +271,14 @@ All content in the platform lives in cards. Cards should feel like:
 ### Navigation
 
 **Top Navigation Bar**:
+
 - Floating pill design (from portfolio site)
 - Glassmorphism background
 - Collapses to icon-only on scroll
 - Reveals on hover
 
 **Bottom Navigation (Mobile)**:
+
 - Fixed bottom bar
 - 4-5 primary destinations
 - Active state with accent color
@@ -281,34 +298,38 @@ All content in the platform lives in cards. Cards should feel like:
 
 ### Timing & Easing
 
-| Type | Duration | Easing |
-|------|----------|--------|
-| **Micro** (hover, tap) | 150-200ms | ease-out |
-| **Navigation** | 200-300ms | ease-out |
-| **Page Transitions** | 300-500ms | ease-in-out |
-| **Reveal/Entrance** | 400-600ms | ease-out |
-| **Background/Ambient** | 4-8s | linear (loop) |
+| Type                   | Duration  | Easing        |
+| ---------------------- | --------- | ------------- |
+| **Micro** (hover, tap) | 150-200ms | ease-out      |
+| **Navigation**         | 200-300ms | ease-out      |
+| **Page Transitions**   | 300-500ms | ease-in-out   |
+| **Reveal/Entrance**    | 400-600ms | ease-out      |
+| **Background/Ambient** | 4-8s      | linear (loop) |
 
 ### Common Animations
 
 **Fade In Up**:
+
 ```
 Initial: opacity 0, translateY 20px
 Animate: opacity 1, translateY 0
 ```
 
 **Scale In**:
+
 ```
 Initial: opacity 0, scale 0.9
 Animate: opacity 1, scale 1
 ```
 
 **Stagger Children**:
+
 ```
 Container triggers children with 50-100ms delay each
 ```
 
 ### Performance Rules
+
 - Only animate `transform` and `opacity`
 - Never animate `width`, `height`, or `margin`
 - Use `will-change` sparingly
@@ -320,24 +341,26 @@ Container triggers children with 50-100ms delay each
 
 ### Breakpoints
 
-| Name | Width | Description |
-|------|-------|-------------|
-| **xs** | < 480px | Small phones |
-| **sm** | ≥ 480px | Large phones |
-| **md** | ≥ 768px | Tablets |
-| **lg** | ≥ 1024px | Laptops |
-| **xl** | ≥ 1280px | Desktops |
+| Name    | Width    | Description   |
+| ------- | -------- | ------------- |
+| **xs**  | < 480px  | Small phones  |
+| **sm**  | ≥ 480px  | Large phones  |
+| **md**  | ≥ 768px  | Tablets       |
+| **lg**  | ≥ 1024px | Laptops       |
+| **xl**  | ≥ 1280px | Desktops      |
 | **2xl** | ≥ 1536px | Large screens |
 
 ### Layout Adaptation
 
 **Feed Grid**:
+
 - xs-sm: 1 column, full width cards
 - md: 2 columns, masonry layout
 - lg: 3 columns, masonry layout
 - xl+: 4 columns, masonry layout
 
 **Navigation**:
+
 - xs-md: Bottom tab bar
 - lg+: Top floating navbar
 
@@ -349,14 +372,15 @@ Container triggers children with 50-100ms delay each
 
 ### Authentication System
 
-| Feature | Description |
-|---------|-------------|
-| **Sign Up** | Email + Password, or OAuth (Google, GitHub) |
-| **Login** | Email + Password, or OAuth |
-| **Password Reset** | Email-based reset flow |
-| **Profile Setup** | Username, avatar, bio (post-signup) |
+| Feature            | Description                                 |
+| ------------------ | ------------------------------------------- |
+| **Sign Up**        | Email + Password, or OAuth (Google, GitHub) |
+| **Login**          | Email + Password, or OAuth                  |
+| **Password Reset** | Email-based reset flow                      |
+| **Profile Setup**  | Username, avatar, bio (post-signup)         |
 
 **UX Flow**:
+
 ```
 Landing → Sign Up → Verify Email → Complete Profile → Feed
                            ↓
@@ -366,6 +390,7 @@ Landing → Sign Up → Verify Email → Complete Profile → Feed
 ### User Profiles
 
 **Profile Data**:
+
 - Display name
 - Username (unique, @-prefixed)
 - Avatar image
@@ -376,6 +401,7 @@ Landing → Sign Up → Verify Email → Complete Profile → Feed
 - Portfolio link (optional)
 
 **Profile Actions**:
+
 - Follow/Unfollow
 - View posts
 - View collections
@@ -384,12 +410,14 @@ Landing → Sign Up → Verify Email → Complete Profile → Feed
 ### Social Feed
 
 **The "Creativities" Feed**:
+
 - Pinterest-style masonry grid
 - Tweet-style cards (image + caption)
 - Infinite scroll
 - Real-time updates
 
 **Feed Types**:
+
 1. **For You** — Algorithmic mix (future)
 2. **Following** — Posts from followed users
 3. **Trending** — High engagement posts
@@ -399,15 +427,16 @@ Landing → Sign Up → Verify Email → Complete Profile → Feed
 
 **Post Types**:
 
-| Type | Content | Visual |
-|------|---------|--------|
-| **Image** | Single or multiple images | Gallery/Carousel |
-| **Text** | Long-form text, markdown | Formatted reader |
-| **Code** | Code snippets | Syntax-highlighted |
-| **Video** | Video embed (YouTube, etc.) | Embedded player |
-| **Link** | URL with preview | Link card |
+| Type      | Content                     | Visual             |
+| --------- | --------------------------- | ------------------ |
+| **Image** | Single or multiple images   | Gallery/Carousel   |
+| **Text**  | Long-form text, markdown    | Formatted reader   |
+| **Code**  | Code snippets               | Syntax-highlighted |
+| **Video** | Video embed (YouTube, etc.) | Embedded player    |
+| **Link**  | URL with preview            | Link card          |
 
 **Post Actions**:
+
 - ❤️ Like
 - 💬 Comment
 - 🔖 Save to collection
@@ -417,6 +446,7 @@ Landing → Sign Up → Verify Email → Complete Profile → Feed
 ### Creation Studio
 
 **Post Composer**:
+
 - Rich text editor
 - Image upload (drag-and-drop)
 - Division selector
@@ -425,6 +455,7 @@ Landing → Sign Up → Verify Email → Complete Profile → Feed
 - Draft saving
 
 **Advanced Studio** (Future):
+
 - Canvas for quick graphics
 - Code playground
 - Collaborative editing
@@ -432,12 +463,14 @@ Landing → Sign Up → Verify Email → Complete Profile → Feed
 ### Discovery & Search
 
 **Explore Page**:
+
 - Trending posts
 - Featured creators
 - Division showcases
 - Hashtag clouds
 
 **Search**:
+
 - Users
 - Posts
 - Tags
@@ -476,18 +509,23 @@ See Post → Like ❤️ → Show animation
 ## 5.1 UX Principles
 
 ### 1. **Content First**
+
 The UI should disappear. When users browse, they should feel immersed in the content, not the interface. Minimize chrome, maximize art.
 
 ### 2. **Instant Feedback**
+
 Every action should have immediate visual feedback. Taps ripple, buttons respond, loading states are clear. No dead clicks.
 
 ### 3. **Progressive Disclosure**
+
 Show only what's needed. Hide complexity behind menus. Reveal advanced features as users explore.
 
 ### 4. **Forgiving Interactions**
+
 Confirm destructive actions. Allow undo. Never lose user work. Auto-save drafts.
 
 ### 5. **Delightful Moments**
+
 Micro-animations on likes, confetti on milestones, satisfying sounds (optional). Small joys that make users smile.
 
 ---
@@ -510,16 +548,16 @@ Micro-animations on likes, confetti on milestones, satisfying sounds (optional).
 
 ### Primary Inspirations
 
-| Platform | What to Learn |
-|----------|---------------|
-| **Pinterest** | Masonry grid, visual discovery, pin-to-board |
-| **Twitter/X** | Card-based posts, quick interactions, real-time feel |
-| **Dribbble** | Creator profiles, shot cards, appreciation culture |
-| **Behance** | Project case studies, premium feel, portfolio integration |
-| **Linear App** | Dark UI excellence, micro-animations, keyboard shortcuts |
-| **Vercel Dashboard** | Glassmorphism, minimal yet informative |
-| **Stripe Docs** | Typography, spacing, polish |
-| **Arc Browser** | Playful animations, space efficiency |
+| Platform             | What to Learn                                             |
+| -------------------- | --------------------------------------------------------- |
+| **Pinterest**        | Masonry grid, visual discovery, pin-to-board              |
+| **Twitter/X**        | Card-based posts, quick interactions, real-time feel      |
+| **Dribbble**         | Creator profiles, shot cards, appreciation culture        |
+| **Behance**          | Project case studies, premium feel, portfolio integration |
+| **Linear App**       | Dark UI excellence, micro-animations, keyboard shortcuts  |
+| **Vercel Dashboard** | Glassmorphism, minimal yet informative                    |
+| **Stripe Docs**      | Typography, spacing, polish                               |
+| **Arc Browser**      | Playful animations, space efficiency                      |
 
 ### Aesthetic Keywords
 
@@ -534,24 +572,28 @@ Editorial •   Gallery   •   Curated     •   Intentional
 ## 6.2 UI Patterns to Adopt
 
 ### From Pinterest
+
 - Masonry grid layout
 - Save to board/collection
 - Visual-first cards
 - Endless scroll
 
 ### From Twitter
+
 - Timeline feed concept
 - Like/Reply/Repost triad
 - Creator verification
 - Notification center
 
 ### From Dribbble
+
 - Full-bleed images in cards
 - View/Like/Save counts
 - "Following" tab
 - Shot of the day
 
 ### From Linear
+
 - Command palette (Cmd+K)
 - Subtle borders
 - Motion that conveys meaning
@@ -563,16 +605,16 @@ Editorial •   Gallery   •   Curated     •   Intentional
 
 ## 7.1 Recommended Stack
 
-| Layer | Technology | Reason |
-|-------|------------|--------|
-| **Framework** | Next.js 14+ (App Router) | SSR, routing, performance |
-| **Language** | TypeScript | Type safety |
-| **Styling** | Tailwind CSS + CSS Variables | Consistency, theming |
-| **Animation** | Framer Motion | Declarative, performant |
-| **Backend** | Supabase | Auth, DB, Storage, Realtime |
-| **State** | Zustand or Jotai | Lightweight, simple |
-| **Forms** | React Hook Form + Zod | Validation, UX |
-| **Icons** | Lucide React | Consistent, customizable |
+| Layer         | Technology                   | Reason                      |
+| ------------- | ---------------------------- | --------------------------- |
+| **Framework** | Next.js 14+ (App Router)     | SSR, routing, performance   |
+| **Language**  | TypeScript                   | Type safety                 |
+| **Styling**   | Tailwind CSS + CSS Variables | Consistency, theming        |
+| **Animation** | Framer Motion                | Declarative, performant     |
+| **Backend**   | Supabase                     | Auth, DB, Storage, Realtime |
+| **State**     | Zustand or Jotai             | Lightweight, simple         |
+| **Forms**     | React Hook Form + Zod        | Validation, UX              |
+| **Icons**     | Lucide React                 | Consistent, customizable    |
 
 ## 7.2 Project Structure
 
@@ -739,7 +781,7 @@ DATA:
 - Fetched from Supabase table: [table_name]
 - [Describe data structure]
 
-Follow the OurCreativity design system: dark backgrounds, luminous accents, 
+Follow the OurCreativity design system: dark backgrounds, luminous accents,
 fluid animations, premium feel.
 ```
 
@@ -747,7 +789,7 @@ fluid animations, premium feel.
 
 ### Prompt Template: Debugging/Fixing
 
-```
+````
 I have an issue with [component/feature] in my OurCreativity platform.
 
 EXPECTED BEHAVIOR:
@@ -768,7 +810,7 @@ Please identify the issue and provide a fix that:
 - Maintains the premium dark aesthetic
 - Keeps any existing animations
 - Follows TypeScript best practices
-```
+````
 
 ---
 
@@ -776,21 +818,22 @@ Please identify the issue and provide a fix that:
 
 When prompting, use these phrases to maintain brand consistency:
 
-| Phrase | Meaning |
-|--------|---------|
-| "Luminous Dark aesthetic" | Dark bg with glowing accents |
-| "Premium, fluid feel" | High-quality, smooth animations |
-| "Pinterest × Twitter hybrid" | Masonry grid + social cards |
-| "Gallery-like experience" | Content as artwork |
-| "OurCreativity design system" | The full brand guidelines |
-| "Surface-level hierarchy" | Using #0f0f0f vs #1a1a1a for depth |
-| "Breathing spacing" | Generous padding/margins |
+| Phrase                        | Meaning                            |
+| ----------------------------- | ---------------------------------- |
+| "Luminous Dark aesthetic"     | Dark bg with glowing accents       |
+| "Premium, fluid feel"         | High-quality, smooth animations    |
+| "Pinterest × Twitter hybrid"  | Masonry grid + social cards        |
+| "Gallery-like experience"     | Content as artwork                 |
+| "OurCreativity design system" | The full brand guidelines          |
+| "Surface-level hierarchy"     | Using #0f0f0f vs #1a1a1a for depth |
+| "Breathing spacing"           | Generous padding/margins           |
 
 ---
 
 ## 8.3 Prompts for Specific Components
 
 ### Post Card
+
 ```
 Create a PostCard component for the OurCreativity feed.
 
@@ -806,6 +849,7 @@ Use Framer Motion for animations.
 ```
 
 ### Navigation Bar
+
 ```
 Create a floating NavBar for OurCreativity.
 
@@ -823,6 +867,7 @@ Use Framer Motion layout animations.
 ```
 
 ### Auth Pages
+
 ```
 Create Login and Signup pages for OurCreativity.
 
@@ -839,6 +884,7 @@ Use Supabase Auth for backend integration.
 ```
 
 ### Create Post Modal
+
 ```
 Create a CreatePostModal for OurCreativity.
 
@@ -900,7 +946,10 @@ Before finalizing any AI-generated code, verify:
 ## Font Import
 
 ```html
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+  rel="stylesheet"
+/>
 ```
 
 ## Tailwind Config Snippet
@@ -926,9 +975,9 @@ fontFamily: {
 
 **Document End**
 
-*This blueprint is a living document. Update as the platform evolves.*
+_This blueprint is a living document. Update as the platform evolves._
 
 ---
 
-*Created for OurCreativity*  
-*December 2025*
+_Created for OurCreativity_  
+_December 2025_

@@ -11,12 +11,14 @@
 ## 📋 Ringkasan Singkat
 
 ### Kode: Open Source (MIT License) ✅
+
 - Gratis dipakai
 - Boleh dimodifikasi
 - Boleh didistribusikan
 - Cocok untuk belajar dan komersial
 
 ### Brand: Dilindungi ⚠️
+
 - Nama "OurCreativity" tidak boleh dipakai untuk project lain
 - Logo dan identitas visual dilindungi
 - Tujuan: Menghindari kebingungan di komunitas
@@ -59,6 +61,7 @@ Hak Cipta Dilindungi (kecuali yang sudah dilisensikan)
 ```
 
 **Tim Pencipta:**
+
 - **Ardelyo** - Lead Developer & Designer
 - **DoctorThink** - Code Refactoring & Documentation
 - **OurCreativity Community** - Para Kontributor
@@ -75,6 +78,7 @@ Kode di project ini menggunakan **MIT License**, artinya:
 - **Harus** kasih credit/attribution
 
 **TAPI dengan tambahan:**
+
 - **Nama dan logo** "OurCreativity" TIDAK boleh dipakai tanpa izin
 
 Lihat file [LICENSE](./LICENSE) untuk teks legal lengkap.
@@ -100,6 +104,7 @@ Yang **TIDAK boleh** dipakai tanpa izin:
 Project ini pakai library open source dari pihak ketiga:
 
 ### Yang Utama:
+
 - **React** (v19.2.0) - © Meta Platforms, Inc.
 - **TypeScript** (v5.8.2) - © Microsoft Corporation
 - **Vite** (v6.2.0) - © Evan You & Contributors
@@ -132,6 +137,7 @@ PAKAI DENGAN RISIKO SENDIRI.
 ```
 
 Artinya:
+
 - Tidak dijamin 100% bebas bug
 - Kami tidak bertanggung jawab atas kerugian dari penggunaan
 - Untuk edukasi dan pembelajaran
@@ -155,14 +161,17 @@ Mau ikut develop OurCreativity? **Silakan!**
 ## 📞 Kontak & Pertanyaan
 
 ### Mau tanya tentang brand usage?
+
 - **GitHub Issues:** [Link](https://github.com/Ardelyo/ourcreativity/issues)
 - **Tag:** `[BRAND-QUESTION]`
 
 ### Mau lapor bug atau suggest fitur?
+
 - **GitHub Issues:** [Link](https://github.com/Ardelyo/ourcreativity/issues)
 - **Tag:** `[BUG]` atau `[FEATURE]`
 
 ### Pertanyaan keamanan?
+
 - Lihat [SECURITY.md](./SECURITY.md)
 - **Tag:** `[SECURITY]`
 
@@ -172,21 +181,22 @@ Mau ikut develop OurCreativity? **Silakan!**
 
 Kalau perlu info lebih detail:
 
-| Topik | Link |
-|-------|------|
-| 🎨 **Brand Usage** (BACA INI!) | [BRAND_USAGE.md](./BRAND_USAGE.md) |
-| 📜 Lisensi MIT | [LICENSE](./LICENSE) |
-| ©️ Copyright | [COPYRIGHT.md](./COPYRIGHT.md) |
-| 👥 Daftar Kontributor | [AUTHORS.md](./AUTHORS.md) |
-| 📦 Third-Party Licenses | [ATTRIBUTION.md](./ATTRIBUTION.md) |
-| 🛡️ Keamanan | [SECURITY.md](./SECURITY.md) |
-| 🤝 Cara Kontribusi | [CONTRIBUTING.md](./CONTRIBUTING.md) |
+| Topik                          | Link                                 |
+| ------------------------------ | ------------------------------------ |
+| 🎨 **Brand Usage** (BACA INI!) | [BRAND_USAGE.md](./BRAND_USAGE.md)   |
+| 📜 Lisensi MIT                 | [LICENSE](./LICENSE)                 |
+| ©️ Copyright                   | [COPYRIGHT.md](./COPYRIGHT.md)       |
+| 👥 Daftar Kontributor          | [AUTHORS.md](./AUTHORS.md)           |
+| 📦 Third-Party Licenses        | [ATTRIBUTION.md](./ATTRIBUTION.md)   |
+| 🛡️ Keamanan                    | [SECURITY.md](./SECURITY.md)         |
+| 🤝 Cara Kontribusi             | [CONTRIBUTING.md](./CONTRIBUTING.md) |
 
 ---
 
 ## 🔄 Update Notice
 
 Notice ini bisa diupdate sewaktu-waktu. Perubahan penting akan diumumkan via:
+
 - GitHub release notes
 - CHANGELOG.md
 - Announcement di repository
@@ -195,7 +205,7 @@ Notice ini bisa diupdate sewaktu-waktu. Perubahan penting akan diumumkan via:
 
 <div align="center">
 
-**OurCreativity** - *Merangkai Imajinasi, Menghidupkan Karya*
+**OurCreativity** - _Merangkai Imajinasi, Menghidupkan Karya_
 
 Dibuat dengan ❤️ dan ☕ untuk Komunitas Kreatif Indonesia
 

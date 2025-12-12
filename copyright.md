@@ -52,13 +52,13 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 ## ⚖️ Warranty Disclaimer
 
 ```
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 ```
 
@@ -113,6 +113,7 @@ By contributing to OurCreativity, you agree that:
 ### Attribution
 
 Contributors are acknowledged in:
+
 - [AUTHORS.md](./AUTHORS.md)
 - Git commit history
 - Release notes (for significant contributions)
@@ -134,6 +135,7 @@ If you believe your copyright has been infringed:
 ### DMCA Compliance
 
 We comply with the Digital Millennium Copyright Act (DMCA):
+
 - Designated agent: [Contact via GitHub]
 - Response time: Within 7 business days
 - Counter-notification process available
@@ -143,6 +145,7 @@ We comply with the Digital Millennium Copyright Act (DMCA):
 ## 🌍 International Copyright
 
 This work is protected by:
+
 - **Berne Convention** for international copyright
 - **National copyright laws** in applicable jurisdictions
 - **Automatic protection** upon creation
@@ -162,13 +165,16 @@ This work is protected by:
 ## 📞 Copyright Inquiries
 
 **For copyright questions:**
+
 - GitHub Issues: [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
 - Tag: `[COPYRIGHT-QUESTION]`
 
 **For licensing inquiries:**
+
 - Tag: `[LICENSE-INQUIRY]`
 
 **For DMCA notices:**
+
 - Tag: `[COPYRIGHT-CLAIM]`
 
 ---
@@ -185,7 +191,7 @@ This work is protected by:
 
 <div align="center">
 
-**OurCreativity** - *Protecting Creativity, Empowering Creators*
+**OurCreativity** - _Protecting Creativity, Empowering Creators_
 
 © 2025 OurCreativity Team. All Rights Reserved.
 

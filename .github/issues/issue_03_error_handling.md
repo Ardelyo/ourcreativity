@@ -6,13 +6,14 @@ Penanganan error di aplikasi masih **sangat minimal dan tidak konsisten**. Ketik
 
 ### Error Handling yang Lemah:
 
-| File | Line | Masalah |
-|------|------|---------|
-| `pages/Karya.tsx` | 64-67 | `catch` hanya `console.error`, tidak ada UI feedback |
-| `pages/Announcement.tsx` | 26-28 | `catch` hanya `console.error` |
-| `components/ChangelogTimeline.tsx` | 38-40 | Error tidak ditampilkan ke user |
+| File                               | Line  | Masalah                                              |
+| ---------------------------------- | ----- | ---------------------------------------------------- |
+| `pages/Karya.tsx`                  | 64-67 | `catch` hanya `console.error`, tidak ada UI feedback |
+| `pages/Announcement.tsx`           | 26-28 | `catch` hanya `console.error`                        |
+| `components/ChangelogTimeline.tsx` | 38-40 | Error tidak ditampilkan ke user                      |
 
 ### Tidak Ada Error Boundaries:
+
 - Aplikasi akan crash jika komponen child melempar error
 - Tidak ada fallback UI untuk error
 
@@ -24,16 +25,16 @@ Penanganan error di aplikasi masih **sangat minimal dan tidak konsisten**. Ketik
 // components/ErrorBoundary.tsx
 class ErrorBoundary extends React.Component {
   state = { hasError: false, error: null };
-  
+
   static getDerivedStateFromError(error) {
     return { hasError: true, error };
   }
-  
+
   componentDidCatch(error, info) {
     // Log ke service seperti Sentry
     console.error('Error caught:', error, info);
   }
-  
+
   render() {
     if (this.state.hasError) {
       return <ErrorFallback error={this.state.error} />;

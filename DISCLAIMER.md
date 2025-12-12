@@ -12,15 +12,16 @@
 ### No Warranty
 
 ```
-THE OURCREATIVITY PLATFORM AND ALL ASSOCIATED SOFTWARE, 
-DOCUMENTATION, AND SERVICES ARE PROVIDED "AS IS" AND "AS 
-AVAILABLE" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR 
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES 
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, 
+THE OURCREATIVITY PLATFORM AND ALL ASSOCIATED SOFTWARE,
+DOCUMENTATION, AND SERVICES ARE PROVIDED "AS IS" AND "AS
+AVAILABLE" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE,
 AND NON-INFRINGEMENT.
 ```
 
 **We make no guarantees regarding:**
+
 - Accuracy, reliability, or completeness of the Platform
 - Uninterrupted or error-free operation
 - Security or data protection (though we implement best practices)
@@ -35,21 +36,22 @@ AND NON-INFRINGEMENT.
 ### Maximum Liability
 
 ```
-TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT 
-SHALL OURCREATIVITY, ITS DEVELOPERS, CONTRIBUTORS, OR COPYRIGHT 
-HOLDERS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED 
-TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND 
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
-OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT
+SHALL OURCREATIVITY, ITS DEVELOPERS, CONTRIBUTORS, OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 ```
 
 ### Specific Limitations
 
 **We are NOT liable for:**
+
 - ❌ Loss of data or content
 - ❌ Financial losses or lost profits
 - ❌ Damage to reputation or goodwill
@@ -94,11 +96,13 @@ POSSIBILITY OF SUCH DAMAGE.
 ### Third-Party Services
 
 The Platform integrates with:
+
 - **Supabase** (database and authentication)
 - **Vercel** (hosting and analytics)
 - Other services listed in [ATTRIBUTION.md](./ATTRIBUTION.md)
 
 **Disclaimer:**
+
 - We are not responsible for third-party service failures
 - Third-party terms and privacy policies apply
 - Service availability may change without notice
@@ -157,12 +161,14 @@ The Platform integrates with:
 ### No Professional Advice
 
 Content on the Platform is for:
+
 - ✅ Educational purposes
 - ✅ Entertainment
 - ✅ Creative expression
 - ✅ Community sharing
 
 **It is NOT:**
+
 - ❌ Professional advice (legal, financial, medical, etc.)
 - ❌ Certified or verified information
 - ❌ A substitute for professional consultation
@@ -257,6 +263,7 @@ Content on the Platform is for:
 ### Not for Critical Use
 
 **DO NOT use this Platform for:**
+
 - ❌ Life-critical applications
 - ❌ Emergency services
 - ❌ Medical diagnosis or treatment
@@ -270,6 +277,7 @@ Content on the Platform is for:
 ## 📞 Questions About This Disclaimer
 
 **For clarification or questions:**
+
 - GitHub Issues: [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
 - Tag: `[DISCLAIMER-QUESTION]`
 
@@ -286,7 +294,7 @@ Content on the Platform is for:
 
 <div align="center">
 
-**OurCreativity** - *Use at Your Own Risk*
+**OurCreativity** - _Use at Your Own Risk_
 
 © 2025 OurCreativity Team
 

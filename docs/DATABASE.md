@@ -24,7 +24,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     announcements {
         uuid id PK
         text title
@@ -45,7 +45,7 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     team_members {
         uuid id PK
         text name
@@ -66,56 +66,56 @@ erDiagram
 
 Menyimpan karya-karya kreator.
 
-| Kolom | Tipe | Deskripsi |
-|-------|------|-----------|
-| `id` | UUID | Primary key |
-| `title` | TEXT | Judul karya |
-| `description` | TEXT | Deskripsi singkat |
-| `content` | TEXT | Konten (untuk teks/kode) |
-| `image_url` | TEXT | URL gambar |
-| `author` | TEXT | Nama pembuat |
-| `role` | TEXT | Peran (contoh: '3D Artist') |
-| `division` | TEXT | Divisi: graphics, video, writing, coding, meme |
-| `type` | TEXT | Tipe: image, video, text, code, slide, embed, document |
-| `slides` | JSONB | Array slide untuk tipe 'slide' |
-| `code_language` | TEXT | Bahasa pemrograman untuk tipe 'code' |
-| `embed_url` | TEXT | URL embed untuk tipe 'embed' |
-| `tags` | TEXT[] | Array tag |
-| `link` | TEXT | Link eksternal |
+| Kolom           | Tipe   | Deskripsi                                              |
+| --------------- | ------ | ------------------------------------------------------ |
+| `id`            | UUID   | Primary key                                            |
+| `title`         | TEXT   | Judul karya                                            |
+| `description`   | TEXT   | Deskripsi singkat                                      |
+| `content`       | TEXT   | Konten (untuk teks/kode)                               |
+| `image_url`     | TEXT   | URL gambar                                             |
+| `author`        | TEXT   | Nama pembuat                                           |
+| `role`          | TEXT   | Peran (contoh: '3D Artist')                            |
+| `division`      | TEXT   | Divisi: graphics, video, writing, coding, meme         |
+| `type`          | TEXT   | Tipe: image, video, text, code, slide, embed, document |
+| `slides`        | JSONB  | Array slide untuk tipe 'slide'                         |
+| `code_language` | TEXT   | Bahasa pemrograman untuk tipe 'code'                   |
+| `embed_url`     | TEXT   | URL embed untuk tipe 'embed'                           |
+| `tags`          | TEXT[] | Array tag                                              |
+| `link`          | TEXT   | Link eksternal                                         |
 
 ### 2. `announcements` (Pengumuman)
 
 Menyimpan pengumuman dan changelog.
 
-| Kolom | Tipe | Deskripsi |
-|-------|------|-----------|
-| `id` | UUID | Primary key |
-| `title` | TEXT | Judul pengumuman |
-| `subtitle` | TEXT | Subjudul |
-| `description` | TEXT | Ringkasan singkat |
-| `content` | TEXT | Konten lengkap |
-| `date` | TIMESTAMP | Tanggal pengumuman |
-| `type` | TEXT | 'announcement' atau 'changelog' |
-| `category` | TEXT | Kategori (Launch, Event, dll) |
-| `status` | TEXT | Status (Baru, Selesai, dll) |
-| `color` | TEXT | Tailwind gradient classes |
-| `highlights` | TEXT[] | Array highlight |
-| `version` | TEXT | Versi (untuk changelog) |
+| Kolom         | Tipe      | Deskripsi                       |
+| ------------- | --------- | ------------------------------- |
+| `id`          | UUID      | Primary key                     |
+| `title`       | TEXT      | Judul pengumuman                |
+| `subtitle`    | TEXT      | Subjudul                        |
+| `description` | TEXT      | Ringkasan singkat               |
+| `content`     | TEXT      | Konten lengkap                  |
+| `date`        | TIMESTAMP | Tanggal pengumuman              |
+| `type`        | TEXT      | 'announcement' atau 'changelog' |
+| `category`    | TEXT      | Kategori (Launch, Event, dll)   |
+| `status`      | TEXT      | Status (Baru, Selesai, dll)     |
+| `color`       | TEXT      | Tailwind gradient classes       |
+| `highlights`  | TEXT[]    | Array highlight                 |
+| `version`     | TEXT      | Versi (untuk changelog)         |
 
 ### 3. `team_members` (Anggota Tim)
 
 Menyimpan data anggota tim.
 
-| Kolom | Tipe | Deskripsi |
-|-------|------|-----------|
-| `id` | UUID | Primary key |
-| `name` | TEXT | Nama anggota |
-| `role` | TEXT | Peran/jabatan |
-| `division` | TEXT | Divisi |
-| `bio` | TEXT | Biografi |
-| `avatar_url` | TEXT | URL foto profil |
-| `social_links` | JSONB | Link sosial media |
-| `is_active` | BOOLEAN | Status aktif |
+| Kolom          | Tipe    | Deskripsi         |
+| -------------- | ------- | ----------------- |
+| `id`           | UUID    | Primary key       |
+| `name`         | TEXT    | Nama anggota      |
+| `role`         | TEXT    | Peran/jabatan     |
+| `division`     | TEXT    | Divisi            |
+| `bio`          | TEXT    | Biografi          |
+| `avatar_url`   | TEXT    | URL foto profil   |
+| `social_links` | JSONB   | Link sosial media |
+| `is_active`    | BOOLEAN | Status aktif      |
 
 ## 🔐 Row Level Security (RLS)
 
@@ -125,13 +125,13 @@ Semua tabel menggunakan RLS untuk keamanan.
 
 ```sql
 -- Public read access (semua orang bisa baca)
-CREATE POLICY "Public read access for works" 
+CREATE POLICY "Public read access for works"
   ON works FOR SELECT USING (true);
 
-CREATE POLICY "Public read access for announcements" 
+CREATE POLICY "Public read access for announcements"
   ON announcements FOR SELECT USING (true);
 
-CREATE POLICY "Public read access for team_members" 
+CREATE POLICY "Public read access for team_members"
   ON team_members FOR SELECT USING (true);
 ```
 
@@ -142,7 +142,7 @@ Untuk menambah kemampuan write (untuk admin panel):
 ```sql
 -- Contoh: Hanya authenticated users bisa insert
 CREATE POLICY "Authenticated users can insert works"
-  ON works FOR INSERT 
+  ON works FOR INSERT
   WITH CHECK (auth.role() = 'authenticated');
 ```
 

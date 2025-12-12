@@ -24,11 +24,13 @@ Perlu diupdate secara berkala atau gunakan format relatif.
 ### 2. README.md - Broken Markdown
 
 Line 261 memiliki extra backticks:
-```markdown
+
+````markdown
 [![GitHub Stars](...)](...)
+
 </div>
 ``` ← Extra backticks di akhir file
-```
+````
 
 ### 3. Versioning di package.json
 
@@ -41,6 +43,7 @@ Sebaiknya sesuaikan dengan versi yang disebutkan (5.0.0).
 ### 4. ARSITEKTUR.md - Struktur Folder Outdated
 
 Struktur folder di dokumentasi tidak mencerminkan:
+
 - Folder `data/`
 - Folder `lib/`
 - Folder `supabase/`

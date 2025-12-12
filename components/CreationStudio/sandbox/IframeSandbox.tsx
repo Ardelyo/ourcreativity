@@ -8,13 +8,17 @@ interface IframeSandboxProps {
 
 /**
  * IframeSandbox - Executes code in a sandboxed iframe.
- * 
+ *
  * Supports:
  * - HTML (with inline CSS/JS)
  * - JavaScript (wrapped in HTML)
  * - p5.js (auto-includes p5.js library)
  */
-export const IframeSandbox: React.FC<IframeSandboxProps> = ({ code, triggerRun, language = 'html' }) => {
+export const IframeSandbox: React.FC<IframeSandboxProps> = ({
+  code,
+  triggerRun,
+  language = 'html',
+}) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const generateHTML = (inputCode: string, lang: string): string => {
@@ -76,7 +80,10 @@ export const IframeSandbox: React.FC<IframeSandboxProps> = ({ code, triggerRun, 
       case 'html':
       default:
         // If code already has DOCTYPE, use as-is
-        if (inputCode.trim().toLowerCase().startsWith('<!doctype') || inputCode.trim().toLowerCase().startsWith('<html')) {
+        if (
+          inputCode.trim().toLowerCase().startsWith('<!doctype') ||
+          inputCode.trim().toLowerCase().startsWith('<html')
+        ) {
           return inputCode;
         }
         return `
@@ -112,9 +119,9 @@ export const IframeSandbox: React.FC<IframeSandboxProps> = ({ code, triggerRun, 
   return (
     <iframe
       ref={iframeRef}
-      title="sandbox"
-      className="w-full h-full border-none bg-white rounded-xl"
-      sandbox="allow-scripts allow-modals allow-forms allow-popups allow-same-origin"
+      title='sandbox'
+      className='w-full h-full border-none bg-white rounded-xl'
+      sandbox='allow-scripts allow-modals allow-forms allow-popups allow-same-origin'
     />
   );
 };

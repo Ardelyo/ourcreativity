@@ -2,11 +2,11 @@
 
 ## Versi yang Didukung
 
-| Versi | Didukung          |
-| ----- | ----------------- |
-| 5.x   | ✅ Ya             |
-| 4.x   | ❌ Tidak          |
-| < 4.0 | ❌ Tidak          |
+| Versi | Didukung |
+| ----- | -------- |
+| 5.x   | ✅ Ya    |
+| 4.x   | ❌ Tidak |
+| < 4.0 | ❌ Tidak |
 
 ## Melaporkan Kerentanan
 

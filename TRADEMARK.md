@@ -51,6 +51,7 @@ The following marks are trademarks of OurCreativity and are protected under appl
 You MAY use OurCreativity trademarks in the following ways **without prior permission**:
 
 ### 1. **Factual References**
+
 ```
 ✓ "Built with OurCreativity codebase"
 ✓ "Forked from OurCreativity repository"
@@ -59,18 +60,21 @@ You MAY use OurCreativity trademarks in the following ways **without prior permi
 ```
 
 ### 2. **Educational & Commentary**
+
 - Academic papers and research
 - News articles and blog posts
 - Technical tutorials and documentation
 - Code reviews and analysis
 
 ### 3. **Community Contributions**
+
 - Pull requests to the official repository
 - Bug reports and feature requests
 - Community forum discussions
 - Official OurCreativity events
 
 ### 4. **Personal Projects (Non-Commercial)**
+
 - Learning and experimentation
 - Portfolio demonstrations (with clear attribution)
 - Academic assignments
@@ -82,6 +86,7 @@ You MAY use OurCreativity trademarks in the following ways **without prior permi
 You **MUST obtain written permission** before using OurCreativity trademarks for:
 
 ### 1. **Product Names**
+
 ```
 ✗ "OurCreativity Pro"
 ✗ "OurCreativity Enterprise"
@@ -90,6 +95,7 @@ You **MUST obtain written permission** before using OurCreativity trademarks for
 ```
 
 ### 2. **Domain Names**
+
 ```
 ✗ ourcreativity-[anything].com
 ✗ [anything]-ourcreativity.com
@@ -99,17 +105,20 @@ You **MUST obtain written permission** before using OurCreativity trademarks for
 **Exception:** Official subdomains authorized by OurCreativity team
 
 ### 3. **Commercial Services**
+
 - Paid hosting services
 - Consulting services branded with OurCreativity
 - Training courses using OurCreativity branding
 - Commercial plugins or extensions
 
 ### 4. **Merchandise**
+
 - T-shirts, stickers, mugs with OurCreativity branding
 - Physical products bearing the logo
 - Digital products (themes, templates) using the brand
 
 ### 5. **Social Media & Apps**
+
 ```
 ✗ @OurCreativity (on any platform)
 ✗ "OurCreativity Community" (as official group name)
@@ -123,21 +132,25 @@ You **MUST obtain written permission** before using OurCreativity trademarks for
 The following uses are **NEVER permitted** under any circumstances:
 
 ### 1. **Misleading Association**
+
 - Implying official endorsement or partnership
 - Suggesting your project is the official OurCreativity
 - Creating confusion about the source of your product
 
 ### 2. **Disparagement**
+
 - Using trademarks in a way that damages our reputation
 - Associating the brand with inappropriate content
 - Defamatory or offensive usage
 
 ### 3. **Trademark Infringement**
+
 - Registering OurCreativity trademarks in your name
 - Filing for similar trademarks that could cause confusion
 - Using marks that are confusingly similar
 
 ### 4. **Logo Modification**
+
 - Altering the official logo design
 - Changing colors, proportions, or elements
 - Combining with other logos without permission
@@ -149,7 +162,9 @@ The following uses are **NEVER permitted** under any circumstances:
 To request permission for trademark use:
 
 ### Step 1: Prepare Your Request
+
 Include the following information:
+
 - **Your name and organization**
 - **Intended use** (detailed description)
 - **Duration** of use
@@ -158,16 +173,19 @@ Include the following information:
 - **Mockups or examples** (if applicable)
 
 ### Step 2: Submit Request
+
 - **GitHub Issues:** [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
   - Use tag: `[BRAND-REQUEST]`
 - **Email:** [Contact via GitHub profile]
 
 ### Step 3: Review Process
+
 - Initial response: Within 7 business days
 - Full review: Within 30 days
 - Decision communicated via email or GitHub
 
 ### Step 4: Approval (if granted)
+
 - Written permission provided
 - Usage guidelines specified
 - Monitoring and compliance requirements
@@ -181,32 +199,37 @@ If you receive permission to use OurCreativity trademarks, follow these guidelin
 ### Logo Usage
 
 #### ✅ DO:
+
 - Use the official logo files provided
 - Maintain minimum clear space around logo
 - Use approved color variations only
 - Ensure logo is legible at all sizes
 
 #### ❌ DON'T:
+
 - Stretch, skew, or distort the logo
 - Change logo colors arbitrarily
 - Add effects (shadows, glows, outlines)
 - Place logo on busy backgrounds
 
 ### Typography
+
 - **Primary Font:** Inter (for digital)
 - **Secondary Font:** Outfit (for headings)
 - Do not substitute with other fonts in official materials
 
 ### Color Palette
+
 ```css
 /* Official OurCreativity Colors */
---primary-dark: #0D1117;
+--primary-dark: #0d1117;
 --primary-accent: #1a1a2e;
 --highlight: #00d26a;
---secondary: #61DAFB;
+--secondary: #61dafb;
 ```
 
 ### Voice & Tone
+
 - Professional yet approachable
 - Innovative and forward-thinking
 - Community-focused
@@ -219,17 +242,21 @@ If you receive permission to use OurCreativity trademarks, follow these guidelin
 We take trademark protection seriously to maintain brand integrity:
 
 ### Monitoring
+
 - Regular searches for unauthorized use
 - Community reporting system
 - Automated brand monitoring tools
 
 ### Violation Response
+
 1. **First Notice:** Friendly cease-and-desist request
 2. **Second Notice:** Formal legal notice
 3. **Legal Action:** If necessary, pursue legal remedies
 
 ### Reporting Violations
+
 If you notice unauthorized use of OurCreativity trademarks:
+
 - Report via GitHub Issues with tag `[TRADEMARK-VIOLATION]`
 - Include evidence (screenshots, URLs, descriptions)
 - We will investigate and take appropriate action
@@ -247,6 +274,7 @@ If you notice unauthorized use of OurCreativity trademarks:
 ## 🔄 Policy Updates
 
 This trademark policy may be updated periodically. Changes will be:
+
 - Announced via GitHub releases
 - Documented in CHANGELOG.md
 - Effective 30 days after publication (unless otherwise stated)
@@ -260,10 +288,12 @@ This trademark policy may be updated periodically. Changes will be:
 ## 📞 Contact Information
 
 **Trademark Inquiries:**
+
 - GitHub Issues: [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
 - Tag: `[BRAND-REQUEST]` or `[TRADEMARK-QUESTION]`
 
 **Legal Department:**
+
 - For legal matters, contact via GitHub Issues with tag `[LEGAL]`
 
 ---
@@ -279,7 +309,7 @@ This trademark policy may be updated periodically. Changes will be:
 
 <div align="center">
 
-**OurCreativity** - *Protecting Our Brand, Empowering Our Community*
+**OurCreativity** - _Protecting Our Brand, Empowering Our Community_
 
 © 2025 OurCreativity Team. All trademarks reserved.
 

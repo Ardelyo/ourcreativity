@@ -29,11 +29,13 @@
 Bayangkan kalau ada 10 website dengan nama "OurCreativity" - mana yang asli? 🤔
 
 **Tujuan kami:**
+
 - Menghindari kebingungan di komunitas
 - Melindungi identitas brand komunitas ini
 - Memastikan orang tahu mana yang official
 
 **Bukan untuk:**
+
 - Membatasi kamu belajar dari kode ini
 - Melarang kamu bikin project serupa
 - Bikin ribet yang mau kontribusi
@@ -57,8 +59,11 @@ Credit: Fork from github.com/Ardelyo/ourcreativity
 
 ```markdown
 # OurCreativity
+
 # OurCreativity Indonesia
+
 # OurCreativity V2
+
 # Copy exact sama termasuk logo
 ```
 
@@ -90,21 +95,27 @@ Ini bukan cuma "aturan main-main":
 ## ❓ FAQ (Pertanyaan Sering Muncul)
 
 ### Q: Boleh pakai kode ini untuk tugas kuliah?
+
 **A:** Boleh banget! Cukup kasih credit di README atau laporan.
 
 ### Q: Boleh pakai untuk komersial?
+
 **A:** Kode boleh (MIT License), tapi ganti nama dan logo ya.
 
 ### Q: Boleh modifikasi?
+
 **A:** Silakan! Bahkan sangat dianjurkan untuk belajar.
 
 ### Q: Kalau fork untuk development sendiri?
+
 **A:** Boleh, asal pas deploy production ganti branding.
 
 ### Q: Definisi "branding" itu apa aja?
+
 **A:** Nama "OurCreativity", logo, dan tagline resmi kami.
 
 ### Q: Kalau cuma mirip desain tapi beda nama?
+
 **A:** Tidak masalah! Desain pattern boleh dipakai.
 
 ---
@@ -144,7 +155,7 @@ Terima kasih sudah menghargai karya komunitas ini. Dengan mengikuti aturan seder
 
 <div align="center">
 
-**OurCreativity** - *Merangkai Imajinasi, Menghidupkan Karya*
+**OurCreativity** - _Merangkai Imajinasi, Menghidupkan Karya_
 
 Proyek Edukasi & Komunitas Kreatif
 

@@ -4,16 +4,16 @@ Terdapat **10+ penggunaan tipe `any`** yang tersebar di berbagai komponen dan ha
 
 ## 📍 Lokasi Terdeteksi
 
-| File | Line | Kode |
-|------|------|------|
-| `pages/Story.tsx` | 140 | `progress: any` |
-| `pages/Karya.tsx` | 48 | `useState<any[]>([]);` |
-| `pages/Karya.tsx` | 76 | `handlePublish(newWork: any)` |
-| `pages/Karya.tsx` | 91 | `renderCardContent(art: any)` |
-| `pages/divisions/Video.tsx` | 44 | `scrollProgress: any` |
-| `pages/Announcement.tsx` | 9-10 | `useState<any[]>` |
-| `components/CreationStudio/index.tsx` | 19, 69, 314 | Multiple `as any` |
-| `components/CreationStudio/carousel/SlideBuilder.tsx` | 91 | `as any` |
+| File                                                  | Line        | Kode                          |
+| ----------------------------------------------------- | ----------- | ----------------------------- |
+| `pages/Story.tsx`                                     | 140         | `progress: any`               |
+| `pages/Karya.tsx`                                     | 48          | `useState<any[]>([]);`        |
+| `pages/Karya.tsx`                                     | 76          | `handlePublish(newWork: any)` |
+| `pages/Karya.tsx`                                     | 91          | `renderCardContent(art: any)` |
+| `pages/divisions/Video.tsx`                           | 44          | `scrollProgress: any`         |
+| `pages/Announcement.tsx`                              | 9-10        | `useState<any[]>`             |
+| `components/CreationStudio/index.tsx`                 | 19, 69, 314 | Multiple `as any`             |
+| `components/CreationStudio/carousel/SlideBuilder.tsx` | 91          | `as any`                      |
 
 ## ✅ Solusi yang Diharapkan
 

@@ -118,11 +118,11 @@ Lihat `.gitignore` kamu sudah benar:
 
 ### Apa yang Di-commit vs Tidak
 
-| File | Di-commit? | Penjelasan |
-|------|------------|------------|
-| `.env` | ❌ TIDAK | Berisi kredensial rahasia |
-| `.env.example` | ✅ YA | Template tanpa nilai rahasia |
-| `.env.local` | ❌ TIDAK | Untuk development lokal |
+| File           | Di-commit? | Penjelasan                   |
+| -------------- | ---------- | ---------------------------- |
+| `.env`         | ❌ TIDAK   | Berisi kredensial rahasia    |
+| `.env.example` | ✅ YA      | Template tanpa nilai rahasia |
+| `.env.local`   | ❌ TIDAK   | Untuk development lokal      |
 
 ### Setup untuk Kontributor Baru
 
@@ -147,10 +147,10 @@ cp .env.example .env
 3. Pergi ke **Settings** → **Environment Variables**
 4. Tambahkan variabel berikut:
 
-| Key | Value | Environment |
-|-----|-------|-------------|
-| `VITE_SUPABASE_URL` | `https://didjpfzpxwvamtlzgcbt.supabase.co` | Production, Preview, Development |
-| `VITE_SUPABASE_ANON_KEY` | `[KUNCI ANON BARU]` | Production, Preview, Development |
+| Key                      | Value                                      | Environment                      |
+| ------------------------ | ------------------------------------------ | -------------------------------- |
+| `VITE_SUPABASE_URL`      | `https://didjpfzpxwvamtlzgcbt.supabase.co` | Production, Preview, Development |
+| `VITE_SUPABASE_ANON_KEY` | `[KUNCI ANON BARU]`                        | Production, Preview, Development |
 
 5. Klik **Save**
 
@@ -167,6 +167,7 @@ vercel --prod
 ### Langkah 3: Verifikasi Koneksi
 
 Setelah deploy, buka website dan cek:
+
 - Console browser (F12) tidak ada error Supabase
 - Data dari database tampil dengan benar
 
@@ -176,12 +177,12 @@ Setelah deploy, buka website dan cek:
 
 ### Mengelola API Keys Supabase
 
-| Key Type | Akses | Penggunaan |
-|----------|-------|------------|
-| `anon` (publishable) | Read only* | Frontend, bisa di-expose |
-| `service_role` | Full access | **RAHASIA** - Backend only |
+| Key Type             | Akses       | Penggunaan                 |
+| -------------------- | ----------- | -------------------------- |
+| `anon` (publishable) | Read only\* | Frontend, bisa di-expose   |
+| `service_role`       | Full access | **RAHASIA** - Backend only |
 
-> *`anon` key aman di-expose KARENA sudah ada Row Level Security (RLS)
+> \*`anon` key aman di-expose KARENA sudah ada Row Level Security (RLS)
 
 ### Rotasi API Key
 
@@ -198,11 +199,13 @@ Jika key bocor atau sebagai keamanan rutin:
 ### Berbagi Kredensial dengan Tim (Aman)
 
 **JANGAN:**
+
 - ❌ Kirim lewat WhatsApp/Telegram
 - ❌ Tulis di file yang di-commit
 - ❌ Share di Discord/grup publik
 
 **LAKUKAN:**
+
 - ✅ Gunakan password manager (1Password, Bitwarden)
 - ✅ Kirim lewat DM terenkripsi
 - ✅ Buat Supabase project terpisah untuk development
@@ -275,7 +278,8 @@ Kontributor development cukup dapat akses ke project Development.
 
 ### Q: Bagaimana jika ada commit berisi `.env`?
 
-**A:** 
+**A:**
+
 1. Segera rotasi ALL keys yang terexpose
 2. Remove file dari Git history menggunakan BFG atau git filter-branch
 3. Force push perubahan

@@ -17,8 +17,8 @@ Fixes #(nomor issue)
 
 ## 📸 Screenshot (jika UI berubah)
 
-| Sebelum | Sesudah |
-|---------|---------|
+| Sebelum      | Sesudah      |
+| ------------ | ------------ |
 | (screenshot) | (screenshot) |
 
 ## ✅ Checklist

@@ -18,7 +18,7 @@
 
 **Platform Komunitas Kreatif Generasi Berikutnya**
 
-*Merangkai Imajinasi, Menghidupkan Karya.*
+_Merangkai Imajinasi, Menghidupkan Karya._
 
 <br/>
 
@@ -52,7 +52,7 @@ Versi 5.0 (**Revolution Edition**) menandai transformasi total dari antarmuka pe
 
 - ✅ Interaksi yang cair dan responsif
 - ✅ Performa tinggi dengan optimisasi modern
-- ✅ Struktur navigasi berbasis *Bento Grid* yang intuitif
+- ✅ Struktur navigasi berbasis _Bento Grid_ yang intuitif
 - ✅ Nuansa atmosferik dan pencahayaan dinamis
 
 <br/>
@@ -60,19 +60,21 @@ Versi 5.0 (**Revolution Edition**) menandai transformasi total dari antarmuka pe
 ## ✨ Fitur Utama
 
 ### 🎨 Desain Luminous
+
 Antarmuka yang hidup dengan kedalaman visual, efek glassmorphism, dan pencahayaan ambien yang bereaksi terhadap interaksi pengguna.
 
 ### 🧩 Lima Divisi Kreativitas
 
-| Divisi | Deskripsi |
-|--------|-----------|
-| **🖼️ Grafis** | Galeri visual untuk seni digital, UI/UX, dan ilustrasi |
-| **💻 Coding** | Showcase untuk rekayasa perangkat lunak dan eksperimen kode |
-| **🎬 Video** | Teater sinematik untuk karya gambar bergerak |
-| **✍️ Menulis** | Ruang editorial untuk literatur dan jurnalisme |
-| **😂 Meme** | Pusat budaya internet yang dinamis dan penuh humor |
+| Divisi         | Deskripsi                                                   |
+| -------------- | ----------------------------------------------------------- |
+| **🖼️ Grafis**  | Galeri visual untuk seni digital, UI/UX, dan ilustrasi      |
+| **💻 Coding**  | Showcase untuk rekayasa perangkat lunak dan eksperimen kode |
+| **🎬 Video**   | Teater sinematik untuk karya gambar bergerak                |
+| **✍️ Menulis** | Ruang editorial untuk literatur dan jurnalisme              |
+| **😂 Meme**    | Pusat budaya internet yang dinamis dan penuh humor          |
 
 ### 📱 Pengalaman Pengguna Premium
+
 - **Navigasi Bento Grid** — Menu navigasi yang modular dan visual
 - **Animasi Fluid** — Transisi halaman menggunakan Framer Motion
 - **Responsif Total** — Optimal di desktop, tablet, dan mobile
@@ -83,15 +85,15 @@ Antarmuka yang hidup dengan kedalaman visual, efek glassmorphism, dan pencahayaa
 
 Proyek ini dibangun di atas fondasi teknologi web modern:
 
-| Kategori | Teknologi |
-|----------|-----------|
-| **Framework** | React v19 |
-| **Bahasa** | TypeScript v5.8 |
-| **Build Tool** | Vite v6 |
-| **Styling** | Tailwind CSS v3 (Custom Config) |
-| **Animasi** | Framer Motion |
-| **Routing** | React Router DOM |
-| **Ikon** | Lucide React |
+| Kategori       | Teknologi                       |
+| -------------- | ------------------------------- |
+| **Framework**  | React v19                       |
+| **Bahasa**     | TypeScript v5.8                 |
+| **Build Tool** | Vite v6                         |
+| **Styling**    | Tailwind CSS v3 (Custom Config) |
+| **Animasi**    | Framer Motion                   |
+| **Routing**    | React Router DOM                |
+| **Ikon**       | Lucide React                    |
 
 <br/>
 
@@ -100,22 +102,26 @@ Proyek ini dibangun di atas fondasi teknologi web modern:
 ### Prasyarat
 
 Pastikan Anda telah menginstal:
+
 - **Node.js** v18 atau lebih baru
 - **npm** atau **yarn**
 
 ### Instalasi
 
 1. **Clone repositori**
+
    ```bash
    git clone https://github.com/ardelyo/ourcreativities.git
    ```
 
 2. **Masuk ke direktori proyek**
+
    ```bash
    cd ourcreativities
    ```
 
 3. **Instal dependensi**
+
    ```bash
    npm install
    # atau
@@ -123,6 +129,7 @@ Pastikan Anda telah menginstal:
    ```
 
 4. **Jalankan server pengembangan**
+
    ```bash
    npm run dev
    # atau
@@ -130,6 +137,7 @@ Pastikan Anda telah menginstal:
    ```
 
 5. **Konfigurasi Environment**
+
    ```bash
    cp .env.example .env
    # Edit .env dengan kredensial Supabase kamu
@@ -144,12 +152,15 @@ Pastikan Anda telah menginstal:
 
 ### Perintah Tersedia
 
-| Perintah | Deskripsi |
-|----------|-----------|
-| `npm run dev` | Menjalankan server pengembangan |
-| `npm run build` | Build untuk produksi |
-| `npm run preview` | Preview build produksi |
-| `npm run lint` | Menjalankan ESLint |
+| Perintah               | Deskripsi                                   |
+| ---------------------- | ------------------------------------------- |
+| `npm run dev`          | Menjalankan server pengembangan             |
+| `npm run build`        | Build untuk produksi                        |
+| `npm run preview`      | Preview build produksi                      |
+| `npm run lint`         | Menjalankan ESLint untuk cek error          |
+| `npm run lint:fix`     | Auto-fix error linting yang bisa diperbaiki |
+| `npm run format`       | Format kode dengan Prettier                 |
+| `npm run format:check` | Cek formatting tanpa mengubah file          |
 
 <br/>
 
@@ -189,17 +200,17 @@ ourcreativities/
 
 Dokumentasi teknis lengkap tersedia dalam **Bahasa Indonesia**:
 
-| Dokumen | Deskripsi |
-|---------|-----------|
-| 🚀 [Panduan Setup](docs/SETUP.md) | **MULAI DARI SINI** - Install & konfigurasi |
-| 🗄️ [Database](docs/DATABASE.md) | Schema & query Supabase |
-| 🏗️ [Arsitektur Sistem](docs/ARSITEKTUR.md) | Struktur kode dan keputusan teknis |
-| 🧩 [Komponen UI](docs/KOMPONEN.md) | Panduan penggunaan komponen |
-| 📄 [Halaman](docs/HALAMAN.md) | Detail implementasi setiap halaman |
-| 🚀 [Deployment](docs/PANDUAN_DEPLOYMENT.md) | Panduan peluncuran ke produksi |
-| 🤝 [Kontribusi](docs/KONTRIBUSI.md) | Standar kode dan alur kerja |
-| 📝 [Catatan Pengembang](docs/CATATAN_PENGEMBANG.md) | Catatan teknis dan TODO |
-| 📜 [Riwayat Versi](docs/versions/RIWAYAT_VERSI_LENGKAP.md) | Sejarah evolusi proyek |
+| Dokumen                                                    | Deskripsi                                   |
+| ---------------------------------------------------------- | ------------------------------------------- |
+| 🚀 [Panduan Setup](docs/SETUP.md)                          | **MULAI DARI SINI** - Install & konfigurasi |
+| 🗄️ [Database](docs/DATABASE.md)                            | Schema & query Supabase                     |
+| 🏗️ [Arsitektur Sistem](docs/ARSITEKTUR.md)                 | Struktur kode dan keputusan teknis          |
+| 🧩 [Komponen UI](docs/KOMPONEN.md)                         | Panduan penggunaan komponen                 |
+| 📄 [Halaman](docs/HALAMAN.md)                              | Detail implementasi setiap halaman          |
+| 🚀 [Deployment](docs/PANDUAN_DEPLOYMENT.md)                | Panduan peluncuran ke produksi              |
+| 🤝 [Kontribusi](docs/KONTRIBUSI.md)                        | Standar kode dan alur kerja                 |
+| 📝 [Catatan Pengembang](docs/CATATAN_PENGEMBANG.md)        | Catatan teknis dan TODO                     |
+| 📜 [Riwayat Versi](docs/versions/RIWAYAT_VERSI_LENGKAP.md) | Sejarah evolusi proyek                      |
 
 <br/>
 
@@ -214,6 +225,22 @@ Kontribusi sangat kami hargai! Untuk berkontribusi:
 5. Buat Pull Request
 
 > 📖 Baca [Panduan Kontribusi](docs/KONTRIBUSI.md) untuk informasi lebih detail.
+
+### 🔄 Continuous Integration
+
+Proyek ini menggunakan **GitHub Actions** untuk automasi CI/CD. Semua pull request dan push ke branch `main` dan `develop` akan memicu workflow CI yang menjalankan:
+
+1. **ESLint** - Memeriksa kode TypeScript dan React
+2. **Prettier Check** - Memastikan formatting kode konsisten
+3. **TypeScript Check** - Validasi tipe dan compilation
+4. **Build Test** - Memastikan proyek bisa di-build tanpa error
+
+#### 🟢 Required Checks
+
+Sebelum merge, pastikan semua checks berikut hijau:
+
+- ✅ `lint-and-build (18.x)`
+- ✅ `lint-and-build (20.x)`
 
 <br/>
 
@@ -241,11 +268,13 @@ Kontribusi sangat kami hargai! Untuk berkontribusi:
 **OurCreativity adalah proyek open source untuk edukasi**, dengan aturan sederhana:
 
 ✅ **Kode: Bebas dipakai** (MIT License)
+
 - Gratis untuk belajar, modifikasi, dan pakai di project sendiri
 - Boleh untuk komersial
 - Boleh fork dan distribute
 
 ⚠️ **Brand: Dilindungi**
+
 - **JANGAN pakai** nama "OurCreativity" untuk website/project kamu
 - **JANGAN copy** logo dan identitas visual kami
 - Tujuan: Menghindari kebingungan di komunitas
@@ -255,7 +284,6 @@ Kontribusi sangat kami hargai! Untuk berkontribusi:
 <br/>
 
 ## 📄 Lisensi
-
 
 ```
 Hak Cipta © 2025 OurCreativity
@@ -272,7 +300,7 @@ Lihat file LICENSE untuk informasi lebih lanjut.
 
 **Dibuat dengan ❤️ dan ☕ oleh Tim OurCreativity Edisi Coding**
 
-*"Merangkai Imajinasi Kita."*
+_"Merangkai Imajinasi Kita."_
 
 <br/>
 

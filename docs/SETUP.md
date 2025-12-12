@@ -45,6 +45,7 @@ yarn install
 #### c. (Opsional) Tambahkan Data Contoh
 
 Jika ingin data contoh:
+
 ```sql
 -- Jalankan di SQL Editor
 -- Pilih salah satu file seed:
@@ -88,6 +89,7 @@ Buka browser di: **http://localhost:5173**
 ## ✅ Verifikasi Setup
 
 Jika setup berhasil, kamu akan melihat:
+
 - ✅ Homepage dengan hero section
 - ✅ Navigasi berfungsi
 - ✅ Data ter-load dari Supabase (di halaman Karya, Pengumuman, dll)
@@ -100,7 +102,8 @@ Jika setup berhasil, kamu akan melihat:
 
 ### Error: "Failed to fetch" atau data tidak muncul
 
-**Solusi**: 
+**Solusi**:
+
 1. Pastikan URL Supabase benar
 2. Cek apakah database schema sudah dijalankan
 3. Verifikasi RLS policies membolehkan public read
@@ -108,6 +111,7 @@ Jika setup berhasil, kamu akan melihat:
 ### Error saat npm install
 
 **Solusi**:
+
 ```bash
 # Hapus cache dan coba lagi
 rm -rf node_modules package-lock.json

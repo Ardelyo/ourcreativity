@@ -9,7 +9,9 @@ This file acknowledges all individuals who have contributed to the OurCreativity
 ## 👥 Core Team
 
 ### Lead Developer & Designer
+
 **Ardelyo** ([@Ardelyo](https://github.com/Ardelyo))
+
 - **Role:** Lead Developer & Designer
 - **Contributions:**
   - Original project architecture and codebase
@@ -21,7 +23,9 @@ This file acknowledges all individuals who have contributed to the OurCreativity
 - **Copyright:** Original codebase, design system, and architecture
 
 ### Code Refactoring & Documentation
+
 **DoctorThink**
+
 - **Role:** Code Refactoring & Documentation Specialist
 - **Contributions:**
   - Code refactoring and optimization
@@ -38,6 +42,7 @@ This file acknowledges all individuals who have contributed to the OurCreativity
 ### How to Be Listed
 
 To be added to this list:
+
 1. Make a meaningful contribution to the project
 2. Submit a pull request
 3. Your contribution will be acknowledged in:
@@ -48,6 +53,7 @@ To be added to this list:
 ### Contribution Types
 
 We recognize contributions in various forms:
+
 - 💻 **Code:** New features, bug fixes, refactoring
 - 📝 **Documentation:** Guides, tutorials, API docs
 - 🎨 **Design:** UI/UX improvements, graphics, branding
@@ -61,32 +67,37 @@ We recognize contributions in various forms:
 ## 🏆 Special Thanks
 
 ### Inspiration & Support
+
 - **The React Community** - For the amazing ecosystem
 - **Tailwind Labs** - For utility-first CSS paradigm
 - **Supabase Team** - For the backend infrastructure
 - **Vercel** - For hosting and deployment platform
 
 ### Beta Testers
-*Coming soon - names will be added as beta testing begins*
+
+_Coming soon - names will be added as beta testing begins_
 
 ### Community Members
-*Thank you to everyone who uses, shares, and supports OurCreativity!*
+
+_Thank you to everyone who uses, shares, and supports OurCreativity!_
 
 ---
 
 ## 📊 Contribution Statistics
 
 ### By the Numbers
+
 - **Total Contributors:** 2 (Core Team)
 - **Total Commits:** [Auto-updated via CI/CD]
 - **Lines of Code:** [Auto-updated via CI/CD]
 - **Documentation Pages:** 15+
 
 ### Top Contributors (by commits)
+
 1. **Ardelyo** - Project Lead
 2. **DoctorThink** - Documentation & Refactoring
 
-*Statistics updated: December 11, 2025*
+_Statistics updated: December 11, 2025_
 
 ---
 
@@ -95,13 +106,16 @@ We recognize contributions in various forms:
 Want to contribute? We'd love to have you!
 
 ### Getting Started
+
 1. Read [CONTRIBUTING.md](./CONTRIBUTING.md)
 2. Check [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
 3. Browse [open issues](https://github.com/Ardelyo/ourcreativity/issues)
 4. Join discussions
 
 ### Recognition
+
 All contributors are:
+
 - ✅ Listed in this AUTHORS file
 - ✅ Acknowledged in release notes
 - ✅ Credited in git history
@@ -127,19 +141,24 @@ See [COPYRIGHT.md](./COPYRIGHT.md) for details.
 ## 🌟 Hall of Fame
 
 ### Milestone Contributors
-*Contributors who have made exceptional impact will be recognized here*
+
+_Contributors who have made exceptional impact will be recognized here_
 
 #### 🏅 Founding Members
+
 - **Ardelyo** - Project Founder & Lead Developer
 - **DoctorThink** - Documentation Pioneer
 
 #### 🚀 Major Feature Contributors
-*To be added as project grows*
+
+_To be added as project grows_
 
 #### 📚 Documentation Champions
+
 - **DoctorThink** - Comprehensive documentation system
 
 #### 🎨 Design Masters
+
 - **Ardelyo** - Luminous Design philosophy
 
 ---
@@ -149,13 +168,16 @@ See [COPYRIGHT.md](./COPYRIGHT.md) for details.
 ### How to Reach Us
 
 **Project Lead (Ardelyo):**
+
 - GitHub: [@Ardelyo](https://github.com/Ardelyo)
 - Via: GitHub Issues or Discussions
 
 **Documentation (DoctorThink):**
+
 - Via: GitHub Issues with tag `[DOCS]`
 
 **General Inquiries:**
+
 - GitHub Discussions: [github.com/Ardelyo/ourcreativity/discussions](https://github.com/Ardelyo/ourcreativity/discussions)
 - Issues: [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
 
@@ -164,12 +186,15 @@ See [COPYRIGHT.md](./COPYRIGHT.md) for details.
 ## 🔄 Keeping This Updated
 
 ### Update Process
+
 - **Automatic:** Git history tracks all contributors
 - **Manual:** Significant contributors added to this file
 - **Frequency:** Updated with each major release
 
 ### Request Addition
+
 If you've contributed but aren't listed:
+
 1. Open a GitHub Issue
 2. Tag: `[AUTHORS-UPDATE]`
 3. Describe your contribution
@@ -180,6 +205,7 @@ If you've contributed but aren't listed:
 ## 📅 Version History
 
 ### Document Versions
+
 - **v1.0.0** (Dec 11, 2025) - Initial AUTHORS file
   - Added core team members
   - Established contribution guidelines
@@ -189,9 +215,9 @@ If you've contributed but aren't listed:
 
 <div align="center">
 
-**OurCreativity** - *Built by Creators, for Creators*
+**OurCreativity** - _Built by Creators, for Creators_
 
-*Thank you to everyone who contributes to making OurCreativity amazing!*
+_Thank you to everyone who contributes to making OurCreativity amazing!_
 
 ---
 

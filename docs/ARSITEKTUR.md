@@ -4,7 +4,7 @@
 
 ## Ringkasan
 
-OurCreativities dibangun sebagai *Single Page Application* (SPA) menggunakan React dengan routing di sisi klien (*client-side*). Arsitektur dirancang untuk skalabilitas, kemudahan pemeliharaan (*maintainability*), dan performa optimal.
+OurCreativities dibangun sebagai _Single Page Application_ (SPA) menggunakan React dengan routing di sisi klien (_client-side_). Arsitektur dirancang untuk skalabilitas, kemudahan pemeliharaan (_maintainability_), dan performa optimal.
 
 ## Arsitektur Tingkat Tinggi
 
@@ -77,16 +77,19 @@ App
 ### Jenis Komponen
 
 **Komponen Tata Letak:**
-- `App.tsx` - Wadah utama (*Root container*)
+
+- `App.tsx` - Wadah utama (_Root container_)
 - `Navbar.tsx` - Bilah navigasi
-- `Footer.tsx` - Kaki halaman (*Page footer*)
+- `Footer.tsx` - Kaki halaman (_Page footer_)
 
 **Komponen Konten:**
+
 - `Hero.tsx` - Bagian Hero (utama)
 - `BentoGrid.tsx` - Tata letak Grid
-- `BottomCTA.tsx` - Ajakan bertindak (*Call-to-action*)
+- `BottomCTA.tsx` - Ajakan bertindak (_Call-to-action_)
 
 **Komponen Halaman:**
+
 - `pages/Home.tsx`
 - `pages/Karya.tsx`
 - `pages/Tim.tsx`
@@ -98,11 +101,13 @@ App
 ### Implementasi React Router
 
 **Tipe Router:** MemoryRouter
-- Alasan: SPA tanpa routing sisi server (*server-side routing*)
-- Navigasi sisi klien (*Client-side navigation*)
+
+- Alasan: SPA tanpa routing sisi server (_server-side routing_)
+- Navigasi sisi klien (_Client-side navigation_)
 - Tidak ada persistensi URL (dapat diubah ke BrowserRouter jika diperlukan)
 
 **Konfigurasi Rute:**
+
 ```typescript
 <Routes>
   <Route path="/" element={<Home />} />
@@ -115,7 +120,8 @@ App
 ```
 
 **Fitur Rute:**
-- Gulir otomatis ke atas (*Automatic scroll to top*)
+
+- Gulir otomatis ke atas (_Automatic scroll to top_)
 - Transisi halaman dengan Framer Motion
 - Pengalihan 404 ke beranda
 - Mode `AnimatePresence` "wait"
@@ -125,12 +131,14 @@ App
 ### Sistem Tailwind CSS
 
 **Konfigurasi:**
+
 - Tailwind CSS berbasis CDN
 - Konfigurasi kustom di `index.html`
 - Palet warna yang diperluas
 - Keluarga font kustom
 
 **Tema Kustom:**
+
 ```javascript
 {
   colors: {
@@ -151,12 +159,14 @@ App
 ### Gaya Global
 
 **index.css:**
+
 - Reset/normalisasi CSS
 - Scrollbar kustom
 - Animasi global
 - Kelas utilitas
 
 **Token Desain:**
+
 - Skala spasi: basis 4px
 - Radius batas: default 0.5rem
 - Sistem bayangan: 3 tingkat
@@ -169,6 +179,7 @@ App
 **Pola Penggunaan:**
 
 **Transisi Halaman:**
+
 ```typescript
 <AnimatePresence mode="wait">
   <motion.div
@@ -180,29 +191,33 @@ App
 ```
 
 **Animasi Komponen:**
-- Animasi masuk (*Entrance animations*)
+
+- Animasi masuk (_Entrance animations_)
 - Status hover
-- Pemicu berbasis gulir (*Scroll-based triggers*)
+- Pemicu berbasis gulir (_Scroll-based triggers_)
 - Animasi gestur
 
 **Pertimbangan Performa:**
+
 - Gunakan `transform` & `opacity`
 - Hindari menganimasikan `width`/`height`
 - Akselerasi perangkat keras
-- Hormati pengaturan *Reduce motion*
+- Hormati pengaturan _Reduce motion_
 
 ## Manajemen State
 
 ### Pendekatan Saat Ini
 
 **State Lokal:**
+
 - React `useState` untuk state komponen
 - Belum ada manajemen state global
-- *Props drilling* untuk state bersama
+- _Props drilling_ untuk state bersama
 
 **Pertimbangan Masa Depan:**
+
 - Context API untuk tema
-- React Query untuk pengambilan data (*data fetching*)
+- React Query untuk pengambilan data (_data fetching_)
 - Zustand/Jotai untuk state global
 
 ## Sistem Build
@@ -210,12 +225,14 @@ App
 ### Konfigurasi Vite
 
 **Fitur:**
-- HMR Cepat (*Hot Module Replacement*)
+
+- HMR Cepat (_Hot Module Replacement_)
 - ESbuild untuk bundling
 - Dukungan TypeScript
 - Plugin React
 
 **Optimasi Build:**
+
 ```typescript
 // vite.config.ts
 export default defineConfig({
@@ -226,24 +243,26 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
-          animation: ['framer-motion']
-        }
-      }
-    }
-  }
-})
+          animation: ['framer-motion'],
+        },
+      },
+    },
+  },
+});
 ```
 
 ## Pengaturan TypeScript
 
 **Konfigurasi:**
-- Mode ketat (*Strict mode*) diaktifkan
+
+- Mode ketat (_Strict mode_) diaktifkan
 - Tipe React disertakan
 - `@types/node` untuk utilitas
 
 **Keamanan Tipe:**
+
 - Props komponen bertipe
-- Penangan acara (*Event handlers*) bertipe
+- Penangan acara (_Event handlers_) bertipe
 - Tidak ada `any` implisit
 - Pemeriksaan null ketat
 
@@ -251,18 +270,21 @@ export default defineConfig({
 
 ### Teknik Optimasi
 
-**Pemisahan Kode (*Code Splitting*):**
+**Pemisahan Kode (_Code Splitting_):**
+
 - Pemisahan berbasis rute
-- Pemuatan komponen secara malas (*Lazy loading*)
+- Pemuatan komponen secara malas (_Lazy loading_)
 - Pemisahan chunk vendor
 
 **Optimasi Aset:**
-- Pemuatan gambar secara malas (*Image lazy loading*)
-- Pemuatan awal font (*Font preloading*)
-- Petunjuk sumber daya (*Resource hints - preconnect*)
-- *Inlining* CSS kritis
+
+- Pemuatan gambar secara malas (_Image lazy loading_)
+- Pemuatan awal font (_Font preloading_)
+- Petunjuk sumber daya (_Resource hints - preconnect_)
+- _Inlining_ CSS kritis
 
 **Optimasi Runtime:**
+
 - `React.memo` untuk komponen berat
 - `useMemo` untuk kalkulasi
 - `useCallback` untuk penangan acara
@@ -273,14 +295,17 @@ export default defineConfig({
 ### Implementasi Saat Ini
 
 **Sanitasi Input:**
+
 - Belum ada input pengguna saat ini
 - Disiapkan untuk formulir masa depan
 
 **Pencegahan XSS:**
-- *Escaping* default React
+
+- _Escaping_ default React
 - Tidak menggunakan `dangerouslySetInnerHTML`
 
 **Dependensi:**
+
 - Pembaruan rutin
 - Pemindaian CodeQL
 - Pemantauan kerentanan
@@ -290,23 +315,27 @@ export default defineConfig({
 ### Keterbatasan Saat Ini
 
 **Konten Statis:**
-- Data di-*hard-code*
+
+- Data di-_hard-code_
 - Tidak ada integrasi CMS
 - Pembaruan manual diperlukan
 
 **Jalur Skala Masa Depan:**
 
 **Fase 1: Integrasi CMS**
+
 - Headless CMS (Strapi/Contentful)
 - Integrasi API
 - UI manajemen konten
 
 **Fase 2: Layanan Backend**
+
 - Otentikasi pengguna
 - Integrasi database
-- Fitur *real-time*
+- Fitur _real-time_
 
-**Fase 3: Layanan Mikro (*Microservices*)**
+**Fase 3: Layanan Mikro (_Microservices_)**
+
 - Pemisahan layanan
 - API gateway
 - Infrastruktur yang dapat diskalakan
@@ -314,11 +343,13 @@ export default defineConfig({
 ## Arsitektur Deployment
 
 **Saat Ini:**
+
 ```
 Git Push → Build → Deploy → CDN
 ```
 
 **Stack:**
+
 - Hosting: Vercel/Netlify
 - CDN: Otomatis
 - SSL: Otomatis
@@ -327,6 +358,7 @@ Git Push → Build → Deploy → CDN
 ## Monitoring & Analitik
 
 **Integrasi Terencana:**
+
 - Google Analytics
 - Pelacakan kesalahan Sentry
 - Pemantauan Web Vitals
@@ -335,6 +367,7 @@ Git Push → Build → Deploy → CDN
 ## Arsitektur Aksesibilitas
 
 **WCAG 2.1 Level AA:**
+
 - HTML5 Semantik
 - Label ARIA
 - Navigasi keyboard
@@ -344,16 +377,18 @@ Git Push → Build → Deploy → CDN
 ## Dukungan Browser
 
 **Browser Target:**
+
 - Chrome 90+
 - Firefox 88+
 - Safari 14+
 - Edge 90+
 
-**Peningkatan Progresif (*Progressive Enhancement*):**
+**Peningkatan Progresif (_Progressive Enhancement_):**
+
 - Deteksi fitur
-- Degradasi yang anggun (*Graceful degradation*)
+- Degradasi yang anggun (_Graceful degradation_)
 - Strategi Polyfill
-- Pengalaman cadangan (*Fallback*)
+- Pengalaman cadangan (_Fallback_)
 
 ## Alur Kerja Pengembangan
 
@@ -372,11 +407,13 @@ graph LR
 ## Strategi Pengujian
 
 **Saat Ini:**
+
 - Pengujian manual
 - Pengujian browser
 - Pengujian performa
 
 **Terencana:**
+
 - Unit tests (Vitest)
 - Integration tests
 - E2E tests (Playwright)
@@ -385,12 +422,14 @@ graph LR
 ## Hutang Teknis
 
 **Masalah Diketahui:**
+
 - Tidak ada pengujian otomatis
-- Tidak ada batas kesalahan (*error boundaries*)
+- Tidak ada batas kesalahan (_error boundaries_)
 - Penanganan kesalahan terbatas
-- Konten di-*hard-code*
+- Konten di-_hard-code_
 
 **Rencana Mitigasi:**
+
 - Prioritaskan pengaturan pengujian
 - Tambahkan batas kesalahan
 - Implementasikan penanganan kesalahan yang tepat
@@ -399,10 +438,11 @@ graph LR
 ## Arsitektur Masa Depan
 
 **Visi v6.0:**
+
 - Arsitektur layanan mikro
-- Fitur *real-time* (WebSocket)
+- Fitur _real-time_ (WebSocket)
 - Strategi caching tingkat lanjut
-- Integrasi komputasi tepi (*Edge computing*)
+- Integrasi komputasi tepi (_Edge computing_)
 - Fitur bertenaga AI
 
 ---

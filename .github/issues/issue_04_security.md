@@ -7,11 +7,13 @@ Beberapa aspek keamanan perlu diperkuat untuk mencegah potensi kerentanan.
 ### 1. RLS Policies Belum Lengkap
 
 File `supabase_schema.sql` hanya memiliki policy **read-only** untuk semua tabel:
+
 ```sql
 CREATE POLICY "Public read access for works" ON works FOR SELECT USING (true);
 ```
 
 **Masalah:**
+
 - Tidak ada policy untuk INSERT/UPDATE/DELETE
 - Jika RLS diaktifkan tapi policy tidak ada, operasi write akan gagal
 - Jika ditambahkan fitur "user submit karya", perlu policy yang tepat
@@ -19,6 +21,7 @@ CREATE POLICY "Public read access for works" ON works FOR SELECT USING (true);
 ### 2. Iframe Sandbox Untuk Code Preview
 
 File `components/CodePreview.tsx` dan `sandbox/IframeSandbox.tsx` menjalankan user code di iframe. Perlu dipastikan:
+
 - sandbox attributes sudah benar
 - CSP (Content Security Policy) dikonfigurasi
 - Tidak ada risiko XSS dari embedded code
@@ -32,6 +35,7 @@ File `components/CodePreview.tsx` dan `sandbox/IframeSandbox.tsx` menjalankan us
 ```
 
 **Potensi Masalah:**
+
 - API key bisa terekspos di client bundle
 - Perlu dipastikan ini hanya untuk development
 
@@ -41,9 +45,9 @@ File `components/CodePreview.tsx` dan `sandbox/IframeSandbox.tsx` menjalankan us
 
 ```sql
 -- Contoh policy untuk authenticated insert
-CREATE POLICY "Authenticated users can insert works" 
-ON works FOR INSERT 
-TO authenticated 
+CREATE POLICY "Authenticated users can insert works"
+ON works FOR INSERT
+TO authenticated
 WITH CHECK (auth.uid() IS NOT NULL);
 
 -- Policy untuk owner update
@@ -56,8 +60,9 @@ WITH CHECK (auth.uid()::text = user_id);
 ### 2. Review Iframe Sandboxing
 
 Pastikan iframe memiliki:
+
 ```html
-<iframe sandbox="allow-scripts" csp="default-src 'self'">
+<iframe sandbox="allow-scripts" csp="default-src 'self'"></iframe>
 ```
 
 ### 3. Audit Environment Variable Exposure

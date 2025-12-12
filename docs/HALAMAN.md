@@ -15,6 +15,7 @@ Aplikasi OurCreativities terdiri dari 5 halaman utama, masing-masing dengan tuju
 **Tujuan:** Halaman pendaratan utama, kesan pertama bagi pengunjung
 
 **Bagian:**
+
 1. **Bagian Hero**
    - Judul besar "Merangkai Imajinasi Kita"
    - Subjudul deskriptif
@@ -31,15 +32,18 @@ Aplikasi OurCreativities terdiri dari 5 halaman utama, masing-masing dengan tuju
    - Mendorong keterlibatan
 
 **Fitur:**
+
 - Animasi masuk untuk semua bagian
 - Perilaku gulir halus
 - Tata letak responsif
 - Tipografi premium
 
 **Kebutuhan Data:**
+
 - Tidak ada data eksternal (konten statis)
 
 **Performa:**
+
 - Waktu muat: ~0.9s
 - Lighthouse: 96/100
 
@@ -57,12 +61,14 @@ Tata letak grid Masonry untuk menampilkan karya dalam grid asimetris yang menari
 **Fitur:**
 
 **Sistem Grid:**
+
 - Tata letak gaya Masonry/Pinterest
 - Kolom responsif (1-4 tergantung layar)
-- Pemuatan gambar secara malas (*Lazy loading*)
+- Pemuatan gambar secara malas (_Lazy loading_)
 - Gulir tak terbatas (opsional)
 
 **Kartu Karya:**
+
 - Pratinjau gambar/video
 - Judul dan deskripsi
 - Informasi penulis
@@ -70,6 +76,7 @@ Tata letak grid Masonry untuk menampilkan karya dalam grid asimetris yang menari
 - Lencana sorotan untuk karya unggulan
 
 **Interaksi:**
+
 - Klik kartu untuk tampilan detail
 - Fungsi suka
 - Fungsi bagikan
@@ -77,12 +84,14 @@ Tata letak grid Masonry untuk menampilkan karya dalam grid asimetris yang menari
 - Pencarian (dasar)
 
 **Dukungan Media:**
+
 - Gambar: JPG, PNG, WebP
 - Video: MP4, WebM
 - Pemuatan malas untuk performa
 - Pembuatan thumbnail
 
 **Struktur Data:**
+
 ```typescript
 interface Karya {
   id: string;
@@ -103,6 +112,7 @@ interface Karya {
 ```
 
 **Pertimbangan Performa:**
+
 - Pemuatan gambar progresif
 - Gulir virtual untuk daftar besar
 - Pengiriman media yang dioptimalkan
@@ -120,6 +130,7 @@ interface Karya {
 Tata letak kartu grid dengan profil anggota tim.
 
 **Konten Kartu:**
+
 - Foto profil/avatar
 - Nama
 - Peran/posisi
@@ -130,12 +141,14 @@ Tata letak kartu grid dengan profil anggota tim.
 **Fitur:**
 
 **Grid Tim:**
+
 - Grid responsif (1-3 kolom)
 - Kartu dengan tinggi yang sama
 - Efek hover
 - Animasi halus
 
 **Kartu Anggota:**
+
 ```typescript
 interface TeamMember {
   id: string;
@@ -154,11 +167,13 @@ interface TeamMember {
 ```
 
 **Interaksi:**
+
 - Hover untuk mengungkapkan detail
 - Klik ikon sosial untuk membuka tautan
 - Animasi masuk halus
 
 **Desain:**
+
 - Kartu glassmorphism
 - Spasi konsisten
 - Presentasi profesional
@@ -178,33 +193,39 @@ Konten bentuk panjang gaya majalah dengan tipografi kaya.
 **Bagian:**
 
 **1. Pengantar**
+
 - Pernyataan pembuka
 - Nilai komunitas
 - Pernyataan misi
 
 **2. Linimasa Perjalanan**
+
 - Tonggak sejarah dalam linimasa visual
 - Momen kunci
 - Kisah pertumbuhan
 
 **3. Visi & Misi**
+
 - Tujuan masa depan
 - Dampak komunitas
 - Nilai dan prinsip
 
 **4. Dampak Komunitas**
+
 - Pencapaian
 - Statistik
 - Testimoni (opsional)
 
 **Elemen Desain:**
+
 - Tipografi premium (Playfair Display)
 - Judul besar
-- Kutipan tarik (*Pull quotes*)
+- Kutipan tarik (_Pull quotes_)
 - Visualisasi linimasa
 - Animasi gulir (halus)
 
 **Blok Konten:**
+
 ```typescript
 interface StorySection {
   id: string;
@@ -217,6 +238,7 @@ interface StorySection {
 ```
 
 **Pengalaman Membaca:**
+
 - Panjang baris optimal
 - Hierarki jelas
 - Ruang bernapas (whitespace)
@@ -234,28 +256,33 @@ interface StorySection {
 **Bagian:**
 
 **1. Informasi Kontak**
+
 - Alamat email
 - Tautan media sosial
 - Lokasi (jika ada)
 - Jam operasional
 
 **2. Bagian FAQ**
+
 - Pertanyaan umum
 - Jawaban gaya akordeon
 - Dapat dicari (masa depan)
 
 **3. Formulir Kontak** (Opsional/Masa Depan)
+
 - Bidang nama
 - Bidang email
 - Area teks pesan
 - Tombol kirim
 
 **4. Grid Media Sosial**
+
 - Tautan ikon ke platform sosial
 - Jumlah pengikut (opsional)
 - Postingan terbaru (integrasi masa depan)
 
 **Tata Letak:**
+
 ```typescript
 Info
 ├── Bagian Hero (Halaman Info)
@@ -268,6 +295,7 @@ Info
 ```
 
 **Struktur Data:**
+
 ```typescript
 interface ContactInfo {
   email: string;
@@ -314,6 +342,7 @@ Gulir otomatis ke atas saat rute berubah melalui komponen `ScrollToTop`.
 ### Desain Responsif
 
 Semua halaman responsif dengan breakpoint:
+
 - Seluler: < 640px
 - Tablet: 640px - 1024px
 - Desktop: > 1024px
@@ -321,6 +350,7 @@ Semua halaman responsif dengan breakpoint:
 ### Optimasi SEO
 
 **Meta Tag Per Halaman:**
+
 ```html
 <title>Judul Halaman | Our Creativity</title>
 <meta name="description" content="Deskripsi halaman" />
@@ -343,12 +373,14 @@ Spinner pemuatan untuk operasi async.
 ### Membuat Halaman Baru
 
 **Langkah 1: Buat File Halaman**
+
 ```bash
 # Di folder pages/
 touch NewPage.tsx
 ```
 
 **Langkah 2: Struktur Dasar**
+
 ```typescript
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -369,6 +401,7 @@ export const NewPage = () => {
 ```
 
 **Langkah 3: Tambahkan Rute**
+
 ```typescript
 // Di App.tsx
 import { NewPage } from './pages/NewPage';
@@ -377,6 +410,7 @@ import { NewPage } from './pages/NewPage';
 ```
 
 **Langkah 4: Tambahkan ke Navigasi**
+
 ```typescript
 // Di Navbar.tsx
 const navLinks = [
@@ -388,6 +422,7 @@ const navLinks = [
 ### Pola Tata Letak Halaman
 
 **Struktur yang Disarankan:**
+
 ```typescript
 <motion.div className="py-20">
   {/* Hero/Header */}
@@ -411,24 +446,28 @@ const navLinks = [
 ### Praktik Terbaik
 
 **Performa:**
+
 - Lazy load gambar
 - Code split komponen berat
 - Optimalkan animasi
 - Minimalkan render ulang
 
 **Aksesibilitas:**
+
 - HTML Semantik
 - Hierarki judul yang tepat
 - Teks alt untuk gambar
 - Navigasi keyboard
 
 **SEO:**
+
 - Judul halaman unik
 - Deskripsi meta
 - Data terstruktur
 - URL kanonis
 
 **Pengalaman Pengguna:**
+
 - Navigasi jelas
 - Desain konsisten
 - Interaksi cepat
@@ -441,6 +480,7 @@ const navLinks = [
 ### Pendekatan Saat Ini
 
 **Data Statis:**
+
 - Di-hard-code dalam komponen
 - Tidak ada panggilan API eksternal
 - Tidak ada database
@@ -448,22 +488,24 @@ const navLinks = [
 ### Pendekatan Masa Depan
 
 **Integrasi CMS:**
+
 ```typescript
 // Contoh dengan Strapi
 const Page = () => {
   const { data } = useQuery('pageContent', fetchPageContent);
-  
+
   return <Content data={data} />;
 };
 ```
 
 **Panggilan API:**
+
 ```typescript
 // Contoh struktur API
-GET /api/pages/home
-GET /api/karya
-GET /api/team
-GET /api/story
+GET / api / pages / home;
+GET / api / karya;
+GET / api / team;
+GET / api / story;
 ```
 
 ---
@@ -473,6 +515,7 @@ GET /api/story
 ### Daftar Periksa Pengujian Manual
 
 **Per Halaman:**
+
 - [ ] Render tanpa error
 - [ ] Responsif di semua breakpoint
 - [ ] Animasi berjalan lancar
@@ -485,6 +528,7 @@ GET /api/story
 ### Pengujian Otomatis (Masa Depan)
 
 **Unit Tests:**
+
 ```typescript
 describe('Home Page', () => {
   it('renders hero section', () => {
@@ -495,6 +539,7 @@ describe('Home Page', () => {
 ```
 
 **E2E Tests:**
+
 ```typescript
 test('navigate to karya page', async ({ page }) => {
   await page.goto('/');

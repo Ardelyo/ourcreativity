@@ -5,20 +5,26 @@ Meskipun dokumen arsitektur menyebutkan dukungan **WCAG 2.1 Level AA**, belum ad
 ## 📍 Aspek yang Perlu Ditingkatkan
 
 ### 1. Skip Navigation Link
+
 Tidak ada skip link untuk pengguna keyboard/screen reader.
 
 ### 2. Focus Management
+
 Saat modal/dialog dibuka (seperti CreationStudio), fokus tidak dipindahkan dengan benar.
 
 ### 3. ARIA Labels
+
 Beberapa elemen interaktif tidak memiliki label yang memadai:
+
 - Icon buttons tanpa aria-label
 - Gambar tanpa alt text yang deskriptif
 
 ### 4. Color Contrast
+
 Desain "Luminous Dark" dengan opacity rendah perlu divalidasi untuk kontras warna.
 
 ### 5. Keyboard Navigation
+
 - Tab order perlu diverifikasi
 - Escape key untuk menutup modal
 
@@ -28,7 +34,7 @@ Desain "Luminous Dark" dengan opacity rendah perlu divalidasi untuk kontras warn
 
 ```tsx
 // Di awal App.tsx
-<a href="#main-content" className="sr-only focus:not-sr-only">
+<a href='#main-content' className='sr-only focus:not-sr-only'>
   Langsung ke konten utama
 </a>
 ```

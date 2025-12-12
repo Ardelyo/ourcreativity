@@ -15,16 +15,18 @@ Komponen bilah navigasi dengan dukungan untuk menu desktop dan seluler.
 **Lokasi:** `components/Navbar.tsx`
 
 **Fitur:**
-- Posisi tetap (*fixed*) di atas
-- Desain Glassmorphism dengan *backdrop blur*
+
+- Posisi tetap (_fixed_) di atas
+- Desain Glassmorphism dengan _backdrop blur_
 - Responsif seluler dengan menu hamburger
-- Penyorotan rute aktif (*Active route highlighting*)
+- Penyorotan rute aktif (_Active route highlighting_)
 - Animasi halus dengan Framer Motion
 
 **Props:**
 Tidak ada props (komponen mandiri)
 
 **Penggunaan:**
+
 ```typescript
 import { Navbar } from './components/Navbar';
 
@@ -32,6 +34,7 @@ import { Navbar } from './components/Navbar';
 ```
 
 **Struktur:**
+
 ```typescript
 Navbar
 ├── Logo (Tautan ke beranda)
@@ -42,6 +45,7 @@ Navbar
 ```
 
 **Tautan Navigasi:**
+
 ```typescript
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -52,14 +56,16 @@ const navLinks = [
 ```
 
 **Styling:**
+
 - Latar Belakang: `bg-[#111]/80` dengan `backdrop-blur-xl`
 - Batas: `border-white/10`
 - Bentuk: `rounded-full`
 - Lebar maksimal: `max-w-4xl`
 
 **Menu Seluler:**
+
 - Terbuka pada breakpoint responsif `md:hidden`
-- Animasi geser masuk (*Slide-in*)
+- Animasi geser masuk (_Slide-in_)
 - Latar belakang dengan glassmorphism
 - Menutup secara otomatis saat navigasi
 
@@ -72,6 +78,7 @@ Komponen kaki halaman sederhana dengan hak cipta dan tautan.
 **Lokasi:** `components/Footer.tsx`
 
 **Fitur:**
+
 - Desain minimalis yang bersih
 - Informasi hak cipta
 - Tautan sosial (opsional)
@@ -81,6 +88,7 @@ Komponen kaki halaman sederhana dengan hak cipta dan tautan.
 Tidak ada props
 
 **Penggunaan:**
+
 ```typescript
 import { Footer } from './components/Footer';
 
@@ -88,8 +96,9 @@ import { Footer } from './components/Footer';
 ```
 
 **Styling:**
+
 - Batas atas halus
-- Warna teks diredam (*muted*)
+- Warna teks diredam (_muted_)
 - Tata letak terpusat
 - Padding responsif
 
@@ -104,6 +113,7 @@ Bagian Hero untuk halaman beranda dengan judul animasi dan tombol CTA.
 **Lokasi:** `components/Hero.tsx`
 
 **Fitur:**
+
 - Tipografi besar dengan Playfair Display
 - Efek teks gradien
 - Lencana animasi "Komunitas Terbuka"
@@ -114,6 +124,7 @@ Bagian Hero untuk halaman beranda dengan judul animasi dan tombol CTA.
 Tidak ada props
 
 **Penggunaan:**
+
 ```typescript
 import { Hero } from './components/Hero';
 
@@ -121,6 +132,7 @@ import { Hero } from './components/Hero';
 ```
 
 **Struktur:**
+
 ```typescript
 Hero
 ├── Lencana Editorial (dengan indikator langsung)
@@ -135,12 +147,14 @@ Hero
 ```
 
 **Tipografi:**
+
 - Ukuran H1: `text-6xl md:text-8xl lg:text-9xl`
 - Font: `font-serif` (Playfair Display)
 - Tinggi baris: `leading-[0.9]` (ketat)
 - Tracking: `tracking-tight`
 
 **Animasi:**
+
 ```typescript
 <motion.div
   initial={{ opacity: 0, y: 30 }}
@@ -150,6 +164,7 @@ Hero
 ```
 
 **Varian Tombol:**
+
 1. Primer: Latar belakang putih, bayangan bersinar saat hover
 2. Sekunder: Efek kaca dengan batas
 
@@ -162,6 +177,7 @@ Sistem tata letak grid fleksibel untuk menampilkan kartu konten dengan berbagai 
 **Lokasi:** `components/BentoGrid.tsx`
 
 **Fitur:**
+
 - Tata letak grid asimetris
 - Berbagai variasi ukuran kartu
 - Breakpoint responsif
@@ -169,6 +185,7 @@ Sistem tata letak grid fleksibel untuk menampilkan kartu konten dengan berbagai 
 - Animasi hover
 
 **Props:**
+
 ```typescript
 interface BentoGridProps {
   // Tidak ada props eksternal
@@ -177,6 +194,7 @@ interface BentoGridProps {
 ```
 
 **Penggunaan:**
+
 ```typescript
 import { BentoGrid } from './components/BentoGrid';
 
@@ -184,17 +202,19 @@ import { BentoGrid } from './components/BentoGrid';
 ```
 
 **Tata Letak Grid:**
+
 ```typescript
 // Desktop: 4 kolom dengan auto-fit
 // Tablet: 2-3 kolom
 // Seluler: 1-2 kolom
 
-className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4';
 ```
 
 **Jenis Kartu:**
 
 **Kartu Standar:**
+
 ```typescript
 <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
   <Icon />
@@ -204,11 +224,13 @@ className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
 ```
 
 **Kartu Unggulan (Besar):**
+
 - Merentang beberapa kolom: `lg:col-span-2`
 - Padding lebih besar
 - Konten lebih menonjol
 
 **Kartu Kaca:**
+
 ```typescript
 <div className="bg-white/10 backdrop-blur-xl border border-white/20">
   {/* Konten */}
@@ -216,6 +238,7 @@ className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
 ```
 
 **Struktur Internal:**
+
 ```typescript
 BentoGrid
 ├── Wadah Grid
@@ -227,6 +250,7 @@ BentoGrid
 ```
 
 **Kustomisasi:**
+
 - Ubah data kartu dalam komponen
 - Sesuaikan kolom grid melalui className
 - Ubah ukuran kartu dengan col-span/row-span
@@ -241,6 +265,7 @@ Bagian ajakan bertindak untuk mendorong keterlibatan pengguna.
 **Lokasi:** `components/BottomCTA.tsx`
 
 **Fitur:**
+
 - Bagian lebar penuh
 - Latar belakang gradien
 - Konten terpusat
@@ -250,6 +275,7 @@ Bagian ajakan bertindak untuk mendorong keterlibatan pengguna.
 Tidak ada props (dapat ditambahkan untuk kustomisasi)
 
 **Penggunaan:**
+
 ```typescript
 import { BottomCTA } from './components/BottomCTA';
 
@@ -257,6 +283,7 @@ import { BottomCTA } from './components/BottomCTA';
 ```
 
 **Struktur:**
+
 ```typescript
 BottomCTA
 ├── Wadah
@@ -266,6 +293,7 @@ BottomCTA
 ```
 
 **Styling:**
+
 - Latar belakang gradien atau warna solid
 - Tipografi besar
 - Tombol menonjol
@@ -282,19 +310,21 @@ Komponen utilitas untuk menggulir ke atas saat rute berubah.
 **Lokasi:** `App.tsx` (inline)
 
 **Implementasi:**
+
 ```typescript
 const ScrollToTop = () => {
   const { pathname } = useLocation();
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-  
+
   return null;
 };
 ```
 
 **Penggunaan:**
+
 ```typescript
 <Router>
   <ScrollToTop />
@@ -311,10 +341,11 @@ Pembungkus untuk rute dengan transisi halaman.
 **Lokasi:** `App.tsx`
 
 **Implementasi:**
+
 ```typescript
 const AnimatedRoutes = () => {
   const location = useLocation();
-  
+
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
@@ -326,6 +357,7 @@ const AnimatedRoutes = () => {
 ```
 
 **Fitur:**
+
 - Transisi halaman Framer Motion
 - Mode: "wait" (tunggu keluar sebelum masuk)
 - Kunci berbasis lokasi untuk animasi yang tepat
@@ -337,20 +369,22 @@ const AnimatedRoutes = () => {
 ### Panduan Styling
 
 **Pola Konsisten:**
+
 ```typescript
 // Glassmorphism
-className="bg-white/10 backdrop-blur-xl border border-white/20"
+className = 'bg-white/10 backdrop-blur-xl border border-white/20';
 
 // Desain Kartu
-className="bg-white/5 border border-white/10 rounded-2xl p-6"
+className = 'bg-white/5 border border-white/10 rounded-2xl p-6';
 
 // Status Hover
-className="hover:bg-white/20 transition-colors duration-300"
+className = 'hover:bg-white/20 transition-colors duration-300';
 ```
 
 ### Panduan Animasi
 
 **Animasi Masuk:**
+
 ```typescript
 <motion.div
   initial={{ opacity: 0, y: 20 }}
@@ -360,6 +394,7 @@ className="hover:bg-white/20 transition-colors duration-300"
 ```
 
 **Animasi Hover:**
+
 ```typescript
 <motion.div
   whileHover={{ scale: 1.05 }}
@@ -368,6 +403,7 @@ className="hover:bg-white/20 transition-colors duration-300"
 ```
 
 **Transisi Halaman:**
+
 ```typescript
 <motion.div
   initial={{ opacity: 0 }}
@@ -380,6 +416,7 @@ className="hover:bg-white/20 transition-colors duration-300"
 ### Desain Responsif
 
 **Breakpoints (Tailwind):**
+
 ```
 sm: 640px
 md: 768px
@@ -389,17 +426,19 @@ xl: 1280px
 ```
 
 **Mobile-First:**
+
 ```typescript
 // Basis: Seluler
 // md: Tablet+
 // lg: Desktop+
 
-className="text-sm md:text-base lg:text-lg"
+className = 'text-sm md:text-base lg:text-lg';
 ```
 
 ### Tipe TypeScript
 
 **Pola Umum:**
+
 ```typescript
 // Item Tautan
 interface NavLink {
@@ -428,12 +467,14 @@ interface ComponentProps {
 ### Menambahkan Komponen Baru
 
 **Langkah 1: Buat File Komponen**
+
 ```bash
 # Di folder components/
 touch NewComponent.tsx
 ```
 
 **Langkah 2: Struktur Dasar**
+
 ```typescript
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -452,12 +493,14 @@ export const NewComponent = () => {
 ```
 
 **Langkah 3: Tambahkan ke Index (opsional)**
+
 ```typescript
 // components/index.ts
 export { NewComponent } from './NewComponent';
 ```
 
 **Langkah 4: Impor dan Gunakan**
+
 ```typescript
 import { NewComponent } from './components/NewComponent';
 ```
@@ -465,8 +508,9 @@ import { NewComponent } from './components/NewComponent';
 ### Memodifikasi Komponen yang Ada
 
 **Panduan:**
+
 1. Pertahankan antarmuka props yang ada
-2. Jangan merusak kompatibilitas ke belakang (*backward compatibility*)
+2. Jangan merusak kompatibilitas ke belakang (_backward compatibility_)
 3. Perbarui dokumentasi
 4. Uji perilaku responsif
 5. Periksa performa animasi
@@ -475,12 +519,14 @@ import { NewComponent } from './components/NewComponent';
 
 **Tips Optimasi:**
 
-**Pemuatan Malas (*Lazy Loading*):**
+**Pemuatan Malas (_Lazy Loading_):**
+
 ```typescript
 const HeavyComponent = React.lazy(() => import('./HeavyComponent'));
 ```
 
 **Memoization:**
+
 ```typescript
 export const Component = React.memo(() => {
   // Kode komponen
@@ -488,6 +534,7 @@ export const Component = React.memo(() => {
 ```
 
 **Optimasi Callback:**
+
 ```typescript
 const handleClick = useCallback(() => {
   // Kode handler
@@ -495,6 +542,7 @@ const handleClick = useCallback(() => {
 ```
 
 **Performa Animasi:**
+
 - Gunakan `transform` dan `opacity` untuk animasi
 - Hindari menganimasikan `width`, `height`, `top`, `left`
 - Gunakan `will-change` dengan hati-hati

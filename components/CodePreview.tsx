@@ -1,24 +1,27 @@
 import React from 'react';
 
 interface CodePreviewProps {
-    code: string;
-    language?: string;
-    className?: string;
+  code: string;
+  language?: string;
+  className?: string;
 }
 
 /**
  * CodePreview - Renders live HTML/JS/p5.js code in a sandboxed iframe.
- * 
+ *
  * Supports:
  * - HTML (with inline CSS/JS)
  * - JavaScript (wrapped in HTML)
  * - p5.js (auto-includes p5.js library)
  */
-export const CodePreview: React.FC<CodePreviewProps> = ({ code, language = 'html', className = '' }) => {
-
-    const generatePreviewHTML = (): string => {
-        // Base HTML template
-        const baseStyles = `
+export const CodePreview: React.FC<CodePreviewProps> = ({
+  code,
+  language = 'html',
+  className = '',
+}) => {
+  const generatePreviewHTML = (): string => {
+    // Base HTML template
+    const baseStyles = `
             <style>
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 body { 
@@ -34,11 +37,11 @@ export const CodePreview: React.FC<CodePreviewProps> = ({ code, language = 'html
             </style>
         `;
 
-        switch (language) {
-            case 'p5js':
-            case 'p5':
-                // p5.js: Include library and wrap code
-                return `
+    switch (language) {
+      case 'p5js':
+      case 'p5':
+        // p5.js: Include library and wrap code
+        return `
                     <!DOCTYPE html>
                     <html>
                     <head>
@@ -53,10 +56,10 @@ export const CodePreview: React.FC<CodePreviewProps> = ({ code, language = 'html
                     </html>
                 `;
 
-            case 'javascript':
-            case 'js':
-                // Pure JS: Wrap in HTML with a container
-                return `
+      case 'javascript':
+      case 'js':
+        // Pure JS: Wrap in HTML with a container
+        return `
                     <!DOCTYPE html>
                     <html>
                     <head>${baseStyles}</head>
@@ -73,14 +76,17 @@ export const CodePreview: React.FC<CodePreviewProps> = ({ code, language = 'html
                     </html>
                 `;
 
-            case 'html':
-            default:
-                // HTML: Render as-is (could contain its own CSS/JS)
-                // Wrap if it doesn't have DOCTYPE
-                if (code.trim().toLowerCase().startsWith('<!doctype') || code.trim().toLowerCase().startsWith('<html')) {
-                    return code;
-                }
-                return `
+      case 'html':
+      default:
+        // HTML: Render as-is (could contain its own CSS/JS)
+        // Wrap if it doesn't have DOCTYPE
+        if (
+          code.trim().toLowerCase().startsWith('<!doctype') ||
+          code.trim().toLowerCase().startsWith('<html')
+        ) {
+          return code;
+        }
+        return `
                     <!DOCTYPE html>
                     <html>
                     <head>${baseStyles}</head>
@@ -89,17 +95,17 @@ export const CodePreview: React.FC<CodePreviewProps> = ({ code, language = 'html
                     </body>
                     </html>
                 `;
-        }
-    };
+    }
+  };
 
-    const previewHTML = generatePreviewHTML();
+  const previewHTML = generatePreviewHTML();
 
-    return (
-        <iframe
-            srcDoc={previewHTML}
-            sandbox="allow-scripts allow-same-origin"
-            className={`w-full h-full border-0 bg-white ${className}`}
-            title="Code Preview"
-        />
-    );
+  return (
+    <iframe
+      srcDoc={previewHTML}
+      sandbox='allow-scripts allow-same-origin'
+      className={`w-full h-full border-0 bg-white ${className}`}
+      title='Code Preview'
+    />
+  );
 };

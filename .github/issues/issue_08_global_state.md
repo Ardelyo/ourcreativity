@@ -5,12 +5,15 @@ Aplikasi saat ini **tidak memiliki state management global**. Semua state dikelo
 ## 📍 Situasi Saat Ini
 
 Dari dokumen `ARSITEKTUR.md`:
+
 > **State Lokal:**
+>
 > - React `useState` untuk state komponen
 > - **Belum ada manajemen state global**
 > - Props drilling untuk state bersama
 >
 > **Pertimbangan Masa Depan:**
+>
 > - Context API untuk tema
 > - React Query untuk pengambilan data
 > - Zustand/Jotai untuk state global
@@ -71,11 +74,11 @@ interface UIStore {
 
 export const useUIStore = create<UIStore>()(
   persist(
-    (set) => ({
+    set => ({
       theme: 'dark',
       sidebarOpen: false,
-      setTheme: (theme) => set({ theme }),
-      toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
+      setTheme: theme => set({ theme }),
+      toggleSidebar: () => set(s => ({ sidebarOpen: !s.sidebarOpen })),
     }),
     { name: 'ui-storage' }
   )

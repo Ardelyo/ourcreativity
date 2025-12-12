@@ -423,6 +423,66 @@ interface ComponentProps {
 }
 ```
 
+### IframeSandbox & WebsiteEmbed Security
+
+Both `IframeSandbox` and `WebsiteEmbed` components have been hardened with restrictive sandbox permissions:
+
+**Security Constraints:**
+- **Sandbox Permissions**: Limited to `allow-scripts` and `allow-forms` only
+- **Removed Permissions**: 
+  - `allow-same-origin` (prevents cross-origin access)
+  - `allow-popups` (prevents popup windows)
+  - `allow-modals` (prevents modal dialogs)
+- **Content Isolation**: All executed content is fully sandboxed and cannot access parent window
+- **External Site Restrictions**: External websites may still block embedding via X-Frame-Options or Content Security Policy
+
+**Usage Considerations:**
+```typescript
+// IframeSandbox - for code execution
+<IframeSandbox 
+  code={userCode} 
+  triggerRun={runCount} 
+  language="javascript" 
+/>
+
+// WebsiteEmbed - for external site embedding  
+<WebsiteEmbed url="https://example.com" />
+```
+
+**Limitations:**
+- Websites with strict frame-busting or CSP policies will not load
+- Form submission within sandboxed iframes is limited
+- Popup-blocking may affect certain website functionality
+- Cross-origin restrictions still apply to sandboxed content
+
+### CodePreview & Karya.tsx Inline Iframe
+
+The `CodePreview` component and inline iframe in `Karya.tsx` also use restrictive sandbox permissions:
+
+**Security Constraints:**
+- **Sandbox Permissions**: Limited to `allow-scripts` only
+- **Removed Permissions**: 
+  - `allow-same-origin` (prevents cross-origin access)
+- **Content Isolation**: All executed code is fully sandboxed and cannot access parent window
+
+**Usage in Karya.tsx:**
+```typescript
+// Inline iframe for code preview in artwork modal
+<iframe
+  srcDoc={generateCodePreview(selectedArtwork.content, selectedArtwork.code_language)}
+  sandbox="allow-scripts"
+  className="w-full h-full border-0"
+  title="Code Preview"
+/>
+```
+
+**Impact:**
+- User-generated code in artwork previews is now fully isolated
+- Code cannot access cookies, localStorage, or parent window
+- Cross-origin restrictions still apply
+
+---
+
 ## Panduan Ekstensi Komponen
 
 ### Menambahkan Komponen Baru

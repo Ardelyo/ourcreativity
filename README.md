@@ -75,6 +75,9 @@ Versi 5.0 (**Revolution Edition**) menandai transformasi total dari antarmuka pe
 - ✅ Performa tinggi dengan optimisasi modern
 - ✅ Struktur navigasi berbasis *Bento Grid* yang intuitif
 - ✅ Nuansa atmosferik dan pencahayaan dinamis
+- 🆕 **BrowserRouter** dengan URL yang persisten dan shareable
+- 🆕 **Error Boundary** untuk penanganan error yang user-friendly
+- 🆕 **Fetch Error States** dengan retry functionality
 
 <br/>
 
@@ -111,10 +114,10 @@ Proyek ini dibangun di atas fondasi teknologi web modern:
 | **Build Tool** | Vite v6 |
 | **Styling** | Tailwind CSS v3 (File-based Config) |
 | **Animasi** | Framer Motion |
-| **Routing** | React Router DOM |
-| **Ikon** | Lucide React |
+| **Routing** | React Router DOM (BrowserRouter) |
 | **Database** | Supabase |
-| **Analytics** | Vercel Analytics & Speed Insights |
+| **Ikon** | Lucide React |
+| **Error Handling** | React Error Boundary |
 
 <br/>
 
@@ -220,6 +223,7 @@ Dokumentasi teknis lengkap tersedia dalam **Bahasa Indonesia**:
 | 🚀 [Panduan Setup](docs/SETUP.md) | **MULAI DARI SINI** - Install & konfigurasi |
 | 🗄️ [Database](docs/DATABASE.md) | Schema & query Supabase |
 | 🏗️ [Arsitektur Sistem](docs/ARSITEKTUR.md) | Struktur kode dan keputusan teknis |
+| 🛣️ [**Routing**](docs/ROUTING.md) | **BARU!** - Panduan lengkap sistem routing |
 | 🧩 [Komponen UI](docs/KOMPONEN.md) | Panduan penggunaan komponen |
 | 📄 [Halaman](docs/HALAMAN.md) | Detail implementasi setiap halaman |
 | 🚀 [Deployment](docs/PANDUAN_DEPLOYMENT.md) | Panduan peluncuran ke produksi |

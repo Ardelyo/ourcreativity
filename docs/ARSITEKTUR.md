@@ -102,10 +102,10 @@ App
 
 ### Implementasi React Router
 
-**Tipe Router:** MemoryRouter
-- Alasan: SPA tanpa routing sisi server (*server-side routing*)
-- Navigasi sisi klien (*Client-side navigation*)
-- Tidak ada persistensi URL (dapat diubah ke BrowserRouter jika diperlukan)
+**Tipe Router:** BrowserRouter
+- Navigasi sisi klien (*Client-side navigation*) dengan URL yang persisten
+- Mendukung deep linking dan shareable URLs
+- Memerlukan konfigurasi fallback SPA pada server/hosting
 
 **Konfigurasi Rute:**
 ```typescript
@@ -115,7 +115,13 @@ App
   <Route path="/tim" element={<Tim />} />
   <Route path="/story" element={<Story />} />
   <Route path="/info" element={<Info />} />
-  <Route path="*" element={<Navigate to="/" />} />
+  <Route path="/announcement" element={<Announcement />} />
+  <Route path="/division/graphics" element={<Graphics />} />
+  <Route path="/division/video" element={<VideoPage />} />
+  <Route path="/division/writing" element={<Writing />} />
+  <Route path="/division/meme" element={<Meme />} />
+  <Route path="/division/coding" element={<Coding />} />
+  <Route path="*" element={<Navigate to="/" replace />} />
 </Routes>
 ```
 
@@ -124,6 +130,41 @@ App
 - Transisi halaman dengan Framer Motion
 - Pengalihan 404 ke beranda
 - Mode `AnimatePresence` "wait"
+- Lazy loading untuk halaman non-esensial
+- Error Boundary untuk penanganan error React
+
+**Konfigurasi SPA Fallback:**
+
+Karena menggunakan BrowserRouter, semua rute harus diarahkan ke `index.html` pada level server:
+
+**Vercel:** (`vercel.json`)
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+**Netlify:** (`netlify.toml` atau `_redirects`)
+```toml
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+```
+
+**Apache:** (`.htaccess`)
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+```
 
 ## Arsitektur Styling
 
@@ -264,9 +305,10 @@ export default defineConfig({
 ### Teknik Optimasi
 
 **Pemisahan Kode (*Code Splitting*):**
-- Pemisahan berbasis rute
-- Pemuatan komponen secara malas (*Lazy loading*)
-- Pemisahan chunk vendor
+- Pemisahan berbasis rute menggunakan `React.lazy()`
+- Pemuatan komponen secara malas (*Lazy loading*) untuk semua halaman kecuali Home
+- Pemisahan chunk vendor (React, React Router, Framer Motion)
+- Komponen Loading fallback selama lazy load
 
 **Optimasi Aset:**
 - Pemuatan gambar secara malas (*Image lazy loading*)
@@ -394,19 +436,36 @@ graph LR
 - E2E tests (Playwright)
 - Visual regression tests
 
+## Penanganan Error
+
+### Error Boundaries
+
+**Implementasi:**
+- `ErrorBoundary` component membungkus seluruh aplikasi rute
+- Menangkap error React runtime dan menampilkan UI fallback yang user-friendly
+- Tombol "Coba Lagi" untuk reset state error
+- Detail teknis dapat dibuka untuk debugging
+
+**Fetch Error Handling:**
+- `FetchErrorState` component untuk error fetching data Supabase
+- Pesan error yang informatif untuk pengguna
+- Opsi retry untuk setiap operasi fetch yang gagal
+- Fallback data untuk halaman Tim (kontributor GitHub)
+
+**Error States per Halaman:**
+- **Karya:** Error state dengan retry untuk gagal memuat karya dari Supabase
+- **Announcement:** Error state dengan retry untuk gagal memuat pengumuman
+- **Tim:** Warning banner untuk error dengan fallback ke cache/data statis
+
 ## Hutang Teknis
 
 **Masalah Diketahui:**
 - Tidak ada pengujian otomatis
-- Tidak ada batas kesalahan (*error boundaries*)
-- Penanganan kesalahan terbatas
-- Konten di-*hard-code*
+- Konten di-*hard-code* (selain data Supabase)
 
 **Rencana Mitigasi:**
 - Prioritaskan pengaturan pengujian
-- Tambahkan batas kesalahan
-- Implementasikan penanganan kesalahan yang tepat
-- Perencanaan integrasi CMS
+- Perencanaan integrasi CMS untuk konten statis
 
 ## Arsitektur Masa Depan
 

@@ -6,6 +6,9 @@
 
 OurCreativity adalah aplikasi React statis yang dapat di-deploy ke berbagai platform hosting modern. Panduan ini mencakup deployment ke Vercel, Netlify, dan alternatif lainnya.
 
+**⚠️ PENTING - SPA Routing:**  
+Aplikasi ini menggunakan `BrowserRouter` dari React Router, yang memerlukan konfigurasi **SPA fallback** pada server hosting. Semua request URL harus diarahkan ke `index.html` untuk memastikan routing client-side berfungsi dengan benar. File konfigurasi sudah disediakan (`vercel.json`, `netlify.toml`, `public/_redirects`).
+
 ## Prasyarat
 
 **Yang Dibutuhkan:**
@@ -162,7 +165,7 @@ Publish directory: dist
 
 **File Konfigurasi:**
 
-Buat `netlify.toml` di root:
+File `netlify.toml` sudah disediakan di root project:
 ```toml
 [build]
   command = "npm run build"
@@ -174,7 +177,7 @@ Buat `netlify.toml` di root:
   status = 200
 ```
 
-Aturan pengalihan penting untuk routing SPA!
+⚠️ **Aturan pengalihan ini WAJIB untuk routing SPA dengan BrowserRouter!**
 
 ---
 
@@ -211,10 +214,12 @@ export default defineConfig({
 npm run deploy
 ```
 
-**Catatan:** Perlu update Router dari MemoryRouter ke BrowserRouter + basename:
+**Catatan:** Aplikasi sudah menggunakan `BrowserRouter`. Untuk GitHub Pages, tambahkan `basename`:
 ```typescript
 <BrowserRouter basename="/ourcreativity">
 ```
+
+⚠️ **GitHub Pages mungkin memerlukan konfigurasi tambahan untuk mendukung client-side routing. Disarankan menggunakan Vercel atau Netlify untuk pengalaman yang lebih baik.**
 
 ---
 
@@ -452,19 +457,54 @@ Sentry.init({
 
 **Masalah: Rute mengembalikan 404**
 
+**⚠️ PENTING:** Aplikasi menggunakan `BrowserRouter` dan MEMERLUKAN konfigurasi SPA fallback!
+
 **Solusi:** Tambahkan aturan pengalihan untuk SPA.
 
-Netlify (file _redirects):
+**Netlify** (file `_redirects` di folder `public/`):
 ```
 /*    /index.html   200
 ```
 
-Vercel (vercel.json):
+Atau gunakan `netlify.toml` di root:
+```toml
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+```
+
+**Vercel** (`vercel.json` di root):
 ```json
 {
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
+}
+```
+
+**Cloudflare Pages:**
+Buat file `_redirects` di folder `public/`:
+```
+/*    /index.html   200
+```
+
+**Apache** (`.htaccess`):
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+```
+
+**Nginx:**
+```nginx
+location / {
+  try_files $uri $uri/ /index.html;
 }
 ```
 

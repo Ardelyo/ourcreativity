@@ -201,9 +201,36 @@ Closes #123
 
 ---
 
-## ❓ Bantuan
+## ❓ Bantuan & Escalation
 
-Ada pertanyaan? Buat issue dengan label `question` atau hubungi maintainer.
+### Getting Help
+
+- **General Questions?** → [GitHub Discussions](https://github.com/ardelyo/ourcreativities/discussions)
+- **Issues with Setup?** → [GitHub Issues with `help-wanted` label](https://github.com/ardelyo/ourcreativities/issues)
+- **Documentation Issues?** → [GitHub Issues with `[DOCS]` tag](https://github.com/ardelyo/ourcreativities/issues)
+
+### Escalation Process
+
+If you need to escalate a decision or request:
+
+1. **Start with Discussion** — Post in GitHub Discussions
+2. **Create RFC (if major)** — See [MAINTAINERS.md](./MAINTAINERS.md#rfc-request-for-comments-process)
+3. **Contact Maintainers** — See [MAINTAINERS.md](./MAINTAINERS.md#communication-channels)
+
+### For Security Issues
+
+**DO NOT** open a public issue. See [SECURITY.md](./SECURITY.md) for how to report security vulnerabilities privately.
+
+---
+
+## 📚 Important Documents
+
+Before contributing, please read these documents:
+
+- **[MAINTAINERS.md](../MAINTAINERS.md)** — Understand project governance and how decisions are made
+- **[ROADMAP.md](../ROADMAP.md)** — See where the project is headed
+- **[CHANGELOG.md](../CHANGELOG.md)** — Learn what has changed recently
+- **[CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md)** — Community standards and expectations
 
 ---
 

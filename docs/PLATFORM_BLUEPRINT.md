@@ -112,7 +112,7 @@
 | **Users** | Visitors (read-only) | Registered members (read/write) |
 | **Content** | Curated by team | User-generated |
 | **Features** | Static pages | Auth, Feed, Posting, Studio |
-| **Domain** | ourcreativities.com | app.ourcreativities.com |
+| **Domain** | ourcreativity.com | app.ourcreativity.com |
 
 ### Core Platform Pillars
 
@@ -577,7 +577,7 @@ Editorial •   Gallery   •   Curated     •   Intentional
 ## 7.2 Project Structure
 
 ```
-ourcreativities-platform/
+ourcreativity-platform/
 ├── src/
 │   ├── app/                 # Next.js App Router pages
 │   │   ├── (auth)/          # Auth pages (login, signup)

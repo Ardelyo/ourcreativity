@@ -1,10 +1,10 @@
 # Dokumentasi Halaman
 
-> Panduan lengkap untuk setiap halaman di OurCreativities v5.0
+> Panduan lengkap untuk setiap halaman di OurCreativity v5.0
 
 ## Ringkasan
 
-Aplikasi OurCreativities terdiri dari 5 halaman utama, masing-masing dengan tujuan dan fitur unik. Semua halaman menggunakan React Router untuk navigasi dan Framer Motion untuk transisi.
+Aplikasi OurCreativity terdiri dari 5 halaman utama, masing-masing dengan tujuan dan fitur unik. Semua halaman menggunakan React Router untuk navigasi dan Framer Motion untuk transisi.
 
 ## Halaman-Halaman
 
@@ -507,4 +507,4 @@ test('navigate to karya page', async ({ page }) => {
 
 **Terakhir Diperbarui:** November 2025  
 **Versi:** 5.0  
-**Pemelihara:** Tim OurCreativities
+**Pemelihara:** Tim OurCreativity

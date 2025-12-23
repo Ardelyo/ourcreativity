@@ -213,7 +213,7 @@ export const Graphics = () => {
 
                 {/* Bilah Bawah */}
                 <div className="absolute bottom-0 left-0 w-full border-t border-white/5 py-4 px-6 flex justify-between items-center font-mono text-xs text-gray-600">
-                    <span>© 2025 OURCREATIVITIES</span>
+                    <span>© 2025 OURCREATIVITY</span>
                     <span>SISTEM: ONLINE</span>
                 </div>
             </footer >

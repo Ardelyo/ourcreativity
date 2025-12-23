@@ -2,7 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BrutalistCard } from '../components/BrutalistCard';
 import { ContributorModal } from '../components/ContributorModal';
-import { Users, AlertCircle, Github } from 'lucide-react';
+import { FetchErrorState } from '../components/FetchErrorState';
+import { Users } from 'lucide-react';
 
 // --- Types ---
 interface Contributor {
@@ -59,12 +60,18 @@ const OWNER_LOGIN = 'Ardelyo';
 const REPO_OWNER = 'Ardelyo';
 const REPO_NAME = 'OurCreativity';
 
-// Manual mapping for core members if GitHub bio is empty
-const BIO_MAPPING: Record<string, BioData> = {
-  'Ardelyo': {
-    bio: "Lead Developer & Visionary. Building the future of creative collaboration.",
-    twitter: "ardelyo",
-    website: "https://ardelyo.com"
+// Cache untuk mengurangi API calls
+const CACHE_KEY = 'ourcreativity_contributors_cache';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 menit
+
+// Fallback data dengan kontributor asli dari repo OurCreativity
+// Data ini digunakan ketika GitHub API terkena rate limit (403)
+const FALLBACK_CONTRIBUTORS: Contributor[] = [
+  {
+    login: 'Ardelyo',
+    avatar_url: 'https://avatars.githubusercontent.com/u/117548799?v=4',
+    html_url: 'https://github.com/Ardelyo',
+    contributions: 13
   },
   'mrmambu': {
     bio: "Design Sorcerer & Frontend Extraordinaire. Crafting pixel-perfect experiences.",
@@ -82,12 +89,13 @@ export const Tim = () => {
   const [contributors, setContributors] = useState<EnhancedContributor[]>([]);
   const [reporters, setReporters] = useState<ReporterData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedContributor, setSelectedContributor] = useState<EnhancedContributor | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
@@ -162,13 +170,35 @@ export const Tim = () => {
           timestamp: Date.now()
         }));
 
-      } catch (err) {
-        console.error("Fetch error:", err);
+        console.log('✅ Data berhasil dimuat');
+
+      } catch (err: any) {
+        console.error("❌ Error:", err);
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { data } = JSON.parse(cached);
+          setContributors(data);
+          console.log('⚠️ Menggunakan cache lama');
+        } else {
+          console.log('🔄 Menggunakan fallback');
+          const fallbackEnhanced: EnhancedContributor[] = FALLBACK_CONTRIBUTORS.map(c => {
+            const isOwner = c.login.toLowerCase() === OWNER_LOGIN.toLowerCase();
+            return {
+              ...c,
+              totalAdditions: 0,
+              totalDeletions: 0,
+              persona: generatePersona(c.login, isOwner)
+            };
+          });
+          setContributors(fallbackEnhanced);
+        }
+        setError('Terjadi kesalahan saat memuat data kontributor. Menampilkan data fallback atau cache.');
       } finally {
         setLoading(false);
       }
     };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -195,15 +225,36 @@ export const Tim = () => {
           KON<span className="text-white bg-rose-600 px-4 shadow-[10px_10px_0px_0px_rgba(225,29,72,0.3)]">TRIB</span>UTOR
         </h1>
 
-        <div className="flex flex-col md:flex-row gap-8 items-start justify-between">
-          <p className="text-xl md:text-2xl font-mono text-white/60 max-w-2xl border-l-4 border-rose-500 pl-6 py-2 bg-rose-500/5">
-            REKAYASA KREATIF & PAHLAWAN LAPORAN BUG YANG MEMBENTUK MASA DEPAN KARYA DIGITAL KITA.
-          </p>
-          <div className="hidden lg:block bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-xl">
-            <div className="flex items-center gap-3 text-xs font-mono">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span>STATUS: OPERASIONAL</span>
-            </div>
+      {/* Error Banner */}
+      {error && !loading && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-4 flex items-center justify-between"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
+            <p className="text-yellow-200/90 text-sm">{error}</p>
+          </div>
+          <button
+            onClick={fetchData}
+            className="text-yellow-400 hover:text-yellow-300 text-sm font-bold underline"
+          >
+            Coba Lagi
+          </button>
+        </motion.div>
+      )}
+
+      {/* Loading */}
+      {loading && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center justify-center h-64 gap-6"
+        >
+          <div className="relative w-16 h-16">
+            <div className="absolute inset-0 border-t-2 border-r-2 border-rose-500 rounded-full animate-spin" />
+            <div className="absolute inset-2 border-t-2 border-l-2 border-purple-500 rounded-full animate-spin" style={{ animationDirection: 'reverse' }} />
           </div>
         </div>
       </motion.div>

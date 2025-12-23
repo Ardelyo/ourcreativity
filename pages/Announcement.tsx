@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Calendar, Tag, ArrowRight, Star, Zap, Layout, Smartphone, Palette, Layers, Box, Image, Share2, Compass, Rocket, Shield, Megaphone, History, Clock, Globe, Cpu, X, ChevronRight } from 'lucide-react';
 import { ChangelogTimeline } from '../components/ChangelogTimeline';
+import { FetchErrorState } from '../components/FetchErrorState';
 import { supabase } from '../lib/supabase';
 
 export const Announcement = () => {
@@ -9,27 +10,31 @@ export const Announcement = () => {
     const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
     const [events, setEvents] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchAnnouncements = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const { data, error } = await supabase
+                .from('announcements')
+                .select('*')
+                .eq('type', 'announcement')
+                .order('date', { ascending: false });
+
+            if (error) throw error;
+            if (data) {
+                setEvents(data);
+            }
+        } catch (error: any) {
+            console.error('Error fetching announcements:', error);
+            setError(error.message || 'Gagal memuat pengumuman dari database. Silakan coba lagi nanti.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchAnnouncements = async () => {
-            try {
-                const { data, error } = await supabase
-                    .from('announcements')
-                    .select('*')
-                    .eq('type', 'announcement')
-                    .order('date', { ascending: false });
-
-                if (error) throw error;
-                if (data) {
-                    setEvents(data);
-                }
-            } catch (error) {
-                console.error('Error fetching announcements:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchAnnouncements();
     }, []);
 
@@ -77,8 +82,25 @@ export const Announcement = () => {
                         exit={{ opacity: 0 }}
                         className="max-w-7xl mx-auto px-4 pb-20"
                     >
-                        {/* Featured Announcement (Hero) */}
-                        {events.length > 0 && (
+                        {error ? (
+                            <FetchErrorState message={error} onRetry={fetchAnnouncements} />
+                        ) : loading ? (
+                            <div className="flex flex-col items-center justify-center py-20">
+                                <div className="w-16 h-16 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mb-4"></div>
+                                <p className="text-gray-400">Memuat pengumuman...</p>
+                            </div>
+                        ) : events.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-20 text-center">
+                                <Megaphone size={64} className="text-gray-600 mb-6" />
+                                <h3 className="text-2xl font-bold text-white mb-2">Belum ada pengumuman</h3>
+                                <p className="text-gray-400 max-w-md">
+                                    Tidak ada pengumuman saat ini. Kembali lagi nanti untuk pembaruan terbaru.
+                                </p>
+                            </div>
+                        ) : (
+                            <>
+                                {/* Featured Announcement (Hero) */}
+                                {events.length > 0 && (
                             <motion.div
                                 layoutId={`card-${events[0].id}`}
                                 onClick={() => setSelectedEvent(events[0])}
@@ -182,6 +204,8 @@ export const Announcement = () => {
                                 </motion.div>
                             ))}
                         </div>
+                            </>
+                        )}
                     </motion.div>
                 ) : (
                     <motion.div

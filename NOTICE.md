@@ -155,11 +155,11 @@ Mau ikut develop OurCreativity? **Silakan!**
 ## 📞 Kontak & Pertanyaan
 
 ### Mau tanya tentang brand usage?
-- **GitHub Issues:** [Link](https://github.com/Ardelyo/ourcreativity/issues)
+- **GitHub Issues:** [Link](https://github.com/ardelyo/ourcreativity/issues)
 - **Tag:** `[BRAND-QUESTION]`
 
 ### Mau lapor bug atau suggest fitur?
-- **GitHub Issues:** [Link](https://github.com/Ardelyo/ourcreativity/issues)
+- **GitHub Issues:** [Link](https://github.com/ardelyo/ourcreativity/issues)
 - **Tag:** `[BUG]` atau `[FEATURE]`
 
 ### Pertanyaan keamanan?

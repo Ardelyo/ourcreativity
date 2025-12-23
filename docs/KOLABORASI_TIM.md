@@ -1,4 +1,4 @@
-# 🤝 Panduan Kolaborasi Tim - OurCreativities
+# 🤝 Panduan Kolaborasi Tim - OurCreativity
 
 > Panduan lengkap untuk berkolaborasi dengan tim dan menjaga keamanan kredensial Supabase.
 
@@ -30,7 +30,7 @@
 
 1. Pergi ke **Settings** → **Branches**
 2. Klik **Add rule**
-3. Branch name pattern: `main` atau `master`
+3. Branch name pattern: `main`
 4. Centang:
    - ✅ **Require a pull request before merging**
    - ✅ **Require approvals** (set minimal 1)
@@ -50,11 +50,11 @@ Ini memastikan semua perubahan HARUS melalui Pull Request!
 # Klik "Fork" di GitHub
 
 # 2. Clone fork kamu
-git clone https://github.com/USERNAME_KAMU/ourcreativities.git
-cd ourcreativities
+git clone https://github.com/USERNAME_KAMU/ourcreativity.git
+cd ourcreativity
 
 # 3. Tambahkan upstream (repo original)
-git remote add upstream https://github.com/ADMIN_USERNAME/ourcreativities.git
+git remote add upstream https://github.com/ADMIN_USERNAME/ourcreativity.git
 
 # 4. Buat branch baru untuk fitur/fix
 git checkout -b feature/nama-fitur
@@ -143,7 +143,7 @@ cp .env.example .env
 ### Langkah 1: Tambahkan Environment Variables di Vercel
 
 1. Login ke [vercel.com](https://vercel.com)
-2. Buka project **ourcreativities**
+2. Buka project **ourcreativity**
 3. Pergi ke **Settings** → **Environment Variables**
 4. Tambahkan variabel berikut:
 
@@ -298,4 +298,4 @@ Kontributor development cukup dapat akses ke project Development.
 
 **Terakhir Diperbarui:** Desember 2025  
 **Versi:** 1.0  
-**Pemelihara:** Tim OurCreativities
+**Pemelihara:** Tim OurCreativity

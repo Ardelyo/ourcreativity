@@ -1,10 +1,10 @@
 import React, { useState, useEffect, Suspense } from 'react';
-import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { Home } from './pages/Home';
+import { Home } from './pages/Home'; // Muat Home secara eager
 
 // Lazy loaded pages
 const Karya = React.lazy(() => import('./pages/Karya').then(module => ({ default: module.Karya })));
@@ -38,22 +38,24 @@ const AnimatedRoutes = () => {
   return (
     <AnimatePresence mode="wait">
       <div key={location.pathname} className="w-full">
-        <Suspense fallback={<Loading />}>
-          <Routes location={location}>
-            <Route path="/" element={<Home />} />
-            <Route path="/karya" element={<Karya />} />
-            <Route path="/tim" element={<Tim />} />
-            <Route path="/info" element={<Info />} />
-            <Route path="/story" element={<Story />} />
-            <Route path="/announcement" element={<Announcement />} />
-            <Route path="/division/graphics" element={<Graphics />} />
-            <Route path="/division/video" element={<VideoPage />} />
-            <Route path="/division/writing" element={<Writing />} />
-            <Route path="/division/meme" element={<Meme />} />
-            <Route path="/division/coding" element={<Coding />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<Loading />}>
+            <Routes location={location}>
+              <Route path="/" element={<Home />} />
+              <Route path="/karya" element={<Karya />} />
+              <Route path="/tim" element={<Tim />} />
+              <Route path="/info" element={<Info />} />
+              <Route path="/story" element={<Story />} />
+              <Route path="/announcement" element={<Announcement />} />
+              <Route path="/division/graphics" element={<Graphics />} />
+              <Route path="/division/video" element={<VideoPage />} />
+              <Route path="/division/writing" element={<Writing />} />
+              <Route path="/division/meme" element={<Meme />} />
+              <Route path="/division/coding" element={<Coding />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </div>
     </AnimatePresence>
   );

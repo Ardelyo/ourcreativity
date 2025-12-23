@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2 } from 'lucide-react';
 import { CreationStudio } from '../components/CreationStudio/index';
+import { FetchErrorState } from '../components/FetchErrorState';
 
 import { supabase } from '../lib/supabase';
 
@@ -48,26 +49,30 @@ export const Karya = () => {
   const [artworks, setArtworks] = useState<any[]>([]);
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchWorks = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const { data, error } = await supabase
+        .from('works')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      if (data) {
+        setArtworks(data);
+      }
+    } catch (error: any) {
+      console.error('Error fetching works:', error);
+      setError(error.message || 'Gagal memuat karya dari database. Silakan coba lagi nanti.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchWorks = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('works')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
-        if (data) {
-          setArtworks(data);
-        }
-      } catch (error) {
-        console.error('Error fetching works:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchWorks();
   }, []);
 
@@ -162,7 +167,9 @@ export const Karya = () => {
       </div>
 
       {/* Grid Masonry Modern */}
-      {loading ? (
+      {error ? (
+        <FetchErrorState message={error} onRetry={fetchWorks} />
+      ) : loading ? (
         <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="break-inside-avoid bg-[#111] rounded-3xl overflow-hidden mb-6 h-64 animate-pulse border border-white/5">
@@ -310,7 +317,7 @@ export const Karya = () => {
                     <div className="w-full h-full bg-black relative">
                       <iframe
                         srcDoc={generateCodePreview(selectedArtwork.content, selectedArtwork.code_language || 'html')}
-                        sandbox="allow-scripts allow-same-origin"
+                        sandbox="allow-scripts"
                         className="w-full h-full border-0"
                         title="Code Preview"
                       />

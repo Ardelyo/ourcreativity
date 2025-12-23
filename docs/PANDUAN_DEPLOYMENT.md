@@ -1,10 +1,13 @@
 # Panduan Deployment
 
-> Langkah-langkah deploy OurCreativities ke produksi
+> Langkah-langkah deploy OurCreativity ke produksi
 
 ## Ringkasan
 
-OurCreativities adalah aplikasi React statis yang dapat di-deploy ke berbagai platform hosting modern. Panduan ini mencakup deployment ke Vercel, Netlify, dan alternatif lainnya.
+OurCreativity adalah aplikasi React statis yang dapat di-deploy ke berbagai platform hosting modern. Panduan ini mencakup deployment ke Vercel, Netlify, dan alternatif lainnya.
+
+**⚠️ PENTING - SPA Routing:**  
+Aplikasi ini menggunakan `BrowserRouter` dari React Router, yang memerlukan konfigurasi **SPA fallback** pada server hosting. Semua request URL harus diarahkan ke `index.html` untuk memastikan routing client-side berfungsi dengan benar. File konfigurasi sudah disediakan (`vercel.json`, `netlify.toml`, `public/_redirects`).
 
 ## Prasyarat
 
@@ -108,7 +111,11 @@ vercel --prod
 - Dukungan domain kustom
 
 **Variabel Lingkungan:**
-Saat ini tidak ada env vars, tapi untuk masa depan:
+OurCreativity memerlukan env vars Supabase berikut:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+Tambahkan di Vercel:
 ```
 Dashboard → Project → Settings → Environment Variables
 ```
@@ -162,7 +169,7 @@ Publish directory: dist
 
 **File Konfigurasi:**
 
-Buat `netlify.toml` di root:
+File `netlify.toml` sudah disediakan di root project:
 ```toml
 [build]
   command = "npm run build"
@@ -174,7 +181,7 @@ Buat `netlify.toml` di root:
   status = 200
 ```
 
-Aturan pengalihan penting untuk routing SPA!
+⚠️ **Aturan pengalihan ini WAJIB untuk routing SPA dengan BrowserRouter!**
 
 ---
 
@@ -190,7 +197,7 @@ npm install --save-dev gh-pages
 **Langkah 2: Perbarui package.json**
 ```json
 {
-  "homepage": "https://username.github.io/ourcreativities",
+  "homepage": "https://username.github.io/ourcreativity",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
@@ -201,7 +208,7 @@ npm install --save-dev gh-pages
 **Langkah 3: Perbarui vite.config.ts**
 ```typescript
 export default defineConfig({
-  base: '/ourcreativities/', // nama repositori
+  base: '/ourcreativity/', // nama repositori
   // ... konfigurasi lainnya
 })
 ```
@@ -211,10 +218,12 @@ export default defineConfig({
 npm run deploy
 ```
 
-**Catatan:** Perlu update Router dari MemoryRouter ke BrowserRouter + basename:
+**Catatan:** Aplikasi sudah menggunakan `BrowserRouter`. Untuk GitHub Pages, tambahkan `basename`:
 ```typescript
-<BrowserRouter basename="/ourcreativities">
+<BrowserRouter basename="/ourcreativity">
 ```
+
+⚠️ **GitHub Pages mungkin memerlukan konfigurasi tambahan untuk mendukung client-side routing. Disarankan menggunakan Vercel atau Netlify untuk pengalaman yang lebih baik.**
 
 ---
 
@@ -286,13 +295,15 @@ www → your-site.netlify.app
 
 ## Variabel Lingkungan
 
-Untuk pengembangan masa depan dengan env vars:
+OurCreativity membutuhkan environment variables berikut (lihat `.env.example`):
 
-**Pengembangan (.env.local):**
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+**Pengembangan Lokal (`.env`):**
 ```bash
-VITE_API_URL=http://localhost:3000
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_KEY=your_key
+VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 **Produksi:**
@@ -305,7 +316,8 @@ Site Settings → Build & Deploy → Environment
 
 **Akses dalam Kode:**
 ```typescript
-const apiUrl = import.meta.env.VITE_API_URL;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 ```
 
 ---
@@ -452,19 +464,54 @@ Sentry.init({
 
 **Masalah: Rute mengembalikan 404**
 
+**⚠️ PENTING:** Aplikasi menggunakan `BrowserRouter` dan MEMERLUKAN konfigurasi SPA fallback!
+
 **Solusi:** Tambahkan aturan pengalihan untuk SPA.
 
-Netlify (file _redirects):
+**Netlify** (file `_redirects` di folder `public/`):
 ```
 /*    /index.html   200
 ```
 
-Vercel (vercel.json):
+Atau gunakan `netlify.toml` di root:
+```toml
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+```
+
+**Vercel** (`vercel.json` di root):
 ```json
 {
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
+}
+```
+
+**Cloudflare Pages:**
+Buat file `_redirects` di folder `public/`:
+```
+/*    /index.html   200
+```
+
+**Apache** (`.htaccess`):
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+```
+
+**Nginx:**
+```nginx
+location / {
+  try_files $uri $uri/ /index.html;
 }
 ```
 
@@ -579,4 +626,4 @@ vercel rollback
 
 **Terakhir Diperbarui:** November 2025  
 **Rekomendasi Platform:** Vercel  
-**Pemelihara:** Tim OurCreativities
+**Pemelihara:** Tim OurCreativity

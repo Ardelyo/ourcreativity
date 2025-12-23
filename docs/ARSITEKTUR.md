@@ -1,10 +1,10 @@
-# Arsitektur Sistem OurCreativities
+# Arsitektur Sistem OurCreativity
 
-> Dokumentasi arsitektur teknis platform OurCreativities v5.0
+> Dokumentasi arsitektur teknis platform OurCreativity v5.0
 
 ## Ringkasan
 
-OurCreativities dibangun sebagai *Single Page Application* (SPA) menggunakan React dengan routing di sisi klien (*client-side*). Arsitektur dirancang untuk skalabilitas, kemudahan pemeliharaan (*maintainability*), dan performa optimal.
+OurCreativity dibangun sebagai *Single Page Application* (SPA) menggunakan React dengan routing di sisi klien (*client-side*). Arsitektur dirancang untuk skalabilitas, kemudahan pemeliharaan (*maintainability*), dan performa optimal.
 
 ## Arsitektur Tingkat Tinggi
 
@@ -23,33 +23,45 @@ graph TB
 ## Struktur Folder
 
 ```
-ourcreativities/
+ourcreativity/
 ├── components/           # Komponen yang dapat digunakan kembali
-│   ├── BentoGrid.tsx
-│   ├── BottomCTA.tsx
-│   ├── Footer.tsx
-│   ├── Hero.tsx
-│   └── Navbar.tsx
-├── pages/               # Halaman utama aplikasi
+│   ├── BentoGrid/
+│   ├── CreationStudio/
+│   └── ...
+├── pages/                # Halaman utama aplikasi
 │   ├── Home.tsx
 │   ├── Karya.tsx
 │   ├── Tim.tsx
-│   ├── Story.tsx
-│   └── Info.tsx
-├── docs/                # Dokumentasi
-│   ├── versions/        # Riwayat versi
-│   ├── ARSITEKTUR.md    # File ini
+│   └── ...
+├── lib/                  # Utilities & Helpers
+│   └── supabase.ts       # Supabase client
+├── data/                 # Data statis (konten lokal, config, dsb.)
+├── public/               # Aset publik (termasuk _redirects untuk SPA fallback)
+├── supabase/             # Konfigurasi Supabase (lokal, functions, dsb.)
+├── docs/                 # Dokumentasi
+│   ├── versions/         # Riwayat versi
+│   ├── ARSITEKTUR.md     # File ini
 │   ├── KOMPONEN.md
 │   ├── HALAMAN.md
+│   ├── ROUTING.md
 │   ├── PANDUAN_DEPLOYMENT.md
 │   └── KONTRIBUSI.md
-├── App.tsx              # Komponen Root
-├── index.tsx            # Titik Masuk (Entry point)
-├── index.html           # Template HTML
-├── index.css            # Gaya Global
-├── vite.config.ts       # Konfigurasi Vite
-├── tsconfig.json        # Konfigurasi TypeScript
-└── package.json         # Dependensi
+├── supabase_schema.sql   # Schema database
+├── supabase_seed.sql     # Seed data (opsional)
+├── supabase_seed_refocused.sql
+├── supabase_seed_changelog.sql
+├── .env.example          # Template env vars (Supabase)
+├── App.tsx               # Komponen Root
+├── index.tsx             # Titik Masuk (Entry point)
+├── index.html            # Template HTML
+├── index.css             # Gaya Global
+├── tailwind.config.ts    # Konfigurasi Tailwind CSS
+├── vite.config.ts        # Konfigurasi Vite
+├── tsconfig.json         # Konfigurasi TypeScript
+├── netlify.toml          # Config Netlify (SPA fallback)
+├── vercel.json           # Config Vercel (SPA fallback)
+├── package.json          # Dependensi
+└── package-lock.json     # Lockfile npm
 ```
 
 ## Arsitektur Komponen
@@ -97,10 +109,10 @@ App
 
 ### Implementasi React Router
 
-**Tipe Router:** MemoryRouter
-- Alasan: SPA tanpa routing sisi server (*server-side routing*)
-- Navigasi sisi klien (*Client-side navigation*)
-- Tidak ada persistensi URL (dapat diubah ke BrowserRouter jika diperlukan)
+**Tipe Router:** BrowserRouter
+- Navigasi sisi klien (*Client-side navigation*) dengan URL yang persisten
+- Mendukung deep linking dan shareable URLs
+- Memerlukan konfigurasi fallback SPA pada server/hosting
 
 **Konfigurasi Rute:**
 ```typescript
@@ -110,7 +122,13 @@ App
   <Route path="/tim" element={<Tim />} />
   <Route path="/story" element={<Story />} />
   <Route path="/info" element={<Info />} />
-  <Route path="*" element={<Navigate to="/" />} />
+  <Route path="/announcement" element={<Announcement />} />
+  <Route path="/division/graphics" element={<Graphics />} />
+  <Route path="/division/video" element={<VideoPage />} />
+  <Route path="/division/writing" element={<Writing />} />
+  <Route path="/division/meme" element={<Meme />} />
+  <Route path="/division/coding" element={<Coding />} />
+  <Route path="*" element={<Navigate to="/" replace />} />
 </Routes>
 ```
 
@@ -119,19 +137,56 @@ App
 - Transisi halaman dengan Framer Motion
 - Pengalihan 404 ke beranda
 - Mode `AnimatePresence` "wait"
+- Lazy loading untuk halaman non-esensial
+- Error Boundary untuk penanganan error React
+
+**Konfigurasi SPA Fallback:**
+
+Karena menggunakan BrowserRouter, semua rute harus diarahkan ke `index.html` pada level server:
+
+**Vercel:** (`vercel.json`)
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+**Netlify:** (`netlify.toml` atau `_redirects`)
+```toml
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+```
+
+**Apache:** (`.htaccess`)
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+```
 
 ## Arsitektur Styling
 
 ### Sistem Tailwind CSS
 
 **Konfigurasi:**
-- Tailwind CSS berbasis CDN
-- Konfigurasi kustom di `index.html`
+- Tailwind CSS berbasis file (`tailwind.config.ts`)
+- PostCSS processing pipeline
 - Palet warna yang diperluas
 - Keluarga font kustom
+- Custom background gradients dan efek
 
 **Tema Kustom:**
-```javascript
+```typescript
+// tailwind.config.ts
 {
   colors: {
     background: '#050505',
@@ -144,6 +199,11 @@ App
   fontFamily: {
     sans: ['Inter', 'sans-serif'],
     serif: ['Playfair Display', 'serif']
+  },
+  backgroundImage: {
+    'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+    'hero-glow': 'conic-gradient(...)',
+    'noise': 'url(...)'
   }
 }
 ```
@@ -252,9 +312,10 @@ export default defineConfig({
 ### Teknik Optimasi
 
 **Pemisahan Kode (*Code Splitting*):**
-- Pemisahan berbasis rute
-- Pemuatan komponen secara malas (*Lazy loading*)
-- Pemisahan chunk vendor
+- Pemisahan berbasis rute menggunakan `React.lazy()`
+- Pemuatan komponen secara malas (*Lazy loading*) untuk semua halaman kecuali Home
+- Pemisahan chunk vendor (React, React Router, Framer Motion)
+- Komponen Loading fallback selama lazy load
 
 **Optimasi Aset:**
 - Pemuatan gambar secara malas (*Image lazy loading*)
@@ -382,19 +443,36 @@ graph LR
 - E2E tests (Playwright)
 - Visual regression tests
 
+## Penanganan Error
+
+### Error Boundaries
+
+**Implementasi:**
+- `ErrorBoundary` component membungkus seluruh aplikasi rute
+- Menangkap error React runtime dan menampilkan UI fallback yang user-friendly
+- Tombol "Coba Lagi" untuk reset state error
+- Detail teknis dapat dibuka untuk debugging
+
+**Fetch Error Handling:**
+- `FetchErrorState` component untuk error fetching data Supabase
+- Pesan error yang informatif untuk pengguna
+- Opsi retry untuk setiap operasi fetch yang gagal
+- Fallback data untuk halaman Tim (kontributor GitHub)
+
+**Error States per Halaman:**
+- **Karya:** Error state dengan retry untuk gagal memuat karya dari Supabase
+- **Announcement:** Error state dengan retry untuk gagal memuat pengumuman
+- **Tim:** Warning banner untuk error dengan fallback ke cache/data statis
+
 ## Hutang Teknis
 
 **Masalah Diketahui:**
 - Tidak ada pengujian otomatis
-- Tidak ada batas kesalahan (*error boundaries*)
-- Penanganan kesalahan terbatas
-- Konten di-*hard-code*
+- Konten di-*hard-code* (selain data Supabase)
 
 **Rencana Mitigasi:**
 - Prioritaskan pengaturan pengujian
-- Tambahkan batas kesalahan
-- Implementasikan penanganan kesalahan yang tepat
-- Perencanaan integrasi CMS
+- Perencanaan integrasi CMS untuk konten statis
 
 ## Arsitektur Masa Depan
 
@@ -407,6 +485,6 @@ graph LR
 
 ---
 
-**Terakhir Diperbarui:** November 2025  
+**Terakhir Diperbarui:** Desember 2025  
 **Versi:** 5.0  
-**Pemelihara:** Tim OurCreativities
+**Pemelihara:** Tim OurCreativity

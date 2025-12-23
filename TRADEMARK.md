@@ -158,7 +158,7 @@ Include the following information:
 - **Mockups or examples** (if applicable)
 
 ### Step 2: Submit Request
-- **GitHub Issues:** [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
+- **GitHub Issues:** [github.com/ardelyo/ourcreativity/issues](https://github.com/ardelyo/ourcreativity/issues)
   - Use tag: `[BRAND-REQUEST]`
 - **Email:** [Contact via GitHub profile]
 
@@ -260,7 +260,7 @@ This trademark policy may be updated periodically. Changes will be:
 ## 📞 Contact Information
 
 **Trademark Inquiries:**
-- GitHub Issues: [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
+- GitHub Issues: [github.com/ardelyo/ourcreativity/issues](https://github.com/ardelyo/ourcreativity/issues)
 - Tag: `[BRAND-REQUEST]` or `[TRADEMARK-QUESTION]`
 
 **Legal Department:**

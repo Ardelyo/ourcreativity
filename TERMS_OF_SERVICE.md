@@ -12,6 +12,8 @@
 
 By accessing or using **OurCreativity** ("the Platform", "we", "us", "our"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not use the Platform.
 
+> **⚠️ IMPORTANT NOTE:** These Terms describe both current functionality and planned features. **User authentication, account management, and user-generated content upload features are currently in development.** The platform currently operates as a showcase gallery with limited interactive features. Full user account and content management features will be implemented in future updates.
+
 ---
 
 ## 1️⃣ Definitions
@@ -41,14 +43,18 @@ By accessing or using **OurCreativity** ("the Platform", "we", "us", "our"), you
 
 ## 3️⃣ Account Registration & Security
 
-### Creating an Account
+> **Note:** Account registration features are currently in development. The following policies will apply once user accounts are implemented.
+
+### Creating an Account (PLANNED FEATURE)
+When account features launch:
 - Provide a valid email address
 - Choose a unique username
 - Create a strong password
 - Agree to these Terms and our Privacy Policy
 
-### Account Security
-- **You are responsible for:**
+### Account Security (PLANNED FEATURE)
+Once accounts are available:
+- **You will be responsible for:**
   - Keeping your password confidential
   - All activities under your account
   - Notifying us of unauthorized access
@@ -57,7 +63,7 @@ By accessing or using **OurCreativity** ("the Platform", "we", "us", "our"), you
   - Losses due to stolen credentials
   - Unauthorized access due to your negligence
 
-### Account Termination
+### Account Termination (PLANNED FEATURE)
 - **By You:** Delete your account anytime via settings
 - **By Us:** We may suspend/terminate accounts for:
   - Terms of Service violations
@@ -69,21 +75,29 @@ By accessing or using **OurCreativity** ("the Platform", "we", "us", "our"), you
 
 ## 4️⃣ User Content
 
-### Content Ownership
-- **You retain ownership** of content you create and upload
-- You grant us a **non-exclusive, worldwide, royalty-free license** to:
+> **Current Status:** The platform currently displays content from a curated database. User content upload features are in development.
+
+### Content Display (CURRENT)
+- Platform displays creative works from a managed Supabase database
+- Content is curated for showcase purposes
+- Public viewing of gallery content
+
+### Content Ownership (APPLIES TO FUTURE USER UPLOADS)
+When user upload features are implemented:
+- **You will retain ownership** of content you create and upload
+- You will grant us a **non-exclusive, worldwide, royalty-free license** to:
   - Display your content on the Platform
   - Store and backup your content
   - Promote the Platform using your content (with attribution)
 
-### Content Responsibilities
-You are solely responsible for:
+### Content Responsibilities (FUTURE USER UPLOADS)
+You will be solely responsible for:
 - ✅ Ensuring you have rights to upload content
 - ✅ Complying with copyright and intellectual property laws
 - ✅ Content accuracy and legality
 - ✅ Consequences of your content
 
-### Prohibited Content
+### Prohibited Content (FUTURE USER UPLOADS)
 You may NOT upload content that:
 - ❌ Violates laws or regulations
 - ❌ Infringes intellectual property rights
@@ -284,7 +298,7 @@ In case of translation conflicts, the English version prevails.
 ## 📞 Contact Us
 
 **Questions about these Terms:**
-- **GitHub Issues:** [github.com/Ardelyo/ourcreativity/issues](https://github.com/Ardelyo/ourcreativity/issues)
+- **GitHub Issues:** [github.com/ardelyo/ourcreativity/issues](https://github.com/ardelyo/ourcreativity/issues)
   - Tag: `[TERMS-QUESTION]`
 - **Legal Inquiries:** Tag: `[LEGAL]`
 

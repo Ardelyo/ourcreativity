@@ -50,7 +50,7 @@ Bayangkan kalau ada 10 website dengan nama "OurCreativity" - mana yang asli? ü§
 Project ini terinspirasi dari OurCreativity.
 Saya menggunakan beberapa komponen dan design pattern dari project tersebut.
 
-Credit: Fork from github.com/Ardelyo/ourcreativity
+Credit: Fork from github.com/ardelyo/ourcreativity
 ```
 
 ### Contoh ‚ùå SALAH
@@ -68,7 +68,7 @@ Credit: Fork from github.com/Ardelyo/ourcreativity
 
 Kontak kami dulu! Kita bisa diskusi:
 
-- **GitHub Issues:** [Link Issues](https://github.com/Ardelyo/ourcreativity/issues)
+- **GitHub Issues:** [Link Issues](https://github.com/ardelyo/ourcreativity/issues)
 - **Tag:** `[BRAND-REQUEST]`
 - **Jelaskan:** Apa yang mau kamu buat dan kenapa
 
@@ -126,7 +126,7 @@ Yang penting: **Jangan klaim sebagai karya 100% kamu sendiri** kalau masih pakai
 
 **Ada pertanyaan atau mau diskusi?**
 
-- **GitHub Issues:** [Buat issue baru](https://github.com/Ardelyo/ourcreativity/issues)
+- **GitHub Issues:** [Buat issue baru](https://github.com/ardelyo/ourcreativity/issues)
 - **Tag yang bisa dipakai:**
   - `[BRAND-QUESTION]` - Pertanyaan tentang brand usage
   - `[BRAND-REQUEST]` - Request permission

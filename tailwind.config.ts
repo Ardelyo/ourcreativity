@@ -16,10 +16,26 @@ export default {
                 primary: '#ffffff',
                 accentRed: '#e11d48',
                 accentPurple: '#a855f7',
+                // Brutalist colors
+                brutalistYellow: '#FACC15',
+                brutalistPink: '#F472B6',
+                brutalistCyan: '#22D3EE',
+                brutalistWhite: '#F8FAFC',
             },
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
                 serif: ['Playfair Display', 'serif'],
+                mono: ['JetBrains Mono', 'monospace'],
+            },
+            boxShadow: {
+                'brutalist-sm': '2px 2px 0px 0px #000',
+                'brutalist': '4px 4px 0px 0px #000',
+                'brutalist-lg': '8px 8px 0px 0px #000',
+                'brutalist-white': '4px 4px 0px 0px #fff',
+                'brutalist-rose': '4px 4px 0px 0px #e11d48',
+                'brutalist-purple': '4px 4px 0px 0px #a855f7',
+                'brutalist-rose-lg': '8px 8px 0px 0px #e11d48',
+                'brutalist-purple-lg': '8px 8px 0px 0px #a855f7',
             },
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

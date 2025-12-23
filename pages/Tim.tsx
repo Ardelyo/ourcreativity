@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ContributorCard } from '../components/ContributorCard';
+import { BrutalistCard } from '../components/BrutalistCard';
 import { ContributorModal } from '../components/ContributorModal';
-import { Users } from 'lucide-react';
+import { Users, AlertCircle, Github } from 'lucide-react';
 
 // --- Types ---
 interface Contributor {
@@ -10,6 +10,17 @@ interface Contributor {
   avatar_url: string;
   html_url: string;
   contributions: number;
+}
+
+interface GitHubIssue {
+  user: {
+    login: string;
+    avatar_url: string;
+    html_url: string;
+  };
+  title: string;
+  number: number;
+  state: string;
 }
 
 interface ContributorStats {
@@ -20,104 +31,56 @@ interface ContributorStats {
   weeks: { a: number; d: number; c: number }[];
 }
 
-interface CreativePersona {
-  title: string;
-  description: string;
-  adjective: string;
-  element: string;
+interface BioData {
+  bio: string;
+  twitter?: string;
+  website?: string;
+}
+
+interface ReporterData {
+  login: string;
+  avatar_url: string;
+  html_url: string;
+  issueTitle: string;
+  issueCount: number;
 }
 
 interface EnhancedContributor extends Contributor {
   totalAdditions: number;
   totalDeletions: number;
-  persona: CreativePersona;
+  bio?: string;
+  socials?: {
+    twitter?: string;
+    website?: string;
+  };
 }
 
 const OWNER_LOGIN = 'Ardelyo';
 const REPO_OWNER = 'Ardelyo';
 const REPO_NAME = 'OurCreativity';
 
-// Cache untuk mengurangi API calls
-const CACHE_KEY = 'ourcreativities_contributors_cache';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 menit
-
-// Fallback data dengan kontributor asli dari repo OurCreativity
-// Data ini digunakan ketika GitHub API terkena rate limit (403)
-const FALLBACK_CONTRIBUTORS: Contributor[] = [
-  {
-    login: 'Ardelyo',
-    avatar_url: 'https://avatars.githubusercontent.com/u/117548799?v=4',
-    html_url: 'https://github.com/Ardelyo',
-    contributions: 13
+// Manual mapping for core members if GitHub bio is empty
+const BIO_MAPPING: Record<string, BioData> = {
+  'Ardelyo': {
+    bio: "Lead Developer & Visionary. Building the future of creative collaboration.",
+    twitter: "ardelyo",
+    website: "https://ardelyo.com"
   },
-  {
-    login: 'mrmambu',
-    avatar_url: 'https://avatars.githubusercontent.com/u/137814118?v=4',
-    html_url: 'https://github.com/mrmambu',
-    contributions: 6
+  'mrmambu': {
+    bio: "Design Sorcerer & Frontend Extraordinaire. Crafting pixel-perfect experiences.",
   },
-  {
-    login: 'Kira262',
-    avatar_url: 'https://avatars.githubusercontent.com/u/158989780?v=4',
-    html_url: 'https://github.com/Kira262',
-    contributions: 5
-  },
-  {
-    login: 'devanjalichandra',
-    avatar_url: 'https://avatars.githubusercontent.com/u/157803048?v=4',
-    html_url: 'https://github.com/devanjalichandra',
-    contributions: 4
-  },
-  {
-    login: 'ZenSwordXJaworski',
-    avatar_url: 'https://avatars.githubusercontent.com/u/203177437?v=4',
-    html_url: 'https://github.com/ZenSwordXJaworski',
-    contributions: 3
+  'Kira262': {
+    bio: "Core contributor focused on system architecture and performance.",
   }
-];
-
-// --- Persona Generator ---
-const generatePersona = (login: string, isOwner: boolean): CreativePersona => {
-  if (isOwner) {
-    return {
-      title: "Pendiri Visioner",
-      description: "Arsitek mimpi yang merajut benang pertama dari tapestri digital ini. Cahaya penuntun bagi kolektif.",
-      adjective: "Bercahaya",
-      element: "Aether"
-    };
-  }
-
-  const charSum = login.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-
-  const titles = [
-    "Alkemis Piksel", "Penenun Kode", "Pembentuk Logika", "Tukang Kebun Digital",
-    "Penjinak Entropi", "Penyair Sintaks", "Pencari Algoritma", "Pemimpi Antarmuka",
-    "Arsitek Sistem", "Ahli Alur"
-  ];
-
-  const descriptions = [
-    "Mengubah kafein menjadi realitas terstruktur.",
-    "Menghembuskan kehidupan ke piksel statis.",
-    "Menemukan keindahan dalam kompleksitas logika.",
-    "Memahat kekosongan menjadi pengalaman bermakna.",
-    "Menari dengan error hingga menjadi fitur.",
-    "Merajut benang-benang tak kasat mata dari koneksi.",
-    "Menerjemahkan niat manusia menjadi eksekusi mesin."
-  ];
-
-  const adjectives = ["Berani", "Abstrak", "Presisi", "Cair", "Neon", "Tenang", "Kacau"];
-  const elements = ["Api", "Air", "Angin", "Bumi", "Digital", "Hampa", "Cahaya"];
-
-  return {
-    title: titles[charSum % titles.length],
-    description: descriptions[charSum % descriptions.length],
-    adjective: adjectives[charSum % adjectives.length],
-    element: elements[charSum % elements.length]
-  };
 };
+
+// Cache
+const CACHE_KEY = 'ourcreativities_contributors_v2_cache';
+const CACHE_DURATION = 15 * 60 * 1000; // 15 menit
 
 export const Tim = () => {
   const [contributors, setContributors] = useState<EnhancedContributor[]>([]);
+  const [reporters, setReporters] = useState<ReporterData[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedContributor, setSelectedContributor] = useState<EnhancedContributor | null>(null);
 
@@ -126,93 +89,81 @@ export const Tim = () => {
       try {
         setLoading(true);
 
-        // Cek cache terlebih dahulu
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
-          const { data, timestamp } = JSON.parse(cached);
+          const { contributors: cData, reporters: rData, timestamp } = JSON.parse(cached);
           if (Date.now() - timestamp < CACHE_DURATION) {
-            console.log('📦 Menggunakan data dari cache');
-            setContributors(data);
+            setContributors(cData);
+            setReporters(rData);
             setLoading(false);
             return;
           }
         }
 
-        console.log('🌐 Fetching data dari GitHub API...');
-
-        // 1. Fetch basic contributors
+        // 1. Fetch Contributors
         const contribRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contributors`);
-
-        if (!contribRes.ok) {
-          throw new Error(`GitHub API Error: ${contribRes.status}`);
-        }
-
+        if (!contribRes.ok) throw new Error(`GitHub API Error: ${contribRes.status}`);
         const contribData: Contributor[] = await contribRes.json();
 
-        // 2. Fetch stats (opsional)
-        let statsData: ContributorStats[] = [];
-        try {
-          const statsRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/stats/contributors`);
-          if (statsRes.ok) {
-            const rawStats = await statsRes.json();
-            if (Array.isArray(rawStats)) statsData = rawStats;
-          }
-        } catch {
-          console.warn('Stats API gagal');
+        // 2. Fetch Issues to find reporters
+        const issuesRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&per_page=100`);
+        let reportersMap: Record<string, ReporterData> = {};
+
+        if (issuesRes.ok) {
+          const issuesData: GitHubIssue[] = await issuesRes.json();
+          issuesData.forEach(issue => {
+            const login = issue.user.login;
+            // Exclude core contributors from reporters list for clarity
+            if (!contribData.some(c => c.login === login)) {
+              if (!reportersMap[login]) {
+                reportersMap[login] = {
+                  login: login,
+                  avatar_url: issue.user.avatar_url,
+                  html_url: issue.user.html_url,
+                  issueTitle: issue.title,
+                  issueCount: 1
+                };
+              } else {
+                reportersMap[login].issueCount += 1;
+              }
+            }
+          });
         }
 
-        // 3. Enhance dengan Personas
-        const enhancedContributors: EnhancedContributor[] = contribData.map((c) => {
-          const stat = statsData.find((s) => s.author?.login?.toLowerCase() === c.login.toLowerCase());
-          const totalAdditions = stat?.weeks.reduce((sum, w) => sum + w.a, 0) || 0;
-          const totalDeletions = stat?.weeks.reduce((sum, w) => sum + w.d, 0) || 0;
-          const isOwner = c.login.toLowerCase() === OWNER_LOGIN.toLowerCase();
-
+        // 3. Fetch Bio for contributors (individual profile calls needed but let's use mapping + fallback)
+        const enhancedContributors: EnhancedContributor[] = contribData.map(c => {
+          const mappedBio = BIO_MAPPING[c.login];
           return {
             ...c,
-            totalAdditions,
-            totalDeletions,
-            persona: generatePersona(c.login, isOwner)
+            totalAdditions: 0,
+            totalDeletions: 0,
+            bio: mappedBio?.bio || "Kontributor di OurCreativity.",
+            socials: {
+              twitter: mappedBio?.twitter,
+              website: mappedBio?.website
+            }
           };
         });
 
-        // Sort: Owner first
-        const sorted = enhancedContributors.sort((a, b) => {
-          if (a.login.toLowerCase() === OWNER_LOGIN.toLowerCase()) return -1;
-          if (b.login.toLowerCase() === OWNER_LOGIN.toLowerCase()) return 1;
+        const sortedContribs = enhancedContributors.sort((a, b) => {
+          if (a.login === OWNER_LOGIN) return -1;
+          if (b.login === OWNER_LOGIN) return 1;
           return b.contributions - a.contributions;
         });
 
-        setContributors(sorted);
+        const sortedReporters = Object.values(reportersMap).sort((a, b) => b.issueCount - a.issueCount);
 
-        // Simpan ke cache
+        setContributors(sortedContribs);
+        setReporters(sortedReporters);
+
         localStorage.setItem(CACHE_KEY, JSON.stringify({
-          data: sorted,
+          contributors: sortedContribs,
+          reporters: sortedReporters,
           timestamp: Date.now()
         }));
 
-        console.log('✅ Data berhasil dimuat');
-
-      } catch (err: any) {
-        console.error("❌ Error:", err);
-        const cached = localStorage.getItem(CACHE_KEY);
-        if (cached) {
-          const { data } = JSON.parse(cached);
-          setContributors(data);
-          console.log('⚠️ Menggunakan cache lama');
-        } else {
-          console.log('🔄 Menggunakan fallback');
-          const fallbackEnhanced: EnhancedContributor[] = FALLBACK_CONTRIBUTORS.map(c => {
-            const isOwner = c.login.toLowerCase() === OWNER_LOGIN.toLowerCase();
-            return {
-              ...c,
-              totalAdditions: 0,
-              totalDeletions: 0,
-              persona: generatePersona(c.login, isOwner)
-            };
-          });
-          setContributors(fallbackEnhanced);
-        }
+      } catch (err) {
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
@@ -221,108 +172,131 @@ export const Tim = () => {
     fetchData();
   }, []);
 
-  const contributorCards = useMemo(() => {
-    return contributors.map((contributor) => {
-      const isOwner = contributor.login.toLowerCase() === OWNER_LOGIN.toLowerCase();
-      return (
-        <ContributorCard
-          key={contributor.login}
-          login={contributor.login}
-          avatar_url={contributor.avatar_url}
-          contributions={contributor.contributions}
-          personaTitle={contributor.persona.title}
-          isOwner={isOwner}
-          onClick={() => setSelectedContributor(contributor)}
-        />
-      )
-    });
-  }, [contributors]);
-
   return (
-    <div className="pt-36 pb-20 px-4 max-w-7xl mx-auto min-h-screen relative z-10">
-      {/* Background */}
-      <div className="fixed inset-0 pointer-events-none -z-10">
-        <div className="absolute top-[20%] left-[10%] w-[500px] h-[500px] bg-rose-500/10 blur-[120px] rounded-full mix-blend-screen" />
-        <div className="absolute bottom-[20%] right-[10%] w-[600px] h-[600px] bg-purple-500/10 blur-[120px] rounded-full mix-blend-screen" />
+    <div className="pt-36 pb-20 px-4 max-w-7xl mx-auto min-h-screen text-white font-sans relative">
+      {/* Background Blobs (Shadow Glows) */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[20%] left-[-10%] w-[600px] h-[600px] bg-rose-500/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-purple-500/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* Header */}
+      {/* Header Section */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="mb-20 text-center"
+        className="mb-24 relative z-10"
       >
-        <div className="flex justify-center mb-6">
-          <div className="relative">
-            <div className="absolute inset-0 bg-rose-500 blur-xl opacity-20 animate-pulse" />
-            <div className="relative bg-white/5 border border-white/10 px-6 py-2 rounded-full text-white/80 font-serif italic text-sm backdrop-blur-md">
-              Kolektif
+        <div className="flex items-center gap-2 mb-6 font-mono text-sm text-rose-500">
+          <span>[ KOLEKTIF_V2.0 ]</span>
+          <div className="h-px flex-1 bg-rose-500/20" />
+        </div>
+
+        <h1 className="text-[12vw] md:text-[8vw] leading-[0.85] font-black uppercase tracking-tighter mb-8">
+          KON<span className="text-white bg-rose-600 px-4 shadow-[10px_10px_0px_0px_rgba(225,29,72,0.3)]">TRIB</span>UTOR
+        </h1>
+
+        <div className="flex flex-col md:flex-row gap-8 items-start justify-between">
+          <p className="text-xl md:text-2xl font-mono text-white/60 max-w-2xl border-l-4 border-rose-500 pl-6 py-2 bg-rose-500/5">
+            REKAYASA KREATIF & PAHLAWAN LAPORAN BUG YANG MEMBENTUK MASA DEPAN KARYA DIGITAL KITA.
+          </p>
+          <div className="hidden lg:block bg-white/5 backdrop-blur-md border border-white/10 p-4 rounded-xl">
+            <div className="flex items-center gap-3 text-xs font-mono">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span>STATUS: OPERASIONAL</span>
             </div>
           </div>
         </div>
-
-        <h1 className="text-5xl md:text-8xl font-serif text-white mb-8 tracking-tight">
-          Kontributor<span className="text-rose-500">.</span>
-        </h1>
-        <p className="text-white/40 max-w-xl mx-auto text-lg font-light leading-relaxed">
-          Konstelasi pemikiran yang merajut masa depan digital.
-          Setiap commit adalah benang, setiap fitur adalah kenangan.
-        </p>
       </motion.div>
 
-      {/* Loading */}
-      {loading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center h-64 gap-6"
-        >
-          <div className="relative w-16 h-16">
-            <div className="absolute inset-0 border-t-2 border-r-2 border-rose-500 rounded-full animate-spin" />
-            <div className="absolute inset-2 border-t-2 border-l-2 border-purple-500 rounded-full animate-spin" style={{ animationDirection: 'reverse' }} />
-          </div>
-          <p className="font-serif italic text-white/30 tracking-widest text-sm">Memanggil roh-roh kreatif...</p>
-        </motion.div>
-      )}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-40 relative z-10">
+          <div className="w-16 h-16 border-4 border-rose-500/20 border-t-rose-500 rounded-full animate-spin" />
+          <p className="mt-6 font-black uppercase tracking-widest text-rose-500 antialiased">Sinkronisasi Data...</p>
+        </div>
+      ) : (
+        <div className="space-y-40 relative z-10">
+          {/* Core Team Section */}
+          <section>
+            <div className="flex items-end justify-between mb-12 border-b border-white/10 pb-6">
+              <div className="flex items-center gap-4">
+                <div className="bg-rose-500 text-white p-3 shadow-brutalist-rose">
+                  <Users size={32} />
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight">Arsitek Utama</h2>
+              </div>
+              <span className="font-mono text-rose-500/50 text-sm hidden md:block">TOTAL: {contributors.length}</span>
+            </div>
 
-      {/* Grid */}
-      {!loading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-        >
-          {contributorCards}
-        </motion.div>
-      )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {contributors.map(c => (
+                <BrutalistCard
+                  key={c.login}
+                  login={c.login}
+                  avatar_url={c.avatar_url}
+                  html_url={c.html_url}
+                  contributions={c.contributions}
+                  bio={c.bio}
+                  isOwner={c.login === OWNER_LOGIN}
+                  socials={c.socials}
+                />
+              ))}
+            </div>
+          </section>
 
-      {/* Empty */}
-      {!loading && contributors.length === 0 && (
-        <div className="text-center text-gray-500 py-20 font-mono border border-dashed border-white/10">
-          <Users size={48} className="mx-auto mb-4 opacity-50" />
-          <p className="uppercase tracking-widest text-sm">Belum ada kontributor.</p>
+          {/* Issue Reporters Section */}
+          {reporters.length > 0 && (
+            <section>
+              <div className="flex items-end justify-between mb-12 border-b border-white/10 pb-6">
+                <div className="flex items-center gap-4">
+                  <div className="bg-purple-500 text-white p-3 shadow-brutalist-purple">
+                    <AlertCircle size={32} />
+                  </div>
+                  <div>
+                    <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight">Pemburu Bug</h2>
+                    <p className="font-mono text-xs text-purple-400 mt-1 uppercase tracking-widest">Pahlawan Komunitas & Pelapor Masalah</p>
+                  </div>
+                </div>
+                <span className="font-mono text-purple-500/50 text-sm hidden md:block">TOTAL: {reporters.length}</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {reporters.map(r => (
+                  <BrutalistCard
+                    key={r.login}
+                    login={r.login}
+                    avatar_url={r.avatar_url}
+                    html_url={r.html_url}
+                    isReporter={true}
+                    issueCount={r.issueCount}
+                    issueTitle={r.issueTitle}
+                    bio={`Kontribusi signifikan melalui laporan issue yang membangun stabilitas platform.`}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Call to Action */}
+          <motion.div
+            whileHover={{ y: -5 }}
+            className="border-4 border-rose-500 bg-rose-500/5 backdrop-blur-sm p-12 text-center relative overflow-hidden group"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 blur-3xl -z-10 group-hover:bg-rose-500/20 transition-all" />
+            <h3 className="text-4xl md:text-6xl font-black uppercase mb-6 tracking-tighter">Bentuk Masa Depan Kita</h3>
+            <p className="font-mono text-lg text-white/60 mb-10 max-w-2xl mx-auto leading-relaxed">
+              Setiap baris kode atau laporan bug membawa kita satu langkah lebih dekat ke kesempurnaan. Bergabunglah dalam kolektif kreatif ini.
+            </p>
+            <a
+              href={`https://github.com/${REPO_OWNER}/${REPO_NAME}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-4 bg-rose-600 text-white px-10 py-5 font-black uppercase text-xl border-4 border-black shadow-brutalist-rose hover:bg-rose-500 transition-all transform hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+            >
+              <Github size={24} /> Mulai Berkontribusi
+            </a>
+          </motion.div>
         </div>
       )}
-
-      {/* Modal */}
-      <AnimatePresence>
-        {selectedContributor && (
-          <ContributorModal
-            isOpen={!!selectedContributor}
-            onClose={() => setSelectedContributor(null)}
-            login={selectedContributor.login}
-            avatar_url={selectedContributor.avatar_url}
-            html_url={selectedContributor.html_url}
-            contributions={selectedContributor.contributions}
-            totalAdditions={selectedContributor.totalAdditions}
-            totalDeletions={selectedContributor.totalDeletions}
-            persona={selectedContributor.persona}
-            isOwner={selectedContributor.login.toLowerCase() === OWNER_LOGIN.toLowerCase()}
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 };

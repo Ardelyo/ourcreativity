@@ -214,12 +214,55 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                                             )
                                         )}
 
-                                        {/* --- VISUAL (SLIDES) EDITOR --- */}
+                                        {/* --- VISUAL (SLIDES/IMAGE) EDITOR --- */}
                                         {medium === 'visual' && (
-                                            <SlideBuilder
-                                                slides={formData.slides || []}
-                                                onChange={(slides) => setFormData(prev => ({ ...prev, slides }))}
-                                            />
+                                            <div className="h-full flex flex-col gap-4">
+                                                <div className="flex gap-2 mb-2">
+                                                    <button
+                                                        onClick={() => setSubMode('default')}
+                                                        className={`px-3 py-1 rounded-full text-xs font-bold border transition-all ${subMode === 'default' ? 'bg-white text-black border-white' : 'border-white/20 text-gray-400'}`}
+                                                    >
+                                                        Single Image
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setSubMode('slide')}
+                                                        className={`px-3 py-1 rounded-full text-xs font-bold border transition-all ${subMode === 'slide' ? 'bg-white text-black border-white' : 'border-white/20 text-gray-400'}`}
+                                                    >
+                                                        Slide Series
+                                                    </button>
+                                                </div>
+
+                                                {subMode === 'slide' ? (
+                                                    <SlideBuilder
+                                                        slides={formData.slides || []}
+                                                        onChange={(slides) => setFormData(prev => ({ ...prev, slides }))}
+                                                    />
+                                                ) : (
+                                                    <div
+                                                        onClick={() => fileInputRef.current?.click()}
+                                                        className={`h-full rounded-3xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center cursor-pointer hover:border-white/30 hover:bg-white/5 transition-all group relative overflow-hidden`}
+                                                    >
+                                                        {formData.image ? (
+                                                            <img src={formData.image} alt="Preview" className="max-h-full max-w-full object-contain" />
+                                                        ) : (
+                                                            <div className="text-center">
+                                                                <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
+                                                                    <Upload className="text-gray-400 group-hover:text-white" size={32} />
+                                                                </div>
+                                                                <h3 className="text-xl font-bold text-white mb-2">Upload Image</h3>
+                                                                <p className="text-gray-500 text-sm">PNG, JPG or WEBP</p>
+                                                            </div>
+                                                        )}
+                                                        <input
+                                                            type="file"
+                                                            ref={fileInputRef}
+                                                            onChange={handleImageUpload}
+                                                            accept="image/*"
+                                                            className="hidden"
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
                                         )}
 
                                         {/* --- SINEMA / EMBED --- */}
@@ -250,6 +293,7 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                                                                 <Upload className="text-gray-400 group-hover:text-white" size={32} />
                                                             </div>
                                                             <h3 className="text-xl font-bold text-white mb-2">Upload Video</h3>
+                                                            <p className="text-gray-500 text-sm">MP4, WebM or Ogg</p>
                                                         </div>
                                                     )}
                                                     <input

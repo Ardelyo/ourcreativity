@@ -12,9 +12,9 @@ export const Footer = () => {
         </div>
 
         <div className="flex items-center gap-8">
-          <a href="#" className="text-gray-500 hover:text-white transition-colors"><Instagram size={20} /></a>
-          <a href="#" className="text-gray-500 hover:text-white transition-colors"><Twitter size={20} /></a>
-          <a href="#" className="text-gray-500 hover:text-white transition-colors"><Youtube size={20} /></a>
+          <a href="https://instagram.com/ourcreativity" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors"><Instagram size={20} /></a>
+          <a href="https://twitter.com/ourcreativity" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors"><Twitter size={20} /></a>
+          <a href="https://youtube.com/ourcreativity" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors"><Youtube size={20} /></a>
         </div>
 
         <div className="text-xs text-gray-600">

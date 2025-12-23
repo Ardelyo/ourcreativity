@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Sparkles, Calendar, Tag, ArrowRight, Star, Zap, Layout, Smartphone, Palette, Layers, Box, Image, Share2, Compass, Rocket, Shield, Megaphone, History, Clock, Globe, Cpu, X, ChevronRight } from 'lucide-react';
 import { ChangelogTimeline } from '../components/ChangelogTimeline';
 import { FetchErrorState } from '../components/FetchErrorState';
@@ -101,109 +102,109 @@ export const Announcement = () => {
                             <>
                                 {/* Featured Announcement (Hero) */}
                                 {events.length > 0 && (
-                            <motion.div
-                                layoutId={`card-${events[0].id}`}
-                                onClick={() => setSelectedEvent(events[0])}
-                                className="group relative w-full min-h-[500px] bg-[#0a0a0a] rounded-[2.5rem] overflow-hidden cursor-pointer border border-white/10 hover:border-white/30 transition-all mb-16 shadow-2xl"
-                            >
-                                {/* Dynamic Background Glow */}
-                                <div className={`absolute inset-0 bg-gradient-to-br ${events[0].color} opacity-20 group-hover:opacity-30 transition-opacity duration-700`} />
-                                <div className={`absolute -right-[20%] -top-[20%] w-[80%] h-[80%] bg-gradient-to-bl ${events[0].color} rounded-full blur-[150px] opacity-20 group-hover:opacity-40 transition-opacity duration-700 animate-pulse`} />
+                                    <motion.div
+                                        layoutId={`card-${events[0].id}`}
+                                        onClick={() => setSelectedEvent(events[0])}
+                                        className="group relative w-full min-h-[500px] bg-[#0a0a0a] rounded-[2.5rem] overflow-hidden cursor-pointer border border-white/10 hover:border-white/30 transition-all mb-16 shadow-2xl"
+                                    >
+                                        {/* Dynamic Background Glow */}
+                                        <div className={`absolute inset-0 bg-gradient-to-br ${events[0].color} opacity-20 group-hover:opacity-30 transition-opacity duration-700`} />
+                                        <div className={`absolute -right-[20%] -top-[20%] w-[80%] h-[80%] bg-gradient-to-bl ${events[0].color} rounded-full blur-[150px] opacity-20 group-hover:opacity-40 transition-opacity duration-700 animate-pulse`} />
 
-                                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
+                                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
 
-                                <div className="relative z-10 h-full flex flex-col md:flex-row items-center p-8 md:p-16 gap-12">
-                                    <div className="flex-1 space-y-8">
-                                        <div className="flex items-center gap-4">
-                                            <span className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-sm font-bold text-white flex items-center gap-2 shadow-lg">
-                                                <Sparkles size={14} className="text-yellow-400" /> FEATURED UPDATE
-                                            </span>
-                                            <span className="text-gray-400 text-sm font-mono">
-                                                {new Date(events[0].date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
-                                            </span>
-                                        </div>
+                                        <div className="relative z-10 h-full flex flex-col md:flex-row items-center p-8 md:p-16 gap-12">
+                                            <div className="flex-1 space-y-8">
+                                                <div className="flex items-center gap-4">
+                                                    <span className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-sm font-bold text-white flex items-center gap-2 shadow-lg">
+                                                        <Sparkles size={14} className="text-yellow-400" /> FEATURED UPDATE
+                                                    </span>
+                                                    <span className="text-gray-400 text-sm font-mono">
+                                                        {new Date(events[0].date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                                    </span>
+                                                </div>
 
-                                        <div className="space-y-4">
-                                            <motion.h2 layoutId={`title-${events[0].id}`} className="text-5xl md:text-7xl font-serif font-bold text-white leading-[1.1]">
-                                                {events[0].title}
-                                            </motion.h2>
-                                            <p className={`text-xl md:text-2xl font-medium text-transparent bg-clip-text bg-gradient-to-r ${events[0].color}`}>
-                                                {events[0].subtitle}
-                                            </p>
-                                        </div>
+                                                <div className="space-y-4">
+                                                    <motion.h2 layoutId={`title-${events[0].id}`} className="text-5xl md:text-7xl font-serif font-bold text-white leading-[1.1]">
+                                                        {events[0].title}
+                                                    </motion.h2>
+                                                    <p className={`text-xl md:text-2xl font-medium text-transparent bg-clip-text bg-gradient-to-r ${events[0].color}`}>
+                                                        {events[0].subtitle}
+                                                    </p>
+                                                </div>
 
-                                        <p className="text-gray-300 text-lg leading-relaxed max-w-2xl line-clamp-3">
-                                            {events[0].description}
-                                        </p>
+                                                <p className="text-gray-300 text-lg leading-relaxed max-w-2xl line-clamp-3">
+                                                    {events[0].description}
+                                                </p>
 
-                                        <div className="flex items-center gap-4 pt-4">
-                                            <button className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-200 transition-colors flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-                                                Baca Selengkapnya <ArrowRight size={20} />
-                                            </button>
-                                        </div>
-                                    </div>
+                                                <div className="flex items-center gap-4 pt-4">
+                                                    <Link to="/v5-launch" className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-200 transition-colors flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                                                        Visualized Presentation <Rocket size={20} />
+                                                    </Link>
+                                                </div>
+                                            </div>
 
-                                    {/* Visual Decoration for Featured */}
-                                    <div className="w-full md:w-1/3 aspect-square relative hidden md:block">
-                                        <div className={`absolute inset-0 bg-gradient-to-br ${events[0].color} rounded-full blur-3xl opacity-20 animate-pulse`} />
-                                        <div className="relative z-10 w-full h-full bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6 transform rotate-6 group-hover:rotate-3 transition-transform duration-500">
-                                            <div className="w-full h-full bg-black/50 rounded-2xl overflow-hidden flex items-center justify-center">
-                                                <Megaphone size={80} className="text-white/50" />
+                                            {/* Visual Decoration for Featured */}
+                                            <div className="w-full md:w-1/3 aspect-square relative hidden md:block">
+                                                <div className={`absolute inset-0 bg-gradient-to-br ${events[0].color} rounded-full blur-3xl opacity-20 animate-pulse`} />
+                                                <div className="relative z-10 w-full h-full bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6 transform rotate-6 group-hover:rotate-3 transition-transform duration-500">
+                                                    <div className="w-full h-full bg-black/50 rounded-2xl overflow-hidden flex items-center justify-center">
+                                                        <Megaphone size={80} className="text-white/50" />
+                                                    </div>
+                                                </div>
+                                                <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 z-20 transform -rotate-12 group-hover:-rotate-6 transition-transform duration-500 flex items-center justify-center">
+                                                    <Star size={40} className="text-yellow-400 fill-yellow-400" />
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 z-20 transform -rotate-12 group-hover:-rotate-6 transition-transform duration-500 flex items-center justify-center">
-                                            <Star size={40} className="text-yellow-400 fill-yellow-400" />
-                                        </div>
-                                    </div>
+                                    </motion.div>
+                                )}
+
+                                {/* Recent Updates Grid */}
+                                <div className="flex items-center gap-4 mb-8">
+                                    <div className="h-px flex-1 bg-white/10" />
+                                    <span className="text-gray-500 font-mono text-sm uppercase tracking-widest">Update Terkini</span>
+                                    <div className="h-px flex-1 bg-white/10" />
                                 </div>
-                            </motion.div>
-                        )}
 
-                        {/* Recent Updates Grid */}
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="h-px flex-1 bg-white/10" />
-                            <span className="text-gray-500 font-mono text-sm uppercase tracking-widest">Update Terkini</span>
-                            <div className="h-px flex-1 bg-white/10" />
-                        </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    {events.slice(1).map((event, i) => (
+                                        <motion.div
+                                            layoutId={`card-${event.id}`}
+                                            key={event.id}
+                                            onClick={() => setSelectedEvent(event)}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: i * 0.1 }}
+                                            className="group relative bg-[#0a0a0a] border border-white/10 rounded-3xl overflow-hidden cursor-pointer hover:border-white/30 transition-all flex flex-col h-full"
+                                        >
+                                            <div className={`absolute inset-0 bg-gradient-to-br ${event.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {events.slice(1).map((event, i) => (
-                                <motion.div
-                                    layoutId={`card-${event.id}`}
-                                    key={event.id}
-                                    onClick={() => setSelectedEvent(event)}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.1 }}
-                                    className="group relative bg-[#0a0a0a] border border-white/10 rounded-3xl overflow-hidden cursor-pointer hover:border-white/30 transition-all flex flex-col h-full"
-                                >
-                                    <div className={`absolute inset-0 bg-gradient-to-br ${event.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
+                                            <div className="p-8 relative z-10 flex flex-col h-full">
+                                                <div className="flex justify-between items-start mb-6">
+                                                    <span className={`text-xs font-bold px-3 py-1 rounded-full border border-white/10 ${event.status === 'Baru' ? 'bg-rose-500/20 text-rose-400' : 'bg-gray-800 text-gray-400'}`}>
+                                                        {event.status}
+                                                    </span>
+                                                    <span className="text-gray-500 text-xs font-mono">
+                                                        {new Date(event.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                                                    </span>
+                                                </div>
 
-                                    <div className="p-8 relative z-10 flex flex-col h-full">
-                                        <div className="flex justify-between items-start mb-6">
-                                            <span className={`text-xs font-bold px-3 py-1 rounded-full border border-white/10 ${event.status === 'Baru' ? 'bg-rose-500/20 text-rose-400' : 'bg-gray-800 text-gray-400'}`}>
-                                                {event.status}
-                                            </span>
-                                            <span className="text-gray-500 text-xs font-mono">
-                                                {new Date(event.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
-                                            </span>
-                                        </div>
+                                                <motion.h3 layoutId={`title-${event.id}`} className="font-serif text-2xl text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all">
+                                                    {event.title}
+                                                </motion.h3>
 
-                                        <motion.h3 layoutId={`title-${event.id}`} className="font-serif text-2xl text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all">
-                                            {event.title}
-                                        </motion.h3>
+                                                <p className="text-gray-400 text-sm line-clamp-3 mb-6 flex-1">
+                                                    {event.description}
+                                                </p>
 
-                                        <p className="text-gray-400 text-sm line-clamp-3 mb-6 flex-1">
-                                            {event.description}
-                                        </p>
-
-                                        <div className="flex items-center gap-2 text-sm font-bold text-white/50 group-hover:text-white transition-colors">
-                                            Baca <ArrowRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
+                                                <div className="flex items-center gap-2 text-sm font-bold text-white/50 group-hover:text-white transition-colors">
+                                                    Baca <ArrowRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
                             </>
                         )}
                     </motion.div>

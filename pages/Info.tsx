@@ -99,10 +99,10 @@ export const Info = () => {
               </div>
 
               <div className="space-y-3 mt-auto">
-                <a href="https://instagram.com/ourcreativity.ofc" className="flex items-center gap-3 text-sm text-white hover:text-rose-400 transition-colors p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/20">
+                <a href="https://instagram.com/ourcreativity.ofc" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-white hover:text-rose-400 transition-colors p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/20">
                   <Instagram size={16} /> @ourcreativity.ofc
                 </a>
-                <a href="#" className="flex items-center gap-3 text-sm text-white hover:text-rose-400 transition-colors p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/20">
+                <a href="https://linktr.ee/ourcreativity.ofc?brid=kzuXyr_Vywp7k3V_CsFxsw" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-white hover:text-rose-400 transition-colors p-3 bg-white/5 rounded-xl border border-white/5 hover:border-white/20">
                   <ExternalLink size={16} /> Linktree Profile
                 </a>
               </div>

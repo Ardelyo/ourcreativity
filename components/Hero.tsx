@@ -52,6 +52,7 @@ export const Hero = () => {
                 dan <span className="text-white font-medium">cerita</span> dalam satu spektrum.
             </motion.p>
 
+
             {/* Tombol - Glassmorphism Modern */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}

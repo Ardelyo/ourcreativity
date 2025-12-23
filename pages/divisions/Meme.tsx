@@ -59,11 +59,15 @@ export const Meme = () => {
 
                     <div className="text-center mb-8">
                         <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500 animate-bounce" style={{ fontFamily: 'Impact' }}>
+                            <img src="/logo oc meme.jpg" alt="OC Meme Logo" className="w-20 h-20 inline-block mr-4 rounded-full border-4 border-yellow-400 animate-spin" style={{ animationDuration: '3s' }} />
                             DIVISI MEME
                         </h1>
                         <h2 className={"text-2xl font-bold bg-black text-white inline-block px-4 " + (blink ? 'opacity-100' : 'opacity-0')}>
                             THE OFFICIAL HOMEPAGE
                         </h2>
+                        <div className="mt-2 font-black text-blue-600 animate-pulse text-lg">
+                            FOLLOW IG: @ocedisimeme.id ATAU HP KAMU MELEDAK!!!
+                        </div>
                     </div>
 
                     <div className="bg-yellow-100 border-4 border-red-500 p-4 mb-6 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">

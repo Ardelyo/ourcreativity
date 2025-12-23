@@ -5,25 +5,25 @@ import { Link } from 'react-router-dom';
 
 const writings = [
     {
-        title: "Dialektika Sunyi",
-        category: "Esai Filosofis",
-        excerpt: "Dalam keheningan, kita menemukan kebisingan pikiran yang paling jujur. Sebuah kritik terhadap modernitas yang menolak jeda.",
-        author: "Sarah A.",
-        image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=2573&auto=format&fit=crop"
+        title: "Poet Box",
+        category: "Puisi Digital",
+        excerpt: "Kotak rahasia yang menyimpan ribuan bait doa dan keresahan. Sebuah antologi digital yang menghubungkan jiwa-jiwa yang haus akan makna.",
+        author: "O.C Team",
+        image: "/assets/divisions/writing/poet_box.png"
     },
     {
-        title: "Matinya Sang Penulis",
-        category: "Kritik Sastra",
-        excerpt: "Apakah intensi penulis masih relevan ketika teks telah dilepas ke publik? Membedah kembali teori Barthes di era media sosial.",
-        author: "Rian K.",
-        image: "https://images.unsplash.com/photo-1476275466078-4007374efbbe?q=80&w=2629&auto=format&fit=crop"
+        title: "Rabu dan Sihir Cintanya",
+        category: "Puisi Digital",
+        excerpt: "Kumpulan bait-bait puisi tentang kegelisahan perasaan cinta yang mendalam. Di mana kata-kata menjadi pelampiasan atas rindu yang tak kunjung usai di setiap hari Rabu.",
+        author: "O.C Team",
+        image: "/assets/divisions/writing/rabu_dan_sihir.png"
     },
     {
-        title: "Kota Tanpa Jendela",
-        category: "Prosa",
-        excerpt: "Mereka membangun dinding-dinding kaca, namun tak ada yang benar-benar melihat ke luar. Sebuah alegori tentang narsisme urban.",
-        author: "Dina M.",
-        image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=2428&auto=format&fit=crop"
+        title: "Story Voting",
+        category: "Proyek Kolaboratif",
+        excerpt: "Voting karya cerita interaktif di mana komunitas menentukan alur narasi. Sebuah eksperimen sosial dalam merajut jalinan cerita bersama-sama.",
+        author: "O.C Team",
+        image: "/assets/divisions/writing/story_voting.png"
     }
 ];
 
@@ -87,10 +87,11 @@ export const Writing = () => {
                                 initial={{ y: "100%" }}
                                 animate={{ y: 0 }}
                                 transition={{ duration: 1, ease: [0.33, 1, 0.68, 1] }}
-                                className="text-sm md:text-base font-sans font-medium tracking-[0.3em] uppercase text-[#1a1a1a]/60 flex items-center gap-4"
+                                className="text-sm md:text-base font-sans font-medium tracking-[0.3em] uppercase text-[#1a1a1a]/60 flex flex-wrap items-center gap-4"
                             >
                                 <span className="w-12 h-[1px] bg-[#1a1a1a]/60"></span>
-                                Selamat Datang di
+                                <span>Selamat Datang di</span>
+                                <span className="text-[#1a1a1a]/40 text-xs">IG: @ocedisikaryatulis</span>
                             </motion.div>
                         </div>
 
@@ -98,6 +99,14 @@ export const Writing = () => {
                             <RevealText text="Divisi" delay={0.1} />
                             <RevealText text="Paling" delay={0.2} className="ml-[10vw] italic font-light" />
                             <RevealText text="Kritis" delay={0.3} />
+                            <motion.img
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.5, duration: 0.8 }}
+                                src="/logo ockaryatulis.jpg"
+                                alt="OC Karya Tulis Logo"
+                                className="w-24 h-24 md:w-32 md:h-32 mt-8 rounded-full border border-[#1a1a1a]/20 object-cover"
+                            />
                         </h1>
 
                         <div className="flex flex-col md:flex-row justify-between items-end gap-12 border-t border-[#1a1a1a] pt-8">

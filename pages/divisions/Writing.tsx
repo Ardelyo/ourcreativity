@@ -103,7 +103,7 @@ export const Writing = () => {
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.5, duration: 0.8 }}
-                                src="/logo ockaryatulis.jpg"
+                                src="/logo-oc-karyatulis.jpg"
                                 alt="OC Karya Tulis Logo"
                                 className="w-24 h-24 md:w-32 md:h-32 mt-8 rounded-full border border-[#1a1a1a]/20 object-cover"
                             />

@@ -10,7 +10,7 @@ export const Navbar = () => {
     const location = useLocation();
 
     const navLinks = [
-        { name: 'Home', href: '/' },
+        { name: 'Beranda', href: '/' },
         { name: 'Karya', href: '/karya' },
         { name: 'Tim', href: '/tim' },
         { name: 'Info', href: '/info' },

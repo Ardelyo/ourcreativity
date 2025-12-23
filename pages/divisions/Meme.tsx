@@ -52,7 +52,7 @@ export const Meme = () => {
                     <div className="inline-block relative mb-8 group">
                         <div className="absolute inset-0 bg-rose-500 rounded-full blur-2xl opacity-10 group-hover:opacity-30 transition-opacity duration-500"></div>
                         <img
-                            src="/logo oc meme.jpg"
+                            src="/logo-oc-meme.jpg"
                             alt="Logo Divisi Meme"
                             className="w-40 h-40 md:w-52 md:h-52 rounded-full border-2 border-zinc-800 relative z-10 group-hover:scale-105 transition-transform duration-300"
                         />
@@ -106,13 +106,13 @@ export const Meme = () => {
 
                     <div className="space-y-6">
                         {[
-                            { icon: <Camera />, title: "PRODUKSI KONTEN", desc: "Feeds harian di Instagram & TikTok." },
-                            { icon: <MessageSquare />, title: "KOLABORASI", desc: "Bekerjasama lintas divisi untuk event spesial." },
-                            { icon: <Zap />, title: "RISET TREN", desc: "Menganalisis humor digital terkini." }
+                            { icon: Camera, title: "PRODUKSI KONTEN", desc: "Feeds harian di Instagram & TikTok." },
+                            { icon: MessageSquare, title: "KOLABORASI", desc: "Bekerjasama lintas divisi untuk event spesial." },
+                            { icon: Zap, title: "RISET TREN", desc: "Menganalisis humor digital terkini." }
                         ].map((item, idx) => (
                             <div key={idx} className="flex items-start gap-6 group">
                                 <div className="text-zinc-600 group-hover:text-white transition-colors pt-1">
-                                    {React.cloneElement(item.icon as React.ReactElement, { size: 32 })}
+                                    <item.icon size={32} />
                                 </div>
                                 <div>
                                     <h3 className="text-3xl font-meme group-hover:text-rose-500 transition-colors uppercase">{item.title}</h3>

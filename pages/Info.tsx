@@ -94,7 +94,7 @@ export const Info = () => {
             <div className="relative z-10 h-full flex flex-col">
               <div className="mb-8">
                 <Mail className="text-rose-400 mb-4" size={32} />
-                <h3 className="text-2xl font-serif text-white mb-2">Connect</h3>
+                <h3 className="text-2xl font-serif text-white mb-2">Hubungi Kami</h3>
                 <p className="text-sm text-gray-400">Punya tawaran kolaborasi atau pertanyaan mendesak?</p>
               </div>
 
@@ -113,7 +113,7 @@ export const Info = () => {
 
       {/* Akordeon FAQ */}
       <div className="max-w-3xl mx-auto mt-24">
-        <h2 className="text-3xl font-serif text-white mb-10 text-center">Frequent Questions</h2>
+        <h2 className="text-3xl font-serif text-white mb-10 text-center">Pertanyaan Umum</h2>
         <div className="space-y-4">
           {faqs.map((faq, i) => (
             <motion.div

@@ -1,8 +1,10 @@
-import React, { useRef, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { Terminal, ArrowLeft, Code, Cpu, Globe, Database, Lock, GitBranch, Share2, Layers, Cpu as Chip, Zap, Server } from 'lucide-react';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Code, Globe, Share2, Layers, GitBranch, Server } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { MatrixRain, GlitchText } from '../../components/effects';
 
+// Data proyek
 const projects = [
     { title: "Proyek: NEBULA", category: "Web App", status: "Deployed", desc: "Platform komunitas next-gen dengan arsitektur mikroservis React & Node.js yang skalabel.", id: "0X4F2A", tech: ["React", "Node.js", "GraphQL"] },
     { title: "CyberGuard", category: "Keamanan", status: "Aktif", desc: "Scanner kerentanan otomatis untuk jaringan lokal dengan pelaporan realtime.", id: "0X9B7C", tech: ["Python", "Rust", "Kali"] },
@@ -10,86 +12,28 @@ const projects = [
     { title: "Bot: Sentinel", category: "Otomasi", status: "Online", desc: "Bot moderasi Discord dengan kapabilitas AI untuk deteksi spam dan toxicity.", id: "0X5C8F", tech: ["Discord.js", "OpenAI API"] },
 ];
 
-const MatrixRain = () => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+// Data statistik
+const stats = [
+    { label: "Baris Kode", value: "150K+", icon: Code },
+    { label: "Proyek Aktif", value: "24", icon: Layers },
+    { label: "Kontributor", value: "50+", icon: Globe },
+    { label: "Waktu Aktif", value: "99.9%", icon: Server },
+];
 
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+// Data langkah kolaborasi
+const collaborationSteps = [
+    { step: "01", title: "Inisiasi", desc: "Buat konsep, tulis kode awal, atau rekam demo proyekmu.", icon: Code },
+    { step: "02", title: "Publikasi", desc: "Upload ke repo atau media sosial dengan tagar komunitas.", icon: Share2 },
+    { step: "03", title: "Sinergi", desc: "Undang kolaborator untuk review, refactor, dan scale-up.", icon: GitBranch },
+];
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const characters = '01';
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops: number[] = [];
-
-        for (let i = 0; i < columns; i++) {
-            drops[i] = 1;
-        }
-
-        const draw = () => {
-            if (!ctx) return;
-            ctx.fillStyle = 'rgba(2, 2, 2, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#15803d'; // Darker green for subtlety
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = characters.charAt(Math.floor(Math.random() * characters.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        };
-
-        const interval = setInterval(draw, 33);
-        const handleResize = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            const newColumns = canvas.width / fontSize;
-            for (let i = drops.length; i < newColumns; i++) {
-                drops[i] = 1;
-            }
-        };
-        window.addEventListener('resize', handleResize);
-        return () => {
-            clearInterval(interval);
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
-    return <canvas ref={canvasRef} className="fixed inset-0 z-0 opacity-20 pointer-events-none" />;
-};
-
-const GlitchText = ({ text, className }: { text: string, className?: string }) => {
-    return (
-        <div className={`relative inline-block ${className}`}>
-            <span className="relative z-10">{text}</span>
-            <motion.span
-                className="absolute inset-0 z-0 text-green-500 opacity-30 translate-x-[2px]"
-                animate={{ x: [0, -2, 2, -1, 0], opacity: [0.3, 0.5, 0.3] }}
-                transition={{ duration: 0.2, repeat: Infinity, repeatDelay: 3 }}
-            >
-                {text}
-            </motion.span>
-            <motion.span
-                className="absolute inset-0 z-0 text-red-500 opacity-30 -translate-x-[2px]"
-                animate={{ x: [0, 2, -2, 1, 0], opacity: [0.3, 0.5, 0.3] }}
-                transition={{ duration: 0.2, repeat: Infinity, repeatDelay: 3, delay: 0.1 }}
-            >
-                {text}
-            </motion.span>
-        </div>
-    );
-};
+// Data skill areas
+const skillAreas = [
+    { label: "Web Development", color: "text-blue-400" },
+    { label: "Data Science", color: "text-pink-400" },
+    { label: "Cybersecurity", color: "text-red-400" },
+    { label: "Game Dev", color: "text-purple-400" }
+];
 
 export const Coding = () => {
     return (
@@ -104,11 +48,11 @@ export const Coding = () => {
                 </Link>
                 <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span className="text-xs font-mono text-green-500">SYSTEM_ONLINE</span>
+                    <span className="text-xs font-mono text-green-500">SISTEM_AKTIF</span>
                 </div>
             </nav>
 
-            {/* SEKSI 1: HERO (Full Screen) */}
+            {/* SEKSI 1: HERO */}
             <section className="h-screen flex flex-col items-center justify-center relative px-6">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#020202]/50 to-[#020202] pointer-events-none z-0"></div>
 
@@ -124,11 +68,8 @@ export const Coding = () => {
                         transition={{ delay: 0.2, duration: 0.8 }}
                         className="mb-8 relative inline-block"
                     >
-                        {/* Circle Background */}
                         <div className="absolute inset-0 bg-green-500/20 blur-[50px] rounded-full"></div>
-
-                        {/* Infinity/Loop Icon */}
-                        <img src="/logo oc coding.jpg" alt="OC Coding Logo" className="w-24 h-24 md:w-32 md:h-32 mx-auto relative z-10 rounded-full object-cover border-2 border-green-500/50" />
+                        <img src="/logo-oc-coding.jpg" alt="OC Coding Logo" className="w-24 h-24 md:w-32 md:h-32 mx-auto relative z-10 rounded-full object-cover border-2 border-green-500/50" />
                     </motion.div>
 
                     <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white mb-6 font-mono">
@@ -155,7 +96,7 @@ export const Coding = () => {
                     transition={{ delay: 1, duration: 1 }}
                     className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
                 >
-                    <span className="text-[10px] text-gray-600 font-mono uppercase tracking-[0.2em]">Scroll to Initialize</span>
+                    <span className="text-[10px] text-gray-600 font-mono uppercase tracking-[0.2em]">Gulir untuk Memulai</span>
                     <div className="w-px h-12 bg-gradient-to-b from-green-500/50 to-transparent"></div>
                 </motion.div>
             </section>
@@ -179,12 +120,7 @@ export const Coding = () => {
                                 <span className="text-white font-medium">Continuous Learning</span>.
                             </p>
                             <ul className="grid grid-cols-2 gap-4 pt-4 mt-6 border-t border-white/5">
-                                {[
-                                    { label: "Web Development", color: "text-blue-400" },
-                                    { label: "Data Science", color: "text-pink-400" },
-                                    { label: "Cybersecurity", color: "text-red-400" },
-                                    { label: "Game Dev", color: "text-purple-400" }
-                                ].map((item, i) => (
+                                {skillAreas.map((item, i) => (
                                     <li key={i} className="flex items-center gap-2 font-mono text-sm">
                                         <span className={`w-1.5 h-1.5 rounded-full bg-current ${item.color}`}></span>
                                         {item.label}
@@ -223,7 +159,7 @@ export const Coding = () => {
                 </div>
             </section>
 
-            {/* SEKSI 3: ALUR KOLABORASI (Vertical Cards) */}
+            {/* SEKSI 3: ALUR KOLABORASI */}
             <section className="py-24 px-6 md:px-20 relative bg-[#020202]">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16">
@@ -232,11 +168,7 @@ export const Coding = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[
-                            { step: "01", title: "Inisiasi", desc: "Buat konsep, tulis kode awal, atau rekam demo proyekmu.", icon: Code },
-                            { step: "02", title: "Publikasi", desc: "Upload ke repo atau media sosial dengan tagar komunitas.", icon: Share2 },
-                            { step: "03", title: "Sinergi", desc: "Undang kolaborator untuk review, refactor, dan scale-up.", icon: GitBranch },
-                        ].map((item, i) => (
+                        {collaborationSteps.map((item, i) => (
                             <motion.div
                                 key={i}
                                 initial={{ opacity: 0, y: 30 }}
@@ -257,7 +189,7 @@ export const Coding = () => {
                 </div>
             </section>
 
-            {/* SEKSI 4: PROJECTS (Grid) */}
+            {/* SEKSI 4: PROJECTS */}
             <section className="py-24 px-6 md:px-20 bg-[#030303] border-t border-white/5">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
@@ -268,7 +200,7 @@ export const Coding = () => {
                             <p className="text-gray-500 text-sm">Proyek unggulan yang dikembangkan oleh anggota.</p>
                         </div>
                         <button className="text-sm font-mono text-green-500 hover:text-white transition-colors flex items-center gap-2 border-b border-green-500/30 pb-1">
-                            VIEW ALL REPOSITORIES <ArrowLeft className="rotate-180" size={14} />
+                            LIHAT SEMUA REPOSITORY <ArrowLeft className="rotate-180" size={14} />
                         </button>
                     </div>
 
@@ -319,12 +251,7 @@ export const Coding = () => {
             <section className="py-20 px-6 border-t border-green-500/10 bg-[#010101] relative overflow-hidden">
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-green-500/50 to-transparent"></div>
                 <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative z-10">
-                    {[
-                        { label: "Lines of Code", value: "150K+", icon: Code },
-                        { label: "Active Projects", value: "24", icon: Layers },
-                        { label: "Contributors", value: "50+", icon: Globe },
-                        { label: "Uptime", value: "99.9%", icon: Server },
-                    ].map((stat, i) => (
+                    {stats.map((stat, i) => (
                         <div key={i} className="space-y-2">
                             <stat.icon size={20} className="mx-auto text-gray-600 mb-2" />
                             <div className="text-3xl font-bold text-white">{stat.value}</div>
@@ -333,7 +260,7 @@ export const Coding = () => {
                     ))}
                 </div>
                 <div className="text-center mt-20 text-gray-600 text-xs font-mono">
-                    <p>TERMINAL SESSION ACTIVE // ID: {Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
+                    <p>SESI TERMINAL AKTIF // ID: {Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
                 </div>
             </section>
         </div>

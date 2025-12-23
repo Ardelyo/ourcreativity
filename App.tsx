@@ -7,6 +7,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { Home } from './pages/Home'; // Muat Home secara eager
 
 // Lazy loaded pages
+// Lazy loaded pages
 const Karya = React.lazy(() => import('./pages/Karya').then(module => ({ default: module.Karya })));
 const Tim = React.lazy(() => import('./pages/Tim').then(module => ({ default: module.Tim })));
 const Info = React.lazy(() => import('./pages/Info').then(module => ({ default: module.Info })));

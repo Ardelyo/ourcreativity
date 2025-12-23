@@ -31,7 +31,7 @@ const highlights = [
     {
         title: "TAGWALL 90'S DESIGN",
         desc: "OurCreativity 0.7 - Total 80+ Participant",
-        image: "/Tagwall 90's Design - OurCreativity 0.7Terimakasih sebesar-besarnya buat partisipasi tagwall ka(1).jpg",
+        image: "/tagwall-90s-design.jpg",
         rotate: 6,
         margin: "mt-10",
         zIndex: "z-10"
@@ -39,7 +39,7 @@ const highlights = [
     {
         title: "TAGWALL BRUTALISM",
         desc: "OurCreativity 1.2 - Part 1",
-        image: "/𝗧𝗔𝗚𝗪𝗔𝗟𝗟 𝗕𝗥𝗨𝗧𝗔𝗟𝗜𝗦𝗠 - 𝗢𝗨𝗥 𝗖𝗥𝗘𝗔𝗧𝗜𝗩𝗜𝗧𝗬 [𝟭.𝟮]𝗣𝗮𝗿𝘁 𝟭Tagwall Produ-1.webp",
+        image: "/tagwall-brutalism.webp",
         rotate: -3,
         margin: "mt-0",
         zIndex: "z-20"
@@ -47,7 +47,7 @@ const highlights = [
     {
         title: "TAGWALL KEMERDEKAAN",
         desc: "Lekas Sembuh Indonesiaku. 70+",
-        image: "/𝗧𝗔𝗚𝗪𝗔𝗟𝗟 𝗞𝗘𝗠𝗘𝗥𝗗𝗘𝗞𝗔𝗔𝗡 - 𝙊𝙪𝙧 𝘾𝙧𝙚𝙖𝙩𝙞𝙫𝙞𝙩𝙮Lekas Sembuh Indonesiaku. 70.webp",
+        image: "/tagwall-kemerdekaan.webp",
         rotate: 3,
         margin: "mt-20",
         zIndex: "z-10"
@@ -55,7 +55,7 @@ const highlights = [
     {
         title: "TAGWALL SUPERHERO",
         desc: "OurCreativity 1.1 - Total 80+ Participant",
-        image: "/𝗧𝗮𝗴𝘄𝗮𝗹𝗹 𝗦𝘂𝗽𝗲𝗿𝗵𝗲𝗿𝗼 - 𝗢𝘂𝗿 𝗖𝗿𝗲𝗮𝘁𝗶𝘃𝗶𝘁𝘆 [𝟭.𝟭]Total 80+ Participant ( .webp",
+        image: "/tagwall-superhero.webp",
         rotate: -6,
         margin: "mt-5",
         zIndex: "z-0"
@@ -102,7 +102,7 @@ export const Graphics = () => {
                                 <span className="font-mono text-purple-400 text-sm">[ DIVISI_01: DESAIN GRAFIS ]</span>
                                 <span className="font-mono text-purple-500/60 text-[10px] mt-1 tracking-widest">IG: @ocdesaingrafis</span>
                             </div>
-                            <img src="/logo ocdesain.jpg" alt="OC Design Logo" className="w-12 h-12 rounded-full border border-purple-500/50 object-cover" />
+                            <img src="/logo-oc-desain.jpg" alt="OC Design Logo" className="w-12 h-12 rounded-full border border-purple-500/50 object-cover" />
                         </div>
 
                         <h1 className="text-[10vw] leading-[0.85] font-black uppercase tracking-tighter mix-blend-difference mb-8">

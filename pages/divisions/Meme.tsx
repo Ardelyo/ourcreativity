@@ -52,7 +52,7 @@ export const Meme = () => {
                     <div className="inline-block relative mb-8 group">
                         <div className="absolute inset-0 bg-rose-500 rounded-full blur-2xl opacity-10 group-hover:opacity-30 transition-opacity duration-500"></div>
                         <img
-                            src="/logo oc meme.jpg"
+                            src="/logo-oc-meme.jpg"
                             alt="Logo Divisi Meme"
                             className="w-40 h-40 md:w-52 md:h-52 rounded-full border-2 border-zinc-800 relative z-10 group-hover:scale-105 transition-transform duration-300"
                         />

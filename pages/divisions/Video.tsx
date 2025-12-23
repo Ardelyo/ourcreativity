@@ -7,45 +7,11 @@ import {
     Video, Info, Zap, Camera, Mic, Palette, Wand2, Aperture, Music
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-// --- Data Bahasa Indonesia ---
-const workGallery = [
-    { title: "OC Showcase Vol. 1", type: "Reel Collage", thumb: "/assets/gallery/v_gallery_1.png" },
-    { title: "OC Showcase Vol. 2", type: "Motion Collage", thumb: "/assets/gallery/v_gallery_2.png" },
-];
-
-const stats = [
-    { label: "PROYEK SELESAI", val: "100+" },
-    { label: "JAM RENDER", val: "5000+" },
-    { label: "RESOLUSI MAK", val: "8K" }
-];
-
-// --- Components ---
-
-const Timecode = ({ scrollProgress }: { scrollProgress: any }) => {
-    const [time, setTime] = useState("00:00:00:00");
-
-    useTransform(scrollProgress, (latest: number) => {
-        const totalFrames = Math.floor(latest * 8000); // More frames for longer scroll
-        const frames = totalFrames % 60;
-        const seconds = Math.floor((totalFrames / 60) % 60);
-        const minutes = Math.floor((totalFrames / 3600) % 60);
-        const hours = Math.floor(totalFrames / 216000);
-
-        const f = frames.toString().padStart(2, '0');
-        const s = seconds.toString().padStart(2, '0');
-        const m = minutes.toString().padStart(2, '0');
-        const h = hours.toString().padStart(2, '0');
-
-        return `${h}:${m}:${s}:${f}`;
-    }).on("change", (latest) => setTime(latest));
-
-    return (
-        <div className="font-mono text-blue-400 text-sm md:text-lg tracking-widest font-bold drop-shadow-md">
-            {time}
-        </div>
-    );
-};
+import { Timecode } from '../../components/video';
+import {
+    workGallery, stats, menuItems, projectFolders,
+    activeEffects, editingTags, vfxTags, colorPalette
+} from '../../data/videoPageData';
 
 export const VideoPage = () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -101,7 +67,7 @@ export const VideoPage = () => {
                             <span className="hidden sm:inline">Our Creativity<span className="text-orange-500">.prproj</span></span>
                         </Link>
                         <div className="hidden lg:flex gap-4 text-[#888]">
-                            {["Berkas", "Ubah", "Klip", "Urutan", "Penanda", "Grafis", "Jendela", "Bantuan"].map(m => (
+                            {menuItems.map(m => (
                                 <span key={m} className="hover:text-white cursor-pointer transition-colors">{m}</span>
                             ))}
                         </div>
@@ -127,7 +93,7 @@ export const VideoPage = () => {
                         </div>
                         <div className="flex-1 p-2 overflow-y-auto custom-scrollbar space-y-4">
                             <div className="grid grid-cols-2 gap-2">
-                                {["Urutan_Final", "Rekaman_Mentah", "Audio_SFX", "Grafis_VFX"].map(f => (
+                                {projectFolders.map(f => (
                                     <div key={f} className="aspect-square bg-[#111] border border-[#333] rounded hover:border-orange-500 flex flex-col items-center justify-center p-2 text-gray-600 group cursor-pointer transition-colors">
                                         <Hash size={20} className="group-hover:text-orange-500 transition-colors" />
                                         <span className="text-[9px] mt-1 text-center font-medium group-hover:text-gray-300">{f}</span>
@@ -228,7 +194,7 @@ export const VideoPage = () => {
                                             Di sini kita mulai rangkai cerita. Pilih momen terbaik dari ratusan klip mentah dan susun jadi alur yang asik ditonton.
                                         </p>
                                         <div className="flex gap-2">
-                                            {["Multicam", "Pacing", "Storytelling"].map(t => (
+                                            {editingTags.map(t => (
                                                 <span key={t} className="px-2 py-1 border border-white/20 rounded text-[10px] text-gray-300">{t}</span>
                                             ))}
                                         </div>
@@ -260,7 +226,7 @@ export const VideoPage = () => {
                                             Tambahin grafis keren, bersihin gambar yang kurang bagus, dan bikin hal-hal yang impossible jadi nyata di layar.
                                         </p>
                                         <div className="flex justify-end gap-2">
-                                            {["Compositing", "Motion Graphics", "3D Tracker"].map(t => (
+                                            {vfxTags.map(t => (
                                                 <span key={t} className="px-2 py-1 border border-purple-500/30 bg-purple-500/10 rounded text-[10px] text-purple-300">{t}</span>
                                             ))}
                                         </div>
@@ -292,8 +258,7 @@ export const VideoPage = () => {
                                         </p>
                                     </div>
                                     <div className="w-1/2 h-64 flex gap-2">
-                                        {/* Color Palette Strips */}
-                                        {['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-teal-500', 'bg-blue-500', 'bg-indigo-500'].map((c, i) => (
+                                        {colorPalette.map((c, i) => (
                                             <motion.div
                                                 key={i}
                                                 initial={{ height: "10%" }}
@@ -436,11 +401,7 @@ export const VideoPage = () => {
                             </div>
                             <div className="border-t border-[#333] pt-4 space-y-4">
                                 <div className="text-[10px] font-bold text-gray-500 uppercase">Efek Aktif</div>
-                                {[
-                                    { n: "Warna Lumetri", c: "bg-purple-500" },
-                                    { n: "Penstabil Gambar", c: "bg-blue-500" },
-                                    { n: "Peredam Derau", c: "bg-green-500" }
-                                ].map(e => (
+                                {activeEffects.map(e => (
                                     <div key={e.n} className="flex items-center justify-between p-2 bg-[#222] border border-[#333] rounded-sm">
                                         <span className="text-[10px] text-gray-300">{e.n}</span>
                                         <div className={`w-1.5 h-1.5 ${e.c} rounded-full`}></div>

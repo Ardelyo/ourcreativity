@@ -51,10 +51,9 @@ export const Navbar = () => {
                 animate={{
                     y: 0,
                     opacity: 1,
-                    width: isMobileMenuOpen ? "100%" : (showFullMenu ? "auto" : "fit-content"),
+                    width: isMobileMenuOpen ? "100%" : (showFullMenu ? "auto" : "max-content"),
                     maxWidth: isMobileMenuOpen ? "500px" : "100%",
-                    borderRadius: isMobileMenuOpen ? 32 : 9999,
-                    height: isMobileMenuOpen ? "auto" : "auto"
+                    borderRadius: isMobileMenuOpen ? "32px" : "100px",
                 }}
                 transition={springTransition}
                 onHoverStart={() => setIsHovered(true)}

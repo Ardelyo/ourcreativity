@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BrutalistCard } from '../components/BrutalistCard';
 import { ContributorModal } from '../components/ContributorModal';
 import { FetchErrorState } from '../components/FetchErrorState';
-import { Users } from 'lucide-react';
+import { Users, AlertCircle, Github } from 'lucide-react';
 
 // --- Types ---
 interface Contributor {
@@ -60,18 +60,10 @@ const OWNER_LOGIN = 'Ardelyo';
 const REPO_OWNER = 'Ardelyo';
 const REPO_NAME = 'OurCreativity';
 
-// Cache untuk mengurangi API calls
-const CACHE_KEY = 'ourcreativity_contributors_cache';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 menit
-
-// Fallback data dengan kontributor asli dari repo OurCreativity
-// Data ini digunakan ketika GitHub API terkena rate limit (403)
-const FALLBACK_CONTRIBUTORS: Contributor[] = [
-  {
-    login: 'Ardelyo',
-    avatar_url: 'https://avatars.githubusercontent.com/u/117548799?v=4',
-    html_url: 'https://github.com/Ardelyo',
-    contributions: 13
+const BIO_MAPPING: Record<string, BioData> = {
+  'Ardelyo': {
+    bio: "Pencetus OurCreativity, pengembang utama, dan desainer. Berfokus pada visi jangka panjang platform.",
+    website: "https://ardelyo.com"
   },
   'mrmambu': {
     bio: "Design Sorcerer & Frontend Extraordinaire. Crafting pixel-perfect experiences.",
@@ -81,9 +73,31 @@ const FALLBACK_CONTRIBUTORS: Contributor[] = [
   }
 };
 
-// Cache
-const CACHE_KEY = 'ourcreativities_contributors_v2_cache';
+// Cache untuk mengurangi API calls
+const CACHE_KEY = 'ourcreativity_contributors_v3_cache';
 const CACHE_DURATION = 15 * 60 * 1000; // 15 menit
+
+// Fallback data dengan kontributor asli dari repo OurCreativity
+const FALLBACK_CONTRIBUTORS: Contributor[] = [
+  {
+    login: 'Ardelyo',
+    avatar_url: 'https://avatars.githubusercontent.com/u/117548799?v=4',
+    html_url: 'https://github.com/Ardelyo',
+    contributions: 13
+  },
+  {
+    login: 'mrmambu',
+    avatar_url: 'https://avatars.githubusercontent.com/u/12300000?v=4',
+    html_url: 'https://github.com/mrmambu',
+    contributions: 5
+  },
+  {
+    login: 'Kira262',
+    avatar_url: 'https://avatars.githubusercontent.com/u/87600000?v=4',
+    html_url: 'https://github.com/Kira262',
+    contributions: 3
+  }
+];
 
 export const Tim = () => {
   const [contributors, setContributors] = useState<EnhancedContributor[]>([]);
@@ -97,106 +111,109 @@ export const Tim = () => {
       setLoading(true);
       setError(null);
 
-        const cached = localStorage.getItem(CACHE_KEY);
-        if (cached) {
-          const { contributors: cData, reporters: rData, timestamp } = JSON.parse(cached);
-          if (Date.now() - timestamp < CACHE_DURATION) {
-            setContributors(cData);
-            setReporters(rData);
-            setLoading(false);
-            return;
-          }
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { contributors: cData, reporters: rData, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp < CACHE_DURATION) {
+          setContributors(cData);
+          setReporters(rData);
+          setLoading(false);
+          return;
         }
+      }
 
-        // 1. Fetch Contributors
-        const contribRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contributors`);
-        if (!contribRes.ok) throw new Error(`GitHub API Error: ${contribRes.status}`);
-        const contribData: Contributor[] = await contribRes.json();
+      // 1. Fetch Contributors
+      const contribRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contributors`);
+      if (!contribRes.ok) throw new Error(`GitHub API Error: ${contribRes.status}`);
+      const contribData: Contributor[] = await contribRes.json();
 
-        // 2. Fetch Issues to find reporters
-        const issuesRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&per_page=100`);
-        let reportersMap: Record<string, ReporterData> = {};
+      // 2. Fetch Issues to find reporters
+      const issuesRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&per_page=100`);
+      let reportersMap: Record<string, ReporterData> = {};
 
-        if (issuesRes.ok) {
-          const issuesData: GitHubIssue[] = await issuesRes.json();
-          issuesData.forEach(issue => {
-            const login = issue.user.login;
-            // Exclude core contributors from reporters list for clarity
-            if (!contribData.some(c => c.login === login)) {
-              if (!reportersMap[login]) {
-                reportersMap[login] = {
-                  login: login,
-                  avatar_url: issue.user.avatar_url,
-                  html_url: issue.user.html_url,
-                  issueTitle: issue.title,
-                  issueCount: 1
-                };
-              } else {
-                reportersMap[login].issueCount += 1;
-              }
+      if (issuesRes.ok) {
+        const issuesData: GitHubIssue[] = await issuesRes.json();
+        issuesData.forEach(issue => {
+          const login = issue.user.login;
+          // Exclude core contributors from reporters list for clarity
+          if (!contribData.some(c => c.login === login)) {
+            if (!reportersMap[login]) {
+              reportersMap[login] = {
+                login: login,
+                avatar_url: issue.user.avatar_url,
+                html_url: issue.user.html_url,
+                issueTitle: issue.title,
+                issueCount: 1
+              };
+            } else {
+              reportersMap[login].issueCount += 1;
             }
-          });
-        }
+          }
+        });
+      }
 
-        // 3. Fetch Bio for contributors (individual profile calls needed but let's use mapping + fallback)
-        const enhancedContributors: EnhancedContributor[] = contribData.map(c => {
+      // 3. Fetch Bio for contributors (individual profile calls needed but let's use mapping + fallback)
+      const enhancedContributors: EnhancedContributor[] = contribData.map(c => {
+        const mappedBio = BIO_MAPPING[c.login];
+        return {
+          ...c,
+          totalAdditions: 0,
+          totalDeletions: 0,
+          bio: mappedBio?.bio || "Kontributor di OurCreativity.",
+          socials: {
+            twitter: mappedBio?.twitter,
+            website: mappedBio?.website
+          }
+        };
+      });
+
+      const sortedContribs = enhancedContributors.sort((a, b) => {
+        if (a.login === OWNER_LOGIN) return -1;
+        if (b.login === OWNER_LOGIN) return 1;
+        return b.contributions - a.contributions;
+      });
+
+      const sortedReporters = Object.values(reportersMap).sort((a, b) => b.issueCount - a.issueCount);
+
+      setContributors(sortedContribs);
+      setReporters(sortedReporters);
+
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
+        contributors: sortedContribs,
+        reporters: sortedReporters,
+        timestamp: Date.now()
+      }));
+
+      console.log('✅ Data berhasil dimuat');
+
+    } catch (err: any) {
+      console.error("❌ Error:", err);
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { data } = JSON.parse(cached);
+        setContributors(data);
+        console.log('⚠️ Menggunakan cache lama');
+      } else {
+        const fallbackEnhanced: EnhancedContributor[] = FALLBACK_CONTRIBUTORS.map(c => {
           const mappedBio = BIO_MAPPING[c.login];
           return {
             ...c,
             totalAdditions: 0,
             totalDeletions: 0,
-            bio: mappedBio?.bio || "Kontributor di OurCreativity.",
+            bio: mappedBio?.bio || "Kontributor OurCreativity.",
             socials: {
               twitter: mappedBio?.twitter,
               website: mappedBio?.website
             }
           };
         });
-
-        const sortedContribs = enhancedContributors.sort((a, b) => {
-          if (a.login === OWNER_LOGIN) return -1;
-          if (b.login === OWNER_LOGIN) return 1;
-          return b.contributions - a.contributions;
-        });
-
-        const sortedReporters = Object.values(reportersMap).sort((a, b) => b.issueCount - a.issueCount);
-
-        setContributors(sortedContribs);
-        setReporters(sortedReporters);
-
-        localStorage.setItem(CACHE_KEY, JSON.stringify({
-          contributors: sortedContribs,
-          reporters: sortedReporters,
-          timestamp: Date.now()
-        }));
-
-        console.log('✅ Data berhasil dimuat');
-
-      } catch (err: any) {
-        console.error("❌ Error:", err);
-        const cached = localStorage.getItem(CACHE_KEY);
-        if (cached) {
-          const { data } = JSON.parse(cached);
-          setContributors(data);
-          console.log('⚠️ Menggunakan cache lama');
-        } else {
-          console.log('🔄 Menggunakan fallback');
-          const fallbackEnhanced: EnhancedContributor[] = FALLBACK_CONTRIBUTORS.map(c => {
-            const isOwner = c.login.toLowerCase() === OWNER_LOGIN.toLowerCase();
-            return {
-              ...c,
-              totalAdditions: 0,
-              totalDeletions: 0,
-              persona: generatePersona(c.login, isOwner)
-            };
-          });
-          setContributors(fallbackEnhanced);
-        }
-        setError('Terjadi kesalahan saat memuat data kontributor. Menampilkan data fallback atau cache.');
-      } finally {
-        setLoading(false);
+        setContributors(fallbackEnhanced);
       }
-    };
+      setError('Terjadi kesalahan saat memuat data kontributor. Menampilkan data fallback atau cache.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -224,13 +241,14 @@ export const Tim = () => {
         <h1 className="text-[12vw] md:text-[8vw] leading-[0.85] font-black uppercase tracking-tighter mb-8">
           KON<span className="text-white bg-rose-600 px-4 shadow-[10px_10px_0px_0px_rgba(225,29,72,0.3)]">TRIB</span>UTOR
         </h1>
+      </motion.div>
 
       {/* Error Banner */}
       {error && !loading && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-4 flex items-center justify-between"
+          className="mb-8 relative z-10 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-4 flex items-center justify-between"
         >
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
@@ -244,20 +262,6 @@ export const Tim = () => {
           </button>
         </motion.div>
       )}
-
-      {/* Loading */}
-      {loading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center h-64 gap-6"
-        >
-          <div className="relative w-16 h-16">
-            <div className="absolute inset-0 border-t-2 border-r-2 border-rose-500 rounded-full animate-spin" />
-            <div className="absolute inset-2 border-t-2 border-l-2 border-purple-500 rounded-full animate-spin" style={{ animationDirection: 'reverse' }} />
-          </div>
-        </div>
-      </motion.div>
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-40 relative z-10">

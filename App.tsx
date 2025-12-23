@@ -17,6 +17,7 @@ const VideoPage = React.lazy(() => import('./pages/divisions/Video').then(module
 const Writing = React.lazy(() => import('./pages/divisions/Writing').then(module => ({ default: module.Writing })));
 const Meme = React.lazy(() => import('./pages/divisions/Meme').then(module => ({ default: module.Meme })));
 const Coding = React.lazy(() => import('./pages/divisions/Coding').then(module => ({ default: module.Coding })));
+const V5Launch = React.lazy(() => import('./pages/V5Launch').then(module => ({ default: module.V5Launch })));
 
 const Loading = () => (
   <div className="flex items-center justify-center min-h-[60vh]">
@@ -52,6 +53,7 @@ const AnimatedRoutes = () => {
               <Route path="/division/writing" element={<Writing />} />
               <Route path="/division/meme" element={<Meme />} />
               <Route path="/division/coding" element={<Coding />} />
+              <Route path="/v5-launch" element={<V5Launch />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

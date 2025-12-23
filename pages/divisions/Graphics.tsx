@@ -29,33 +29,33 @@ const stats = [
 
 const highlights = [
     {
-        title: "POSTER DESIGN",
-        desc: "Event 2024",
-        image: "https://images.unsplash.com/photo-1572375992501-4b0892d50c69?q=80&w=800&auto=format&fit=crop",
+        title: "TAGWALL 90'S DESIGN",
+        desc: "OurCreativity 0.7 - Total 80+ Participant",
+        image: "/Tagwall 90's Design - OurCreativity 0.7Terimakasih sebesar-besarnya buat partisipasi tagwall ka(1).jpg",
         rotate: 6,
         margin: "mt-10",
         zIndex: "z-10"
     },
     {
-        title: "UI EXPLORATION",
-        desc: "Mobile App Concept",
-        image: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?q=80&w=800&auto=format&fit=crop",
+        title: "TAGWALL BRUTALISM",
+        desc: "OurCreativity 1.2 - Part 1",
+        image: "/𝗧𝗔𝗚𝗪𝗔𝗟𝗟 𝗕𝗥𝗨𝗧𝗔𝗟𝗜𝗦𝗠 - 𝗢𝗨𝗥 𝗖𝗥𝗘𝗔𝗧𝗜𝗩𝗜𝗧𝗬 [𝟭.𝟮]𝗣𝗮𝗿𝘁 𝟭Tagwall Produ-1.webp",
         rotate: -3,
         margin: "mt-0",
         zIndex: "z-20"
     },
     {
-        title: "BRAND IDENTITY",
-        desc: "Logo Folio Vol. 1",
-        image: "https://images.unsplash.com/photo-1626785774573-4b799314346d?q=80&w=800&auto=format&fit=crop",
+        title: "TAGWALL KEMERDEKAAN",
+        desc: "Lekas Sembuh Indonesiaku. 70+",
+        image: "/𝗧𝗔𝗚𝗪𝗔𝗟𝗟 𝗞𝗘𝗠𝗘𝗥𝗗𝗘𝗞𝗔𝗔𝗡 - 𝙊𝙪𝙧 𝘾𝙧𝙚𝙖𝙩𝙞𝙫𝙞𝙩𝙮Lekas Sembuh Indonesiaku. 70.webp",
         rotate: 3,
         margin: "mt-20",
         zIndex: "z-10"
     },
     {
-        title: "ILLUSTRATION",
-        desc: "Character Design",
-        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop",
+        title: "TAGWALL SUPERHERO",
+        desc: "OurCreativity 1.1 - Total 80+ Participant",
+        image: "/𝗧𝗮𝗴𝘄𝗮𝗹𝗹 𝗦𝘂𝗽𝗲𝗿𝗵𝗲𝗿𝗼 - 𝗢𝘂𝗿 𝗖𝗿𝗲𝗮𝘁𝗶𝘃𝗶𝘁𝘆 [𝟭.𝟭]Total 80+ Participant ( .webp",
         rotate: -6,
         margin: "mt-5",
         zIndex: "z-0"
@@ -98,8 +98,11 @@ export const Graphics = () => {
                         className="relative z-10"
                     >
                         <div className="flex items-start justify-between mb-4 border-b border-purple-500/30 pb-4">
-                            <span className="font-mono text-purple-400 text-sm">[ DIVISI_01: DESAIN GRAFIS ]</span>
-                            <Maximize2 className="text-purple-500" size={24} />
+                            <div className="flex flex-col">
+                                <span className="font-mono text-purple-400 text-sm">[ DIVISI_01: DESAIN GRAFIS ]</span>
+                                <span className="font-mono text-purple-500/60 text-[10px] mt-1 tracking-widest">IG: @ocdesaingrafis</span>
+                            </div>
+                            <img src="/logo ocdesain.jpg" alt="OC Design Logo" className="w-12 h-12 rounded-full border border-purple-500/50 object-cover" />
                         </div>
 
                         <h1 className="text-[10vw] leading-[0.85] font-black uppercase tracking-tighter mix-blend-difference mb-8">

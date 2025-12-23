@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { PlayCircle, ArrowRight } from 'lucide-react';
+import { PlayCircle, ArrowRight, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Hero = () => {
@@ -60,17 +60,22 @@ export const Hero = () => {
                 transition={{ delay: 0.8 }}
                 className="flex flex-col sm:flex-row items-center gap-4"
             >
-                <button className="group relative px-8 py-4 bg-white text-black rounded-full font-bold text-sm overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]">
+                <Link to="/karya" className="group relative px-8 py-4 bg-white text-black rounded-full font-bold text-sm overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]">
                     <span className="relative z-10 flex items-center gap-2">
                         Mulai Jelajahi <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                     </span>
                     <div className="absolute inset-0 bg-gray-200 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
-                </button>
+                </Link>
 
-                <button className="px-8 py-4 bg-white/5 border border-white/10 backdrop-blur-sm text-white rounded-full font-medium text-sm hover:bg-white/10 transition-all flex items-center gap-3">
-                    <PlayCircle className="w-5 h-5 text-gray-400 group-hover:text-white" />
-                    Tonton Reel
-                </button>
+                <a
+                    href="https://drive.google.com/file/d/17VIqQTeQCwX64zuzmQWAFy47KGdxJENM/view?usp=sharing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-6 py-4 border border-rose-500/30 bg-rose-500/5 text-rose-400 rounded-full font-medium text-sm hover:bg-rose-500/10 transition-all flex items-center gap-2"
+                >
+                    <BookOpen className="w-4 h-4" />
+                    Buku Panduan
+                </a>
             </motion.div>
         </section>
     );

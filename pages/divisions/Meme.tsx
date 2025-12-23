@@ -106,13 +106,13 @@ export const Meme = () => {
 
                     <div className="space-y-6">
                         {[
-                            { icon: <Camera />, title: "PRODUKSI KONTEN", desc: "Feeds harian di Instagram & TikTok." },
-                            { icon: <MessageSquare />, title: "KOLABORASI", desc: "Bekerjasama lintas divisi untuk event spesial." },
-                            { icon: <Zap />, title: "RISET TREN", desc: "Menganalisis humor digital terkini." }
+                            { icon: Camera, title: "PRODUKSI KONTEN", desc: "Feeds harian di Instagram & TikTok." },
+                            { icon: MessageSquare, title: "KOLABORASI", desc: "Bekerjasama lintas divisi untuk event spesial." },
+                            { icon: Zap, title: "RISET TREN", desc: "Menganalisis humor digital terkini." }
                         ].map((item, idx) => (
                             <div key={idx} className="flex items-start gap-6 group">
                                 <div className="text-zinc-600 group-hover:text-white transition-colors pt-1">
-                                    {React.cloneElement(item.icon as React.ReactElement, { size: 32 })}
+                                    <item.icon size={32} />
                                 </div>
                                 <div>
                                     <h3 className="text-3xl font-meme group-hover:text-rose-500 transition-colors uppercase">{item.title}</h3>

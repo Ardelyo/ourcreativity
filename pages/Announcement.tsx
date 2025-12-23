@@ -51,7 +51,7 @@ export const Announcement = () => {
                     className="relative z-10"
                 >
                     <span className="text-purple-400 font-bold tracking-widest text-xs uppercase mb-4 block">Pusat Informasi</span>
-                    <h1 className="text-4xl md:text-7xl font-serif font-bold mb-6 tracking-tight">What's New?</h1>
+                    <h1 className="text-4xl md:text-7xl font-serif font-bold mb-6 tracking-tight">Ada Apa yang Baru?</h1>
                     <p className="text-gray-400 max-w-2xl mx-auto text-base md:text-lg mb-10">
                         Ikuti perkembangan terbaru dari komunitas dan evolusi teknis platform kami.
                     </p>
@@ -117,7 +117,7 @@ export const Announcement = () => {
                                             <div className="flex-1 space-y-8">
                                                 <div className="flex items-center gap-4">
                                                     <span className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-sm font-bold text-white flex items-center gap-2 shadow-lg">
-                                                        <Sparkles size={14} className="text-yellow-400" /> FEATURED UPDATE
+                                                        <Sparkles size={14} className="text-yellow-400" /> UPDATE UTAMA
                                                     </span>
                                                     <span className="text-gray-400 text-sm font-mono">
                                                         {new Date(events[0].date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -139,7 +139,7 @@ export const Announcement = () => {
 
                                                 <div className="flex items-center gap-4 pt-4">
                                                     <Link to="/v5-launch" className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-200 transition-colors flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-                                                        Visualized Presentation <Rocket size={20} />
+                                                        Presentasi Visual <Rocket size={20} />
                                                     </Link>
                                                 </div>
                                             </div>

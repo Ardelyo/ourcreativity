@@ -156,7 +156,12 @@ export const BentoGrid = () => {
 
             {/* 6. Kartu Panduan - Unduhan Menonjol */}
             <Card className="md:col-span-4 bg-gradient-to-br from-[#111] to-[#050505] border border-white/5 hover:border-white/20 group relative" delay={0.6}>
-                <Link to="/info" className="flex flex-col h-full justify-between relative z-10">
+                <a
+                    href="https://drive.google.com/file/d/17VIqQTeQCwX64zuzmQWAFy47KGdxJENM/view?usp=sharing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col h-full justify-between relative z-10"
+                >
                     <div>
                         <div className="flex items-center gap-2 mb-3">
                             <FileText size={16} className="text-rose-400" />
@@ -172,7 +177,7 @@ export const BentoGrid = () => {
                         </div>
                         <Download size={16} className="text-white" />
                     </div>
-                </Link>
+                </a>
                 {/* Blur Dekoratif */}
                 <div className="absolute bottom-0 right-0 w-24 h-24 bg-rose-500/10 blur-[40px] rounded-full pointer-events-none"></div>
             </Card>

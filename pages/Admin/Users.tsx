@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, MoreVertical, Check, X, Shield, User, Loader2 } from 'lucide-react';
+import { Search, Filter, MoreVertical, Check, X, Shield, User, Loader2, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { Pagination } from '../../components/Pagination';
@@ -74,7 +74,31 @@ export const Users = () => {
         }
     });
 
-    const handleAction = (userId: string, action: 'approve' | 'reject' | 'make_admin' | 'remove_admin') => {
+    const deleteMutation = useMutation({
+        mutationFn: async (userId: string) => {
+            const { error } = await supabase
+                .from('profiles')
+                .delete()
+                .eq('id', userId);
+            if (error) throw error;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['users'] });
+            alert('Pengguna berhasil dihapus.');
+        },
+        onError: (error) => {
+            console.error('Delete failed:', error);
+            alert('Gagal menghapus pengguna.');
+        }
+    });
+
+    const handleAction = (userId: string, action: 'approve' | 'reject' | 'make_admin' | 'remove_admin' | 'delete') => {
+        if (action === 'delete') {
+            if (window.confirm('Apakah Anda yakin ingin menghapus pengguna ini secara permanen? Semua data profil akan hilang.')) {
+                deleteMutation.mutate(userId);
+            }
+            return;
+        }
         let updates = {};
         if (action === 'approve') updates = { is_approved: true };
         if (action === 'reject') updates = { is_approved: false };
@@ -217,6 +241,14 @@ export const Users = () => {
                                                 >
                                                     {user.role === 'admin' ? <User size={18} /> : <Shield size={18} />}
                                                 </button>
+                                                <button
+                                                    onClick={() => handleAction(user.id, 'delete')}
+                                                    className="w-10 h-10 bg-rose-500/10 text-rose-500 rounded-xl hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center shadow-lg shadow-rose-900/10"
+                                                    title="Hapus Pengguna"
+                                                    disabled={deleteMutation.isPending}
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -232,18 +264,20 @@ export const Users = () => {
                     </table>
                 </div>
 
-                {users.length > 0 && (
-                    <div className="px-8 pb-8">
-                        <Pagination
-                            page={page}
-                            totalPages={totalPages}
-                            hasMore={!isPlaceholderData && page < totalPages}
-                            onPageChange={(newPage) => setPage(newPage)}
-                            loading={isPlaceholderData}
-                        />
-                    </div>
-                )}
-            </motion.div>
-        </div>
+                {
+                    users.length > 0 && (
+                        <div className="px-8 pb-8">
+                            <Pagination
+                                page={page}
+                                totalPages={totalPages}
+                                hasMore={!isPlaceholderData && page < totalPages}
+                                onPageChange={(newPage) => setPage(newPage)}
+                                loading={isPlaceholderData}
+                            />
+                        </div>
+                    )
+                }
+            </motion.div >
+        </div >
     );
 };

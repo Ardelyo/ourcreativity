@@ -9,35 +9,31 @@ interface SlideBuilderProps {
 }
 
 export const SlideBuilder: React.FC<SlideBuilderProps> = ({ slides, onChange }) => {
-    const onDrop = (acceptedFiles: File[]) => {
+    const onDrop = async (acceptedFiles: File[]) => {
         if (slides.length + acceptedFiles.length > 10) {
             alert("Maximum 10 slides allowed");
             return;
         }
 
-        const newSlides = acceptedFiles.map((file, index) => {
-            const reader = new FileReader();
-            const id = Date.now().toString() + Math.random().toString();
+        const readFiles = acceptedFiles.map((file, index) => {
+            return new Promise<SlideContent>((resolve) => {
+                const reader = new FileReader();
+                const id = Date.now().toString() + Math.random().toString();
 
-            // We need to handle async reading, for simplicity in this MVP 
-            // we'll push a placeholder and update it when loaded
-            // Ideally we'd use a more robust logic but this works for basic preview
-            const slide: SlideContent = {
-                id,
-                type: 'image',
-                content: '', // Will update
-                order: slides.length + index
-            };
-
-            reader.onload = () => {
-                updateSlideContent(id, reader.result as string);
-            };
-            reader.readAsDataURL(file);
-
-            return slide;
+                reader.onload = () => {
+                    resolve({
+                        id,
+                        type: 'image',
+                        content: reader.result as string,
+                        order: slides.length + index
+                    });
+                };
+                reader.readAsDataURL(file);
+            });
         });
 
-        onChange([...slides, ...newSlides]);
+        const newSlidesFromFiles = await Promise.all(readFiles);
+        onChange([...slides, ...newSlidesFromFiles]);
     };
 
     const updateSlideContent = (id: string, content: string) => {
@@ -121,8 +117,8 @@ export const SlideBuilder: React.FC<SlideBuilderProps> = ({ slides, onChange }) 
                     <div
                         {...getRootProps()}
                         className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${isDragActive
-                                ? 'border-accent-purple bg-accent-purple/10'
-                                : 'border-white/10 hover:border-white/30 hover:bg-white/5'
+                            ? 'border-accent-purple bg-accent-purple/10'
+                            : 'border-white/10 hover:border-white/30 hover:bg-white/5'
                             }`}
                     >
                         <input {...getInputProps()} />

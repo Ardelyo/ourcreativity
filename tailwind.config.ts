@@ -41,7 +41,10 @@ export default {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
                 'hero-glow': 'conic-gradient(from 180deg at 50% 50%, #f43f5e 0deg, #8b5cf6 180deg, #10b981 360deg)',
                 'noise': "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E\")",
-            }
+            },
+            animation: {
+                'spin-slow': 'spin 8s linear infinite',
+            },
         },
     },
     plugins: [],

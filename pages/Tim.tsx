@@ -62,19 +62,23 @@ const REPO_NAME = 'OurCreativity';
 
 const BIO_MAPPING: Record<string, BioData> = {
   'Ardelyo': {
-    bio: "Pencetus OurCreativity, pengembang utama, dan desainer. Berfokus pada visi jangka panjang platform.",
+    bio: "Founder OurCreativity Edisi Coding, Website Developer 3 Years Experience.",
     website: "https://ardelyo.com"
   },
   'mrmambu': {
-    bio: "Design Sorcerer & Frontend Extraordinaire. Crafting pixel-perfect experiences.",
+    bio: "Penyihir Desain & Ahli Frontend. Menciptakan pengalaman pixel-perfect.",
   },
   'Kira262': {
-    bio: "Core contributor focused on system architecture and performance.",
+    bio: "Kontributor inti yang berfokus pada arsitektur sistem dan performa.",
+  },
+  'fk0u': {
+    bio: "Al-Ghani Desta Setyawan. Pengembang Full-Stack & Flutter. Meningkatkan fitur dan stabilitas platform dengan logika dan kreativitas.",
+    website: "https://kou.it.com"
   }
 };
 
 // Cache untuk mengurangi API calls
-const CACHE_KEY = 'ourcreativity_contributors_v3_cache';
+const CACHE_KEY = 'ourcreativity_contributors_v6_cache'; // Version 6: Fix fk0u contribution count to 2
 const CACHE_DURATION = 15 * 60 * 1000; // 15 menit
 
 // Fallback data dengan kontributor asli dari repo OurCreativity
@@ -93,9 +97,15 @@ const FALLBACK_CONTRIBUTORS: Contributor[] = [
   },
   {
     login: 'Kira262',
-    avatar_url: 'https://avatars.githubusercontent.com/u/87600000?v=4',
+    avatar_url: 'https://avatars.githubusercontent.com/u/96334657?v=4',
     html_url: 'https://github.com/Kira262',
     contributions: 3
+  },
+  {
+    login: 'fk0u',
+    avatar_url: 'https://avatars.githubusercontent.com/u/142812925?v=4',
+    html_url: 'https://github.com/fk0u',
+    contributions: 2
   }
 ];
 
@@ -135,8 +145,8 @@ export const Tim = () => {
         const issuesData: GitHubIssue[] = await issuesRes.json();
         issuesData.forEach(issue => {
           const login = issue.user.login;
-          // Exclude core contributors from reporters list for clarity
-          if (!contribData.some(c => c.login === login)) {
+          // Exclude core contributors and fk0u from reporters list
+          if (!contribData.some(c => c.login === login) && login !== 'fk0u') {
             if (!reportersMap[login]) {
               reportersMap[login] = {
                 login: login,
@@ -150,6 +160,19 @@ export const Tim = () => {
             }
           }
         });
+      }
+
+      // Ensure fk0u is in contributors if found in reporters or elsewhere
+      if (!contribData.some(c => c.login === 'fk0u')) {
+        // Find fk0u in reporters or use fallback
+        const fk0uInReporters = reportersMap['fk0u'];
+        contribData.push({
+          login: 'fk0u',
+          avatar_url: fk0uInReporters?.avatar_url || 'https://avatars.githubusercontent.com/u/142812925?v=4',
+          html_url: fk0uInReporters?.html_url || 'https://github.com/fk0u',
+          contributions: 2
+        });
+        delete reportersMap['fk0u'];
       }
 
       // 3. Fetch Bio for contributors (individual profile calls needed but let's use mapping + fallback)
@@ -173,7 +196,9 @@ export const Tim = () => {
         return b.contributions - a.contributions;
       });
 
-      const sortedReporters = Object.values(reportersMap).sort((a, b) => b.issueCount - a.issueCount);
+      const sortedReporters = Object.values(reportersMap)
+        .filter(r => r.login !== 'fk0u') // Double check exclusion
+        .sort((a, b) => b.issueCount - a.issueCount);
 
       setContributors(sortedContribs);
       setReporters(sortedReporters);
@@ -231,16 +256,20 @@ export const Tim = () => {
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-24 relative z-10"
+        className="mb-24 relative z-10 text-center"
       >
-        <div className="flex items-center gap-2 mb-6 font-mono text-sm text-rose-500">
-          <span>[ KOLEKTIF_V2.0 ]</span>
-          <div className="h-px flex-1 bg-rose-500/20" />
+        <div className="flex items-center justify-center gap-4 mb-6">
+          <div className="h-px w-12 bg-rose-500/20" />
+          <span className="font-mono text-sm text-rose-500 tracking-[0.2em] uppercase">Kolektif Kreatif</span>
+          <div className="h-px w-12 bg-rose-500/20" />
         </div>
 
-        <h1 className="text-[12vw] md:text-[8vw] leading-[0.85] font-black uppercase tracking-tighter mb-8">
-          KON<span className="text-white bg-rose-600 px-4 shadow-[10px_10px_0px_0px_rgba(225,29,72,0.3)]">TRIB</span>UTOR
+        <h1 className="text-7xl md:text-9xl font-serif font-light leading-none tracking-tight mb-8">
+          Para <span className="italic">Kreator</span>
         </h1>
+        <p className="text-gray-400 font-light text-lg max-w-2xl mx-auto">
+          Membangun masa depan OurCreativity melalui kode, seni, dan dedikasi.
+        </p>
       </motion.div>
 
       {/* Error Banner */}
@@ -272,14 +301,10 @@ export const Tim = () => {
         <div className="space-y-40 relative z-10">
           {/* Core Team Section */}
           <section>
-            <div className="flex items-end justify-between mb-12 border-b border-white/10 pb-6">
-              <div className="flex items-center gap-4">
-                <div className="bg-rose-500 text-white p-3 shadow-brutalist-rose">
-                  <Users size={32} />
-                </div>
-                <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight">Arsitek Utama</h2>
-              </div>
-              <span className="font-mono text-rose-500/50 text-sm hidden md:block">TOTAL: {contributors.length}</span>
+            <div className="flex flex-col items-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-serif italic mb-4">Kontributor Kode</h2>
+              <div className="h-1 w-20 bg-gradient-to-r from-rose-500 to-indigo-500 rounded-full" />
+              <span className="font-mono text-gray-500 text-xs mt-4 uppercase tracking-[0.2em]">Membangun arsitektur inti platform</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -301,17 +326,10 @@ export const Tim = () => {
           {/* Issue Reporters Section */}
           {reporters.length > 0 && (
             <section>
-              <div className="flex items-end justify-between mb-12 border-b border-white/10 pb-6">
-                <div className="flex items-center gap-4">
-                  <div className="bg-purple-500 text-white p-3 shadow-brutalist-purple">
-                    <AlertCircle size={32} />
-                  </div>
-                  <div>
-                    <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight">Pemburu Bug</h2>
-                    <p className="font-mono text-xs text-purple-400 mt-1 uppercase tracking-widest">Pahlawan Komunitas & Pelapor Masalah</p>
-                  </div>
-                </div>
-                <span className="font-mono text-purple-500/50 text-sm hidden md:block">TOTAL: {reporters.length}</span>
+              <div className="flex flex-col items-center mb-16">
+                <h2 className="text-4xl md:text-5xl font-serif italic mb-4 text-purple-400">Pelapor Masalah</h2>
+                <div className="h-1 w-20 bg-purple-500/30 rounded-full" />
+                <p className="font-mono text-xs text-purple-400/60 mt-4 uppercase tracking-widest text-center">Pahlawan Komunitas & Pelapor Masalah</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -324,7 +342,7 @@ export const Tim = () => {
                     isReporter={true}
                     issueCount={r.issueCount}
                     issueTitle={r.issueTitle}
-                    bio={`Kontribusi signifikan melalui laporan issue yang membangun stabilitas platform.`}
+                    bio={`Dedikasi luar biasa melalui laporan masalah yang membantu stabilitas platform.`}
                   />
                 ))}
               </div>

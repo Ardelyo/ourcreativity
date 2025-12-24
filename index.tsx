@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Analytics } from '@vercel/analytics/react';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './lib/react-query';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -13,8 +15,10 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <App />
-    <SpeedInsights />
-    <Analytics />
+    <QueryClientProvider client={queryClient}>
+      <App />
+      <SpeedInsights />
+      <Analytics />
+    </QueryClientProvider>
   </React.StrictMode>
 );

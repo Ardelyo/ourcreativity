@@ -11,6 +11,7 @@ import { PyodideSandbox } from './sandbox/PyodideSandbox';
 import { WebsiteEmbed } from './embed/WebsiteEmbed';
 import { DocumentUploader } from './editors/DocumentUploader';
 import { SlideBuilder } from './carousel/SlideBuilder';
+import { supabase } from '../../lib/supabase';
 
 // Re-using the props interface
 interface Props {
@@ -95,15 +96,128 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
         }, 500);
     };
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const url = reader.result as string;
-                setFormData(prev => ({ ...prev, image: url, image_url: url }));
-            };
-            reader.readAsDataURL(file);
+    const [isPublishing, setIsPublishing] = useState(false);
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        const file = files[0];
+
+        // Preview locally first
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const url = reader.result as string;
+            setFormData(prev => ({ ...prev, image: url }));
+        };
+        reader.readAsDataURL(file);
+
+        // Actual upload will happen on Publish to keep it efficient, 
+        // or we store the file object to upload now.
+        // Let's store the file for later upload to avoid abandoned files.
+        setFormData(prev => ({ ...prev, _pendingFile: file }));
+    };
+
+    const uploadFile = async (file: File): Promise<string> => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from('works')
+            .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data } = supabase.storage
+            .from('works')
+            .getPublicUrl(filePath);
+
+        return data.publicUrl;
+    };
+
+    const handlePublishInternal = async () => {
+        try {
+            setIsPublishing(true);
+            let finalData = { ...formData };
+
+            // Upload main image/video if exists
+            if (formData._pendingFile) {
+                const publicUrl = await uploadFile(formData._pendingFile as File);
+                finalData.image_url = publicUrl;
+                delete finalData._pendingFile;
+            }
+
+            // Upload slides images if any
+            if (formData.slides && formData.slides.length > 0) {
+                const updatedSlides = await Promise.all(formData.slides.map(async (slide) => {
+                    if (slide.type === 'image' && slide.content.startsWith('data:')) {
+                        // Extract blob from data URL
+                        const res = await fetch(slide.content);
+                        const blob = await res.blob();
+                        const file = new File([blob], `slide_${slide.id}.jpg`, { type: 'image/jpeg' });
+                        const publicUrl = await uploadFile(file);
+                        return { ...slide, content: publicUrl };
+                    }
+                    return slide;
+                }));
+                finalData.slides = updatedSlides;
+            }
+
+            // Determine type and thumbnail
+            let finalType = finalData.type || 'image';
+
+            // Priority: Trust the subMode selection
+            if (medium === 'visual') {
+                if (subMode === 'slide') {
+                    finalType = 'slide';
+                } else {
+                    finalType = 'image';
+                }
+            } else if (medium === 'kode') {
+                finalType = 'code';
+            } else if (medium === 'narasi') {
+                finalType = subMode === 'document' ? 'document' : 'text';
+            } else if (medium === 'sinema') {
+                finalType = subMode === 'embed' ? 'embed' : 'video';
+            }
+
+            // Fallback for image_url if it's a slide work
+            // If image_url is missing (because we uploaded slides but not a main image), use the first slide
+            if (!finalData.image_url && finalData.slides && finalData.slides.length > 0) {
+                const firstImageSlide = finalData.slides.find(s => s.type === 'image');
+                if (firstImageSlide) {
+                    finalData.image_url = firstImageSlide.content;
+                }
+            }
+
+            // SET THE FINAL TYPE
+            finalData.type = finalType;
+
+            // Cleanup payload before sending to Supabase
+            // We remove 'image' (the local preview base64) to keep the DB entry clean
+            if ('image' in finalData) delete (finalData as any).image;
+            if ('_pendingFile' in finalData) delete (finalData as any)._pendingFile;
+
+            // Wait for DB insertion to complete
+            await onPublish(finalData);
+
+            // Close and Reset
+            onClose();
+            setTimeout(() => {
+                setStep('selection');
+                setMedium(null);
+                setSubMode('default');
+                setFormData({
+                    title: '', description: '', author: '', division: 'graphics', tags: [], content: '', slides: []
+                });
+            }, 500);
+
+        } catch (error: any) {
+            console.error('Error during upload:', error);
+            alert('Gagal mengunggah media: ' + error.message);
+        } finally {
+            setIsPublishing(false);
         }
     };
 
@@ -410,10 +524,15 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                                     </button>
                                 ) : (
                                     <button
-                                        onClick={handlePublish}
-                                        className="bg-accent-rose text-white px-8 py-3 rounded-full font-bold hover:bg-rose-600 transition-colors flex items-center gap-2"
+                                        onClick={handlePublishInternal}
+                                        disabled={isPublishing}
+                                        className="bg-accent-rose text-white px-8 py-3 rounded-full font-bold hover:bg-rose-600 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        <Check size={18} /> Publish to Feed
+                                        {isPublishing ? (
+                                            <>Memproses... <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" /></>
+                                        ) : (
+                                            <><Check size={18} /> Publish to Feed</>
+                                        )}
                                     </button>
                                 )}
                             </div>

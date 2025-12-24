@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => {
   return {
     server: {
       port: 3000,
+      strictPort: false, // Allow fallback to next available port if 3000 is busy
       host: '0.0.0.0',
     },
     plugins: [react()],

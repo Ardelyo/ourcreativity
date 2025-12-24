@@ -15,7 +15,7 @@ export interface ChangelogEntry {
 export const changelogData: ChangelogEntry[] = [
     {
         version: "v5.0.0",
-        date: "November 2025",
+        date: "Desember 2024",
         title: "Revolution Edition",
         description: "Akhirnya rilis juga! Redesign total platform. Gila sih ini, bener-bener beda dari yang lama. Fokus ke estetika modern, interaksi yang 'mahal', dan experience yang premium abis.",
         type: "major",

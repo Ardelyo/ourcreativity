@@ -31,7 +31,7 @@ const DIVISIONS = [
     { id: 'meme', name: 'Divisi Meme' },
 ];
 
-const Studio = () => {
+export const Studio = () => {
     const navigate = useNavigate();
     const { user, profile, loading: authLoading } = useAuth();
 
@@ -588,4 +588,4 @@ const Studio = () => {
     );
 };
 
-export default Studio;
+

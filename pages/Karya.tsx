@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2, ArrowLeft, ArrowRight, ArrowDown } from 'lucide-react';
+import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2, ArrowLeft, ArrowRight, ArrowDown, Send, MessageCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom'; // Changed import
 import { FetchErrorState } from '../components/FetchErrorState';
+import { useAuth } from '../components/AuthProvider';
 
 import { supabase } from '../lib/supabase';
 
@@ -45,6 +46,7 @@ const generateCodePreview = (code: string, language: string = 'html'): string =>
 
 export const Karya = () => {
   const navigate = useNavigate();
+  const { user, profile } = useAuth();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const carouselRef = React.useRef<HTMLDivElement>(null);
@@ -56,6 +58,13 @@ export const Karya = () => {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const ITEMS_PER_PAGE = 6;
+
+  // Social State
+  const [likesCount, setLikesCount] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+  const [comments, setComments] = useState<any[]>([]);
+  const [newComment, setNewComment] = useState('');
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   const fetchWorks = async (pageNum = 0, currentFilter = filter) => {
     try {
@@ -108,7 +117,117 @@ export const Karya = () => {
   // Reset active slide when switching artworks
   useEffect(() => {
     setActiveSlide(0);
+    if (selectedId) {
+      fetchSocialData(selectedId);
+    }
   }, [selectedId]);
+
+  const fetchSocialData = async (workId: string) => {
+    try {
+      // 1. Fetch Likes Count
+      const { count: likesData, error: likesError } = await supabase
+        .from('likes')
+        .select('*', { count: 'exact', head: true })
+        .eq('work_id', workId);
+
+      if (!likesError) setLikesCount(likesData || 0);
+
+      // 2. Check if user liked
+      if (user) {
+        const { data: userLike } = await supabase
+          .from('likes')
+          .select('id')
+          .eq('work_id', workId)
+          .eq('user_id', user.id)
+          .single();
+        setIsLiked(!!userLike);
+      } else {
+        setIsLiked(false);
+      }
+
+      // 3. Fetch Comments
+      const { data: commentsData, error: commentsError } = await supabase
+        .from('comments')
+        .select(`
+          id,
+          content,
+          created_at,
+          user_id,
+          profiles:user_id (username, avatar_url, role)
+        `)
+        .eq('work_id', workId)
+        .order('created_at', { ascending: false });
+
+      if (!commentsError) setComments(commentsData || []);
+
+    } catch (error) {
+      console.error('Error fetching social data:', error);
+    }
+  };
+
+  const handleToggleLike = async () => {
+    if (!user || !selectedId) {
+      alert('Silakan login untuk menyukai karya ini.');
+      return;
+    }
+
+    // Optimistic Update
+    const previousIsLiked = isLiked;
+    const previousLikesCount = likesCount;
+    setIsLiked(!isLiked);
+    setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+
+    try {
+      if (previousIsLiked) {
+        // Unlike
+        await supabase.from('likes').delete().eq('work_id', selectedId).eq('user_id', user.id);
+      } else {
+        // Like
+        await supabase.from('likes').insert({ work_id: selectedId, user_id: user.id });
+      }
+    } catch (error) {
+      // Revert if error
+      setIsLiked(previousIsLiked);
+      setLikesCount(previousLikesCount);
+      console.error('Error toggling like:', error);
+    }
+  };
+
+  const handleSubmitComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !selectedId || !newComment.trim()) return;
+
+    setIsSubmittingComment(true);
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .insert({
+          work_id: selectedId,
+          user_id: user.id,
+          content: newComment.trim()
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Add to local state (Optimistic-ish, or just append result)
+      if (data) {
+        // We need profile data for display, usually we refetch or simpler: mock it
+        const newCommentObj = {
+          ...data,
+          profiles: profile // Use current user profile
+        };
+        setComments(prev => [newCommentObj, ...prev]);
+        setNewComment('');
+      }
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+      alert('Gagal mengirim komentar.');
+    } finally {
+      setIsSubmittingComment(false);
+    }
+  };
 
   // Handle scroll snap to update active dot
   const handleCarouselScroll = () => {
@@ -465,10 +584,91 @@ export const Karya = () => {
                   ))}
                 </div>
 
-                <div className="mt-auto pt-8 border-t border-white/10">
-                  <button className="w-full py-4 bg-white text-black rounded-xl font-bold text-sm hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
-                    <Heart size={18} /> Apresiasi Karya
+                {/* Social Actions (Like) */}
+                <div className="flex gap-4 mb-8">
+                  <button
+                    onClick={handleToggleLike}
+                    className={`flex-1 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 ${isLiked ? 'bg-rose-600 text-white shadow-lg shadow-rose-900/50 border border-rose-500' : 'bg-white/5 text-white hover:bg-white/10 border border-white/10'}`}
+                  >
+                    <Heart size={20} className={isLiked ? 'fill-current' : ''} />
+                    {likesCount > 0 ? `${likesCount} Apresiasi` : 'Apresiasi Karya'}
                   </button>
+                  <button className="px-6 py-3 bg-white/5 text-white rounded-xl font-bold hover:bg-white/10 border border-white/10 transition-all flex items-center gap-2">
+                    <Share2 size={20} />
+                  </button>
+                </div>
+
+                {/* Comments Section */}
+                <div className="border-t border-white/10 pt-8">
+                  <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <MessageCircle size={20} className="text-gray-400" />
+                    Diskusi ({comments.length})
+                  </h3>
+
+                  {/* Comment Input */}
+                  {user ? (
+                    <form onSubmit={handleSubmitComment} className="flex gap-4 mb-8">
+                      <div className="w-10 h-10 rounded-full bg-gray-700 overflow-hidden shrink-0">
+                        <img
+                          src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${user.email}`}
+                          alt="Me"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 relative">
+                        <input
+                          type="text"
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                          placeholder="Tulis pendapatmu..."
+                          className="w-full bg-white/5 border border-white/10 rounded-full py-3 pl-6 pr-12 text-white placeholder:text-gray-500 focus:outline-none focus:border-rose-500/50 focus:bg-white/10 transition-all"
+                          disabled={isSubmittingComment}
+                        />
+                        <button
+                          type="submit"
+                          disabled={!newComment.trim() || isSubmittingComment}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-rose-600 rounded-full text-white hover:bg-rose-500 disabled:opacity-50 disabled:hover:bg-rose-600 transition-colors"
+                        >
+                          <Send size={16} />
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="bg-white/5 rounded-2xl p-6 text-center mb-8 border border-white/5 border-dashed">
+                      <p className="text-gray-400 text-sm mb-3">Login untuk bergabung dalam diskusi</p>
+                      <Link to="/auth" className="inline-block px-6 py-2 bg-white text-black rounded-full font-bold text-sm hover:bg-gray-200 transition-colors">
+                        Masuk Sekarang
+                      </Link>
+                    </div>
+                  )}
+
+                  {/* Comments List */}
+                  <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    {comments.length > 0 ? comments.map(comment => (
+                      <div key={comment.id} className="flex gap-4">
+                        <Link to={`/profile/${comment.profiles?.user_id || '#'}`} className="shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden ring-1 ring-white/10">
+                            <img
+                              src={comment.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${comment.profiles?.username || 'User'}`}
+                              alt="Avatar"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        </Link>
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-white font-bold text-sm">{comment.profiles?.username || 'Pengguna'}</span>
+                            <span className="text-xs text-gray-500">{new Date(comment.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
+                          </div>
+                          <p className="text-gray-400 text-sm leading-relaxed">{comment.content}</p>
+                        </div>
+                      </div>
+                    )) : (
+                      <div className="text-center py-8 text-gray-600">
+                        <p className="text-sm">Belum ada komentar.</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </motion.div>

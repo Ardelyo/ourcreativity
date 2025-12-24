@@ -49,29 +49,29 @@ export const Navbar = () => {
     const containerVariants = {
         collapsed: {
             width: "auto",
-            height: "50px",
-            borderRadius: "50px",
-            padding: "8px 16px",
+            height: "44px",
+            borderRadius: "22px",
+            padding: "4px 12px",
         },
         expanded: {
             width: "auto",
-            height: "60px",
-            borderRadius: "50px",
-            padding: "12px 24px",
+            height: "56px",
+            borderRadius: "28px",
+            padding: "8px 20px",
         },
         profileOpen: {
-            width: "auto",
-            minWidth: "200px",
+            width: "100%",
+            maxWidth: "320px",
             height: "auto",
-            borderRadius: "32px",
-            padding: "12px 20px 20px 20px",
+            borderRadius: "24px",
+            padding: "12px 16px 16px 16px",
         },
         mobileOpen: {
-            width: "100%",
-            maxWidth: "400px",
+            width: "92%",
+            maxWidth: "360px",
             height: "auto",
-            borderRadius: "32px",
-            padding: "24px",
+            borderRadius: "28px",
+            padding: "16px 20px 24px 20px",
         }
     };
 
@@ -93,9 +93,9 @@ export const Navbar = () => {
                         <Link to="/" className="flex items-center gap-2 group shrink-0 relative z-10" onClick={() => setIsMobileMenuOpen(false)}>
                             <motion.div
                                 layout="position"
-                                className={`rounded-full flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-colors ${showFullMenu || isMobileMenuOpen ? 'w-8 h-8 bg-white/10' : 'w-8 h-8 bg-transparent'}`}
+                                className={`rounded-full flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-all duration-300 ${showFullMenu || isMobileMenuOpen ? 'w-8 h-8 bg-white/10' : 'w-7 h-7 bg-transparent'}`}
                             >
-                                <Asterisk size={showFullMenu || isMobileMenuOpen ? 18 : 20} className={!(showFullMenu || isMobileMenuOpen) ? "animate-spin-slow" : ""} />
+                                <Asterisk size={showFullMenu || isMobileMenuOpen ? 18 : 20} className={!(showFullMenu || isMobileMenuOpen) ? "animate-spin-slow" : "rotate-0 group-hover:rotate-180 transition-transform duration-500"} />
                             </motion.div>
                         </Link>
 
@@ -219,14 +219,14 @@ export const Navbar = () => {
                         )}
 
                         <button
-                            className="md:hidden text-white p-1 rounded-full hover:bg-white/10 transition-colors"
+                            className="md:hidden text-white p-2 rounded-full hover:bg-white/10 transition-all active:scale-90"
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         >
                             <motion.div
-                                animate={{ rotate: isMobileMenuOpen ? 90 : 0 }}
-                                transition={{ duration: 0.2 }}
+                                animate={{ rotate: isMobileMenuOpen ? 90 : 0, scale: isMobileMenuOpen ? 1.1 : 1 }}
+                                transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
                             >
-                                {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                                {isMobileMenuOpen ? <X size={22} strokeWidth={2.5} /> : <Menu size={22} strokeWidth={2.5} />}
                             </motion.div>
                         </button>
                     </div>
@@ -284,26 +284,28 @@ export const Navbar = () => {
                             className="flex flex-col gap-2 md:hidden overflow-hidden mt-2"
                         >
                             <div className="h-px bg-white/10 w-full mb-4" />
-                            {navLinks.map((link, i) => (
-                                <motion.div
-                                    key={link.name}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.05 + 0.1 }}
-                                >
-                                    <Link
-                                        to={link.href}
-                                        className={`text-lg font-medium px-4 py-3 rounded-xl transition-colors flex items-center justify-between group ${isActive(link.href)
-                                            ? 'bg-white/10 text-white'
-                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
-                                            }`}
-                                        onClick={() => setIsMobileMenuOpen(false)}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 px-1">
+                                {navLinks.map((link, i) => (
+                                    <motion.div
+                                        key={link.name}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: i * 0.05 + 0.1 }}
                                     >
-                                        <span>{link.name}</span>
-                                        <ArrowRight size={16} className={`opacity-0 group-hover:opacity-100 transition-opacity ${isActive(link.href) ? 'opacity-100' : ''}`} />
-                                    </Link>
-                                </motion.div>
-                            ))}
+                                        <Link
+                                            to={link.href}
+                                            className={`text-sm font-bold px-4 py-3 rounded-2xl transition-all flex items-center justify-between group h-14 ${isActive(link.href)
+                                                ? 'bg-white text-black'
+                                                : 'bg-white/5 text-gray-300 hover:text-white hover:bg-white/10'
+                                                }`}
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            <span className="tracking-wide uppercase text-[10px]">{link.name}</span>
+                                            <ArrowRight size={14} className={`transition-transform duration-300 group-hover:translate-x-1 ${isActive(link.href) ? 'text-black' : 'text-gray-500'}`} />
+                                        </Link>
+                                    </motion.div>
+                                ))}
+                            </div>
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -312,48 +314,57 @@ export const Navbar = () => {
                             >
                                 {user && profile ? (
                                     <div className="flex flex-col gap-3">
-                                        <div className="flex items-center gap-3 p-3 bg-white/5 rounded-2xl border border-white/5">
+                                        <div className="flex items-center gap-3 p-4 bg-white/5 rounded-[24px] border border-white/5 mx-1">
                                             <img
                                                 src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || 'User'}`}
                                                 alt={profile.username}
-                                                className="w-10 h-10 rounded-full bg-neutral-800"
+                                                className="w-12 h-12 rounded-full bg-neutral-800 border-2 border-white/10"
                                             />
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-bold text-white">{profile.username}</span>
-                                                <span className="text-[10px] text-gray-500 uppercase tracking-widest">{profile.is_approved ? "Member" : "Pending"}</span>
+                                                <span className="text-base font-bold text-white leading-tight">{profile.username}</span>
+                                                <span className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mt-0.5">{profile.is_approved ? "Member Kreatif" : "Menunggu Verifikasi"}</span>
                                             </div>
                                         </div>
-                                        <div className="grid grid-cols-2 gap-2">
+                                        <div className="grid grid-cols-2 gap-2 px-1">
                                             <Link
                                                 to={`/profile/${profile.username}`}
                                                 onClick={() => setIsMobileMenuOpen(false)}
-                                                className="px-4 py-3 bg-white/5 rounded-xl text-xs font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2"
+                                                className="px-4 py-3.5 bg-white/5 rounded-2xl text-[11px] font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2 active:bg-white/10 transition-colors"
                                             >
                                                 <UserIcon size={14} /> Profil
                                             </Link>
                                             <Link
                                                 to="/settings"
                                                 onClick={() => setIsMobileMenuOpen(false)}
-                                                className="px-4 py-3 bg-white/5 rounded-xl text-xs font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2"
+                                                className="px-4 py-3.5 bg-white/5 rounded-2xl text-[11px] font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2 active:bg-white/10 transition-colors"
                                             >
                                                 <Settings size={14} /> Settings
                                             </Link>
                                         </div>
+                                        {profile?.role === 'admin' && (
+                                            <Link
+                                                to="/admin"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className="mx-1 flex items-center justify-center gap-2 px-3 py-3.5 text-[11px] font-bold text-rose-400 bg-rose-500/5 hover:bg-rose-500/10 rounded-2xl transition-colors"
+                                            >
+                                                <Shield size={14} /> Panel Administrasi
+                                            </Link>
+                                        )}
                                         <button
                                             onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
-                                            className="w-full bg-rose-500/10 text-rose-500 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2"
+                                            className="mx-1 bg-red-500/10 text-red-500 py-3.5 rounded-2xl text-[11px] font-bold flex items-center justify-center gap-2 active:bg-red-500/20 transition-colors"
                                         >
-                                            <LogOut size={14} /> Keluar
+                                            <LogOut size={14} /> Keluar Aplikasi
                                         </button>
                                     </div>
                                 ) : (
                                     <Link
                                         to="/login"
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="bg-white text-black text-center py-3 rounded-xl font-bold mt-2 flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors"
+                                        className="mx-1 bg-white text-black text-center py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-gray-100 transition-all active:scale-[0.98]"
                                     >
-                                        <span>Masuk / Daftar</span>
-                                        <ArrowRight size={16} />
+                                        <span className="text-sm">Masuk / Daftar</span>
+                                        <ArrowRight size={18} />
                                     </Link>
                                 )}
                             </motion.div>

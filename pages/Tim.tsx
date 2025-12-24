@@ -245,29 +245,30 @@ export const Tim = () => {
   }, []);
 
   return (
-    <div className="pt-36 pb-20 px-4 max-w-7xl mx-auto min-h-screen text-white font-sans relative">
-      {/* Background Blobs (Shadow Glows) */}
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[20%] left-[-10%] w-[600px] h-[600px] bg-rose-500/5 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-purple-500/5 blur-[120px] rounded-full" />
+    <div className="pt-24 md:pt-36 pb-20 px-4 max-w-7xl mx-auto min-h-screen text-white font-sans relative overflow-hidden md:overflow-visible">
+
+      {/* Background Blobs (Shadow Glows) - Adjusted opacity and position */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[10%] left-[-20%] md:left-[-10%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-rose-500/10 blur-[80px] md:blur-[120px] rounded-full" />
+        <div className="absolute bottom-[20%] right-[-20%] md:right-[-10%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-purple-500/10 blur-[80px] md:blur-[120px] rounded-full" />
       </div>
 
       {/* Header Section */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-24 relative z-10 text-center"
+        className="mb-16 md:mb-24 relative z-10 text-center"
       >
         <div className="flex items-center justify-center gap-4 mb-6">
-          <div className="h-px w-12 bg-rose-500/20" />
-          <span className="font-mono text-sm text-rose-500 tracking-[0.2em] uppercase">Kolektif Kreatif</span>
-          <div className="h-px w-12 bg-rose-500/20" />
+          <div className="h-px w-8 md:w-12 bg-rose-500/20" />
+          <span className="font-mono text-xs md:text-sm text-rose-500 tracking-[0.2em] uppercase">Kolektif Kreatif</span>
+          <div className="h-px w-8 md:w-12 bg-rose-500/20" />
         </div>
 
-        <h1 className="text-7xl md:text-9xl font-serif font-light leading-none tracking-tight mb-8">
+        <h1 className="text-5xl md:text-9xl font-serif font-light leading-none tracking-tight mb-6 md:mb-8">
           Para <span className="italic">Kreator</span>
         </h1>
-        <p className="text-gray-400 font-light text-lg max-w-2xl mx-auto">
+        <p className="text-gray-400 font-light text-base md:text-lg max-w-2xl mx-auto px-4">
           Membangun masa depan OurCreativity melalui kode, seni, dan dedikasi.
         </p>
       </motion.div>
@@ -298,16 +299,16 @@ export const Tim = () => {
           <p className="mt-6 font-black uppercase tracking-widest text-rose-500 antialiased">Sinkronisasi Data...</p>
         </div>
       ) : (
-        <div className="space-y-40 relative z-10">
+        <div className="space-y-24 md:space-y-40 relative z-10">
           {/* Core Team Section */}
           <section>
-            <div className="flex flex-col items-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-serif italic mb-4">Kontributor Kode</h2>
+            <div className="flex flex-col items-center mb-12 md:mb-16 text-center">
+              <h2 className="text-3xl md:text-5xl font-serif italic mb-4">Kontributor Kode</h2>
               <div className="h-1 w-20 bg-gradient-to-r from-rose-500 to-indigo-500 rounded-full" />
-              <span className="font-mono text-gray-500 text-xs mt-4 uppercase tracking-[0.2em]">Membangun arsitektur inti platform</span>
+              <span className="font-mono text-gray-500 text-[10px] md:text-xs mt-4 uppercase tracking-[0.2em]">Membangun arsitektur inti platform</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
               {contributors.map(c => (
                 <BrutalistCard
                   key={c.login}
@@ -326,13 +327,13 @@ export const Tim = () => {
           {/* Issue Reporters Section */}
           {reporters.length > 0 && (
             <section>
-              <div className="flex flex-col items-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-serif italic mb-4 text-purple-400">Pelapor Masalah</h2>
+              <div className="flex flex-col items-center mb-12 md:mb-16 text-center">
+                <h2 className="text-3xl md:text-5xl font-serif italic mb-4 text-purple-400">Pelapor Masalah</h2>
                 <div className="h-1 w-20 bg-purple-500/30 rounded-full" />
-                <p className="font-mono text-xs text-purple-400/60 mt-4 uppercase tracking-widest text-center">Pahlawan Komunitas & Pelapor Masalah</p>
+                <p className="font-mono text-[10px] md:text-xs text-purple-400/60 mt-4 uppercase tracking-widest px-4">Pahlawan Komunitas & Pelapor Masalah</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
                 {reporters.map(r => (
                   <BrutalistCard
                     key={r.login}
@@ -352,20 +353,20 @@ export const Tim = () => {
           {/* Call to Action */}
           <motion.div
             whileHover={{ y: -5 }}
-            className="border-4 border-rose-500 bg-rose-500/5 backdrop-blur-sm p-12 text-center relative overflow-hidden group"
+            className="border-2 md:border-4 border-rose-500 bg-rose-500/5 backdrop-blur-sm p-8 md:p-12 text-center relative overflow-hidden group rounded-3xl"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 blur-3xl -z-10 group-hover:bg-rose-500/20 transition-all" />
-            <h3 className="text-4xl md:text-6xl font-black uppercase mb-6 tracking-tighter">Bentuk Masa Depan Kita</h3>
-            <p className="font-mono text-lg text-white/60 mb-10 max-w-2xl mx-auto leading-relaxed">
+            <h3 className="text-3xl md:text-6xl font-black uppercase mb-4 md:mb-6 tracking-tighter">Bentuk Masa Depan Kita</h3>
+            <p className="font-mono text-sm md:text-lg text-white/60 mb-8 md:mb-10 max-w-2xl mx-auto leading-relaxed px-2">
               Setiap baris kode atau laporan bug membawa kita satu langkah lebih dekat ke kesempurnaan. Bergabunglah dalam kolektif kreatif ini.
             </p>
             <a
               href={`https://github.com/${REPO_OWNER}/${REPO_NAME}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-4 bg-rose-600 text-white px-10 py-5 font-black uppercase text-xl border-4 border-black shadow-brutalist-rose hover:bg-rose-500 transition-all transform hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+              className="inline-flex w-full md:w-auto justify-center items-center gap-3 md:gap-4 bg-rose-600 text-white px-6 md:px-10 py-4 md:py-5 font-black uppercase text-base md:text-xl border-2 md:border-4 border-black shadow-brutalist-rose hover:bg-rose-500 transition-all transform hover:translate-x-1 hover:translate-y-1 hover:shadow-none rounded-xl md:rounded-none"
             >
-              <Github size={24} /> Mulai Berkontribusi
+              <Github size={20} className="md:w-6 md:h-6" /> Mulai Berkontribusi
             </a>
           </motion.div>
         </div>

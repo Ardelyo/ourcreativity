@@ -80,7 +80,7 @@ export const Navbar = () => {
                 initial="expanded"
                 animate={isMobileMenuOpen ? "mobileOpen" : (isProfileOpen ? "profileOpen" : (showFullMenu ? "expanded" : "collapsed"))}
                 variants={containerVariants}
-                transition={springTransition}
+                transition={springTransition as any}
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
                 className="pointer-events-auto bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden relative"

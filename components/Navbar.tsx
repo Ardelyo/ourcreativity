@@ -67,11 +67,11 @@ export const Navbar = () => {
             padding: "12px 16px 16px 16px",
         },
         mobileOpen: {
-            width: "92%",
-            maxWidth: "360px",
+            width: "95%",
+            maxWidth: "380px",
             height: "auto",
-            borderRadius: "28px",
-            padding: "16px 20px 24px 20px",
+            borderRadius: "32px",
+            padding: "24px 28px 32px 28px",
         }
     };
 
@@ -284,24 +284,24 @@ export const Navbar = () => {
                             className="flex flex-col gap-2 md:hidden overflow-hidden mt-2"
                         >
                             <div className="h-px bg-white/10 w-full mb-4" />
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 px-1">
+                            <div className="flex flex-col gap-3 mt-4 px-1">
                                 {navLinks.map((link, i) => (
                                     <motion.div
                                         key={link.name}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: i * 0.05 + 0.1 }}
                                     >
                                         <Link
                                             to={link.href}
-                                            className={`text-sm font-bold px-4 py-3 rounded-2xl transition-all flex items-center justify-between group h-14 ${isActive(link.href)
-                                                ? 'bg-white text-black'
-                                                : 'bg-white/5 text-gray-300 hover:text-white hover:bg-white/10'
+                                            className={`text-lg font-bold px-6 py-4 rounded-3xl transition-all flex items-center justify-between group ${isActive(link.href)
+                                                ? 'bg-white text-black scale-[1.02] shadow-lg shadow-black/20'
+                                                : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 hover:scale-[1.01]'
                                                 }`}
                                             onClick={() => setIsMobileMenuOpen(false)}
                                         >
-                                            <span className="tracking-wide uppercase text-[10px]">{link.name}</span>
-                                            <ArrowRight size={14} className={`transition-transform duration-300 group-hover:translate-x-1 ${isActive(link.href) ? 'text-black' : 'text-gray-500'}`} />
+                                            <span className="tracking-wide">{link.name}</span>
+                                            <ArrowRight size={20} className={`transition-all duration-300 ${isActive(link.href) ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 group-hover:opacity-50 group-hover:translate-x-0'}`} />
                                         </Link>
                                     </motion.div>
                                 ))}

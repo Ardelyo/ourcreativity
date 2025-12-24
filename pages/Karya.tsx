@@ -233,12 +233,12 @@ export const Karya = () => {
 
                   <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">
                     <h3 className="text-white font-bold text-xl mb-1 leading-tight">{art.title}</h3>
-                    <div className="flex items-center gap-2 mb-4">
+                    <Link to={`/profile/${art.author}`} className="flex items-center gap-2 mb-4 hover:opacity-80 transition-opacity">
                       <div className="w-5 h-5 rounded-full bg-gray-700 overflow-hidden">
                         <img src={`https://ui-avatars.com/api/?name=${art.author}&background=random`} alt="Avatar" />
                       </div>
                       <p className="text-xs text-gray-300">{art.author}</p>
-                    </div>
+                    </Link>
 
                     <div className="flex gap-2">
                       <button className="flex-1 bg-white text-black py-2 rounded-full text-xs font-bold hover:bg-gray-200 transition-colors">
@@ -407,7 +407,7 @@ export const Karya = () => {
                 <h2 className="text-4xl font-serif text-white mb-4">{selectedArtwork.title}</h2>
                 <p className="text-gray-400 leading-relaxed mb-8">{selectedArtwork.description}</p>
 
-                <div className="flex items-center gap-4 mb-8 p-4 bg-white/5 rounded-2xl border border-white/5">
+                <Link to={`/profile/${selectedArtwork.author}`} className="flex items-center gap-4 mb-8 p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
                   <div className="w-12 h-12 rounded-full bg-gray-700 overflow-hidden">
                     <img src={`https://ui-avatars.com/api/?name=${selectedArtwork.author}&background=random`} alt="Avatar" />
                   </div>
@@ -416,9 +416,9 @@ export const Karya = () => {
                     <p className="text-gray-500 text-xs">{selectedArtwork.role}</p>
                   </div>
                   <button className="ml-auto bg-white text-black px-4 py-2 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors">
-                    Follow
+                    Lihat
                   </button>
-                </div>
+                </Link>
 
                 <div className="flex flex-wrap gap-2 mb-8">
                   {selectedArtwork.tags?.map(tag => (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Asterisk, ArrowRight, User as UserIcon, LogOut, Settings } from 'lucide-react';
+import { Menu, X, Asterisk, ArrowRight, User as UserIcon, LogOut, Settings, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
@@ -61,7 +61,7 @@ export const Navbar = () => {
                 transition={springTransition}
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
-                className={`pointer-events-auto bg-[#111]/90 backdrop-blur-lg border border-white/10 shadow-2xl shadow-black/50 overflow-hidden flex flex-col ${isMobileMenuOpen ? 'p-6 gap-6' : (showFullMenu ? 'px-6 py-3' : 'px-3 py-2')
+                className={`pointer-events-auto bg-[#111]/90 backdrop-blur-lg border border-white/10 shadow-2xl shadow-black/50 flex flex-col ${isMobileMenuOpen ? 'p-6 gap-6 overflow-hidden' : (showFullMenu ? 'px-6 py-3 overflow-visible' : 'px-3 py-2 overflow-visible')
                     }`}
             >
                 <motion.div layout className={`flex items-center justify-between w-full ${isMobileMenuOpen ? '' : (showFullMenu ? 'gap-8' : 'gap-2')}`}>
@@ -118,28 +118,41 @@ export const Navbar = () => {
 
                     {/* CTA & Toggle Seluler */}
                     <div className="flex items-center gap-2 shrink-0">
-                        <AnimatePresence mode="popLayout">
+                        <AnimatePresence>
                             {showFullMenu && !isMobileMenuOpen ? (
                                 <motion.div
                                     initial={{ opacity: 0, width: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, width: "auto", scale: 1 }}
                                     exit={{ opacity: 0, width: 0, scale: 0.8 }}
                                     transition={{ duration: 0.3 }}
-                                    className="hidden sm:flex items-center gap-2 overflow-hidden"
+                                    className="hidden sm:flex items-center gap-2"
                                 >
                                     {user && profile ? (
-                                        <div className="relative">
-                                            <button
-                                                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 pl-2 pr-4 py-1.5 rounded-full transition-colors"
-                                            >
-                                                <img
-                                                    src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile.username}`}
-                                                    alt={profile.username}
-                                                    className="w-6 h-6 rounded-full"
-                                                />
-                                                <span className="text-xs font-bold text-white max-w-[100px] truncate">{profile.username}</span>
-                                            </button>
+                                        <div className="relative group/profile">
+                                            <div className="flex items-center">
+                                                <Link
+                                                    to="/settings"
+                                                    className="flex items-center gap-2 bg-white/10 hover:bg-white/20 pl-2 pr-3 py-1.5 rounded-l-full transition-colors border-r border-white/10"
+                                                >
+                                                    <img
+                                                        src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile.username}`}
+                                                        alt={profile.username}
+                                                        className="w-6 h-6 rounded-full"
+                                                    />
+                                                    <span className="text-xs font-bold text-white max-w-[80px] truncate">{profile.username}</span>
+                                                </Link>
+                                                <button
+                                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                                    className="bg-white/10 hover:bg-white/20 px-2 py-1.5 rounded-r-full transition-colors h-[36px] flex items-center justify-center"
+                                                >
+                                                    <motion.div
+                                                        animate={{ rotate: isProfileOpen ? 180 : 0 }}
+                                                        transition={{ duration: 0.2 }}
+                                                    >
+                                                        <ChevronRight size={14} className="text-white rotate-90" />
+                                                    </motion.div>
+                                                </button>
+                                            </div>
 
                                             <AnimatePresence>
                                                 {isProfileOpen && (
@@ -147,13 +160,16 @@ export const Navbar = () => {
                                                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                                        className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl overflow-hidden shadow-xl p-1 flex flex-col gap-1 z-50"
+                                                        className="absolute top-full right-0 mt-3 w-56 bg-[#18181b]/95 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-1.5 flex flex-col gap-1 z-50 min-w-[200px]"
                                                     >
                                                         <div className="px-3 py-2 text-xs text-gray-400 border-b border-white/5 mb-1">
                                                             Status: <span className={profile.is_approved ? "text-green-500 font-bold" : "text-yellow-500 font-bold"}>
                                                                 {profile.is_approved ? "Member" : "Pending"}
                                                             </span>
                                                         </div>
+                                                        <Link to={`/profile/${profile.username}`} className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-lg w-full text-left transition-colors">
+                                                            <UserIcon size={14} /> Profil Saya
+                                                        </Link>
                                                         <Link to="/settings" className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-lg w-full text-left transition-colors">
                                                             <Settings size={14} /> Pengaturan
                                                         </Link>

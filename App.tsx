@@ -21,6 +21,8 @@ const Writing = React.lazy(() => import('./pages/divisions/Writing').then(module
 const Meme = React.lazy(() => import('./pages/divisions/Meme').then(module => ({ default: module.Meme })));
 const Coding = React.lazy(() => import('./pages/divisions/Coding').then(module => ({ default: module.Coding })));
 const Studio = React.lazy(() => import('./pages/Studio').then(module => ({ default: module.Studio })));
+const Settings = React.lazy(() => import('./pages/Settings').then(module => ({ default: module.Settings })));
+const Profile = React.lazy(() => import('./pages/Profile').then(module => ({ default: module.Profile })));
 const V5Launch = React.lazy(() => import('./pages/V5Launch').then(module => ({ default: module.V5Launch })));
 
 const Loading = () => (
@@ -60,6 +62,8 @@ const AnimatedRoutes = () => {
               <Route path="/division/meme" element={<Meme />} />
               <Route path="/division/coding" element={<Coding />} />
               <Route path="/studio" element={<Studio />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/profile/:username" element={<Profile />} />
               <Route path="/v5-launch" element={<V5Launch />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
@@ -67,6 +71,30 @@ const AnimatedRoutes = () => {
         </ErrorBoundary>
       </div>
     </AnimatePresence>
+  );
+};
+
+const AppContent = () => {
+  const { pathname } = useLocation();
+  const isStudio = pathname.toLowerCase() === '/studio';
+
+  return (
+    <div className="min-h-screen bg-[#030303] text-white selection:bg-rose-500/30 font-sans overflow-x-hidden flex flex-col relative">
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: `url("https://grainy-gradients.vercel.app/noise.svg")`, backgroundSize: '100px 100px' }}></div>
+        <div className="absolute top-[-20%] left-[10%] w-[800px] h-[800px] bg-rose-900/10 blur-[100px] rounded-full" />
+        <div className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-indigo-900/10 blur-[100px] rounded-full" />
+        <div className="absolute bottom-[-20%] left-[20%] w-[900px] h-[900px] bg-[#0a0a0a] blur-[80px] rounded-full" />
+      </div>
+
+      <div className="relative z-10 flex flex-col min-h-screen">
+        {!isStudio && <Navbar />}
+        <main className={`flex-grow ${isStudio ? 'w-full h-screen overflow-hidden' : 'container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl'}`}>
+          <AnimatedRoutes />
+        </main>
+        {!isStudio && <Footer />}
+      </div>
+    </div>
   );
 };
 
@@ -84,22 +112,7 @@ export default function App() {
       <AuthProvider>
         <Router>
           <ScrollToTop />
-          <div className="min-h-screen bg-[#030303] text-white selection:bg-rose-500/30 font-sans overflow-x-hidden flex flex-col relative">
-            <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-              <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: `url("https://grainy-gradients.vercel.app/noise.svg")`, backgroundSize: '100px 100px' }}></div>
-              <div className="absolute top-[-20%] left-[10%] w-[800px] h-[800px] bg-rose-900/10 blur-[100px] rounded-full" />
-              <div className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-indigo-900/10 blur-[100px] rounded-full" />
-              <div className="absolute bottom-[-20%] left-[20%] w-[900px] h-[900px] bg-[#0a0a0a] blur-[80px] rounded-full" />
-            </div>
-
-            <div className="relative z-10 flex flex-col min-h-screen">
-              <Navbar />
-              <main className="flex-grow container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
-                <AnimatedRoutes />
-              </main>
-              <Footer />
-            </div>
-          </div>
+          <AppContent />
         </Router>
       </AuthProvider>
     </ErrorBoundary>

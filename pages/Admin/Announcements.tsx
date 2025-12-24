@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Plus, Edit2, Trash2, X, Save, Loader2, Megaphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const Announcements = () => {
-    const [announcements, setAnnouncements] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const queryClient = useQueryClient();
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<any>({
         title: '',
@@ -16,45 +16,32 @@ export const Announcements = () => {
         category: 'General',
         status: 'Baru',
         color: 'from-purple-500 to-blue-500',
-        highlights: '', // comma separated for input
+        highlights: '',
         is_active: true
     });
 
-    const fetchAnnouncements = async () => {
-        setLoading(true);
-        try {
+    // Query for Announcements
+    const { data: announcements = [], isLoading } = useQuery({
+        queryKey: ['announcements'],
+        queryFn: async () => {
             const { data, error } = await supabase
                 .from('announcements')
-                .select('id, title, subtitle, description, date, type, status, color, is_active')
+                .select('id, title, subtitle, description, date, type, status, color, is_active, content, category, highlights')
                 .order('date', { ascending: false });
 
             if (error) throw error;
-            setAnnouncements(data || []);
-        } catch (error) {
-            console.error('Error fetching announcements:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+            return data;
+        },
+    });
 
-    useEffect(() => {
-        fetchAnnouncements();
-    }, []);
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const payload = {
-                ...formData,
-                highlights: formData.highlights.split(',').map((h: string) => h.trim()).filter(Boolean),
-                date: new Date().toISOString()
-            };
-
-            if (formData.id) {
+    // Mutation for Save/Update
+    const saveMutation = useMutation({
+        mutationFn: async (payload: any) => {
+            if (payload.id) {
                 const { error } = await supabase
                     .from('announcements')
                     .update(payload)
-                    .eq('id', formData.id);
+                    .eq('id', payload.id);
                 if (error) throw error;
             } else {
                 const { error } = await supabase
@@ -62,25 +49,48 @@ export const Announcements = () => {
                     .insert([payload]);
                 if (error) throw error;
             }
-
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['announcements'] });
             setIsEditing(false);
-            fetchAnnouncements();
             resetForm();
-        } catch (error) {
+        },
+        onError: (error) => {
             console.error('Error saving announcement:', error);
-            alert('Failed to save announcement.');
+            alert('Gagal menyimpan pengumuman.');
         }
-    };
+    });
 
-    const handleDelete = async (id: string) => {
-        if (!window.confirm('Delete this announcement?')) return;
-        try {
+    // Mutation for Delete
+    const deleteMutation = useMutation({
+        mutationFn: async (id: string) => {
             const { error } = await supabase.from('announcements').delete().eq('id', id);
             if (error) throw error;
-            setAnnouncements(announcements.filter(a => a.id !== id));
-        } catch (error) {
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['announcements'] });
+        },
+        onError: (error) => {
             console.error('Error deleting:', error);
+            alert('Gagal menghapus pengumuman.');
         }
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const payload = {
+            ...formData,
+            highlights: typeof formData.highlights === 'string'
+                ? formData.highlights.split(',').map((h: string) => h.trim()).filter(Boolean)
+                : formData.highlights,
+            date: formData.id ? formData.date : new Date().toISOString()
+        };
+        saveMutation.mutate(payload);
+    };
+
+    const handleDelete = (id: string) => {
+        if (!window.confirm('Hapus pengumuman ini?')) return;
+        deleteMutation.mutate(id);
     };
 
     const handleEdit = (item: any) => {
@@ -116,7 +126,7 @@ export const Announcements = () => {
 
             {/* List - Zen Refinement */}
             <div className="grid gap-4">
-                {loading ? (
+                {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-20">
                         <Loader2 className="animate-spin text-rose-500 mb-4" size={32} />
                         <p className="text-gray-500 font-black uppercase tracking-widest text-[10px]">Menarik data...</p>
@@ -127,7 +137,7 @@ export const Announcements = () => {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {announcements.map((item, index) => (
+                        {announcements.map((item: any, index: number) => (
                             <motion.div
                                 key={item.id}
                                 initial={{ opacity: 0, y: 10 }}
@@ -159,8 +169,12 @@ export const Announcements = () => {
                                         <button onClick={() => handleEdit(item)} className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-xl text-white transition-all">
                                             <Edit2 size={16} />
                                         </button>
-                                        <button onClick={() => handleDelete(item.id)} className="w-10 h-10 flex items-center justify-center bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white rounded-xl transition-all">
-                                            <Trash2 size={16} />
+                                        <button
+                                            onClick={() => handleDelete(item.id)}
+                                            disabled={deleteMutation.isPending}
+                                            className="w-10 h-10 flex items-center justify-center bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white rounded-xl transition-all"
+                                        >
+                                            {deleteMutation.isPending && deleteMutation.variables === item.id ? <Loader2 className="animate-spin" size={16} /> : <Trash2 size={16} />}
                                         </button>
                                     </div>
                                     <div className={`w-2 h-2 rounded-full ${item.is_active ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-gray-800'}`} />
@@ -178,13 +192,13 @@ export const Announcements = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[100] flex items-center justify-center p-6"
+                        className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[100] flex items-center justify-center p-6 overflow-y-auto"
                     >
                         <motion.div
                             initial={{ scale: 0.95, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.95, y: 20 }}
-                            className="bg-[#080808] border border-white/[0.08] w-full max-w-3xl rounded-[3rem] shadow-2xl overflow-hidden pointer-events-auto"
+                            className="bg-[#080808] border border-white/[0.08] w-full max-w-3xl rounded-[3rem] shadow-2xl overflow-hidden pointer-events-auto my-8"
                         >
                             <div className="p-10 border-b border-white/[0.05] flex justify-between items-center">
                                 <div>
@@ -238,8 +252,13 @@ export const Announcements = () => {
                             </form>
                             <div className="p-10 border-t border-white/[0.05] flex justify-end gap-4 bg-white/[0.01]">
                                 <button type="button" onClick={() => setIsEditing(false)} className="px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] text-gray-500 hover:text-white transition-all">Batal</button>
-                                <button onClick={handleSubmit} className="px-10 py-3 bg-rose-500 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center gap-2 hover:bg-rose-600 transition-all shadow-xl shadow-rose-900/20 active:scale-95">
-                                    <Save size={14} /> Simpan Perubahan
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={saveMutation.isPending}
+                                    className="px-10 py-3 bg-rose-500 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center gap-2 hover:bg-rose-600 transition-all shadow-xl shadow-rose-900/20 active:scale-95"
+                                >
+                                    {saveMutation.isPending ? <Loader2 className="animate-spin" size={14} /> : <Save size={14} />}
+                                    {saveMutation.isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
                                 </button>
                             </div>
                         </motion.div>

@@ -21,8 +21,7 @@ const faqs = [
 
 const Noise = () => (
   <div
-    className="absolute inset-0 opacity-[0.05] pointer-events-none z-0 mix-blend-overlay"
-    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E")` }}
+    className="absolute inset-0 opacity-[0.05] pointer-events-none z-0 mix-blend-overlay bg-[url('data:image/svg+xml,%3Csvg%20viewBox=%270%200%20200%20200%27%20xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cfilter%20id=%27noiseFilter%27%3E%3CfeTurbulence%20type=%27fractalNoise%27%20baseFrequency=%270.65%27%20numOctaves=%273%27%20stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect%20width=%27100%25%27%20height=%27100%25%27%20filter=%27url(%23noiseFilter)%27%20opacity=%271%27/%3E%3C/svg%3E')]"
   ></div>
 );
 
@@ -126,6 +125,7 @@ export const Info = () => {
               <button
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 className="w-full flex items-center justify-between p-6 text-left hover:bg-white/5 transition-colors"
+                aria-expanded={openFaq === i}
               >
                 <span className="font-bold text-white text-lg">{faq.q}</span>
                 <ChevronDown

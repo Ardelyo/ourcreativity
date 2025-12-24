@@ -54,6 +54,51 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
 
     // Refs
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const modalRef = useRef<HTMLDivElement>(null);
+    const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+    // Focus Trap
+    React.useEffect(() => {
+        if (!isOpen) return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                onClose();
+                return;
+            }
+
+            if (e.key === 'Tab') {
+                const focusableElements = modalRef.current?.querySelectorAll(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                
+                if (!focusableElements || focusableElements.length === 0) return;
+
+                const firstElement = focusableElements[0] as HTMLElement;
+                const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+                if (e.shiftKey) {
+                    if (document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        // Focus the close button initially
+        setTimeout(() => closeButtonRef.current?.focus(), 100);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isOpen, onClose]);
 
     const handleMediumSelect = (m: Medium) => {
         setMedium(m);
@@ -120,6 +165,7 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                     />
 
                     <motion.div
+                        ref={modalRef}
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
@@ -129,7 +175,7 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-black/50 backdrop-blur-md z-10">
                             <div className="flex items-center gap-4">
                                 {step !== 'selection' && (
-                                    <button onClick={() => setStep(step === 'details' ? 'editor' : 'selection')} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white">
+                                    <button onClick={() => setStep(step === 'details' ? 'editor' : 'selection')} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white" aria-label="Kembali">
                                         <ArrowLeft size={20} />
                                     </button>
                                 )}
@@ -164,7 +210,7 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                                 </div>
                             )}
 
-                            <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white">
+                            <button ref={closeButtonRef} onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white" aria-label="Tutup Creation Studio">
                                 <X size={20} />
                             </button>
                         </div>
@@ -259,6 +305,7 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                                                             onChange={handleImageUpload}
                                                             accept="image/*"
                                                             className="hidden"
+                                                            title="Upload Image"
                                                         />
                                                     </div>
                                                 )}
@@ -302,6 +349,7 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                                                         onChange={handleImageUpload}
                                                         accept="video/*"
                                                         className="hidden"
+                                                        title="Upload Video"
                                                     />
                                                 </div>
                                             )
@@ -352,11 +400,13 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div className="space-y-2">
-                                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">Division</label>
+                                                <label htmlFor="division-select" className="block text-xs font-bold text-gray-500 uppercase tracking-wider">Division</label>
                                                 <select
+                                                    id="division-select"
                                                     value={formData.division}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, division: e.target.value as any }))}
                                                     className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
+                                                    title="Select Division"
                                                 >
                                                     {divisions.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
                                                 </select>

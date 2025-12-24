@@ -13,10 +13,10 @@ export const Footer = () => {
         </div>
 
         <div className="flex items-center gap-8">
-          <a href="https://www.instagram.com/ourcreativity.ofc/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors" title="Instagram">
+          <a href="https://www.instagram.com/ourcreativity.ofc/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors" title="Instagram" aria-label="Instagram">
             <Instagram size={20} />
           </a>
-          <a href="https://www.tiktok.com/@ourcreativity.ofc" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors" title="TikTok">
+          <a href="https://www.tiktok.com/@ourcreativity.ofc" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-white transition-colors" title="TikTok" aria-label="TikTok">
             <Music2 size={20} />
           </a>
         </div>

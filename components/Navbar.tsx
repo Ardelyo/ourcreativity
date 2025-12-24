@@ -63,7 +63,7 @@ export const Navbar = () => {
             >
                 <motion.div layout className={`flex items-center justify-between w-full ${isMobileMenuOpen ? '' : (showFullMenu ? 'gap-8' : 'gap-2')}`}>
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-2 group shrink-0" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link to="/" className="flex items-center gap-2 group shrink-0" onClick={() => setIsMobileMenuOpen(false)} aria-label="Beranda">
                         <motion.div
                             layout
                             className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-colors"
@@ -150,6 +150,7 @@ export const Navbar = () => {
                         <button
                             className="md:hidden text-white p-2"
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            aria-label={isMobileMenuOpen ? "Tutup Menu" : "Buka Menu"}
                         >
                             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
                         </button>

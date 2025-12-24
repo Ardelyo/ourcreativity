@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, ExternalLink, X, Sparkles, Wand2, Heart, Palette } from 'lucide-react';
 import html2canvas from 'html2canvas';
@@ -36,6 +36,50 @@ export const ContributorModal: React.FC<ContributorDetailProps> = ({
     isOwner,
 }) => {
     const modalRef = useRef<HTMLDivElement>(null);
+    const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+    // Focus Trap
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                onClose();
+                return;
+            }
+
+            if (e.key === 'Tab') {
+                const focusableElements = modalRef.current?.parentElement?.querySelectorAll(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                
+                if (!focusableElements || focusableElements.length === 0) return;
+
+                const firstElement = focusableElements[0] as HTMLElement;
+                const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+                if (e.shiftKey) {
+                    if (document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        // Focus the close button initially or the modal itself
+        setTimeout(() => closeButtonRef.current?.focus(), 100);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isOpen, onClose]);
 
     const handleDownload = async () => {
         if (!modalRef.current) return;
@@ -71,7 +115,7 @@ export const ContributorModal: React.FC<ContributorDetailProps> = ({
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden pt-[max(1rem,env(safe-area-inset-top))]">
                 {/* Backdrop with blur */}
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -88,8 +132,10 @@ export const ContributorModal: React.FC<ContributorDetailProps> = ({
                 >
                     {/* Close Button */}
                     <button
+                        ref={closeButtonRef}
                         onClick={onClose}
                         className="absolute top-6 right-6 z-30 p-2 bg-white/5 hover:bg-white/20 text-white rounded-full transition-all backdrop-blur-md"
+                        aria-label="Tutup detail kontributor"
                     >
                         <X size={20} />
                     </button>
@@ -161,6 +207,8 @@ export const ContributorModal: React.FC<ContributorDetailProps> = ({
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="p-3 rounded-full bg-white/5 text-white hover:bg-white hover:text-black transition-all duration-300"
+                                        title="Lihat profil GitHub"
+                                        aria-label="Lihat profil GitHub"
                                     >
                                         <ExternalLink size={18} />
                                     </a>

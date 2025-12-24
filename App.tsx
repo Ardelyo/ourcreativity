@@ -77,6 +77,9 @@ export default function App() {
     <ErrorBoundary>
       <Router>
         <ScrollToTop />
+        <a href="#main-content" className="sr-only focus:not-sr-only absolute top-4 left-4 z-[100] bg-white text-black px-4 py-2 rounded-md font-bold shadow-lg">
+          Langsung ke konten utama
+        </a>
         <div className="min-h-screen bg-[#030303] text-white selection:bg-rose-500/30 font-sans overflow-x-hidden flex flex-col relative">
           <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
             <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: `url("https://grainy-gradients.vercel.app/noise.svg")`, backgroundSize: '100px 100px' }}></div>
@@ -87,7 +90,7 @@ export default function App() {
 
           <div className="relative z-10 flex flex-col min-h-screen">
             <Navbar />
-            <main className="flex-grow container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
+            <main id="main-content" className="flex-grow container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
               <AnimatedRoutes />
             </main>
             <Footer />

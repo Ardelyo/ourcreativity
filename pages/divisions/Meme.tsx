@@ -69,31 +69,31 @@ export const Meme = () => {
                 </div>
 
                 {/* Content Section - Simplified Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-16 md:mb-20">
 
                     {/* Identity Card */}
-                    <div className="bg-zinc-900/50 backdrop-blur border border-zinc-800 p-10 rounded-2xl hover-lift">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="bg-rose-500/20 p-3 rounded-xl">
-                                <Heart className="text-rose-500 w-8 h-8" />
+                    <div className="bg-zinc-900/50 backdrop-blur border border-zinc-800 p-6 md:p-10 rounded-2xl hover-lift">
+                        <div className="flex items-center gap-4 mb-4 md:mb-6">
+                            <div className="bg-rose-500/20 p-2 md:p-3 rounded-xl">
+                                <Heart className="text-rose-500 w-6 h-6 md:w-8 md:h-8" />
                             </div>
-                            <h2 className="text-4xl font-meme uppercase">Identitas</h2>
+                            <h2 className="text-3xl md:text-4xl font-meme uppercase">Identitas</h2>
                         </div>
-                        <p className="font-pixel text-2xl text-zinc-400 leading-relaxed">
+                        <p className="font-pixel text-xl md:text-2xl text-zinc-400 leading-relaxed">
                             Bukan sekadar hiburan, tapi refleksi kreatif dari kejadian
                             sehari-hari yang dikemas dengan cerdas dan relatable.
                         </p>
                     </div>
 
                     {/* Mission Card */}
-                    <div className="bg-zinc-900/50 backdrop-blur border border-zinc-800 p-10 rounded-2xl hover-lift">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="bg-yellow-500/20 p-3 rounded-xl">
-                                <Zap className="text-yellow-500 w-8 h-8" />
+                    <div className="bg-zinc-900/50 backdrop-blur border border-zinc-800 p-6 md:p-10 rounded-2xl hover-lift">
+                        <div className="flex items-center gap-4 mb-4 md:mb-6">
+                            <div className="bg-yellow-500/20 p-2 md:p-3 rounded-xl">
+                                <Zap className="text-yellow-500 w-6 h-6 md:w-8 md:h-8" />
                             </div>
-                            <h2 className="text-4xl font-meme uppercase">Misi Kami</h2>
+                            <h2 className="text-3xl md:text-4xl font-meme uppercase">Misi Kami</h2>
                         </div>
-                        <p className="font-pixel text-2xl text-zinc-400 leading-relaxed">
+                        <p className="font-pixel text-xl md:text-2xl text-zinc-400 leading-relaxed">
                             Membangun jembatan tawa antara kreator dan audiens,
                             satu meme di satu waktu.
                         </p>
@@ -101,8 +101,8 @@ export const Meme = () => {
                 </div>
 
                 {/* Information Table - Clean Typography */}
-                <div className="mb-20">
-                    <h2 className="text-5xl font-meme mb-10 text-center underline decoration-zinc-800 underline-offset-8">PROGRAM & KEGIATAN</h2>
+                <div className="mb-16 md:mb-20">
+                    <h2 className="text-4xl md:text-5xl font-meme mb-8 md:mb-10 text-center underline decoration-zinc-800 underline-offset-8">PROGRAM & KEGIATAN</h2>
 
                     <div className="space-y-6">
                         {[
@@ -110,13 +110,13 @@ export const Meme = () => {
                             { icon: MessageSquare, title: "KOLABORASI", desc: "Bekerjasama lintas divisi untuk event spesial." },
                             { icon: Zap, title: "RISET TREN", desc: "Menganalisis humor digital terkini." }
                         ].map((item, idx) => (
-                            <div key={idx} className="flex items-start gap-6 group">
+                            <div key={idx} className="flex items-start gap-4 md:gap-6 group">
                                 <div className="text-zinc-600 group-hover:text-white transition-colors pt-1">
-                                    <item.icon size={32} />
+                                    <item.icon size={24} className="md:w-8 md:h-8" />
                                 </div>
                                 <div>
-                                    <h3 className="text-3xl font-meme group-hover:text-rose-500 transition-colors uppercase">{item.title}</h3>
-                                    <p className="font-pixel text-xl text-zinc-500 uppercase tracking-widest">{item.desc}</p>
+                                    <h3 className="text-2xl md:text-3xl font-meme group-hover:text-rose-500 transition-colors uppercase">{item.title}</h3>
+                                    <p className="font-pixel text-lg md:text-xl text-zinc-500 uppercase tracking-widest">{item.desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -124,10 +124,10 @@ export const Meme = () => {
                 </div>
 
                 {/* Call to Action - Massive & Simple */}
-                <div className="relative overflow-hidden rounded-3xl bg-zinc-900 border border-zinc-800 p-12 md:p-20 text-center">
+                <div className="relative overflow-hidden rounded-3xl bg-zinc-900 border border-zinc-800 p-8 md:p-20 text-center">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 via-yellow-500 to-purple-500"></div>
 
-                    <h2 className="text-5xl md:text-7xl font-meme mb-8 uppercase leading-tight">
+                    <h2 className="text-4xl md:text-7xl font-meme mb-6 md:mb-8 uppercase leading-tight">
                         LIHAT KARYA KAMI
                         <br />
                         <span className="text-rose-500">@OCEDISIMEME.ID</span>
@@ -137,9 +137,9 @@ export const Meme = () => {
                         href="https://www.instagram.com/ocedisimeme.id"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-4 bg-white text-black font-meme text-3xl px-12 py-5 rounded-full hover:bg-rose-500 hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-2xl"
+                        className="inline-flex items-center gap-3 md:gap-4 bg-white text-black font-meme text-2xl md:text-3xl px-8 md:px-12 py-3 md:py-5 rounded-full hover:bg-rose-500 hover:text-white transition-all transform hover:scale-110 active:scale-95 shadow-2xl"
                     >
-                        <Share2 className="w-8 h-8" />
+                        <Share2 className="w-6 h-6 md:w-8 md:h-8" />
                         DUKUNG KAMI
                     </a>
                 </div>

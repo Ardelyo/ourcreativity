@@ -95,9 +95,9 @@ export const Writing = () => {
                             </motion.div>
                         </div>
 
-                        <h1 className="text-[12vw] leading-[0.85] font-medium tracking-tighter uppercase mb-12 mix-blend-multiply">
+                        <h1 className="text-6xl md:text-[12vw] leading-[0.9] md:leading-[0.85] font-medium tracking-tighter uppercase mb-8 md:mb-12 mix-blend-multiply flex flex-col md:block">
                             <RevealText text="Divisi" delay={0.1} />
-                            <RevealText text="Paling" delay={0.2} className="ml-[10vw] italic font-light" />
+                            <RevealText text="Paling" delay={0.2} className="md:ml-[10vw] italic font-light" />
                             <RevealText text="Kritis" delay={0.3} />
                             <motion.img
                                 initial={{ opacity: 0, scale: 0.8 }}
@@ -105,12 +105,12 @@ export const Writing = () => {
                                 transition={{ delay: 0.5, duration: 0.8 }}
                                 src="/logo-oc-karyatulis.jpg"
                                 alt="OC Karya Tulis Logo"
-                                className="w-24 h-24 md:w-32 md:h-32 mt-8 rounded-full border border-[#1a1a1a]/20 object-cover"
+                                className="w-20 h-20 md:w-32 md:h-32 mt-4 md:mt-8 rounded-full border border-[#1a1a1a]/20 object-cover"
                             />
                         </h1>
 
-                        <div className="flex flex-col md:flex-row justify-between items-end gap-12 border-t border-[#1a1a1a] pt-8">
-                            <p className="max-w-md text-lg md:text-xl leading-relaxed font-sans text-[#1a1a1a]/80">
+                        <div className="flex flex-col md:flex-row justify-between items-end gap-8 md:gap-12 border-t border-[#1a1a1a] pt-8">
+                            <p className="max-w-md text-base md:text-xl leading-relaxed font-sans text-[#1a1a1a]/80">
                                 Di mana setiap kata ditimbang, setiap ide diuji, dan setiap tulisan adalah bentuk perlawanan terhadap kedangkalan.
                             </p>
                             <motion.div
@@ -126,16 +126,16 @@ export const Writing = () => {
                 </header>
 
                 {/* Bagian Manifesto / Kolase */}
-                <section className="py-32 px-6 md:px-20 border-t border-[#1a1a1a]/10">
+                <section className="py-20 md:py-32 px-6 md:px-20 border-t border-[#1a1a1a]/10">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
                         <div className="md:col-span-4 sticky top-32">
                             <span className="font-sans text-xs tracking-[0.2em] uppercase mb-6 block text-[#1a1a1a]/60">Manifesto Kami</span>
-                            <h2 className="text-5xl md:text-7xl leading-none mb-8">
+                            <h2 className="text-4xl md:text-7xl leading-none mb-6 md:mb-8">
                                 Berpikir.<br />
                                 Menulis.<br />
                                 <span className="italic font-light">Mengubah.</span>
                             </h2>
-                            <p className="font-sans text-[#1a1a1a]/70 leading-relaxed mb-8">
+                            <p className="font-sans text-[#1a1a1a]/70 leading-relaxed mb-8 text-sm md:text-base">
                                 Kami percaya bahwa tulisan bukan sekadar hiasan. Ia adalah senjata tajam yang membedah realitas. Di sini, kami tidak hanya belajar menulis indah, tapi belajar berpikir benar.
                             </p>
                             <div className="flex gap-4">

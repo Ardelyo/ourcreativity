@@ -6,7 +6,10 @@ import { ChangelogTimeline } from '../components/ChangelogTimeline';
 import { FetchErrorState } from '../components/FetchErrorState';
 import { supabase } from '../lib/supabase';
 
+import { useAuth } from '../components/AuthProvider';
+
 export const Announcement = () => {
+    const { loading: authLoading } = useAuth();
     const [activeTab, setActiveTab] = useState<'updates' | 'changelog'>('updates');
     const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
     const [events, setEvents] = useState<any[]>([]);
@@ -14,6 +17,8 @@ export const Announcement = () => {
     const [error, setError] = useState<string | null>(null);
 
     const fetchAnnouncements = async () => {
+        if (authLoading) return;
+
         try {
             setLoading(true);
             setError(null);
@@ -36,8 +41,10 @@ export const Announcement = () => {
     };
 
     useEffect(() => {
-        fetchAnnouncements();
-    }, []);
+        if (!authLoading) {
+            fetchAnnouncements();
+        }
+    }, [authLoading]);
 
     return (
         <div className="min-h-screen bg-black text-white">

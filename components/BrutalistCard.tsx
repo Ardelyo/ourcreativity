@@ -35,83 +35,76 @@ export const BrutalistCard: React.FC<BrutalistCardProps> = ({
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            whileHover={{ x: -4, y: -4 }}
-            className={`relative backdrop-blur-md border-4 p-6 transition-all group ${isOwner
-                ? 'bg-rose-950/20 border-rose-500 shadow-brutalist-rose hover:shadow-brutalist-rose-lg'
+            whileHover={{ y: -5 }}
+            className={`relative group p-6 rounded-3xl transition-all duration-500 overflow-hidden ${isOwner
+                ? 'bg-gradient-to-br from-rose-500/10 to-transparent border border-rose-500/20 shadow-[0_0_40px_rgba(244,63,94,0.1)]'
                 : isReporter
-                    ? 'bg-purple-950/20 border-purple-500 shadow-brutalist-purple hover:shadow-brutalist-purple-lg'
-                    : 'bg-white/5 border-white/20 shadow-brutalist hover:shadow-brutalist-lg'
+                    ? 'bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 shadow-[0_0_40px_rgba(168,85,247,0.1)]'
+                    : 'bg-white/5 border border-white/10 backdrop-blur-sm'
                 }`}
         >
-            <div className="flex items-start justify-between mb-4">
-                <div className="relative">
-                    <div className={`absolute inset-0 blur-xl opacity-20 -z-10 ${isOwner ? 'bg-rose-500' : 'bg-purple-500'}`} />
+            {/* Soft Ambient Glow */}
+            <div className={`absolute -top-24 -right-24 w-48 h-48 blur-[80px] opacity-20 rounded-full pointer-events-none ${isOwner ? 'bg-rose-500' : isReporter ? 'bg-purple-500' : 'bg-white'
+                }`} />
+
+            <div className="flex flex-col items-center text-center">
+                <div className="relative mb-6">
+                    <div className={`absolute inset-0 rounded-full blur-2xl opacity-30 ${isOwner ? 'bg-rose-500' : 'bg-purple-500'}`} />
                     <img
                         src={avatar_url}
                         alt={login}
-                        className={`w-20 h-20 border-4 bg-black object-cover ${isOwner ? 'border-rose-500' : 'border-white/20'}`}
+                        className={`w-28 h-28 rounded-2xl object-cover relative z-10 border-2 ${isOwner ? 'border-rose-500/50' : 'border-white/20'
+                            } grayscale group-hover:grayscale-0 transition-all duration-700`}
                     />
                     {isOwner && (
-                        <div className="absolute -top-3 -right-3 bg-rose-500 text-white p-1.5 border-2 border-black">
-                            <Crown size={18} />
-                        </div>
-                    )}
-                    {isReporter && (
-                        <div className="absolute -top-3 -right-3 bg-purple-500 text-white p-1.5 border-2 border-black">
-                            <Bug size={18} />
+                        <div className="absolute -top-2 -right-2 bg-rose-500 text-white p-1.5 rounded-full z-20 shadow-lg border-2 border-black">
+                            <Crown size={14} />
                         </div>
                     )}
                 </div>
-                <div className="text-right">
-                    <h3 className="text-2xl font-black uppercase tracking-tighter leading-none mb-1 text-white group-hover:text-rose-400 transition-colors">
-                        {login}
-                    </h3>
+
+                <h3 className="text-3xl font-serif italic mb-2 text-white group-hover:text-rose-400 transition-colors duration-500">
+                    {login}
+                </h3>
+
+                <div className="flex gap-2 mb-6">
                     {contributions !== undefined && (
-                        <span className="bg-rose-500 text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-widest">
-                            {contributions} KONTRIBUSI
+                        <span className="text-[10px] font-mono tracking-widest uppercase py-1 px-3 bg-rose-500/10 text-rose-400 rounded-full border border-rose-500/20">
+                            {contributions} Komitmen
                         </span>
                     )}
                     {issueCount !== undefined && (
-                        <span className="bg-purple-500 text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-widest">
-                            {issueCount} LAPORAN
+                        <span className="text-[10px] font-mono tracking-widest uppercase py-1 px-3 bg-purple-500/10 text-purple-400 rounded-full border border-purple-500/20">
+                            {issueCount} Laporan
                         </span>
                     )}
                 </div>
-            </div>
 
-            <div className="space-y-4">
                 {bio && (
-                    <p className="font-mono text-xs text-white/60 border-l-2 border-white/20 pl-3 py-1 bg-white/5 leading-relaxed">
+                    <p className="text-gray-400 text-sm font-light leading-relaxed mb-8 max-w-[240px]">
                         {bio}
                     </p>
                 )}
 
-                {issueTitle && (
-                    <div className="bg-purple-500/10 border border-purple-500/30 text-white p-3 font-mono text-[10px]">
-                        <span className="text-purple-400 font-black uppercase block mb-1">LAPORAN TERAKHIR:</span>
-                        <span className="opacity-80">{issueTitle}</span>
-                    </div>
-                )}
-
-                <div className="flex gap-2">
+                <div className="flex items-center gap-4">
                     <a
                         href={html_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-white/5 text-white p-2 hover:bg-rose-500 hover:text-white border-2 border-white/10 transition-all"
+                        className="text-gray-500 hover:text-white transition-colors"
                         title="GitHub Profile"
                     >
-                        <Github size={18} />
+                        <Github size={20} />
                     </a>
                     {socials?.twitter && (
                         <a
                             href={`https://twitter.com/${socials.twitter}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white/5 text-white p-2 hover:bg-[#1DA1F2] hover:text-white border-2 border-white/10 transition-all"
+                            className="text-gray-500 hover:text-white transition-colors"
                             title="Twitter"
                         >
-                            <Twitter size={18} />
+                            <Twitter size={20} />
                         </a>
                     )}
                     {socials?.website && (
@@ -119,17 +112,18 @@ export const BrutalistCard: React.FC<BrutalistCardProps> = ({
                             href={socials.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white/5 text-white p-2 hover:bg-purple-500 hover:text-white border-2 border-white/10 transition-all"
+                            className="text-gray-500 hover:text-white transition-colors"
                             title="Situs Web"
                         >
-                            <LinkIcon size={18} />
+                            <LinkIcon size={20} />
                         </a>
                     )}
                 </div>
             </div>
 
-            {/* Decoration */}
-            <div className={`absolute bottom-2 right-2 w-4 h-4 border-r-4 border-b-4 transition-colors ${isOwner ? 'border-rose-500' : 'border-white/10'}`} />
+            {/* Bottom Decoration */}
+            <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-0 group-hover:opacity-10 transition-opacity duration-500 ${isOwner ? 'text-rose-500' : isReporter ? 'text-purple-500' : 'text-white'
+                }`} />
         </motion.div>
     );
 };

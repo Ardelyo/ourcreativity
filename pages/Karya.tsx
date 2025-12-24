@@ -46,7 +46,8 @@ const generateCodePreview = (code: string, language: string = 'html'): string =>
 
 export const Karya = () => {
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const carouselRef = React.useRef<HTMLDivElement>(null);
@@ -67,6 +68,9 @@ export const Karya = () => {
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   const fetchWorks = async (pageNum = 0, currentFilter = filter) => {
+    // If auth is still initializing, don't fetch yet as it might lead to empty results if RLS is strict
+    if (authLoading) return;
+
     try {
       if (pageNum === 0) setLoading(true);
       setError(null);
@@ -104,9 +108,11 @@ export const Karya = () => {
   };
 
   useEffect(() => {
-    setPage(0);
-    fetchWorks(0, filter);
-  }, [filter]);
+    if (!authLoading) {
+      setPage(0);
+      fetchWorks(0, filter);
+    }
+  }, [filter, authLoading]);
 
   const handleLoadMore = () => {
     const nextPage = page + 1;

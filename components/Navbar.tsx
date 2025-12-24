@@ -41,152 +41,151 @@ export const Navbar = () => {
     // Konfigurasi transisi animasi - pegas cair "mirip Apple"
     const springTransition = {
         type: "spring" as const,
-        stiffness: 350,
+        stiffness: 400,
         damping: 30,
-        mass: 1
+        mass: 0.8
+    };
+
+    const containerVariants = {
+        collapsed: {
+            width: "auto",
+            height: "50px",
+            borderRadius: "50px",
+            padding: "8px 16px",
+        },
+        expanded: {
+            width: "auto",
+            height: "60px",
+            borderRadius: "50px",
+            padding: "12px 24px",
+        },
+        profileOpen: {
+            width: "auto",
+            minWidth: "200px",
+            height: "auto",
+            borderRadius: "32px",
+            padding: "12px 20px 20px 20px",
+        },
+        mobileOpen: {
+            width: "100%",
+            maxWidth: "400px",
+            height: "auto",
+            borderRadius: "32px",
+            padding: "24px",
+        }
     };
 
     return (
         <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4 pointer-events-none">
             <motion.nav
                 layout
-                initial={{ y: -100, opacity: 0, width: "auto", borderRadius: 50 }}
-                animate={{
-                    y: 0,
-                    opacity: 1,
-                    width: isMobileMenuOpen ? "100%" : (showFullMenu ? "auto" : "max-content"),
-                    maxWidth: isMobileMenuOpen ? "500px" : "100%",
-                    borderRadius: isMobileMenuOpen ? "32px" : "100px",
-                }}
+                initial="expanded"
+                animate={isMobileMenuOpen ? "mobileOpen" : (isProfileOpen ? "profileOpen" : (showFullMenu ? "expanded" : "collapsed"))}
+                variants={containerVariants}
                 transition={springTransition}
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
-                className={`pointer-events-auto bg-[#111]/90 backdrop-blur-lg border border-white/10 shadow-2xl shadow-black/50 flex flex-col ${isMobileMenuOpen ? 'p-6 gap-6 overflow-hidden' : (showFullMenu ? 'px-6 py-3 overflow-visible' : 'px-3 py-2 overflow-visible')
-                    }`}
+                className="pointer-events-auto bg-[#111]/90 backdrop-blur-lg border border-white/10 shadow-2xl shadow-black/50 flex flex-col overflow-hidden"
             >
-                <motion.div layout className={`flex items-center justify-between w-full ${isMobileMenuOpen ? '' : (showFullMenu ? 'gap-8' : 'gap-2')}`}>
-                    {/* Logo */}
-                    <Link to="/" className="flex items-center gap-2 group shrink-0" onClick={() => setIsMobileMenuOpen(false)}>
-                        <motion.div
-                            layout
-                            className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-colors"
-                        >
-                            <Asterisk size={16} />
-                        </motion.div>
+                <div className={`flex items-center justify-between w-full relative ${showFullMenu && !isMobileMenuOpen ? 'gap-12' : 'gap-4'} ${isProfileOpen ? 'h-[40px]' : 'h-full'}`}>
+                    {/* Logo & Title Wrapper */}
+                    <div className="flex items-center gap-3">
+                        <Link to="/" className="flex items-center gap-2 group shrink-0 relative z-10" onClick={() => setIsMobileMenuOpen(false)}>
+                            <motion.div
+                                layout="position"
+                                className={`rounded-full flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-colors ${showFullMenu || isMobileMenuOpen ? 'w-8 h-8 bg-white/10' : 'w-8 h-8 bg-transparent'}`}
+                            >
+                                <Asterisk size={showFullMenu || isMobileMenuOpen ? 18 : 20} className={!(showFullMenu || isMobileMenuOpen) ? "animate-spin-slow" : ""} />
+                            </motion.div>
+                        </Link>
+
                         <AnimatePresence mode="popLayout">
                             {(showFullMenu || isMobileMenuOpen) && (
                                 <motion.span
-                                    initial={{ opacity: 0, width: 0, filter: "blur(10px)" }}
-                                    animate={{ opacity: 1, width: "auto", filter: "blur(0px)" }}
-                                    exit={{ opacity: 0, width: 0, filter: "blur(10px)" }}
-                                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                                    className="font-serif font-bold text-lg tracking-tight text-white whitespace-nowrap overflow-hidden ml-2"
+                                    initial={{ opacity: 0, x: -10, filter: "blur(5px)" }}
+                                    animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                                    exit={{ opacity: 0, x: -10, filter: "blur(5px)" }}
+                                    transition={{ duration: 0.3, ease: "easeOut" }}
+                                    className="font-serif font-bold text-lg tracking-tight text-white whitespace-nowrap"
                                 >
                                     Our Creativity.
                                 </motion.span>
                             )}
                         </AnimatePresence>
-                    </Link>
-
-                    {/* Tautan Desktop */}
-                    <div className="hidden md:flex items-center">
-                        <AnimatePresence mode='popLayout'>
-                            {showFullMenu && (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
-                                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                                    exit={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
-                                    transition={{ duration: 0.2 }}
-                                    className="flex items-center gap-1"
-                                >
-                                    {navLinks.map((link) => (
-                                        <Link
-                                            key={link.name}
-                                            to={link.href}
-                                            className={`px-4 py-2 text-xs font-medium uppercase tracking-wide transition-colors rounded-full whitespace-nowrap ${isActive(link.href)
-                                                ? 'text-white bg-white/10'
-                                                : 'text-gray-400 hover:text-white hover:bg-white/5'
-                                                }`}
-                                        >
-                                            {link.name}
-                                        </Link>
-                                    ))}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
                     </div>
 
-                    {/* CTA & Toggle Seluler */}
-                    <div className="flex items-center gap-2 shrink-0">
-                        <AnimatePresence>
-                            {showFullMenu && !isMobileMenuOpen ? (
+                    {/* Tautan Desktop */}
+                    <AnimatePresence mode="popLayout">
+                        {showFullMenu && !isMobileMenuOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.15 } }}
+                                transition={{ duration: 0.25 }}
+                                className="hidden md:flex items-center gap-1"
+                            >
+                                {navLinks.map((link) => (
+                                    <Link
+                                        key={link.name}
+                                        to={link.href}
+                                        className={`px-4 py-2 text-[10px] lg:text-xs font-medium uppercase tracking-[0.2em] transition-all rounded-full whitespace-nowrap relative group ${isActive(link.href)
+                                            ? 'text-white'
+                                            : 'text-gray-400 hover:text-white'
+                                            }`}
+                                    >
+                                        <span className="relative z-10">{link.name}</span>
+                                        {isActive(link.href) && (
+                                            <motion.div
+                                                layoutId="navPill"
+                                                className="absolute inset-0 bg-white/10 rounded-full -z-0"
+                                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                            />
+                                        )}
+                                        {!isActive(link.href) && (
+                                            <div className="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity -z-0" />
+                                        )}
+                                    </Link>
+                                ))}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* CTA & Toggle Area */}
+                    <div className="flex items-center gap-2 shrink-0 z-10">
+                        <AnimatePresence mode="popLayout">
+                            {showFullMenu && !isMobileMenuOpen && (
                                 <motion.div
-                                    initial={{ opacity: 0, width: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, width: "auto", scale: 1 }}
-                                    exit={{ opacity: 0, width: 0, scale: 0.8 }}
-                                    transition={{ duration: 0.3 }}
+                                    key="desktop-auth"
+                                    initial={{ opacity: 0, x: 10, scale: 0.9 }}
+                                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                                    exit={{ opacity: 0, x: 10, scale: 0.9, transition: { duration: 0.15 } }}
+                                    transition={{ duration: 0.25 }}
                                     className="hidden sm:flex items-center gap-2"
                                 >
                                     {user && profile ? (
-                                        <div className="relative group/profile">
-                                            <div className="flex items-center">
-                                                <Link
-                                                    to="/settings"
-                                                    className="flex items-center gap-2 bg-white/10 hover:bg-white/20 pl-2 pr-3 py-1.5 rounded-l-full transition-colors border-r border-white/10"
+                                        <div className="flex items-center">
+                                            <Link
+                                                to="/settings"
+                                                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 pl-2 pr-3 py-1.5 rounded-l-full transition-colors border-r border-white/10"
+                                            >
+                                                <img
+                                                    src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || 'User'}`}
+                                                    alt={profile.username}
+                                                    className="w-6 h-6 rounded-full bg-neutral-800"
+                                                />
+                                                <span className="text-xs font-bold text-white max-w-[80px] truncate">{profile.username}</span>
+                                            </Link>
+                                            <button
+                                                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                                className="bg-white/10 hover:bg-white/20 px-2 py-1.5 rounded-r-full transition-colors h-[36px] flex items-center justify-center"
+                                            >
+                                                <motion.div
+                                                    animate={{ rotate: isProfileOpen ? 180 : 0 }}
+                                                    transition={{ duration: 0.2 }}
                                                 >
-                                                    <img
-                                                        src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile.username}`}
-                                                        alt={profile.username}
-                                                        className="w-6 h-6 rounded-full"
-                                                    />
-                                                    <span className="text-xs font-bold text-white max-w-[80px] truncate">{profile.username}</span>
-                                                </Link>
-                                                <button
-                                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                                    className="bg-white/10 hover:bg-white/20 px-2 py-1.5 rounded-r-full transition-colors h-[36px] flex items-center justify-center"
-                                                >
-                                                    <motion.div
-                                                        animate={{ rotate: isProfileOpen ? 180 : 0 }}
-                                                        transition={{ duration: 0.2 }}
-                                                    >
-                                                        <ChevronRight size={14} className="text-white rotate-90" />
-                                                    </motion.div>
-                                                </button>
-                                            </div>
-
-                                            <AnimatePresence>
-                                                {isProfileOpen && (
-                                                    <motion.div
-                                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                                        className="absolute top-full right-0 mt-3 w-56 bg-[#18181b]/95 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-1.5 flex flex-col gap-1 z-50 min-w-[200px]"
-                                                    >
-                                                        <div className="px-3 py-2 text-xs text-gray-400 border-b border-white/5 mb-1">
-                                                            Status: <span className={profile.is_approved ? "text-green-500 font-bold" : "text-yellow-500 font-bold"}>
-                                                                {profile.is_approved ? "Member" : "Pending"}
-                                                            </span>
-                                                        </div>
-                                                        <Link to={`/profile/${profile.username}`} className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-lg w-full text-left transition-colors">
-                                                            <UserIcon size={14} /> Profil Saya
-                                                        </Link>
-                                                        <Link to="/settings" className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-lg w-full text-left transition-colors">
-                                                            <Settings size={14} /> Pengaturan
-                                                        </Link>
-                                                        {profile?.role === 'admin' && (
-                                                            <Link to="/admin" className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg w-full text-left transition-colors">
-                                                                <Shield size={14} /> Panel Admin
-                                                            </Link>
-                                                        )}
-                                                        <button
-                                                            onClick={signOut}
-                                                            className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-red-400 hover:bg-white/5 rounded-lg w-full text-left transition-colors"
-                                                        >
-                                                            <LogOut size={14} /> Keluar
-                                                        </button>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
+                                                    <ChevronRight size={14} className="text-white rotate-90" />
+                                                </motion.div>
+                                            </button>
                                         </div>
                                     ) : (
                                         <Link
@@ -198,53 +197,99 @@ export const Navbar = () => {
                                         </Link>
                                     )}
                                 </motion.div>
-                            ) : (
-                                !isMobileMenuOpen && (
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                        className="flex gap-2"
-                                    >
-                                        {/* Status indicator or mini avatar when collapsed */}
-                                        {user && (
-                                            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                                                <UserIcon size={14} className="text-white" />
-                                            </div>
-                                        )}
-                                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse my-auto ml-2" />
-                                    </motion.div>
-                                )
                             )}
                         </AnimatePresence>
 
+                        {!isMobileMenuOpen && !showFullMenu && (
+                            <motion.div
+                                key="collapsed-indicator"
+                                initial={{ opacity: 0, scale: 0 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="flex gap-2 items-center"
+                            >
+                                {user && (
+                                    <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
+                                        <UserIcon size={12} className="text-white" />
+                                    </div>
+                                )}
+                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                            </motion.div>
+                        )}
+
                         <button
-                            className="md:hidden text-white p-2"
+                            className="md:hidden text-white p-1 rounded-full hover:bg-white/10 transition-colors"
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         >
-                            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                            <motion.div
+                                animate={{ rotate: isMobileMenuOpen ? 90 : 0 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                            </motion.div>
                         </button>
                     </div>
-                </motion.div>
+                </div>
 
-                {/* Konten Menu Seluler - Di dalam Pulau */}
+                {/* Profile Dropdown Content */}
+                <AnimatePresence>
+                    {isProfileOpen && !isMobileMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                        >
+                            <div className="h-px bg-white/5 w-full my-2" />
+                            <div className="flex flex-col gap-1 p-1">
+                                <div className="px-3 py-2 text-[10px] text-gray-500 uppercase tracking-widest flex justify-between">
+                                    <span>Status</span>
+                                    <span className={profile?.is_approved ? "text-emerald-500 font-bold" : "text-amber-500 font-bold"}>
+                                        {profile?.is_approved ? "ACTIVE MEMBER" : "PENDING APPROVAL"}
+                                    </span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <Link to={`/profile/${profile?.username}`} onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+                                        <UserIcon size={14} /> Profil Saya
+                                    </Link>
+                                    <Link to="/settings" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+                                        <Settings size={14} /> Pengaturan
+                                    </Link>
+                                </div>
+                                {profile?.role === 'admin' && (
+                                    <Link to="/admin" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl transition-colors">
+                                        <Shield size={14} /> Panel Admin
+                                    </Link>
+                                )}
+                                <button
+                                    onClick={() => { signOut(); setIsProfileOpen(false); }}
+                                    className="flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold text-red-500 bg-red-500/5 hover:bg-red-500/10 rounded-xl transition-colors mt-1"
+                                >
+                                    <LogOut size={14} /> Keluar Aplikasi
+                                </button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Mobile Menu Content */}
                 <AnimatePresence>
                     {isMobileMenuOpen && (
                         <motion.div
-                            initial={{ opacity: 0, height: 0, filter: "blur(10px)" }}
-                            animate={{ opacity: 1, height: "auto", filter: "blur(0px)" }}
-                            exit={{ opacity: 0, height: 0, filter: "blur(10px)" }}
-                            transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
-                            className="flex flex-col gap-2 md:hidden overflow-hidden"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                            className="flex flex-col gap-2 md:hidden overflow-hidden mt-2"
                         >
-                            <div className="h-px bg-white/10 w-full my-2" />
+                            <div className="h-px bg-white/10 w-full mb-4" />
                             {navLinks.map((link, i) => (
                                 <motion.div
                                     key={link.name}
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.05 }}
+                                    transition={{ delay: i * 0.05 + 0.1 }}
                                 >
                                     <Link
                                         to={link.href}
@@ -263,29 +308,49 @@ export const Navbar = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3 }}
-                                className="flex flex-col gap-2"
+                                className="flex flex-col gap-2 mt-2 pt-2 border-t border-white/5"
                             >
-                                {user ? (
-                                    <>
-                                        <Link
-                                            to="/settings"
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                            className="w-full bg-white/5 text-white text-center py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
-                                        >
-                                            <Settings size={16} /> Pengaturan Akun
-                                        </Link>
+                                {user && profile ? (
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex items-center gap-3 p-3 bg-white/5 rounded-2xl border border-white/5">
+                                            <img
+                                                src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || 'User'}`}
+                                                alt={profile.username}
+                                                className="w-10 h-10 rounded-full bg-neutral-800"
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-bold text-white">{profile.username}</span>
+                                                <span className="text-[10px] text-gray-500 uppercase tracking-widest">{profile.is_approved ? "Member" : "Pending"}</span>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <Link
+                                                to={`/profile/${profile.username}`}
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className="px-4 py-3 bg-white/5 rounded-xl text-xs font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2"
+                                            >
+                                                <UserIcon size={14} /> Profil
+                                            </Link>
+                                            <Link
+                                                to="/settings"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className="px-4 py-3 bg-white/5 rounded-xl text-xs font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2"
+                                            >
+                                                <Settings size={14} /> Settings
+                                            </Link>
+                                        </div>
                                         <button
                                             onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
-                                            className="w-full bg-red-500/10 text-red-500 text-center py-3 rounded-xl font-bold mt-2 flex items-center justify-center gap-2"
+                                            className="w-full bg-rose-500/10 text-rose-500 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2"
                                         >
-                                            <LogOut size={16} /> Keluar
+                                            <LogOut size={14} /> Keluar
                                         </button>
-                                    </>
+                                    </div>
                                 ) : (
                                     <Link
                                         to="/login"
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="bg-white text-black text-center py-3 rounded-xl font-bold mt-2 flex items-center justify-center gap-2"
+                                        className="bg-white text-black text-center py-3 rounded-xl font-bold mt-2 flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors"
                                     >
                                         <span>Masuk / Daftar</span>
                                         <ArrowRight size={16} />

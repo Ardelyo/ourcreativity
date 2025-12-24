@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { HelpCircle, FileText, Mail, ChevronDown, PenTool, Video, Smile, Type, ExternalLink, Instagram, ChevronRight, Terminal } from 'lucide-react';
+import { HelpCircle, FileText, Mail, ChevronDown, PenTool, Video, Smile, Type, ExternalLink, Instagram, ChevronRight, Terminal, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const divisions = [
@@ -106,6 +106,40 @@ export const Info = () => {
                   <ExternalLink size={16} /> Linktree Profile
                 </a>
               </div>
+            </div>
+          </motion.div>
+
+          <h2 className="text-xl font-serif text-white mb-2 md:mb-4 mt-6 flex items-center gap-3">
+            <div className="w-8 h-[1px] bg-white/20"></div> Legal
+          </h2>
+
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 relative overflow-hidden"
+          >
+            <Noise />
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-4">
+                <Shield className="text-rose-500" size={20} />
+                <h3 className="text-lg font-bold text-white">Aturan Brand</h3>
+              </div>
+              <ul className="space-y-2 mb-4">
+                <li className="text-sm text-gray-400 flex items-start gap-2">
+                  <span className="text-green-500 font-bold">✓</span> Kode bebas (MIT License)
+                </li>
+                <li className="text-sm text-gray-400 flex items-start gap-2">
+                  <span className="text-rose-500 font-bold">✕</span> Dilarang pakai nama/logo
+                </li>
+                <li className="text-sm text-gray-400 flex items-start gap-2">
+                  <span className="text-rose-500 font-bold">✕</span> Jangan klaim official
+                </li>
+              </ul>
+              <Link to="/license" className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 transition-colors">
+                Baca selengkapnya <ChevronRight size={12} />
+              </Link>
             </div>
           </motion.div>
         </div>

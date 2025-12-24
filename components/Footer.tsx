@@ -1,5 +1,6 @@
 import React from 'react';
 import { Github, Instagram, Music2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const Footer = () => {
   return (
@@ -21,8 +22,11 @@ export const Footer = () => {
           </a>
         </div>
 
-        <div className="text-xs text-gray-600">
-          © 2025 Hak Cipta Dilindungi.
+        <div className="text-xs text-gray-600 flex flex-col md:flex-row items-center gap-4">
+          <span>© 2025 Hak Cipta Dilindungi.</span>
+          <Link to="/license" className="hover:text-rose-500 transition-colors">
+            Lisensi & Brand
+          </Link>
         </div>
       </div>
     </footer>

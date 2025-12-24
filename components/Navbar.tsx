@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Asterisk, ArrowRight, User as UserIcon, LogOut, Settings, ChevronRight } from 'lucide-react';
+import { Menu, X, Asterisk, ArrowRight, User as UserIcon, LogOut, Settings, ChevronRight, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
@@ -173,6 +173,11 @@ export const Navbar = () => {
                                                         <Link to="/settings" className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-lg w-full text-left transition-colors">
                                                             <Settings size={14} /> Pengaturan
                                                         </Link>
+                                                        {profile?.role === 'admin' && (
+                                                            <Link to="/admin" className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg w-full text-left transition-colors">
+                                                                <Shield size={14} /> Panel Admin
+                                                            </Link>
+                                                        )}
                                                         <button
                                                             onClick={signOut}
                                                             className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-red-400 hover:bg-white/5 rounded-lg w-full text-left transition-colors"

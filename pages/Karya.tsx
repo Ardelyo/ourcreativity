@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2, ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2, ArrowLeft, ArrowRight, ArrowDown } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom'; // Changed import
 import { FetchErrorState } from '../components/FetchErrorState';
 
@@ -53,30 +53,57 @@ export const Karya = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchWorks = async () => {
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const ITEMS_PER_PAGE = 6;
+
+  const fetchWorks = async (pageNum = 0, currentFilter = filter) => {
     try {
-      setLoading(true);
+      if (pageNum === 0) setLoading(true);
       setError(null);
-      const { data, error } = await supabase
+
+      const from = pageNum * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+
+      let query = supabase
         .from('works')
-        .select('*')
+        .select('id, title, description, image_url, author, type, division, tags, slides, created_at')
         .order('created_at', { ascending: false });
 
+      if (currentFilter !== 'all') {
+        query = query.eq('division', currentFilter);
+      }
+
+      const { data, error } = await query.range(from, to);
+
       if (error) throw error;
+
       if (data) {
-        setArtworks(data);
+        if (pageNum === 0) {
+          setArtworks(data);
+        } else {
+          setArtworks(prev => [...prev, ...data]);
+        }
+        setHasMore(data.length === ITEMS_PER_PAGE);
       }
     } catch (error: any) {
       console.error('Error fetching works:', error);
       setError(error.message || 'Gagal memuat karya dari database. Silakan coba lagi nanti.');
     } finally {
-      setLoading(false);
+      if (pageNum === 0) setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchWorks();
-  }, []);
+    setPage(0);
+    fetchWorks(0, filter);
+  }, [filter]);
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchWorks(nextPage, filter);
+  };
 
   // Reset active slide when switching artworks
   useEffect(() => {
@@ -103,9 +130,7 @@ export const Karya = () => {
 
   const selectedArtwork = artworks.find(a => a.id === selectedId);
 
-  const filteredArtworks = filter === 'all'
-    ? artworks
-    : artworks.filter(a => a.division === filter);
+  const filteredArtworks = artworks;
 
   // Helper untuk merender konten kartu berdasarkan tipe
   const renderCardContent = (art: any) => {
@@ -184,78 +209,90 @@ export const Karya = () => {
         </div>
       </div>
 
-      {/* Grid Masonry Modern */}
+      {/* Grid Masonry Modern - Pinterest Style */}
       {error ? (
         <FetchErrorState message={error} onRetry={fetchWorks} />
-      ) : loading ? (
-        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="break-inside-avoid bg-[#111] rounded-3xl overflow-hidden mb-6 h-64 animate-pulse border border-white/5">
-              <div className="h-full w-full bg-gray-900/50"></div>
+      ) : loading && artworks.length === 0 ? (
+        <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 md:gap-6 space-y-4 md:space-y-6">
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className="break-inside-avoid bg-white/[0.03] rounded-3xl overflow-hidden mb-4 md:mb-6 h-64 animate-pulse border border-white/5 shadow-lg">
+              <div className="h-full w-full bg-gradient-to-br from-white/5 to-transparent"></div>
             </div>
           ))}
         </div>
-      ) : filteredArtworks.length > 0 ? (
-        <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
-          {filteredArtworks.map((art, index) => (
+      ) : artworks.length > 0 ? (
+        <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 md:gap-6 space-y-4 md:space-y-6">
+          {artworks.map((art, index) => (
             <motion.div
               key={art.id}
               layoutId={`card-${art.id}`}
               onClick={() => setSelectedId(art.id)}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ type: "spring", stiffness: 100, damping: 20, delay: index * 0.05 }}
-              viewport={{ once: true }}
-              className="break-inside-avoid group relative rounded-3xl overflow-hidden cursor-pointer bg-[#111] mb-6 shadow-2xl hover:shadow-purple-500/10 transition-shadow border border-white/5"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+                delay: (index % 10) * 0.05
+              }}
+              className="break-inside-avoid group relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden cursor-pointer bg-[#111] mb-4 md:mb-6 shadow-xl hover:shadow-2xl hover:shadow-rose-500/10 transition-all duration-500 border border-white/5 active:scale-[0.98]"
             >
               {/* Konten Kartu (Gambar/Teks/Kode) */}
-              <div className={`relative w-full ${art.type === 'text' || art.type === 'code' ? 'aspect-[4/5]' : ''}`}>
-                <motion.div layoutId={`content-${art.id}`} className="w-full h-full">
+              <div className={`relative w-full ${art.type === 'text' || art.type === 'code' ? 'aspect-[3/4]' : ''}`}>
+                <div className="w-full h-full overflow-hidden">
                   {renderCardContent(art)}
-                </motion.div>
+                </div>
 
-                {/* Hamparan Hover Glassmorphism */}
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-between p-6">
+                {/* Hamparan Hover Premium - Pinterest Inspired */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-4 md:p-6 translate-y-2 group-hover:translate-y-0">
 
-                  <div className="flex justify-between items-start transform -translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/20 ${art.division === 'coding' ? 'bg-green-500/20 text-green-400' :
-                      art.division === 'video' ? 'bg-orange-500/20 text-orange-400' :
-                        art.division === 'meme' ? 'bg-yellow-500/20 text-yellow-400' :
-                          art.division === 'writing' ? 'bg-white/20 text-white' :
-                            'bg-purple-500/20 text-purple-400'
-                      }`}>
-                      {art.division}
-                    </span>
-                    <button className="p-2 bg-white/10 rounded-full hover:bg-white text-white hover:text-black transition-colors">
+                  <div className="flex justify-between items-center mb-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                    <h3 className="text-white font-bold text-sm md:text-lg leading-tight line-clamp-2">{art.title}</h3>
+                    <button className="p-2 bg-white/20 backdrop-blur-xl rounded-full hover:bg-rose-500 text-white transition-all shadow-lg active:scale-90 flex-shrink-0">
                       <Heart size={16} />
                     </button>
                   </div>
 
-                  <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">
-                    <h3 className="text-white font-bold text-xl mb-1 leading-tight">{art.title}</h3>
-                    <Link to={`/profile/${art.author}`} className="flex items-center gap-2 mb-4 hover:opacity-80 transition-opacity">
-                      <div className="w-5 h-5 rounded-full bg-gray-700 overflow-hidden">
-                        <img src={`https://ui-avatars.com/api/?name=${art.author}&background=random`} alt="Avatar" />
+                  <div className="flex items-center justify-between transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
+                    <Link
+                      to={`/profile/${art.author}`}
+                      className="flex items-center gap-2 hover:opacity-80 transition-opacity bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-gray-700 overflow-hidden ring-1 ring-white/20">
+                        <img src={`https://ui-avatars.com/api/?name=${art.author}&background=random`} alt="Avatar" className="w-full h-full object-cover" />
                       </div>
-                      <p className="text-xs text-gray-300">{art.author}</p>
+                      <p className="text-[10px] md:text-xs text-white font-medium">{art.author}</p>
                     </Link>
 
-                    <div className="flex gap-2">
-                      <button className="flex-1 bg-white text-black py-2 rounded-full text-xs font-bold hover:bg-gray-200 transition-colors">
-                        Lihat Detail
-                      </button>
-                      <button className="p-2 border border-white/20 rounded-full text-white hover:bg-white/10 transition-colors">
-                        <Share2 size={16} />
-                      </button>
-                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#999] bg-black/40 px-2 py-1 rounded-lg border border-white/5">
+                      {art.division}
+                    </span>
                   </div>
-
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
-      ) : (
+      ) : null}
+
+      {hasMore && artworks.length > 0 && (
+        <div className="flex justify-center mt-12 pb-12">
+          <button
+            onClick={handleLoadMore}
+            disabled={loading}
+            className="px-10 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold hover:bg-white hover:text-black transition-all flex items-center gap-2 group active:scale-95 disabled:opacity-50"
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>Muat Lebih Banyak <ArrowDown size={18} className="group-hover:translate-y-1 transition-transform" /></>
+            )}
+          </button>
+        </div>
+      )}
+
+      {artworks.length === 0 && !loading && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-24 h-24 bg-gray-900 rounded-full flex items-center justify-center mb-6">
             <ImageIcon size={40} className="text-gray-600" />

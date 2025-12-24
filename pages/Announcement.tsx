@@ -19,7 +19,7 @@ export const Announcement = () => {
             setError(null);
             const { data, error } = await supabase
                 .from('announcements')
-                .select('*')
+                .select('id, title, subtitle, description, content, date, type, category, status, color, highlights')
                 .eq('type', 'announcement')
                 .order('date', { ascending: false });
 

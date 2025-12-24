@@ -25,6 +25,15 @@ const Settings = React.lazy(() => import('./pages/Settings').then(module => ({ d
 const Profile = React.lazy(() => import('./pages/Profile').then(module => ({ default: module.Profile })));
 const V5Launch = React.lazy(() => import('./pages/V5Launch').then(module => ({ default: module.V5Launch })));
 
+// Admin Components
+import { AdminGuard } from './components/AdminGuard';
+import { AdminLayout } from './components/AdminLayout';
+const AdminDashboard = React.lazy(() => import('./pages/Admin/Dashboard').then(module => ({ default: module.Dashboard })));
+const AdminUsers = React.lazy(() => import('./pages/Admin/Users').then(module => ({ default: module.Users })));
+const AdminContent = React.lazy(() => import('./pages/Admin/Content').then(module => ({ default: module.Content })));
+const AdminAnnouncements = React.lazy(() => import('./pages/Admin/Announcements').then(module => ({ default: module.Announcements })));
+const AdminSettings = React.lazy(() => import('./pages/Admin/Settings').then(module => ({ default: module.Settings })));
+
 const Loading = () => (
   <div className="flex items-center justify-center min-h-[60vh]">
     <div className="w-10 h-10 border-4 border-rose-500/30 border-t-rose-500 rounded-full animate-spin"></div>
@@ -65,6 +74,19 @@ const AnimatedRoutes = () => {
               <Route path="/settings" element={<Settings />} />
               <Route path="/profile/:username" element={<Profile />} />
               <Route path="/v5-launch" element={<V5Launch />} />
+
+              {/* Admin Routes */}
+              <Route path="/admin" element={
+                <AdminGuard>
+                  <AdminLayout />
+                </AdminGuard>
+              }>
+                <Route index element={<AdminDashboard />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="content" element={<AdminContent />} />
+                <Route path="announcements" element={<AdminAnnouncements />} />
+                <Route path="settings" element={<AdminSettings />} />
+              </Route>
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>
@@ -77,6 +99,8 @@ const AnimatedRoutes = () => {
 const AppContent = () => {
   const { pathname } = useLocation();
   const isStudio = pathname.toLowerCase() === '/studio';
+  const isAdmin = pathname.toLowerCase().startsWith('/admin');
+  const isZenMode = isStudio || isAdmin;
 
   return (
     <div className="min-h-screen bg-[#030303] text-white selection:bg-rose-500/30 font-sans overflow-x-hidden flex flex-col relative">
@@ -88,11 +112,11 @@ const AppContent = () => {
       </div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
-        {!isStudio && <Navbar />}
-        <main className={`flex-grow ${isStudio ? 'w-full h-screen overflow-hidden' : 'container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl'}`}>
+        {!isZenMode && <Navbar />}
+        <main className={`flex-grow ${isStudio ? 'w-full h-screen overflow-hidden' : (isAdmin ? 'w-full px-0 container-none max-w-none' : 'container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl')}`}>
           <AnimatedRoutes />
         </main>
-        {!isStudio && <Footer />}
+        {!isZenMode && <Footer />}
       </div>
     </div>
   );

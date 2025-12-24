@@ -25,7 +25,7 @@ export const Profile = () => {
             // Fetch Profile
             const { data: profileData, error: profileError } = await supabase
                 .from('profiles')
-                .select('*')
+                .select('id, username, avatar_url, bio, website, role, is_approved, updated_at')
                 .eq('username', username)
                 .single();
 
@@ -35,7 +35,7 @@ export const Profile = () => {
             // Fetch works for this profile
             const { data: worksData, error: worksError } = await supabase
                 .from('works')
-                .select('*')
+                .select('id, title, description, image_url, division, slides, created_at')
                 .eq('author_id', profileData.id)
                 .order('created_at', { ascending: false });
 

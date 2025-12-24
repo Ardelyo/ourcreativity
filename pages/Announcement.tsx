@@ -112,7 +112,7 @@ export const Announcement = () => {
                                     <motion.div
                                         layoutId={`card-${events[0].id}`}
                                         onClick={() => setSelectedEvent(events[0])}
-                                        className="group relative w-full min-h-[500px] bg-[#0a0a0a] rounded-[2.5rem] overflow-hidden cursor-pointer border border-white/10 hover:border-white/30 transition-all mb-16 shadow-2xl"
+                                        className="group relative w-full min-h-auto md:min-h-[500px] bg-[#0a0a0a] rounded-3xl md:rounded-[2.5rem] overflow-hidden cursor-pointer border border-white/10 hover:border-white/30 transition-all mb-12 md:mb-16 shadow-2xl"
                                     >
                                         {/* Dynamic Background Glow */}
                                         <div className={`absolute inset-0 bg-gradient-to-br ${events[0].color} opacity-20 group-hover:opacity-30 transition-opacity duration-700`} />
@@ -120,33 +120,33 @@ export const Announcement = () => {
 
                                         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
 
-                                        <div className="relative z-10 h-full flex flex-col md:flex-row items-center p-8 md:p-16 gap-12">
-                                            <div className="flex-1 space-y-8">
+                                        <div className="relative z-10 h-full flex flex-col md:flex-row items-center p-6 md:p-16 gap-8 md:gap-12">
+                                            <div className="flex-1 space-y-6 md:space-y-8">
                                                 <div className="flex items-center gap-4">
-                                                    <span className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-sm font-bold text-white flex items-center gap-2 shadow-lg">
-                                                        <Sparkles size={14} className="text-yellow-400" /> UPDATE UTAMA
+                                                    <span className="px-3 md:px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs md:text-sm font-bold text-white flex items-center gap-2 shadow-lg">
+                                                        <Sparkles size={12} className="md:w-[14px] md:h-[14px] text-yellow-400" /> UPDATE UTAMA
                                                     </span>
-                                                    <span className="text-gray-400 text-sm font-mono">
+                                                    <span className="text-gray-400 text-xs md:text-sm font-mono">
                                                         {new Date(events[0].date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                                                     </span>
                                                 </div>
 
-                                                <div className="space-y-4">
-                                                    <motion.h2 layoutId={`title-${events[0].id}`} className="text-5xl md:text-7xl font-serif font-bold text-white leading-[1.1]">
+                                                <div className="space-y-3 md:space-y-4">
+                                                    <motion.h2 layoutId={`title-${events[0].id}`} className="text-3xl md:text-7xl font-serif font-bold text-white leading-[1.1]">
                                                         {events[0].title}
                                                     </motion.h2>
-                                                    <p className={`text-xl md:text-2xl font-medium text-transparent bg-clip-text bg-gradient-to-r ${events[0].color}`}>
+                                                    <p className={`text-lg md:text-2xl font-medium text-transparent bg-clip-text bg-gradient-to-r ${events[0].color}`}>
                                                         {events[0].subtitle}
                                                     </p>
                                                 </div>
 
-                                                <p className="text-gray-300 text-lg leading-relaxed max-w-2xl line-clamp-3">
+                                                <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-2xl line-clamp-3">
                                                     {events[0].description}
                                                 </p>
 
-                                                <div className="flex items-center gap-4 pt-4">
-                                                    <Link to="/v5-launch" className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-200 transition-colors flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-                                                        Presentasi Visual <Rocket size={20} />
+                                                <div className="flex items-center gap-4 pt-2 md:pt-4">
+                                                    <Link to="/v5-launch" className="px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-full font-bold text-sm md:text-lg hover:bg-gray-200 transition-colors flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                                                        Presentasi Visual <Rocket size={16} className="md:w-5 md:h-5" />
                                                     </Link>
                                                 </div>
                                             </div>
@@ -168,13 +168,13 @@ export const Announcement = () => {
                                 )}
 
                                 {/* Recent Updates Grid */}
-                                <div className="flex items-center gap-4 mb-8">
+                                <div className="flex items-center gap-4 mb-6 md:mb-8">
                                     <div className="h-px flex-1 bg-white/10" />
-                                    <span className="text-gray-500 font-mono text-sm uppercase tracking-widest">Update Terkini</span>
+                                    <span className="text-gray-500 font-mono text-xs md:text-sm uppercase tracking-widest">Update Terkini</span>
                                     <div className="h-px flex-1 bg-white/10" />
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
                                     {events.slice(1).map((event, i) => (
                                         <motion.div
                                             layoutId={`card-${event.id}`}
@@ -183,30 +183,30 @@ export const Announcement = () => {
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: i * 0.1 }}
-                                            className="group relative bg-[#0a0a0a] border border-white/10 rounded-3xl overflow-hidden cursor-pointer hover:border-white/30 transition-all flex flex-col h-full"
+                                            className="group relative bg-[#0a0a0a] border border-white/10 rounded-2xl md:rounded-3xl overflow-hidden cursor-pointer hover:border-white/30 transition-all flex flex-col h-full"
                                         >
                                             <div className={`absolute inset-0 bg-gradient-to-br ${event.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
 
-                                            <div className="p-8 relative z-10 flex flex-col h-full">
-                                                <div className="flex justify-between items-start mb-6">
-                                                    <span className={`text-xs font-bold px-3 py-1 rounded-full border border-white/10 ${event.status === 'Baru' ? 'bg-rose-500/20 text-rose-400' : 'bg-gray-800 text-gray-400'}`}>
+                                            <div className="p-6 md:p-8 relative z-10 flex flex-col h-full">
+                                                <div className="flex justify-between items-start mb-4 md:mb-6">
+                                                    <span className={`text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 rounded-full border border-white/10 ${event.status === 'Baru' ? 'bg-rose-500/20 text-rose-400' : 'bg-gray-800 text-gray-400'}`}>
                                                         {event.status}
                                                     </span>
-                                                    <span className="text-gray-500 text-xs font-mono">
+                                                    <span className="text-gray-500 text-[10px] md:text-xs font-mono">
                                                         {new Date(event.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
                                                     </span>
                                                 </div>
 
-                                                <motion.h3 layoutId={`title-${event.id}`} className="font-serif text-2xl text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all">
+                                                <motion.h3 layoutId={`title-${event.id}`} className="font-serif text-xl md:text-2xl text-white mb-2 md:mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all">
                                                     {event.title}
                                                 </motion.h3>
 
-                                                <p className="text-gray-400 text-sm line-clamp-3 mb-6 flex-1">
+                                                <p className="text-gray-400 text-sm line-clamp-3 mb-4 md:mb-6 flex-1">
                                                     {event.description}
                                                 </p>
 
-                                                <div className="flex items-center gap-2 text-sm font-bold text-white/50 group-hover:text-white transition-colors">
-                                                    Baca <ArrowRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
+                                                <div className="flex items-center gap-2 text-xs md:text-sm font-bold text-white/50 group-hover:text-white transition-colors">
+                                                    Baca <ArrowRight size={14} className="md:w-4 md:h-4 transform group-hover:translate-x-1 transition-transform" />
                                                 </div>
                                             </div>
                                         </motion.div>

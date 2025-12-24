@@ -40,10 +40,10 @@ export const Navbar = () => {
 
     // Konfigurasi transisi animasi - pegas cair "mirip Apple"
     const springTransition = {
-        type: "spring" as const,
-        stiffness: 400,
+        type: "spring",
+        stiffness: 350,
         damping: 30,
-        mass: 0.8
+        mass: 1
     };
 
     const containerVariants = {
@@ -51,7 +51,7 @@ export const Navbar = () => {
             width: "auto",
             height: "44px",
             borderRadius: "22px",
-            padding: "4px 12px",
+            padding: "4px 6px",
         },
         expanded: {
             width: "auto",
@@ -60,23 +60,21 @@ export const Navbar = () => {
             padding: "8px 20px",
         },
         profileOpen: {
-            width: "100%",
-            maxWidth: "320px",
+            width: "320px",
             height: "auto",
             borderRadius: "24px",
             padding: "12px 16px 16px 16px",
         },
         mobileOpen: {
-            width: "95%",
-            maxWidth: "380px",
+            width: "360px",
             height: "auto",
-            borderRadius: "32px",
-            padding: "24px 28px 32px 28px",
+            borderRadius: "40px",
+            padding: "24px",
         }
     };
 
     return (
-        <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4 pointer-events-none">
+        <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 sm:pt-6 px-4 pointer-events-none">
             <motion.nav
                 layout
                 initial="expanded"
@@ -85,15 +83,15 @@ export const Navbar = () => {
                 transition={springTransition}
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
-                className="pointer-events-auto bg-[#111]/90 backdrop-blur-lg border border-white/10 shadow-2xl shadow-black/50 flex flex-col overflow-hidden"
+                className="pointer-events-auto bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden relative"
             >
-                <div className={`flex items-center justify-between w-full relative ${showFullMenu && !isMobileMenuOpen ? 'gap-12' : 'gap-4'} ${isProfileOpen ? 'h-[40px]' : 'h-full'}`}>
+                <div className={`flex items-center justify-between w-full relative z-20 ${showFullMenu && !isMobileMenuOpen ? 'gap-12' : 'gap-3'} ${isProfileOpen ? 'h-[40px]' : (isMobileMenuOpen ? 'mb-4' : 'h-full')}`}>
                     {/* Logo & Title Wrapper */}
                     <div className="flex items-center gap-3">
                         <Link to="/" className="flex items-center gap-2 group shrink-0 relative z-10" onClick={() => setIsMobileMenuOpen(false)}>
                             <motion.div
                                 layout="position"
-                                className={`rounded-full flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-all duration-300 ${showFullMenu || isMobileMenuOpen ? 'w-8 h-8 bg-white/10' : 'w-7 h-7 bg-transparent'}`}
+                                className={`rounded-full flex items-center justify-center text-white transition-all duration-300 ${showFullMenu || isMobileMenuOpen ? 'w-8 h-8 bg-white/10' : 'w-8 h-8 bg-transparent'}`}
                             >
                                 <Asterisk size={showFullMenu || isMobileMenuOpen ? 18 : 20} className={!(showFullMenu || isMobileMenuOpen) ? "animate-spin-slow" : "rotate-0 group-hover:rotate-180 transition-transform duration-500"} />
                             </motion.div>
@@ -219,14 +217,16 @@ export const Navbar = () => {
                         )}
 
                         <button
-                            className="md:hidden text-white p-2 rounded-full hover:bg-white/10 transition-all active:scale-90"
+                            className={`md:hidden p-2 rounded-full transition-all active:scale-95 ${isMobileMenuOpen ? 'bg-white text-black hover:bg-gray-200' : 'text-white hover:bg-white/10'}`}
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         >
                             <motion.div
-                                animate={{ rotate: isMobileMenuOpen ? 90 : 0, scale: isMobileMenuOpen ? 1.1 : 1 }}
+                                animate={{
+                                    rotate: isMobileMenuOpen ? 90 : 0,
+                                }}
                                 transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
                             >
-                                {isMobileMenuOpen ? <X size={22} strokeWidth={2.5} /> : <Menu size={22} strokeWidth={2.5} />}
+                                {isMobileMenuOpen ? <X size={20} strokeWidth={2.5} /> : <Menu size={20} strokeWidth={2.5} />}
                             </motion.div>
                         </button>
                     </div>
@@ -239,7 +239,7 @@ export const Navbar = () => {
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="overflow-hidden"
+                            className="overflow-hidden relative z-10"
                         >
                             <div className="h-px bg-white/5 w-full my-2" />
                             <div className="flex flex-col gap-1 p-1">
@@ -277,82 +277,90 @@ export const Navbar = () => {
                 <AnimatePresence>
                     {isMobileMenuOpen && (
                         <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="flex flex-col gap-2 md:hidden overflow-hidden mt-2"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="flex flex-col md:hidden overflow-hidden relative z-10 h-full"
                         >
-                            <div className="h-px bg-white/10 w-full mb-4" />
-                            <div className="flex flex-col gap-3 mt-4 px-1">
+                            <div className="h-px bg-white/5 w-full mb-2" />
+
+                            <div className="flex flex-col gap-1.5 mt-2 flex-1">
                                 {navLinks.map((link, i) => (
                                     <motion.div
                                         key={link.name}
-                                        initial={{ opacity: 0, x: -20 }}
+                                        initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: i * 0.05 + 0.1 }}
+                                        transition={{ delay: i * 0.04 + 0.1 }}
                                     >
                                         <Link
                                             to={link.href}
-                                            className={`text-lg font-bold px-6 py-4 rounded-3xl transition-all flex items-center justify-between group ${isActive(link.href)
-                                                ? 'bg-white text-black scale-[1.02] shadow-lg shadow-black/20'
-                                                : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 hover:scale-[1.01]'
+                                            className={`group relative text-base font-semibold px-5 py-3.5 rounded-2xl transition-all flex items-center justify-between overflow-hidden ${isActive(link.href)
+                                                ? 'bg-white text-black shadow-lg shadow-black/20'
+                                                : 'text-gray-400 hover:text-white hover:bg-white/5'
                                                 }`}
                                             onClick={() => setIsMobileMenuOpen(false)}
                                         >
-                                            <span className="tracking-wide">{link.name}</span>
-                                            <ArrowRight size={20} className={`transition-all duration-300 ${isActive(link.href) ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 group-hover:opacity-50 group-hover:translate-x-0'}`} />
+                                            <span className="relative z-10 tracking-wide">{link.name}</span>
+                                            {isActive(link.href) ? (
+                                                <ArrowRight size={18} />
+                                            ) : (
+                                                <ArrowRight size={18} className="opacity-0 -translate-x-2 group-hover:opacity-50 group-hover:translate-x-0 transition-all duration-300" />
+                                            )}
                                         </Link>
                                     </motion.div>
                                 ))}
                             </div>
+
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3 }}
-                                className="flex flex-col gap-2 mt-2 pt-2 border-t border-white/5"
+                                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                                className="mt-4 pt-4 border-t border-white/5"
                             >
                                 {user && profile ? (
                                     <div className="flex flex-col gap-3">
-                                        <div className="flex items-center gap-3 p-4 bg-white/5 rounded-[24px] border border-white/5 mx-1">
+                                        <div className="flex items-center gap-3 p-3 bg-white/5 rounded-[20px] border border-white/5">
                                             <img
                                                 src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || 'User'}`}
                                                 alt={profile.username}
-                                                className="w-12 h-12 rounded-full bg-neutral-800 border-2 border-white/10"
+                                                className="w-10 h-10 rounded-full bg-neutral-800 object-cover"
                                             />
                                             <div className="flex flex-col">
-                                                <span className="text-base font-bold text-white leading-tight">{profile.username}</span>
-                                                <span className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mt-0.5">{profile.is_approved ? "Member Kreatif" : "Menunggu Verifikasi"}</span>
+                                                <span className="text-sm font-bold text-white">{profile.username}</span>
+                                                <span className={`text-[9px] uppercase tracking-wider font-bold ${profile.is_approved ? "text-emerald-500" : "text-amber-500"}`}>
+                                                    {profile.is_approved ? "Member Kreatif" : "Menunggu Verifikasi"}
+                                                </span>
                                             </div>
                                         </div>
-                                        <div className="grid grid-cols-2 gap-2 px-1">
+                                        <div className="grid grid-cols-2 gap-2">
                                             <Link
                                                 to={`/profile/${profile.username}`}
                                                 onClick={() => setIsMobileMenuOpen(false)}
-                                                className="px-4 py-3.5 bg-white/5 rounded-2xl text-[11px] font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2 active:bg-white/10 transition-colors"
+                                                className="px-4 py-3 bg-white/5 rounded-xl text-[11px] font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2 active:bg-white/10 transition-colors"
                                             >
                                                 <UserIcon size={14} /> Profil
                                             </Link>
                                             <Link
                                                 to="/settings"
                                                 onClick={() => setIsMobileMenuOpen(false)}
-                                                className="px-4 py-3.5 bg-white/5 rounded-2xl text-[11px] font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2 active:bg-white/10 transition-colors"
+                                                className="px-4 py-3 bg-white/5 rounded-xl text-[11px] font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2 active:bg-white/10 transition-colors"
                                             >
-                                                <Settings size={14} /> Settings
+                                                <Settings size={14} /> Pengaturan
                                             </Link>
                                         </div>
                                         {profile?.role === 'admin' && (
                                             <Link
                                                 to="/admin"
                                                 onClick={() => setIsMobileMenuOpen(false)}
-                                                className="mx-1 flex items-center justify-center gap-2 px-3 py-3.5 text-[11px] font-bold text-rose-400 bg-rose-500/5 hover:bg-rose-500/10 rounded-2xl transition-colors"
+                                                className="flex items-center justify-center gap-2 px-3 py-3 text-[11px] font-bold text-rose-400 bg-rose-500/5 hover:bg-rose-500/10 rounded-xl transition-colors"
                                             >
                                                 <Shield size={14} /> Panel Administrasi
                                             </Link>
                                         )}
                                         <button
                                             onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
-                                            className="mx-1 bg-red-500/10 text-red-500 py-3.5 rounded-2xl text-[11px] font-bold flex items-center justify-center gap-2 active:bg-red-500/20 transition-colors"
+                                            className="bg-red-500/10 text-red-500 py-3 rounded-xl text-[11px] font-bold flex items-center justify-center gap-2 active:bg-red-500/20 transition-colors"
                                         >
                                             <LogOut size={14} /> Keluar Aplikasi
                                         </button>
@@ -361,10 +369,10 @@ export const Navbar = () => {
                                     <Link
                                         to="/login"
                                         onClick={() => setIsMobileMenuOpen(false)}
-                                        className="mx-1 bg-white text-black text-center py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-gray-100 transition-all active:scale-[0.98]"
+                                        className="bg-white text-black w-full py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-all active:scale-[0.98]"
                                     >
-                                        <span className="text-sm">Masuk / Daftar</span>
-                                        <ArrowRight size={18} />
+                                        <span>Masuk / Daftar</span>
+                                        <ArrowRight size={16} />
                                     </Link>
                                 )}
                             </motion.div>

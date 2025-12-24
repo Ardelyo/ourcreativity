@@ -33,6 +33,7 @@ export interface CreationData {
     code_language?: string;
     embed_url?: string;
     document_source?: string;
+    _pendingFile?: File; // Internal use for uploads
 }
 
 export interface CodeEditorProps {

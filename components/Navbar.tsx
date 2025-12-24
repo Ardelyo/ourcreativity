@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Asterisk, ArrowRight } from 'lucide-react';
+import { Menu, X, Asterisk, ArrowRight, User as UserIcon, LogOut, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from './AuthProvider';
 
 export const Navbar = () => {
+    const { user, profile, signOut } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
     const location = useLocation();
 
     const navLinks = [
@@ -122,15 +125,57 @@ export const Navbar = () => {
                                     animate={{ opacity: 1, width: "auto", scale: 1 }}
                                     exit={{ opacity: 0, width: 0, scale: 0.8 }}
                                     transition={{ duration: 0.3 }}
-                                    className="hidden sm:block overflow-hidden"
+                                    className="hidden sm:flex items-center gap-2 overflow-hidden"
                                 >
-                                    <Link
-                                        to="/info"
-                                        className="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-gray-200 transition-all whitespace-nowrap flex items-center gap-2"
-                                    >
-                                        <span>Bergabung</span>
-                                        <ArrowRight size={14} />
-                                    </Link>
+                                    {user && profile ? (
+                                        <div className="relative">
+                                            <button
+                                                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 pl-2 pr-4 py-1.5 rounded-full transition-colors"
+                                            >
+                                                <img
+                                                    src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile.username}`}
+                                                    alt={profile.username}
+                                                    className="w-6 h-6 rounded-full"
+                                                />
+                                                <span className="text-xs font-bold text-white max-w-[100px] truncate">{profile.username}</span>
+                                            </button>
+
+                                            <AnimatePresence>
+                                                {isProfileOpen && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                        className="absolute top-full right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl overflow-hidden shadow-xl p-1 flex flex-col gap-1 z-50"
+                                                    >
+                                                        <div className="px-3 py-2 text-xs text-gray-400 border-b border-white/5 mb-1">
+                                                            Status: <span className={profile.is_approved ? "text-green-500 font-bold" : "text-yellow-500 font-bold"}>
+                                                                {profile.is_approved ? "Member" : "Pending"}
+                                                            </span>
+                                                        </div>
+                                                        <Link to="/settings" className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-lg w-full text-left transition-colors">
+                                                            <Settings size={14} /> Pengaturan
+                                                        </Link>
+                                                        <button
+                                                            onClick={signOut}
+                                                            className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-red-400 hover:bg-white/5 rounded-lg w-full text-left transition-colors"
+                                                        >
+                                                            <LogOut size={14} /> Keluar
+                                                        </button>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    ) : (
+                                        <Link
+                                            to="/login"
+                                            className="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-gray-200 transition-all whitespace-nowrap flex items-center gap-2"
+                                        >
+                                            <span>Masuk</span>
+                                            <UserIcon size={14} />
+                                        </Link>
+                                    )}
                                 </motion.div>
                             ) : (
                                 !isMobileMenuOpen && (
@@ -139,9 +184,15 @@ export const Navbar = () => {
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0 }}
                                         transition={{ duration: 0.2 }}
+                                        className="flex gap-2"
                                     >
-                                        {/* Indikator mini saat diciutkan */}
-                                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                        {/* Status indicator or mini avatar when collapsed */}
+                                        {user && (
+                                            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                                <UserIcon size={14} className="text-white" />
+                                            </div>
+                                        )}
+                                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse my-auto ml-2" />
                                     </motion.div>
                                 )
                             )}
@@ -191,15 +242,34 @@ export const Navbar = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3 }}
+                                className="flex flex-col gap-2"
                             >
-                                <Link
-                                    to="/info"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="bg-white text-black text-center py-3 rounded-xl font-bold mt-2 flex items-center justify-center gap-2"
-                                >
-                                    <span>Bergabung Sekarang</span>
-                                    <ArrowRight size={16} />
-                                </Link>
+                                {user ? (
+                                    <>
+                                        <Link
+                                            to="/settings"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="w-full bg-white/5 text-white text-center py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+                                        >
+                                            <Settings size={16} /> Pengaturan Akun
+                                        </Link>
+                                        <button
+                                            onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
+                                            className="w-full bg-red-500/10 text-red-500 text-center py-3 rounded-xl font-bold mt-2 flex items-center justify-center gap-2"
+                                        >
+                                            <LogOut size={16} /> Keluar
+                                        </button>
+                                    </>
+                                ) : (
+                                    <Link
+                                        to="/login"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className="bg-white text-black text-center py-3 rounded-xl font-bold mt-2 flex items-center justify-center gap-2"
+                                    >
+                                        <span>Masuk / Daftar</span>
+                                        <ArrowRight size={16} />
+                                    </Link>
+                                )}
                             </motion.div>
                         </motion.div>
                     )}

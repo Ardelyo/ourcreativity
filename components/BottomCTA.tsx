@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const BottomCTA = () => {
   return (
@@ -32,16 +33,18 @@ export const BottomCTA = () => {
           tanpa birokrasi, hanya kreativitas murni.
         </motion.p>
 
-        <motion.button
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="px-10 py-4 bg-[#111] border border-white/20 hover:border-white/50 hover:bg-[#1a1a1a] text-white rounded-full font-bold text-sm transition-all flex items-center gap-3 mx-auto group shadow-lg"
-        >
-          Gabung Sekarang
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-        </motion.button>
+        <Link to="/register">
+          <motion.button
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="px-10 py-4 bg-[#111] border border-white/20 hover:border-white/50 hover:bg-[#1a1a1a] text-white rounded-full font-bold text-sm transition-all flex items-center gap-3 mx-auto group shadow-lg"
+          >
+            Gabung Sekarang
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </motion.button>
+        </Link>
       </div>
     </section>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2 } from 'lucide-react';
-import { CreationStudio } from '../components/CreationStudio/index';
+import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom'; // Changed import
 import { FetchErrorState } from '../components/FetchErrorState';
 
 import { supabase } from '../lib/supabase';
@@ -44,8 +44,10 @@ const generateCodePreview = (code: string, language: string = 'html'): string =>
 };
 
 export const Karya = () => {
+  const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [isStudioOpen, setIsStudioOpen] = useState(false);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const carouselRef = React.useRef<HTMLDivElement>(null);
   const [artworks, setArtworks] = useState<any[]>([]);
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -76,17 +78,30 @@ export const Karya = () => {
     fetchWorks();
   }, []);
 
-  const selectedArtwork = artworks.find(a => a.id === selectedId);
+  // Reset active slide when switching artworks
+  useEffect(() => {
+    setActiveSlide(0);
+  }, [selectedId]);
 
-  const handlePublish = (newWork: any) => {
-    // Tentukan tipe berdasarkan divisi jika tidak ditentukan
-    let type = 'image';
-    if (newWork.division === 'writing') type = 'text';
-    if (newWork.division === 'coding') type = 'code';
-    if (newWork.division === 'video') type = 'video';
-
-    setArtworks(prev => [{ ...newWork, type }, ...prev]);
+  // Handle scroll snap to update active dot
+  const handleCarouselScroll = () => {
+    if (!carouselRef.current) return;
+    const scrollLeft = carouselRef.current.scrollLeft;
+    const width = carouselRef.current.offsetWidth;
+    const index = Math.round(scrollLeft / width);
+    setActiveSlide(index);
   };
+
+  const scrollToSlide = (index: number) => {
+    if (!carouselRef.current) return;
+    const width = carouselRef.current.offsetWidth;
+    carouselRef.current.scrollTo({
+      left: index * width,
+      behavior: 'smooth'
+    });
+  };
+
+  const selectedArtwork = artworks.find(a => a.id === selectedId);
 
   const filteredArtworks = filter === 'all'
     ? artworks
@@ -128,8 +143,11 @@ export const Karya = () => {
             </div>
           </div>
         );
+      case 'slide':
+        const slidePreviewUrl = art.image_url || (art.slides?.[0]?.content);
+        return <img src={slidePreviewUrl} alt={art.title} className="w-full h-full object-cover" />;
       default: // image
-        return <img src={art.image_url} alt={art.title} className="w-full h-full object-cover" />;
+        return <img src={art.image_url || (art.slides?.[0]?.content)} alt={art.title} className="w-full h-full object-cover" />;
     }
   };
 
@@ -157,12 +175,12 @@ export const Karya = () => {
             ))}
           </div>
 
-          <button
-            onClick={() => setIsStudioOpen(true)}
+          <Link
+            to="/studio"
             className="hidden md:flex bg-white text-black px-6 py-3 rounded-full font-bold items-center gap-2 hover:bg-gray-200 transition-colors"
           >
             <Plus size={20} /> Buat Karya
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -246,29 +264,22 @@ export const Karya = () => {
           <p className="text-gray-400 max-w-md">
             Kategori ini masih kosong. Jadilah yang pertama mempublikasikan karya di sini!
           </p>
-          <button
-            onClick={() => setIsStudioOpen(true)}
+          <Link
+            to="/studio"
             className="mt-8 px-8 py-3 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition-colors"
           >
             Buat Karya Baru
-          </button>
+          </Link>
         </div>
       )}
 
       {/* Tombol Aksi Mengambang (Seluler) */}
-      <button
-        onClick={() => setIsStudioOpen(true)}
+      <Link
+        to="/studio"
         className="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-white text-black rounded-full shadow-2xl flex items-center justify-center z-40 hover:scale-110 transition-transform active:scale-95"
       >
         <Plus size={28} />
-      </button>
-
-      {/* Modal Studio Kreasi */}
-      <CreationStudio
-        isOpen={isStudioOpen}
-        onClose={() => setIsStudioOpen(false)}
-        onPublish={handlePublish}
-      />
+      </Link>
 
       {/* Modal Detail */}
       <AnimatePresence>
@@ -297,12 +308,62 @@ export const Karya = () => {
               {/* Bagian Media */}
               <div className="w-full md:w-3/5 bg-black flex items-center justify-center relative overflow-hidden">
                 <motion.div layoutId={`content-${selectedId}`} className="w-full h-full flex items-center justify-center">
+                  {selectedArtwork.type === 'slide' && (
+                    <div className="relative w-full h-full flex items-center justify-center group/carousel">
+                      {/* Carousel Container */}
+                      <div
+                        ref={carouselRef}
+                        onScroll={handleCarouselScroll}
+                        className="w-full h-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar bg-black"
+                      >
+                        {(selectedArtwork.slides || []).map((slide: any, i: number) => (
+                          <div key={slide.id || i} className="min-w-full h-full snap-center flex items-center justify-center relative">
+                            <img src={slide.content} className="max-w-full max-h-full object-contain" alt={`Slide ${i + 1}`} />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Navigation Arrows */}
+                      {selectedArtwork.slides && selectedArtwork.slides.length > 1 && (
+                        <>
+                          {activeSlide > 0 && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); scrollToSlide(activeSlide - 1); }}
+                              className="absolute left-4 p-2 bg-black/50 hover:bg-white text-white hover:text-black rounded-full transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover/carousel:opacity-100"
+                            >
+                              <ArrowLeft size={20} />
+                            </button>
+                          )}
+                          {activeSlide < selectedArtwork.slides.length - 1 && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); scrollToSlide(activeSlide + 1); }}
+                              className="absolute right-4 p-2 bg-black/50 hover:bg-white text-white hover:text-black rounded-full transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover/carousel:opacity-100"
+                            >
+                              <ArrowRight size={20} />
+                            </button>
+                          )}
+
+                          {/* Dots Container */}
+                          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 px-3 py-1.5 bg-black/20 backdrop-blur-md rounded-full border border-white/5">
+                            {selectedArtwork.slides.map((_: any, i: number) => (
+                              <button
+                                key={i}
+                                onClick={() => scrollToSlide(i)}
+                                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeSlide === i ? 'bg-white w-3' : 'bg-white/30'
+                                  }`}
+                              />
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
                   {selectedArtwork.type === 'image' && (
-                    <img src={selectedArtwork.image_url} className="w-full h-full object-contain" />
+                    <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-contain" />
                   )}
                   {selectedArtwork.type === 'video' && (
                     <div className="relative w-full h-full">
-                      <img src={selectedArtwork.image_url} className="w-full h-full object-cover opacity-50" />
+                      <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-cover opacity-50" />
                       <div className="absolute inset-0 flex items-center justify-center">
                         <Play size={64} className="text-white fill-current" />
                       </div>

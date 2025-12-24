@@ -67,7 +67,7 @@ export const Navbar = () => {
             padding: "12px 20px 20px 20px",
         },
         mobileOpen: {
-            width: "100%",
+            width: "90%",
             maxWidth: "400px",
             height: "auto",
             borderRadius: "32px",
@@ -76,18 +76,30 @@ export const Navbar = () => {
     };
 
     return (
-        <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4 pointer-events-none">
-            <motion.nav
-                layout
-                initial="expanded"
-                animate={isMobileMenuOpen ? "mobileOpen" : (isProfileOpen ? "profileOpen" : (showFullMenu ? "expanded" : "collapsed"))}
-                variants={containerVariants}
-                transition={springTransition}
-                onHoverStart={() => setIsHovered(true)}
-                onHoverEnd={() => setIsHovered(false)}
-                className="pointer-events-auto bg-[#111]/90 backdrop-blur-lg border border-white/10 shadow-2xl shadow-black/50 flex flex-col overflow-hidden"
-            >
-                <div className={`flex items-center justify-between w-full relative ${showFullMenu && !isMobileMenuOpen ? 'gap-12' : 'gap-4'} ${isProfileOpen ? 'h-[40px]' : 'h-full'}`}>
+        <>
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="fixed inset-0 bg-black/50 z-40"
+                    />
+                )}
+            </AnimatePresence>
+            <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4 pointer-events-none">
+                <motion.nav
+                    layout
+                    initial="expanded"
+                    animate={isMobileMenuOpen ? "mobileOpen" : (isProfileOpen ? "profileOpen" : (showFullMenu ? "expanded" : "collapsed"))}
+                    variants={containerVariants}
+                    transition={springTransition}
+                    onHoverStart={() => setIsHovered(true)}
+                    onHoverEnd={() => setIsHovered(false)}
+                    className="pointer-events-auto bg-[#111]/90 backdrop-blur-lg border border-white/10 shadow-2xl shadow-black/50 flex flex-col overflow-hidden"
+                >
+                    <div className={`flex items-center justify-between w-full relative ${showFullMenu && !isMobileMenuOpen ? 'gap-12' : 'gap-4'} ${isProfileOpen ? 'h-[40px]' : 'h-full'}`}>
                     {/* Logo & Title Wrapper */}
                     <div className="flex items-center gap-3">
                         <Link to="/" className="flex items-center gap-2 group shrink-0 relative z-10" onClick={() => setIsMobileMenuOpen(false)}>
@@ -219,6 +231,7 @@ export const Navbar = () => {
                         )}
 
                         <button
+                            data-testid="mobile-menu-button"
                             className="md:hidden text-white p-1 rounded-full hover:bg-white/10 transition-colors"
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         >
@@ -362,5 +375,6 @@ export const Navbar = () => {
                 </AnimatePresence>
             </motion.nav>
         </div>
+        </>
     );
 };

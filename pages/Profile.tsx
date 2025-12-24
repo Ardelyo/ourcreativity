@@ -13,6 +13,8 @@ export const Profile = () => {
     const { username } = useParams<{ username: string }>();
     const [profile, setProfile] = useState<any>(null);
     const [works, setWorks] = useState<any[]>([]);
+    const [likedWorks, setLikedWorks] = useState<any[]>([]);
+    const [activeTab, setActiveTab] = useState<'karya' | 'tentang' | 'likes'>('karya');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +27,7 @@ export const Profile = () => {
             // Fetch Profile
             const { data: profileData, error: profileError } = await supabase
                 .from('profiles')
-                .select('id, username, avatar_url, bio, website, role, is_approved, updated_at')
+                .select('id, username, avatar_url, bio, website, role, is_approved, updated_at, created_at')
                 .eq('username', username)
                 .single();
 
@@ -51,6 +53,31 @@ export const Profile = () => {
 
             if (worksError) throw worksError;
             setWorks(worksData || []);
+
+            // Fetch liked works
+            const { data: likesData, error: likesError } = await supabase
+                .from('likes')
+                .select(`
+                    work:works (
+                        id, 
+                        title, 
+                        description, 
+                        image_url, 
+                        division, 
+                        slides, 
+                        created_at,
+                        likes:likes(count),
+                        comments:comments(count),
+                        author:profiles(username, avatar_url)
+                    )
+                `)
+                .eq('user_id', profileData.id)
+                .order('created_at', { ascending: false });
+
+            if (likesError) throw likesError;
+            // Flatten the structure
+            const flattenedLikedWorks = likesData?.map((item: any) => item.work).filter(Boolean) || [];
+            setLikedWorks(flattenedLikedWorks);
 
         } catch (err: any) {
             console.error('Error fetching profile data:', err);
@@ -80,6 +107,10 @@ export const Profile = () => {
             supabase.removeChannel(profileSubscription);
         };
     }, [username]);
+
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+    };
 
     if (loading) return (
         <div className="min-h-screen bg-[#030303] flex items-center justify-center">
@@ -148,7 +179,7 @@ export const Profile = () => {
                                 </a>
                             )}
                             <div className="flex items-center gap-2">
-                                <Calendar size={16} /> Bergabung {new Date(profile.updated_at).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
+                                <Calendar size={16} /> Bergabung {formatDate(profile.created_at || profile.updated_at)}
                             </div>
                             <div className="flex items-center gap-2">
                                 <LayoutGrid size={16} /> {works.length} Karya
@@ -169,70 +200,180 @@ export const Profile = () => {
                 {/* Content Tabs */}
                 <div className="border-b border-white/10 mb-12">
                     <div className="flex gap-8 overflow-x-auto no-scrollbar">
-                        <button className="pb-4 border-b-2 border-rose-500 text-white font-bold text-sm tracking-wider uppercase">
+                        <button
+                            onClick={() => setActiveTab('karya')}
+                            className={`pb-4 border-b-2 font-bold text-sm tracking-wider uppercase transition-colors ${activeTab === 'karya' ? 'border-rose-500 text-white' : 'border-transparent text-gray-500 hover:text-white'
+                                }`}
+                        >
                             Karya
                         </button>
-                        <button className="pb-4 border-b-2 border-transparent text-gray-500 hover:text-white transition-colors font-bold text-sm tracking-wider uppercase">
+                        <button
+                            onClick={() => setActiveTab('tentang')}
+                            className={`pb-4 border-b-2 font-bold text-sm tracking-wider uppercase transition-colors ${activeTab === 'tentang' ? 'border-rose-500 text-white' : 'border-transparent text-gray-500 hover:text-white'
+                                }`}
+                        >
                             Tentang
                         </button>
-                        <button className="pb-4 border-b-2 border-transparent text-gray-500 hover:text-white transition-colors font-bold text-sm tracking-wider uppercase">
+                        <button
+                            onClick={() => setActiveTab('likes')}
+                            className={`pb-4 border-b-2 font-bold text-sm tracking-wider uppercase transition-colors ${activeTab === 'likes' ? 'border-rose-500 text-white' : 'border-transparent text-gray-500 hover:text-white'
+                                }`}
+                        >
                             Likes
                         </button>
                     </div>
                 </div>
 
-                {/* Works Grid */}
-                {works.length > 0 ? (
-                    <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
-                        {works.map((work, index) => (
-                            <motion.div
-                                key={work.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.05 }}
-                                className="break-inside-avoid group relative bg-[#0a0a0a] border border-white/5 rounded-3xl overflow-hidden cursor-pointer hover:border-rose-500/30 transition-all shadow-xl"
-                            >
-                                <div className="aspect-[4/3] bg-gray-900 overflow-hidden relative">
-                                    <img
-                                        src={work.image_url || (work.slides?.[0]?.content)}
-                                        alt={work.title}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    />
-                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <div className="flex gap-4">
-                                            <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-                                                <Heart size={14} className="fill-rose-500 text-rose-500" />
-                                                <span className="text-xs font-bold">{work.likes?.[0]?.count || 0}</span>
-                                            </div>
-                                            <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-                                                <MessageSquare size={14} />
-                                                <span className="text-xs font-bold">{work.comments?.[0]?.count || 0}</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                {/* Content Area */}
+                <AnimatePresence mode="wait">
+                    {activeTab === 'karya' && (
+                        <motion.div
+                            key="karya"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="w-full"
+                        >
+                            {works.length > 0 ? (
+                                <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
+                                    {works.map((work, index) => (
+                                        <WorkCard key={work.id} work={work} index={index} />
+                                    ))}
                                 </div>
-                                <div className="p-6">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h3 className="font-bold text-lg leading-tight group-hover:text-rose-500 transition-colors uppercase tracking-tight">{work.title}</h3>
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 border border-white/10 px-2 py-0.5 rounded">
-                                            {work.division}
+                            ) : (
+                                <EmptyState message="Pengguna ini belum mempublikasikan karya apapun." />
+                            )}
+                        </motion.div>
+                    )}
+
+                    {activeTab === 'tentang' && (
+                        <motion.div
+                            key="tentang"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="max-w-2xl mx-auto md:mx-0 bg-white/5 border border-white/10 rounded-3xl p-8"
+                        >
+                            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                                <Globe size={20} className="text-rose-500" />
+                                Informasi Profil
+                            </h3>
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-[120px_1fr] gap-4">
+                                    <div className="text-gray-500">Username</div>
+                                    <div className="font-medium">@{profile.username}</div>
+                                </div>
+                                <div className="grid grid-cols-[120px_1fr] gap-4">
+                                    <div className="text-gray-500">Role</div>
+                                    <div className="font-medium capitalize">{profile.role || 'Member'}</div>
+                                </div>
+                                <div className="grid grid-cols-[120px_1fr] gap-4">
+                                    <div className="text-gray-500">Bergabung</div>
+                                    <div className="font-medium">{formatDate(profile.created_at || profile.updated_at)}</div>
+                                </div>
+                                <div className="grid grid-cols-[120px_1fr] gap-4">
+                                    <div className="text-gray-500">Status</div>
+                                    <div className="font-medium">
+                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border ${profile.is_approved
+                                                ? 'bg-green-500/10 text-green-500 border-green-500/20'
+                                                : 'bg-gray-500/10 text-gray-500 border-gray-500/20'
+                                            }`}>
+                                            <span className={`w-1.5 h-1.5 rounded-full ${profile.is_approved ? 'bg-green-500' : 'bg-gray-500'}`} />
+                                            {profile.is_approved ? 'Verified' : 'Member'}
                                         </span>
                                     </div>
-                                    <p className="text-xs text-gray-400 line-clamp-2">{work.description}</p>
                                 </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="py-20 text-center">
-                        <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <ImageIcon size={32} className="text-gray-600" />
-                        </div>
-                        <h3 className="text-xl font-bold mb-2">Belum ada karya</h3>
-                        <p className="text-gray-500">Pengguna ini belum mempublikasikan karya apapun.</p>
-                    </div>
-                )}
+                                {profile.website && (
+                                    <div className="grid grid-cols-[120px_1fr] gap-4">
+                                        <div className="text-gray-500">Website</div>
+                                        <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-rose-500 hover:underline break-all">
+                                            {profile.website}
+                                        </a>
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {activeTab === 'likes' && (
+                        <motion.div
+                            key="likes"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="w-full"
+                        >
+                            {likedWorks.length > 0 ? (
+                                <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
+                                    {likedWorks.map((work, index) => (
+                                        <WorkCard key={work.id} work={work} index={index} showAuthor />
+                                    ))}
+                                </div>
+                            ) : (
+                                <EmptyState message="Belum ada karya yang disukai." />
+                            )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );
 };
+
+const WorkCard = ({ work, index, showAuthor = false }: { work: any, index: number, showAuthor?: boolean }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05 }}
+        className="break-inside-avoid group relative bg-[#0a0a0a] border border-white/5 rounded-3xl overflow-hidden cursor-pointer hover:border-rose-500/30 transition-all shadow-xl"
+    >
+        <div className="aspect-[4/3] bg-gray-900 overflow-hidden relative">
+            <img
+                src={work.image_url || (work.slides?.[0]?.content)}
+                alt={work.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="flex gap-4">
+                    <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                        <Heart size={14} className="fill-rose-500 text-rose-500" />
+                        <span className="text-xs font-bold">{work.likes?.[0]?.count || 0}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                        <MessageSquare size={14} />
+                        <span className="text-xs font-bold">{work.comments?.[0]?.count || 0}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div className="p-6">
+            <div className="flex justify-between items-start mb-2">
+                <h3 className="font-bold text-lg leading-tight group-hover:text-rose-500 transition-colors uppercase tracking-tight">{work.title}</h3>
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 border border-white/10 px-2 py-0.5 rounded">
+                    {work.division}
+                </span>
+            </div>
+            {showAuthor && work.author && (
+                <div className="flex items-center gap-2 mb-3">
+                    <img
+                        src={work.author.avatar_url || `https://ui-avatars.com/api/?name=${work.author.username}`}
+                        alt={work.author.username}
+                        className="w-5 h-5 rounded-full border border-white/10"
+                    />
+                    <span className="text-xs text-gray-400">by {work.author.username}</span>
+                </div>
+            )}
+            <p className="text-xs text-gray-400 line-clamp-2">{work.description}</p>
+        </div>
+    </motion.div>
+);
+
+const EmptyState = ({ message }: { message: string }) => (
+    <div className="py-20 text-center">
+        <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+            <ImageIcon size={32} className="text-gray-600" />
+        </div>
+        <h3 className="text-xl font-bold mb-2">Tidak ada data</h3>
+        <p className="text-gray-500">{message}</p>
+    </div>
+);

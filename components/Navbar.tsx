@@ -10,7 +10,18 @@ export const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
     const location = useLocation();
+
+    // Media Query Hook for Responsive Layout
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const navLinks = [
         { name: 'Beranda', href: '/' },
@@ -58,328 +69,396 @@ export const Navbar = () => {
             height: "56px",
             borderRadius: "28px",
             padding: "8px 20px",
+            maxWidth: "90vw"
         },
-        profileOpen: {
+        // Desktop Profile Open - expands the island naturally
+        profileOpenDesktop: {
             width: "320px",
             height: "auto",
             borderRadius: "24px",
             padding: "12px 16px 16px 16px",
         },
+        // Mobile only variant for profile/menu open
         mobileOpen: {
             width: "360px",
             height: "auto",
             borderRadius: "40px",
             padding: "24px",
+            maxWidth: "95vw"
         }
+    };
+
+    // Determine current variant based on state and device
+    const getCurrentVariant = () => {
+        if (isMobile) {
+            if (isMobileMenuOpen || isProfileOpen) return "mobileOpen";
+            return showFullMenu ? "expanded" : "collapsed";
+        }
+        // Desktop
+        if (isProfileOpen) return "profileOpenDesktop";
+        return showFullMenu ? "expanded" : "collapsed";
     };
 
     return (
         <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 sm:pt-6 px-4 pointer-events-none">
-            <motion.nav
-                layout
-                initial="expanded"
-                animate={isMobileMenuOpen ? "mobileOpen" : (isProfileOpen ? "profileOpen" : (showFullMenu ? "expanded" : "collapsed"))}
-                variants={containerVariants}
-                transition={springTransition as any}
-                onHoverStart={() => setIsHovered(true)}
-                onHoverEnd={() => setIsHovered(false)}
-                className="pointer-events-auto bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden relative"
-            >
-                <div className={`flex items-center justify-between w-full relative z-20 ${showFullMenu && !isMobileMenuOpen ? 'gap-12' : 'gap-3'} ${isProfileOpen ? 'h-[40px]' : (isMobileMenuOpen ? 'mb-4' : 'h-full')}`}>
-                    {/* Logo & Title Wrapper */}
-                    <div className="flex items-center gap-3">
-                        <Link to="/" className="flex items-center gap-2 group shrink-0 relative z-10" onClick={() => setIsMobileMenuOpen(false)}>
-                            <motion.div
-                                layout="position"
-                                className={`rounded-full flex items-center justify-center text-white transition-all duration-300 ${showFullMenu || isMobileMenuOpen ? 'w-8 h-8 bg-white/10' : 'w-8 h-8 bg-transparent'}`}
-                            >
-                                <Asterisk size={showFullMenu || isMobileMenuOpen ? 18 : 20} className={!(showFullMenu || isMobileMenuOpen) ? "animate-spin-slow" : "rotate-0 group-hover:rotate-180 transition-transform duration-500"} />
-                            </motion.div>
-                        </Link>
-
-                        <AnimatePresence mode="popLayout">
-                            {(showFullMenu || isMobileMenuOpen) && (
-                                <motion.span
-                                    initial={{ opacity: 0, x: -10, filter: "blur(5px)" }}
-                                    animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                                    exit={{ opacity: 0, x: -10, filter: "blur(5px)" }}
-                                    transition={{ duration: 0.3, ease: "easeOut" }}
-                                    className="font-serif font-bold text-lg tracking-tight text-white whitespace-nowrap"
+            <div className="relative pointer-events-auto">
+                <motion.nav
+                    layout
+                    initial="expanded"
+                    animate={getCurrentVariant()}
+                    variants={containerVariants}
+                    transition={springTransition as any}
+                    onHoverStart={() => setIsHovered(true)}
+                    onHoverEnd={() => setIsHovered(false)}
+                    className="bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden relative"
+                >
+                    <div className={`flex items-center justify-between w-full relative z-20 ${showFullMenu && !isMobileMenuOpen && !isProfileOpen ? 'gap-12' : 'gap-3'} ${(isMobile && (isProfileOpen || isMobileMenuOpen)) ? 'mb-4' : 'h-full'}`}>
+                        {/* Logo & Title Wrapper */}
+                        <div className="flex items-center gap-3">
+                            <Link to="/" className="flex items-center gap-2 group shrink-0 relative z-10" onClick={() => setIsMobileMenuOpen(false)}>
+                                <motion.div
+                                    layout="position"
+                                    className={`rounded-full flex items-center justify-center text-white transition-all duration-300 ${showFullMenu || isMobileMenuOpen ? 'w-8 h-8 bg-white/10' : 'w-8 h-8 bg-transparent'}`}
                                 >
-                                    Our Creativity.
-                                </motion.span>
+                                    <Asterisk size={showFullMenu || isMobileMenuOpen ? 18 : 20} className={!(showFullMenu || isMobileMenuOpen) ? "animate-spin-slow" : "rotate-0 group-hover:rotate-180 transition-transform duration-500"} />
+                                </motion.div>
+                            </Link>
+
+                            <AnimatePresence mode="popLayout">
+                                {(showFullMenu || isMobileMenuOpen) && !isProfileOpen && (
+                                    <motion.span
+                                        initial={{ opacity: 0, x: -10, filter: "blur(5px)" }}
+                                        animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                                        exit={{ opacity: 0, x: -10, filter: "blur(5px)" }}
+                                        transition={{ duration: 0.3, ease: "easeOut" }}
+                                        className="font-serif font-bold text-lg tracking-tight text-white whitespace-nowrap"
+                                    >
+                                        Our Creativity.
+                                    </motion.span>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        {/* Tautan Desktop */}
+                        <AnimatePresence mode="popLayout">
+                            {showFullMenu && !isMobileMenuOpen && !isProfileOpen && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.15 } }}
+                                    transition={{ duration: 0.25 }}
+                                    className="hidden md:flex items-center gap-1"
+                                >
+                                    {navLinks.map((link) => (
+                                        <Link
+                                            key={link.name}
+                                            to={link.href}
+                                            className={`px-4 py-2 text-[10px] lg:text-xs font-medium uppercase tracking-[0.2em] transition-all rounded-full whitespace-nowrap relative group ${isActive(link.href)
+                                                ? 'text-white'
+                                                : 'text-gray-400 hover:text-white'
+                                                }`}
+                                        >
+                                            <span className="relative z-10">{link.name}</span>
+                                            {isActive(link.href) && (
+                                                <motion.div
+                                                    layoutId="navPill"
+                                                    className="absolute inset-0 bg-white/10 rounded-full -z-0"
+                                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                                />
+                                            )}
+                                            {!isActive(link.href) && (
+                                                <div className="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity -z-0" />
+                                            )}
+                                        </Link>
+                                    ))}
+                                </motion.div>
                             )}
                         </AnimatePresence>
+
+                        {/* CTA & Toggle Area */}
+                        <div className="flex items-center gap-2 shrink-0 z-10">
+                            <AnimatePresence mode="popLayout">
+                                {showFullMenu && !isMobileMenuOpen && (
+                                    <motion.div
+                                        key="desktop-auth"
+                                        initial={{ opacity: 0, x: 10, scale: 0.9 }}
+                                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                                        exit={{ opacity: 0, x: 10, scale: 0.9, transition: { duration: 0.15 } }}
+                                        transition={{ duration: 0.25 }}
+                                        className="hidden sm:flex items-center gap-2"
+                                    >
+                                        {user && profile ? (
+                                            <div className="flex items-center relative">
+                                                {!isProfileOpen && (
+                                                    <Link
+                                                        to="/settings"
+                                                        className="flex items-center gap-2 bg-white/10 hover:bg-white/20 pl-2 pr-3 py-1.5 rounded-l-full transition-colors border-r border-white/10"
+                                                    >
+                                                        <img
+                                                            src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || 'User'}`}
+                                                            alt={profile.username}
+                                                            className="w-6 h-6 rounded-full bg-neutral-800"
+                                                        />
+                                                        <span className="text-xs font-bold text-white max-w-[80px] truncate">{profile.username}</span>
+                                                    </Link>
+                                                )}
+                                                <button
+                                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                                    className={`hover:bg-white/20 px-2 py-1.5 transition-colors h-[36px] flex items-center justify-center ${isProfileOpen ? 'bg-transparent' : 'bg-white/10 rounded-r-full'}`}
+                                                >
+                                                    <motion.div
+                                                        animate={{ rotate: isProfileOpen ? 180 : 0 }}
+                                                        transition={{ duration: 0.2 }}
+                                                    >
+                                                        <ChevronRight size={14} className="text-white rotate-90" />
+                                                    </motion.div>
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <Link
+                                                to="/login"
+                                                className="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-gray-200 transition-all whitespace-nowrap flex items-center gap-2"
+                                            >
+                                                <span>Masuk</span>
+                                                <UserIcon size={14} />
+                                            </Link>
+                                        )}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            {!isMobileMenuOpen && !showFullMenu && !isProfileOpen && (
+                                <motion.div
+                                    key="collapsed-indicator"
+                                    initial={{ opacity: 0, scale: 0 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="flex gap-2 items-center"
+                                >
+                                    {user && (
+                                        <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
+                                            <UserIcon size={12} className="text-white" />
+                                        </div>
+                                    )}
+                                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                                </motion.div>
+                            )}
+
+                            <button
+                                className={`md:hidden p-2 rounded-full transition-all active:scale-95 ${isMobileMenuOpen ? 'bg-white text-black hover:bg-gray-200' : 'text-white hover:bg-white/10'}`}
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            >
+                                <motion.div
+                                    animate={{
+                                        rotate: isMobileMenuOpen ? 90 : 0,
+                                    }}
+                                    transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
+                                >
+                                    {isMobileMenuOpen ? <X size={20} strokeWidth={2.5} /> : <Menu size={20} strokeWidth={2.5} />}
+                                </motion.div>
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Tautan Desktop */}
-                    <AnimatePresence mode="popLayout">
-                        {showFullMenu && !isMobileMenuOpen && (
+                    {/* Desktop Profile Content - Integrated into Island */}
+                    <AnimatePresence>
+                        {isProfileOpen && !isMobile && (
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.15 } }}
-                                transition={{ duration: 0.25 }}
-                                className="hidden md:flex items-center gap-1"
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="overflow-hidden relative z-10 w-full"
                             >
-                                {navLinks.map((link) => (
-                                    <Link
-                                        key={link.name}
-                                        to={link.href}
-                                        className={`px-4 py-2 text-[10px] lg:text-xs font-medium uppercase tracking-[0.2em] transition-all rounded-full whitespace-nowrap relative group ${isActive(link.href)
-                                            ? 'text-white'
-                                            : 'text-gray-400 hover:text-white'
-                                            }`}
+                                <div className="h-px bg-white/5 w-full my-2" />
+                                <div className="flex flex-col gap-1 p-1">
+                                    <div className="flex items-center gap-3 p-2 mb-2">
+                                        <img
+                                            src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || 'User'}`}
+                                            alt={profile?.username}
+                                            className="w-10 h-10 rounded-full bg-neutral-800 object-cover"
+                                        />
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-bold text-white">{profile?.username}</span>
+                                            <span className={`text-[9px] uppercase tracking-wider font-bold ${profile?.is_approved ? "text-emerald-500" : "text-amber-500"}`}>
+                                                {profile?.is_approved ? "ACTIVE MEMBER" : "PENDING"}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <Link to={`/profile/${profile?.username}`} onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+                                            <UserIcon size={14} /> Profil
+                                        </Link>
+                                        <Link to="/settings" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+                                            <Settings size={14} /> Settings
+                                        </Link>
+                                    </div>
+                                    {profile?.role === 'admin' && (
+                                        <Link to="/admin" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl transition-colors">
+                                            <Shield size={14} /> Admin
+                                        </Link>
+                                    )}
+                                    <button
+                                        onClick={() => { signOut(); setIsProfileOpen(false); }}
+                                        className="flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold text-red-500 bg-red-500/5 hover:bg-red-500/10 rounded-xl transition-colors mt-1"
                                     >
-                                        <span className="relative z-10">{link.name}</span>
-                                        {isActive(link.href) && (
-                                            <motion.div
-                                                layoutId="navPill"
-                                                className="absolute inset-0 bg-white/10 rounded-full -z-0"
-                                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                            />
-                                        )}
-                                        {!isActive(link.href) && (
-                                            <div className="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity -z-0" />
-                                        )}
-                                    </Link>
-                                ))}
+                                        <LogOut size={14} /> Keluar
+                                    </button>
+                                </div>
                             </motion.div>
                         )}
                     </AnimatePresence>
 
-                    {/* CTA & Toggle Area */}
-                    <div className="flex items-center gap-2 shrink-0 z-10">
-                        <AnimatePresence mode="popLayout">
-                            {showFullMenu && !isMobileMenuOpen && (
+                    {/* Mobile Profile Dropdown Content (Inside Island) */}
+                    <AnimatePresence>
+                        {isMobile && isProfileOpen && !isMobileMenuOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="overflow-hidden relative z-10"
+                            >
+                                <div className="h-px bg-white/5 w-full my-2" />
+                                <div className="flex flex-col gap-1 p-1">
+                                    <div className="px-3 py-2 text-[10px] text-gray-500 uppercase tracking-widest flex justify-between">
+                                        <span>Status</span>
+                                        <span className={profile?.is_approved ? "text-emerald-500 font-bold" : "text-amber-500 font-bold"}>
+                                            {profile?.is_approved ? "ACTIVE" : "PENDING"}
+                                        </span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <Link to={`/profile/${profile?.username}`} onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+                                            <UserIcon size={14} /> Profil
+                                        </Link>
+                                        <Link to="/settings" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+                                            <Settings size={14} /> Settings
+                                        </Link>
+                                    </div>
+                                    {profile?.role === 'admin' && (
+                                        <Link to="/admin" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl transition-colors">
+                                            <Shield size={14} /> Admin
+                                        </Link>
+                                    )}
+                                    <button
+                                        onClick={() => { signOut(); setIsProfileOpen(false); }}
+                                        className="flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold text-red-500 bg-red-500/5 hover:bg-red-500/10 rounded-xl transition-colors mt-1"
+                                    >
+                                        <LogOut size={14} /> Keluar
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Mobile Menu Content */}
+                    <AnimatePresence>
+                        {isMobileMenuOpen && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="flex flex-col md:hidden overflow-hidden relative z-10 h-full"
+                            >
+                                <div className="h-px bg-white/5 w-full mb-2" />
+
+                                <div className="flex flex-col gap-1.5 mt-2 flex-1">
+                                    {navLinks.map((link, i) => (
+                                        <motion.div
+                                            key={link.name}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: i * 0.04 + 0.1 }}
+                                        >
+                                            <Link
+                                                to={link.href}
+                                                className={`group relative text-base font-semibold px-5 py-3.5 rounded-2xl transition-all flex items-center justify-between overflow-hidden ${isActive(link.href)
+                                                    ? 'bg-white text-black shadow-lg shadow-black/20'
+                                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                                    }`}
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                            >
+                                                <span className="relative z-10 tracking-wide">{link.name}</span>
+                                                {isActive(link.href) ? (
+                                                    <ArrowRight size={18} />
+                                                ) : (
+                                                    <ArrowRight size={18} className="opacity-0 -translate-x-2 group-hover:opacity-50 group-hover:translate-x-0 transition-all duration-300" />
+                                                )}
+                                            </Link>
+                                        </motion.div>
+                                    ))}
+                                </div>
+
                                 <motion.div
-                                    key="desktop-auth"
-                                    initial={{ opacity: 0, x: 10, scale: 0.9 }}
-                                    animate={{ opacity: 1, x: 0, scale: 1 }}
-                                    exit={{ opacity: 0, x: 10, scale: 0.9, transition: { duration: 0.15 } }}
-                                    transition={{ duration: 0.25 }}
-                                    className="hidden sm:flex items-center gap-2"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                                    className="mt-4 pt-4 border-t border-white/5"
                                 >
                                     {user && profile ? (
-                                        <div className="flex items-center">
-                                            <Link
-                                                to="/settings"
-                                                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 pl-2 pr-3 py-1.5 rounded-l-full transition-colors border-r border-white/10"
-                                            >
+                                        <div className="flex flex-col gap-3">
+                                            <div className="flex items-center gap-3 p-3 bg-white/5 rounded-[20px] border border-white/5">
                                                 <img
                                                     src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || 'User'}`}
                                                     alt={profile.username}
-                                                    className="w-6 h-6 rounded-full bg-neutral-800"
+                                                    className="w-10 h-10 rounded-full bg-neutral-800 object-cover"
                                                 />
-                                                <span className="text-xs font-bold text-white max-w-[80px] truncate">{profile.username}</span>
-                                            </Link>
-                                            <button
-                                                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                                                className="bg-white/10 hover:bg-white/20 px-2 py-1.5 rounded-r-full transition-colors h-[36px] flex items-center justify-center"
-                                            >
-                                                <motion.div
-                                                    animate={{ rotate: isProfileOpen ? 180 : 0 }}
-                                                    transition={{ duration: 0.2 }}
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-bold text-white">{profile.username}</span>
+                                                    <span className={`text-[9px] uppercase tracking-wider font-bold ${profile.is_approved ? "text-emerald-500" : "text-amber-500"}`}>
+                                                        {profile.is_approved ? "Member Kreatif" : "Menunggu Verifikasi"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <Link
+                                                    to={`/profile/${profile.username}`}
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                    className="px-4 py-3 bg-white/5 rounded-xl text-[11px] font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2 active:bg-white/10 transition-colors"
                                                 >
-                                                    <ChevronRight size={14} className="text-white rotate-90" />
-                                                </motion.div>
+                                                    <UserIcon size={14} /> Profil
+                                                </Link>
+                                                <Link
+                                                    to="/settings"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                    className="px-4 py-3 bg-white/5 rounded-xl text-[11px] font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2 active:bg-white/10 transition-colors"
+                                                >
+                                                    <Settings size={14} /> Pengaturan
+                                                </Link>
+                                            </div>
+                                            {profile?.role === 'admin' && (
+                                                <Link
+                                                    to="/admin"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                    className="flex items-center justify-center gap-2 px-3 py-3 text-[11px] font-bold text-rose-400 bg-rose-500/5 hover:bg-rose-500/10 rounded-xl transition-colors"
+                                                >
+                                                    <Shield size={14} /> Panel Administrasi
+                                                </Link>
+                                            )}
+                                            <button
+                                                onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
+                                                className="bg-red-500/10 text-red-500 py-3 rounded-xl text-[11px] font-bold flex items-center justify-center gap-2 active:bg-red-500/20 transition-colors"
+                                            >
+                                                <LogOut size={14} /> Keluar Aplikasi
                                             </button>
                                         </div>
                                     ) : (
                                         <Link
                                             to="/login"
-                                            className="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-gray-200 transition-all whitespace-nowrap flex items-center gap-2"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="bg-white text-black w-full py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-all active:scale-[0.98]"
                                         >
-                                            <span>Masuk</span>
-                                            <UserIcon size={14} />
+                                            <span>Masuk / Daftar</span>
+                                            <ArrowRight size={16} />
                                         </Link>
                                     )}
                                 </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        {!isMobileMenuOpen && !showFullMenu && (
-                            <motion.div
-                                key="collapsed-indicator"
-                                initial={{ opacity: 0, scale: 0 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0 }}
-                                transition={{ duration: 0.2 }}
-                                className="flex gap-2 items-center"
-                            >
-                                {user && (
-                                    <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
-                                        <UserIcon size={12} className="text-white" />
-                                    </div>
-                                )}
-                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                             </motion.div>
                         )}
-
-                        <button
-                            className={`md:hidden p-2 rounded-full transition-all active:scale-95 ${isMobileMenuOpen ? 'bg-white text-black hover:bg-gray-200' : 'text-white hover:bg-white/10'}`}
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        >
-                            <motion.div
-                                animate={{
-                                    rotate: isMobileMenuOpen ? 90 : 0,
-                                }}
-                                transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
-                            >
-                                {isMobileMenuOpen ? <X size={20} strokeWidth={2.5} /> : <Menu size={20} strokeWidth={2.5} />}
-                            </motion.div>
-                        </button>
-                    </div>
-                </div>
-
-                {/* Profile Dropdown Content */}
-                <AnimatePresence>
-                    {isProfileOpen && !isMobileMenuOpen && (
-                        <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="overflow-hidden relative z-10"
-                        >
-                            <div className="h-px bg-white/5 w-full my-2" />
-                            <div className="flex flex-col gap-1 p-1">
-                                <div className="px-3 py-2 text-[10px] text-gray-500 uppercase tracking-widest flex justify-between">
-                                    <span>Status</span>
-                                    <span className={profile?.is_approved ? "text-emerald-500 font-bold" : "text-amber-500 font-bold"}>
-                                        {profile?.is_approved ? "ACTIVE MEMBER" : "PENDING APPROVAL"}
-                                    </span>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2">
-                                    <Link to={`/profile/${profile?.username}`} onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-                                        <UserIcon size={14} /> Profil Saya
-                                    </Link>
-                                    <Link to="/settings" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-                                        <Settings size={14} /> Pengaturan
-                                    </Link>
-                                </div>
-                                {profile?.role === 'admin' && (
-                                    <Link to="/admin" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-xl transition-colors">
-                                        <Shield size={14} /> Panel Admin
-                                    </Link>
-                                )}
-                                <button
-                                    onClick={() => { signOut(); setIsProfileOpen(false); }}
-                                    className="flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold text-red-500 bg-red-500/5 hover:bg-red-500/10 rounded-xl transition-colors mt-1"
-                                >
-                                    <LogOut size={14} /> Keluar Aplikasi
-                                </button>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                {/* Mobile Menu Content */}
-                <AnimatePresence>
-                    {isMobileMenuOpen && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className="flex flex-col md:hidden overflow-hidden relative z-10 h-full"
-                        >
-                            <div className="h-px bg-white/5 w-full mb-2" />
-
-                            <div className="flex flex-col gap-1.5 mt-2 flex-1">
-                                {navLinks.map((link, i) => (
-                                    <motion.div
-                                        key={link.name}
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: i * 0.04 + 0.1 }}
-                                    >
-                                        <Link
-                                            to={link.href}
-                                            className={`group relative text-base font-semibold px-5 py-3.5 rounded-2xl transition-all flex items-center justify-between overflow-hidden ${isActive(link.href)
-                                                ? 'bg-white text-black shadow-lg shadow-black/20'
-                                                : 'text-gray-400 hover:text-white hover:bg-white/5'
-                                                }`}
-                                            onClick={() => setIsMobileMenuOpen(false)}
-                                        >
-                                            <span className="relative z-10 tracking-wide">{link.name}</span>
-                                            {isActive(link.href) ? (
-                                                <ArrowRight size={18} />
-                                            ) : (
-                                                <ArrowRight size={18} className="opacity-0 -translate-x-2 group-hover:opacity-50 group-hover:translate-x-0 transition-all duration-300" />
-                                            )}
-                                        </Link>
-                                    </motion.div>
-                                ))}
-                            </div>
-
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                                className="mt-4 pt-4 border-t border-white/5"
-                            >
-                                {user && profile ? (
-                                    <div className="flex flex-col gap-3">
-                                        <div className="flex items-center gap-3 p-3 bg-white/5 rounded-[20px] border border-white/5">
-                                            <img
-                                                src={profile.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username || 'User'}`}
-                                                alt={profile.username}
-                                                className="w-10 h-10 rounded-full bg-neutral-800 object-cover"
-                                            />
-                                            <div className="flex flex-col">
-                                                <span className="text-sm font-bold text-white">{profile.username}</span>
-                                                <span className={`text-[9px] uppercase tracking-wider font-bold ${profile.is_approved ? "text-emerald-500" : "text-amber-500"}`}>
-                                                    {profile.is_approved ? "Member Kreatif" : "Menunggu Verifikasi"}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <Link
-                                                to={`/profile/${profile.username}`}
-                                                onClick={() => setIsMobileMenuOpen(false)}
-                                                className="px-4 py-3 bg-white/5 rounded-xl text-[11px] font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2 active:bg-white/10 transition-colors"
-                                            >
-                                                <UserIcon size={14} /> Profil
-                                            </Link>
-                                            <Link
-                                                to="/settings"
-                                                onClick={() => setIsMobileMenuOpen(false)}
-                                                className="px-4 py-3 bg-white/5 rounded-xl text-[11px] font-bold text-gray-300 hover:text-white flex items-center justify-center gap-2 active:bg-white/10 transition-colors"
-                                            >
-                                                <Settings size={14} /> Pengaturan
-                                            </Link>
-                                        </div>
-                                        {profile?.role === 'admin' && (
-                                            <Link
-                                                to="/admin"
-                                                onClick={() => setIsMobileMenuOpen(false)}
-                                                className="flex items-center justify-center gap-2 px-3 py-3 text-[11px] font-bold text-rose-400 bg-rose-500/5 hover:bg-rose-500/10 rounded-xl transition-colors"
-                                            >
-                                                <Shield size={14} /> Panel Administrasi
-                                            </Link>
-                                        )}
-                                        <button
-                                            onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
-                                            className="bg-red-500/10 text-red-500 py-3 rounded-xl text-[11px] font-bold flex items-center justify-center gap-2 active:bg-red-500/20 transition-colors"
-                                        >
-                                            <LogOut size={14} /> Keluar Aplikasi
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <Link
-                                        to="/login"
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                        className="bg-white text-black w-full py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition-all active:scale-[0.98]"
-                                    >
-                                        <span>Masuk / Daftar</span>
-                                        <ArrowRight size={16} />
-                                    </Link>
-                                )}
-                            </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </motion.nav>
+                    </AnimatePresence>
+                </motion.nav>
+            </div>
         </div>
     );
 };

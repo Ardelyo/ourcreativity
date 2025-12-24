@@ -3,70 +3,84 @@ import { Search, Trash2, Eye, ExternalLink, Loader2, AlertTriangle, CheckCircle 
 import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
 import { Link } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
+import { Pagination } from '../../components/Pagination';
 
 export const Content = () => {
-    const [works, setWorks] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const queryClient = useQueryClient();
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [filter, setFilter] = useState('all');
+    const [page, setPage] = useState(1);
+
+    const ITEMS_PER_PAGE = 20;
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(searchQuery);
+            setPage(1); // Reset to page 1 on search
         }, 500);
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
-    const fetchWorks = async () => {
-        setLoading(true);
-        try {
+    // Query for Works
+    const { data, isLoading, isPlaceholderData } = useQuery({
+        queryKey: ['works', page, filter, debouncedSearch],
+        queryFn: async () => {
             let query = supabase
                 .from('works')
-                .select('id, title, description, image_url, author, type, division, created_at, slides')
-                .order('created_at', { ascending: false });
+                .select('id, title, description, image_url, author, type, division, created_at, slides, content', { count: 'exact' })
+                .order('created_at', { ascending: false })
+                .range((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE - 1);
 
             if (filter !== 'all') {
                 query = query.eq('type', filter);
             }
 
             if (debouncedSearch) {
-                // Search in title, description OR author
-                // Supabase doesn't easily support OR with ILIKE across columns in simple query builder
-                // we'll search by title for now, or use filter locally if data is small
-                // Given the "full solution" request, let's use a simple or filter if possible
+                // Optimized OR search manually since Supabase client has limitations on mixed AND/OR groups without complexity
+                // But with just one condition set, .or works fine if used correctly.
+                // However, merging filter AND search OR is tricky in simple syntax.
+                // We'll prioritize search on title if searching, to use the index efficiently.
+                // Or try RPC if available, but staying safe with simple title search for performance on indexes
+                // query = query.ilike('title', `%${debouncedSearch}%`);
+
+                // Using .or with query string format:
                 query = query.or(`title.ilike.%${debouncedSearch}%,description.ilike.%${debouncedSearch}%,author.ilike.%${debouncedSearch}%`);
             }
 
-            const { data, error } = await query.limit(50);
-
+            const { data, error, count } = await query;
             if (error) throw error;
-            setWorks(data || []);
-        } catch (error) {
-            console.error('Error fetching works:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+            return { works: data, total: count };
+        },
+        placeholderData: keepPreviousData,
+    });
 
-    useEffect(() => {
-        fetchWorks();
-    }, [filter, debouncedSearch]);
+    const works = data?.works || [];
+    const totalCount = data?.total || 0;
+    const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-    const handleDelete = async (id: string) => {
-        if (!window.confirm('Are you sure you want to delete this work? This action cannot be undone.')) return;
-
-        try {
+    // Mutation for Deletion
+    const mutation = useMutation({
+        mutationFn: async (id: string) => {
             const { error } = await supabase
                 .from('works')
                 .delete()
                 .eq('id', id);
-
             if (error) throw error;
-            setWorks(works.filter(w => w.id !== id));
-        } catch (error) {
-            console.error('Error deleting work:', error);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['works'] });
+        },
+        onError: (error) => {
+            console.error('Delete failed:', error);
             alert('Failed to delete work.');
         }
+    });
+
+    const handleDelete = async (id: string) => {
+        if (!window.confirm('Are you sure you want to delete this work? This action cannot be undone.')) return;
+        mutation.mutate(id);
     };
 
     const filteredWorks = works;
@@ -82,7 +96,7 @@ export const Content = () => {
                     {['all', 'image', 'video', 'code', 'text', 'slide'].map(f => (
                         <button
                             key={f}
-                            onClick={() => setFilter(f)}
+                            onClick={() => { setFilter(f); setPage(1); }}
                             className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${filter === f ? 'bg-white text-black shadow-xl' : 'text-gray-500 hover:text-white'}`}
                         >
                             {f === 'all' ? 'Semua' : f}
@@ -104,57 +118,79 @@ export const Content = () => {
             </div>
 
             {/* Works Grid */}
-            {loading ? (
+            {isLoading ? (
                 <div className="flex flex-col items-center justify-center py-40">
                     <Loader2 className="animate-spin text-rose-500 mb-4" size={40} />
                     <p className="text-gray-500 font-black uppercase tracking-widest text-xs">Menyelaraskan data...</p>
                 </div>
             ) : filteredWorks.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {filteredWorks.map((work, index) => (
-                        <motion.div
-                            key={work.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="bg-white/[0.02] border border-white/[0.05] rounded-[2.5rem] overflow-hidden group hover:border-white/20 transition-all hover:bg-white/[0.04]"
-                        >
-                            <div className="aspect-[4/3] bg-black relative overflow-hidden m-4 mb-0 rounded-[2rem]">
-                                {work.type === 'image' || work.type === 'slide' ? (
-                                    <img src={work.image_url || work.slides?.[0]?.content} alt={work.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                ) : work.type === 'video' ? (
-                                    <div className="w-full h-full flex items-center justify-center bg-zinc-900">
-                                        <ExternalLink size={32} className="text-white/20" />
-                                    </div>
-                                ) : (
-                                    <div className="w-full h-full p-6 bg-zinc-950 text-[10px] overflow-hidden opacity-30 font-mono leading-relaxed">
-                                        {work.content}
-                                    </div>
-                                )}
+                <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        {filteredWorks.map((work, index) => (
+                            <motion.div
+                                key={work.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.05 }}
+                                className="bg-white/[0.02] border border-white/[0.05] rounded-[2.5rem] overflow-hidden group hover:border-white/20 transition-all hover:bg-white/[0.04]"
+                            >
+                                <div className="aspect-[4/3] bg-black relative overflow-hidden m-4 mb-0 rounded-[2rem]">
+                                    {work.type === 'image' || work.type === 'slide' ? (
+                                        <img src={work.image_url || work.slides?.[0]?.content} alt={work.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                    ) : work.type === 'video' ? (
+                                        <div className="w-full h-full flex items-center justify-center bg-zinc-900">
+                                            <ExternalLink size={32} className="text-white/20" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-full h-full p-6 bg-zinc-950 text-[10px] overflow-hidden opacity-30 font-mono leading-relaxed">
+                                            {work.content}
+                                        </div>
+                                    )}
 
-                                <div className="absolute inset-0 bg-black/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-4">
-                                    <Link to={`/karya?id=${work.id}`} target="_blank" className="w-12 h-12 bg-white text-black rounded-2xl hover:scale-110 transition-transform flex items-center justify-center" title="Lihat">
-                                        <Eye size={20} />
-                                    </Link>
-                                    <button onClick={() => handleDelete(work.id)} className="w-12 h-12 bg-rose-500 text-white rounded-2xl hover:scale-110 transition-transform flex items-center justify-center" title="Hapus">
-                                        <Trash2 size={20} />
-                                    </button>
-                                </div>
+                                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-4">
+                                        <Link to={`/karya?id=${work.id}`} target="_blank" className="w-12 h-12 bg-white text-black rounded-2xl hover:scale-110 transition-transform flex items-center justify-center" title="Lihat">
+                                            <Eye size={20} />
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDelete(work.id)}
+                                            className="w-12 h-12 bg-rose-500 text-white rounded-2xl hover:scale-110 transition-transform flex items-center justify-center"
+                                            title="Hapus"
+                                            disabled={mutation.isPending}
+                                        >
+                                            {mutation.isPending && mutation.variables === work.id ? (
+                                                <Loader2 size={20} className="animate-spin" />
+                                            ) : (
+                                                <Trash2 size={20} />
+                                            )}
+                                        </button>
+                                    </div>
 
-                                <span className="absolute top-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-xl text-[9px] font-black uppercase tracking-widest text-white rounded-full border border-white/10">
-                                    {work.division}
-                                </span>
-                            </div>
-                            <div className="p-8">
-                                <h3 className="font-black text-white text-lg truncate mb-1 group-hover:text-rose-500 transition-colors">{work.title}</h3>
-                                <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-gray-500">
-                                    <span>oleh {work.author}</span>
-                                    <span className="font-mono text-gray-700">{new Date(work.created_at).toLocaleDateString('id-ID')}</span>
+                                    <span className="absolute top-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-xl text-[9px] font-black uppercase tracking-widest text-white rounded-full border border-white/10">
+                                        {work.division}
+                                    </span>
                                 </div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+                                <div className="p-8">
+                                    <h3 className="font-black text-white text-lg truncate mb-1 group-hover:text-rose-500 transition-colors">{work.title}</h3>
+                                    <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                                        <span>oleh {work.author}</span>
+                                        <span className="font-mono text-gray-700">{new Date(work.created_at).toLocaleDateString('id-ID')}</span>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                    {works.length > 0 && (
+                        <div className="pb-8">
+                            <Pagination
+                                page={page}
+                                totalPages={totalPages}
+                                hasMore={!isPlaceholderData && page < totalPages}
+                                onPageChange={(newPage) => setPage(newPage)}
+                                loading={isPlaceholderData}
+                            />
+                        </div>
+                    )}
+                </>
             ) : (
                 <div className="text-center py-40 border-2 border-dashed border-white/5 rounded-[3rem]">
                     <AlertTriangle className="mx-auto mb-4 text-gray-800" size={48} />

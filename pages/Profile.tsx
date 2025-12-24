@@ -35,7 +35,17 @@ export const Profile = () => {
             // Fetch works for this profile
             const { data: worksData, error: worksError } = await supabase
                 .from('works')
-                .select('id, title, description, image_url, division, slides, created_at')
+                .select(`
+                    id, 
+                    title, 
+                    description, 
+                    image_url, 
+                    division, 
+                    slides, 
+                    created_at,
+                    likes:likes(count),
+                    comments:comments(count)
+                `)
                 .eq('author_id', profileData.id)
                 .order('created_at', { ascending: false });
 
@@ -192,11 +202,11 @@ export const Profile = () => {
                                         <div className="flex gap-4">
                                             <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
                                                 <Heart size={14} className="fill-rose-500 text-rose-500" />
-                                                <span className="text-xs font-bold">12</span>
+                                                <span className="text-xs font-bold">{work.likes?.[0]?.count || 0}</span>
                                             </div>
                                             <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
                                                 <MessageSquare size={14} />
-                                                <span className="text-xs font-bold">4</span>
+                                                <span className="text-xs font-bold">{work.comments?.[0]?.count || 0}</span>
                                             </div>
                                         </div>
                                     </div>

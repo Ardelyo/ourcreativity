@@ -2,29 +2,35 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, MoreVertical, Check, X, Shield, User, Loader2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
+import { Pagination } from '../../components/Pagination';
 
 export const Users = () => {
-    const [users, setUsers] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const queryClient = useQueryClient();
     const [searchQuery, setSearchQuery] = useState('');
     const [filter, setFilter] = useState('all'); // all, pending, approved, admin
-    const [selectedUser, setSelectedUser] = useState<string | null>(null);
+    const [page, setPage] = useState(1);
     const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    const ITEMS_PER_PAGE = 20;
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(searchQuery);
+            setPage(1); // Reset to page 1 on search
         }, 500);
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
-    const fetchUsers = async () => {
-        setLoading(true);
-        try {
+    // Query for Users
+    const { data, isLoading, isPlaceholderData } = useQuery({
+        queryKey: ['users', page, filter, debouncedSearch],
+        queryFn: async () => {
             let query = supabase
                 .from('profiles')
-                .select('id, username, avatar_url, is_approved, role, updated_at')
-                .order('updated_at', { ascending: false });
+                .select('id, username, avatar_url, is_approved, role, updated_at', { count: 'exact' })
+                .order('updated_at', { ascending: false })
+                .range((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE - 1);
 
             if (filter === 'pending') {
                 query = query.eq('is_approved', false);
@@ -35,50 +41,48 @@ export const Users = () => {
             }
 
             if (debouncedSearch) {
+                // Use ILIKE for search causing minimal conflict with indexes
                 query = query.ilike('username', `%${debouncedSearch}%`);
             }
 
-            const { data, error } = await query.limit(50); // Improved: Limit results
-
+            const { data, error, count } = await query;
             if (error) throw error;
-            setUsers(data || []);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+            return { users: data, total: count };
+        },
+        placeholderData: keepPreviousData, // Keep showing previous page data while loading next
+    });
 
-    useEffect(() => {
-        fetchUsers();
-    }, [filter, debouncedSearch]);
+    const users = data?.users || [];
+    const totalCount = data?.total || 0;
+    const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-    const handleAction = async (userId: string, action: 'approve' | 'reject' | 'make_admin' | 'remove_admin') => {
-        try {
-            let updates = {};
-            if (action === 'approve') updates = { is_approved: true };
-            if (action === 'reject') updates = { is_approved: false };
-            if (action === 'make_admin') updates = { role: 'admin' };
-            if (action === 'remove_admin') updates = { role: 'member' };
-
+    // Mutation for Actions
+    const mutation = useMutation({
+        mutationFn: async ({ userId, updates }: { userId: string, updates: any }) => {
             const { error } = await supabase
                 .from('profiles')
                 .update(updates)
                 .eq('id', userId);
-
             if (error) throw error;
-
-            // Refresh local state
-            setUsers(users.map(u => u.id === userId ? { ...u, ...updates } : u));
-            setSelectedUser(null);
-
-        } catch (error) {
-            console.error(`Error performing ${action}:`, error);
-            alert(`Gagal melakukan aksi: ${action}`);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['users'] });
+        },
+        onError: (error) => {
+            console.error('Action failed:', error);
+            alert('Gagal melakukan aksi.');
         }
-    };
+    });
 
-    const filteredUsers = users;
+    const handleAction = (userId: string, action: 'approve' | 'reject' | 'make_admin' | 'remove_admin') => {
+        let updates = {};
+        if (action === 'approve') updates = { is_approved: true };
+        if (action === 'reject') updates = { is_approved: false };
+        if (action === 'make_admin') updates = { role: 'admin' };
+        if (action === 'remove_admin') updates = { role: 'member' };
+
+        mutation.mutate({ userId, updates });
+    };
 
     return (
         <div className="space-y-10 pb-20">
@@ -95,7 +99,7 @@ export const Users = () => {
                     ].map(f => (
                         <button
                             key={f.id}
-                            onClick={() => setFilter(f.id)}
+                            onClick={() => { setFilter(f.id); setPage(1); }}
                             className={`px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${filter === f.id ? 'bg-white text-black shadow-xl' : 'text-gray-500 hover:text-white'}`}
                         >
                             {f.label}
@@ -104,12 +108,12 @@ export const Users = () => {
                 </div>
             </header>
 
-            {/* Search Bar - Zen Refinement */}
+            {/* Search Bar */}
             <div className="relative group">
                 <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-rose-500 transition-colors" size={20} />
                 <input
                     type="text"
-                    placeholder="Cari berdasarkan username atau email..."
+                    placeholder="Cari berdasarkan username..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-white/[0.02] border border-white/[0.05] rounded-[2rem] py-5 pl-16 pr-6 text-white text-lg focus:outline-none focus:border-rose-500/50 focus:bg-white/[0.04] transition-all placeholder:text-gray-700"
@@ -134,15 +138,15 @@ export const Users = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/[0.03]">
-                            {loading ? (
+                            {isLoading ? (
                                 <tr>
                                     <td colSpan={5} className="p-20 text-center">
                                         <Loader2 className="animate-spin mx-auto mb-4 text-rose-500" size={32} />
                                         <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Memuat data...</p>
                                     </td>
                                 </tr>
-                            ) : filteredUsers.length > 0 ? (
-                                filteredUsers.map((user) => (
+                            ) : users.length > 0 ? (
+                                users.map((user) => (
                                     <tr key={user.id} className="hover:bg-white/5 transition-all group">
                                         <td className="p-8">
                                             <div className="flex items-center gap-5">
@@ -160,7 +164,7 @@ export const Users = () => {
                                                 </div>
                                                 <div>
                                                     <div className="font-black text-white text-lg">{user.username}</div>
-                                                    <div className="text-xs text-gray-500 font-medium">{user.email || 'Tanpa email'}</div>
+                                                    <div className="text-xs text-gray-500 font-medium">{'Member'}</div>
                                                 </div>
                                             </div>
                                         </td>
@@ -190,6 +194,7 @@ export const Users = () => {
                                                         onClick={() => handleAction(user.id, 'approve')}
                                                         className="w-10 h-10 bg-emerald-500/10 text-emerald-500 rounded-xl hover:bg-emerald-500 hover:text-black transition-all flex items-center justify-center"
                                                         title="Setujui"
+                                                        disabled={mutation.isPending}
                                                     >
                                                         <Check size={18} />
                                                     </button>
@@ -199,6 +204,7 @@ export const Users = () => {
                                                         onClick={() => handleAction(user.id, 'reject')}
                                                         className="w-10 h-10 bg-amber-500/10 text-amber-500 rounded-xl hover:bg-amber-500 hover:text-black transition-all flex items-center justify-center"
                                                         title="Batalkan Persetujuan"
+                                                        disabled={mutation.isPending}
                                                     >
                                                         <X size={18} />
                                                     </button>
@@ -207,6 +213,7 @@ export const Users = () => {
                                                     onClick={() => handleAction(user.id, user.role === 'admin' ? 'remove_admin' : 'make_admin')}
                                                     className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${user.role === 'admin' ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white'}`}
                                                     title={user.role === 'admin' ? "Cabut Admin" : "Jadikan Admin"}
+                                                    disabled={mutation.isPending}
                                                 >
                                                     {user.role === 'admin' ? <User size={18} /> : <Shield size={18} />}
                                                 </button>
@@ -224,6 +231,18 @@ export const Users = () => {
                         </tbody>
                     </table>
                 </div>
+
+                {users.length > 0 && (
+                    <div className="px-8 pb-8">
+                        <Pagination
+                            page={page}
+                            totalPages={totalPages}
+                            hasMore={!isPlaceholderData && page < totalPages}
+                            onPageChange={(newPage) => setPage(newPage)}
+                            loading={isPlaceholderData}
+                        />
+                    </div>
+                )}
             </motion.div>
         </div>
     );

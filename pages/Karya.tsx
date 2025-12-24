@@ -80,7 +80,20 @@ export const Karya = () => {
 
       let query = supabase
         .from('works')
-        .select('id, title, description, image_url, author, type, division, tags, slides, created_at')
+        .select(`
+          id, 
+          title, 
+          description, 
+          image_url, 
+          author, 
+          type, 
+          division, 
+          tags, 
+          slides, 
+          created_at,
+          likes:likes(count),
+          comments:comments(count)
+        `)
         .order('created_at', { ascending: false });
 
       if (currentFilter !== 'all') {
@@ -373,9 +386,16 @@ export const Karya = () => {
 
                   <div className="flex justify-between items-center mb-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                     <h3 className="text-white font-bold text-sm md:text-lg leading-tight line-clamp-2">{art.title}</h3>
-                    <button className="p-2 bg-white/20 backdrop-blur-xl rounded-full hover:bg-rose-500 text-white transition-all shadow-lg active:scale-90 flex-shrink-0">
-                      <Heart size={16} />
-                    </button>
+                    <div className="flex gap-2">
+                      <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 text-white text-[10px] font-bold">
+                        <Heart size={10} className="fill-rose-500 text-rose-500" />
+                        {art.likes?.[0]?.count || 0}
+                      </div>
+                      <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 text-white text-[10px] font-bold">
+                        <MessageCircle size={10} className="text-blue-400" />
+                        {art.comments?.[0]?.count || 0}
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">

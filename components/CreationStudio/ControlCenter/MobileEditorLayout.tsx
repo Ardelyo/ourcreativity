@@ -14,14 +14,14 @@ interface MobileEditorLayoutProps {
 }
 
 export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, setFiles, triggerRun = 0 }) => {
-    // --- STATE ---
+    // --- state ---
     const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
     const [activeFileId, setActiveFileId] = useState<string>('1');
     const [showConsole, setShowConsole] = useState(false);
     const [showFiles, setShowFiles] = useState(false);
     const [consoleLogs, setConsoleLogs] = useState<ConsoleMessage[]>([]);
 
-    // Sync active file
+    // samain file yang aktif
     useEffect(() => {
         if (!files.find(f => f.id === activeFileId) && files.length > 0) {
             setActiveFileId(files[0].id);
@@ -30,7 +30,7 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
 
     const activeFile = files.find(f => f.id === activeFileId);
 
-    // Auto-switch to preview on run
+    // otomatis pindah ke preview pas di-run
     useEffect(() => {
         if (triggerRun > 0) {
             setActiveTab('preview');
@@ -38,7 +38,7 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
         }
     }, [triggerRun]);
 
-    // --- ACTIONS ---
+    // --- aksi ---
     const handleFileChange = (val: string | undefined) => {
         if (val === undefined) return;
         setFiles(prev => prev.map(f => f.id === activeFileId ? { ...f, content: val } : f));
@@ -66,12 +66,12 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
     return (
         <div className="flex flex-col h-full bg-[#050505] relative overflow-hidden">
 
-            {/* TOP NAVIGATION HEADER (Merged & Clean) */}
+            {/* header navigasi atas (gabung & bersih) */}
             <div className="flex flex-col bg-[#050505] z-20">
-                {/* Visual Header */}
+                {/* header visual */}
                 <div className="flex items-center justify-between px-4 py-3 bg-[#0a0a0a]/50 backdrop-blur-md border-b border-white/5">
 
-                    {/* Simplified Tabs */}
+                    {/* tab simpel */}
                     <div className="flex bg-[#111] rounded-full p-0.5 border border-white/5">
                         <button
                             onClick={() => setActiveTab('editor')}
@@ -87,7 +87,7 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                         </button>
                     </div>
 
-                    {/* Integrated Tools (Files & Console) */}
+                    {/* tool terintegrasi (file & konsol) */}
                     <div className="flex gap-1">
                         <button
                             onClick={() => setShowFiles(true)}
@@ -104,7 +104,7 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                     </div>
                 </div>
 
-                {/* File Information (Only in Editor Mode) */}
+                {/* info file (cuma pas mode editor) */}
                 {activeTab === 'editor' && (
                     <div className="px-4 py-1.5 bg-[#050505] text-[10px] font-mono text-gray-500 flex justify-center items-center gap-2 border-b border-white/5">
                         <span className="opacity-50">MENGEDIT:</span>
@@ -116,7 +116,7 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                 )}
             </div>
 
-            {/* MAIN CONTENT AREA */}
+            {/* area konten utama */}
             <div className="flex-1 relative overflow-hidden">
                 <AnimatePresence mode="wait">
                     {activeTab === 'editor' ? (
@@ -128,7 +128,7 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                             transition={{ duration: 0.2 }}
                             className="h-full flex flex-col"
                         >
-                            {/* File Name Banner Removed (Integrated above) */}
+                            {/* banner nama file diapus (udah digabung ke atas) */}
 
                             <div className="flex-1 relative">
                                 {activeFile ? (
@@ -136,7 +136,7 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                                         value={activeFile.content}
                                         onChange={handleFileChange}
                                         language={activeFile.language}
-                                        fontSize={14} // Larger font for mobile
+                                        fontSize={14} // font lebih gede buat mobile
                                     />
                                 ) : (
                                     <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-4">
@@ -165,7 +165,7 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                 </AnimatePresence>
             </div>
 
-            {/* CONSOLE DRAWER */}
+            {/* laci konsol */}
             <AnimatePresence>
                 {showConsole && (
                     <motion.div
@@ -186,7 +186,7 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                 )}
             </AnimatePresence>
 
-            {/* FILE MANAGER DRAWER */}
+            {/* laci manager file */}
             <AnimatePresence>
                 {showFiles && (
                     <>

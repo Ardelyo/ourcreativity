@@ -40,7 +40,7 @@ export const Coding = () => {
         <div className="min-h-screen bg-[#020202] text-gray-300 font-sans selection:bg-green-500/30 overflow-x-hidden">
             <MatrixRain />
 
-            {/* Navigasi Tetap */}
+            {/* Navigasi Tetap (Sticky) */}
             <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center bg-[#020202]/80 backdrop-blur-md border-b border-white/5">
                 <Link to="/info" className="flex items-center text-gray-400 hover:text-green-500 transition-colors group">
                     <ArrowLeft size={18} className="mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -159,7 +159,7 @@ export const Coding = () => {
                 </div>
             </section>
 
-            {/* SEKSI 3: ALUR KOLABORASI */}
+            {/* SEKSI 3: ALUR KERJA KOLABORASI */}
             <section className="py-24 px-6 md:px-20 relative bg-[#020202]">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16">

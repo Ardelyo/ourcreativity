@@ -58,7 +58,7 @@ export const ContributorModal: React.FC<ContributorDetailProps> = ({
 
     if (!isOpen) return null;
 
-    // Dynamic mesh gradient based on name length/char (pseudo-random)
+    // Gradasi mesh dinamis berdasarkan panjang nama (pseudo-random biar variasi)
     const getGradient = (name: string) => {
         const colors = [
             'from-rose-500/20 via-purple-500/20 to-cyan-500/20',
@@ -72,7 +72,7 @@ export const ContributorModal: React.FC<ContributorDetailProps> = ({
     return (
         <AnimatePresence>
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-hidden" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))' }}>
-                {/* Backdrop with blur */}
+                {/* Backdrop dengan blur */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -81,12 +81,12 @@ export const ContributorModal: React.FC<ContributorDetailProps> = ({
                     className="absolute inset-0 bg-black/60 backdrop-blur-xl"
                 />
 
-                {/* Modal Window */}
+                {/* Jendela Modal */}
                 <motion.div
                     layoutId={`card-${login}`}
                     className="relative w-full max-w-lg bg-[#0a0a0a]/80 border border-white/10 rounded-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
                 >
-                    {/* Close Button */}
+                    {/* Tombol Tutup */}
                     <button
                         onClick={onClose}
                         className="absolute top-6 right-6 z-30 p-2 bg-white/5 hover:bg-white/20 text-white rounded-full transition-all backdrop-blur-md"
@@ -94,11 +94,11 @@ export const ContributorModal: React.FC<ContributorDetailProps> = ({
                         <X size={20} />
                     </button>
 
-                    {/* Scrollable Content */}
+                    {/* Konten yang Bisa Di-scroll */}
                     <div className="overflow-y-auto custom-scrollbar flex-1">
                         <div ref={modalRef} className="relative bg-[#030303] p-8 md:p-12 overflow-hidden min-h-[500px] flex flex-col items-center text-center">
 
-                            {/* Abstract Background Art */}
+                            {/* Seni Latar Belakang Abstrak */}
                             <div className={`absolute inset-0 bg-gradient-to-br ${getGradient(login)} blur-3xl opacity-50`} />
                             <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
 
@@ -107,7 +107,7 @@ export const ContributorModal: React.FC<ContributorDetailProps> = ({
 
                             <div className="relative z-10 w-full flex flex-col items-center">
 
-                                {/* Avatar: Floating & Organic */}
+                                {/* Avatar: Melayang & Organik */}
                                 <div className="relative mb-8 group">
                                     <div className="absolute inset-0 bg-gradient-to-r from-rose-500 to-cyan-500 rounded-full blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-700" />
                                     <div className={`w-32 h-32 rounded-full p-1 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/10 ${isOwner ? 'shadow-[0_0_40px_rgba(251,191,36,0.2)]' : ''}`}>
@@ -128,7 +128,7 @@ export const ContributorModal: React.FC<ContributorDetailProps> = ({
                                     <Sparkles size={14} className="text-purple-400" />
                                 </div>
 
-                                {/* Creative Signature / Bio */}
+                                {/* Tanda Tangan Kreatif / Bio */}
                                 <div className="relative p-6 mb-8 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-sm max-w-sm">
                                     <Wand2 size={24} className="absolute -top-3 -left-3 text-rose-400 rotate-12" />
                                     <p className="text-lg text-gray-300 font-serif italic leading-relaxed">
@@ -140,7 +140,7 @@ export const ContributorModal: React.FC<ContributorDetailProps> = ({
                                     </div>
                                 </div>
 
-                                {/* Abstract Stats */}
+                                {/* Statistik Abstrak */}
                                 <div className="flex gap-8 md:gap-12 mb-8">
                                     <div className="flex flex-col items-center">
                                         <span className="text-3xl font-light text-white">{contributions}</span>
@@ -174,7 +174,7 @@ export const ContributorModal: React.FC<ContributorDetailProps> = ({
                         </div>
                     </div>
 
-                    {/* Action Bar */}
+                    {/* Bar Aksi */}
                     <div className="p-6 bg-[#0a0a0a]/90 border-t border-white/10 flex justify-center backdrop-blur-xl">
                         <button
                             onClick={handleDownload}

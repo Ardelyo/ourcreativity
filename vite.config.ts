@@ -7,13 +7,13 @@ export default defineConfig(({ mode }) => {
   return {
     server: {
       port: 3000,
-      strictPort: false, // Allow fallback to next available port if 3000 is busy
+      strictPort: false, // Pake port laen kalo 3000 lagi dipake
       host: '0.0.0.0',
     },
     plugins: [react()],
     define: {
-      // Removed GEMINI_API_KEY injection for security - private keys should not be exposed to client bundle
-      // Only VITE_ prefixed environment variables should be used in client-side code
+      // GEMINI_API_KEY dihapus demi keamanan - private key gak boleh bocor ke client
+      // Cuma variabel dot-env yang depannya VITE_ yang boleh dipake di kode client
     },
     resolve: {
       alias: {

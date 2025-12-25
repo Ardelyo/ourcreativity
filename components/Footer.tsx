@@ -9,7 +9,7 @@ export const Footer = () => {
         <div className="text-center md:text-left">
           <h3 className="font-serif text-2xl font-bold text-white mb-2">Our Creativity.</h3>
           <p className="text-[10px] text-gray-500 tracking-wider uppercase mb-1">Jakarta, Indonesia.</p>
-          <p className="text-[10px] text-rose-500/80 font-mono tracking-widest uppercase">Founder @hakyyofficial</p>
+          <p className="text-[10px] text-rose-500/80 font-mono tracking-widest uppercase">Pendiri @hakyyofficial</p>
         </div>
 
         <div className="flex items-center gap-8">

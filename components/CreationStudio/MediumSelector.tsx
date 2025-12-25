@@ -20,7 +20,7 @@ export const MediumSelector: React.FC<MediumSelectorProps> = ({ activeType, onCh
 
     return (
         <div className="w-full">
-            {/* Mobile: 2x3 Grid */}
+            {/* mobile: grid 2x3 */}
             <div className="md:hidden grid grid-cols-3 gap-2 mb-6">
                 {types.map((type) => (
                     <button
@@ -40,7 +40,7 @@ export const MediumSelector: React.FC<MediumSelectorProps> = ({ activeType, onCh
                 ))}
             </div>
 
-            {/* Desktop: Horizontal Pills */}
+            {/* desktop: pil horizontal */}
             <div className="hidden md:flex bg-[#111] p-1 rounded-full border border-white/10 inline-flex mb-8">
                 {types.map((type) => (
                     <button

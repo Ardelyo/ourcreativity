@@ -10,13 +10,13 @@ import { useAuth } from '../components/AuthProvider';
 
 export const Announcement = () => {
     const { loading: authLoading } = useAuth();
-    const [activeTab, setActiveTab] = useState<'updates' | 'changelog'>('updates');
+    const [activeTab, setActiveTab] = useState<'updates' | 'changelog'>('updates'); //updates buat pengumuman, changelog buat riwayat sistem
     const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
     const [events, setEvents] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchAnnouncements = async () => {
+    const fetchAnnouncements = async () => { // Ambil pengumuman dari Supabase
         if (authLoading) return;
 
         try {

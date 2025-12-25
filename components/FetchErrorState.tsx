@@ -1,3 +1,4 @@
+// Tampilan buat ngasih tau kalo ada error pas ambil data.
 import React from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 

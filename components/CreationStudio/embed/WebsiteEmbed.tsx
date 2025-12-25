@@ -6,21 +6,21 @@ interface WebsiteEmbedProps {
 }
 
 /**
- * WebsiteEmbed - Embeds external websites in a restricted sandbox.
+ * WebsiteEmbed - Naro website luar di dalem sandbox yang terbatas.
  * 
- * SECURITY CONSTRAINTS:
- * - Uses restrictive sandbox with only "allow-scripts" and "allow-forms"
- * - Removed "allow-same-origin" to prevent cross-origin access
- * - Removed "allow-popups" to prevent popup windows
- * - Content policies and CORS restrictions still apply
- * - Websites may still block embedding via X-Frame-Options or CSP
+ * BATASAN KEAMANAN:
+ * - Pake sandbox ketat cuma "allow-scripts" sama "allow-forms"
+ * - "allow-same-origin" diapus biar gak bisa akses lintas-asal
+ * - "allow-popups" diapus biar gak bisa buka window popup
+ * - Kebijakan konten sama batasan CORS tetep berlaku
+ * - Kadang website masih bisa ngeblokir embed lewat X-Frame-Options atau CSP
  */
 
 export const WebsiteEmbed: React.FC<WebsiteEmbedProps> = ({ url }) => {
-    const [key, setKey] = useState(0); // To force reload
+    const [key, setKey] = useState(0); // Buat maksa muat ulang
     const [loadError, setLoadError] = useState(false);
 
-    // Validate URL
+    // Validasi URL
     const isValidUrl = (string: string) => {
         try {
             new URL(string);
@@ -31,7 +31,7 @@ export const WebsiteEmbed: React.FC<WebsiteEmbedProps> = ({ url }) => {
     };
 
     if (!url) return null;
-    if (!isValidUrl(url)) return <div className="p-4 text-red-500 bg-red-500/10 rounded-xl">Invalid URL</div>;
+    if (!isValidUrl(url)) return <div className="p-4 text-red-500 bg-red-500/10 rounded-xl">URL Gak Valid</div>;
 
     const reload = () => {
         setKey(prev => prev + 1);
@@ -40,7 +40,7 @@ export const WebsiteEmbed: React.FC<WebsiteEmbedProps> = ({ url }) => {
 
     return (
         <div className="w-full h-full flex flex-col bg-[#0f0f0f] border border-white/10 rounded-xl overflow-hidden">
-            {/* Header / Address Bar */}
+            {/* Header / Bar Alamat */}
             <div className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a] border-b border-white/5 text-xs text-gray-400">
                 <button onClick={reload} className="p-1 hover:text-white hover:bg-white/10 rounded transition-colors">
                     <RefreshCw size={12} />
@@ -54,23 +54,23 @@ export const WebsiteEmbed: React.FC<WebsiteEmbedProps> = ({ url }) => {
                     rel="noreferrer"
                     className="p-1 hover:text-white hover:bg-white/10 rounded transition-colors flex items-center gap-1"
                 >
-                    Open <ExternalLink size={12} />
+                    Buka <ExternalLink size={12} />
                 </a>
             </div>
 
-            {/* Iframe Content */}
+            {/* Konten Iframe */}
             <div className="flex-1 relative bg-white">
                 {loadError ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-[#0a0a0a] text-gray-400">
                         <ExternalLink size={32} className="mb-4 opacity-50" />
-                        <p className="mb-2">Website might be blocking embeds.</p>
+                        <p className="mb-2">Website ini mungkin ngeblokir buat dipasang (embed).</p>
                         <a
                             href={url}
                             target="_blank"
                             rel="noreferrer"
                             className="text-accent-blue hover:underline"
                         >
-                            Click here to open directly
+                            Klik di sini buat buka langsung
                         </a>
                     </div>
                 ) : (
@@ -80,8 +80,8 @@ export const WebsiteEmbed: React.FC<WebsiteEmbedProps> = ({ url }) => {
                         className="w-full h-full border-none"
                         sandbox="allow-scripts allow-forms"
                         onError={() => setLoadError(true)}
-                    // Note: onError on iframe isn't reliable for X-Frame-Options blocks
-                    // We mainly rely on the fallback UI if it looks broken, or users open manually
+                    /* Catetan: onError di iframe gak bener-bener akurat buat deteksi blokir X-Frame-Options */
+                    /* Kita cuma ngandelin UI fallback kalo keliatannya rusak, atau user buka manual */
                     />
                 )}
             </div>

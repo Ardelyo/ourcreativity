@@ -13,7 +13,7 @@ export const Navbar = () => {
     const [isMobile, setIsMobile] = useState(false);
     const location = useLocation();
 
-    // Media Query Hook for Responsive Layout
+    // Hook Media Query buat Layout Responsif
     useEffect(() => {
         const checkMobile = () => {
             setIsMobile(window.innerWidth < 768);
@@ -46,10 +46,10 @@ export const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Tentukan apakah kita harus menampilkan menu lengkap (Desktop)
+    // Tentukan kalo perlu tampil menu lengkap (Desktop)
     const showFullMenu = !isScrolled || isHovered;
 
-    // Konfigurasi transisi animasi - pegas cair "mirip Apple"
+    // Konfigurasi transisi animasi - pegas cair ala ala Apple
     const springTransition = {
         type: "spring",
         stiffness: 350,
@@ -71,14 +71,14 @@ export const Navbar = () => {
             padding: "8px 20px",
             maxWidth: "90vw"
         },
-        // Desktop Profile Open - expands the island naturally
+        // Profile Desktop pas kebuka - ngelebarin island secara natural
         profileOpenDesktop: {
             width: "320px",
             height: "auto",
             borderRadius: "24px",
             padding: "12px 16px 16px 16px",
         },
-        // Mobile only variant for profile/menu open
+        // Varian khusus mobile pas profile/menu kebuka
         mobileOpen: {
             width: "360px",
             height: "auto",
@@ -88,7 +88,7 @@ export const Navbar = () => {
         }
     };
 
-    // Determine current variant based on state and device
+    // Tentukan varian sekarang berdasarkan status dan device
     const getCurrentVariant = () => {
         if (isMobile) {
             if (isMobileMenuOpen || isProfileOpen) return "mobileOpen";
@@ -113,7 +113,7 @@ export const Navbar = () => {
                     className="bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden relative"
                 >
                     <div className={`flex items-center justify-between w-full relative z-20 ${showFullMenu && !isMobileMenuOpen && !isProfileOpen ? 'gap-12' : 'gap-3'} ${(isMobile && (isProfileOpen || isMobileMenuOpen)) ? 'mb-4' : 'h-full'}`}>
-                        {/* Logo & Title Wrapper */}
+                        {/* Pembungkus Logo & Judul */}
                         <div className="flex items-center gap-3">
                             <Link to="/" className="flex items-center gap-2 group shrink-0 relative z-10" onClick={() => setIsMobileMenuOpen(false)}>
                                 <motion.div
@@ -175,7 +175,7 @@ export const Navbar = () => {
                             )}
                         </AnimatePresence>
 
-                        {/* CTA & Toggle Area */}
+                        {/* Area CTA & Toggle */}
                         <div className="flex items-center gap-2 shrink-0 z-10">
                             <AnimatePresence mode="popLayout">
                                 {showFullMenu && !isMobileMenuOpen && (
@@ -261,7 +261,7 @@ export const Navbar = () => {
                         </div>
                     </div>
 
-                    {/* Desktop Profile Content - Integrated into Island */}
+                    {/* Konten Profil Desktop - Nyatu ke Island */}
                     <AnimatePresence>
                         {isProfileOpen && !isMobile && (
                             <motion.div
@@ -310,7 +310,7 @@ export const Navbar = () => {
                         )}
                     </AnimatePresence>
 
-                    {/* Mobile Profile Dropdown Content (Inside Island) */}
+                    {/* Konten Dropdown Profil Mobile (Di dalem Island) */}
                     <AnimatePresence>
                         {isMobile && isProfileOpen && !isMobileMenuOpen && (
                             <motion.div
@@ -351,7 +351,7 @@ export const Navbar = () => {
                         )}
                     </AnimatePresence>
 
-                    {/* Mobile Menu Content */}
+                    {/* Konten Menu Mobile */}
                     <AnimatePresence>
                         {isMobileMenuOpen && (
                             <motion.div

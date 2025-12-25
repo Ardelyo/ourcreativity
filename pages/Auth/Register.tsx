@@ -37,12 +37,12 @@ export const Register = () => {
 
             if (signUpError) throw signUpError;
 
-            // Check if session is established (auto-login usually works unless email confirm is on)
+            // Cek apa sesi udah ada (biasanya auto-login ok, kecuali konfirmasi email aktif)
             if (data.session) {
                 navigate('/');
             } else {
-                // If email confirmation is required, this might happen. 
-                // Assuming for this MVP environment it's likely auto-confirm or we just prompt user.
+                // Kalo butuh konfirmasi email, ini mungkin kejadian. 
+                // Asumsi buat MVP ini auto-konfirm atau kita kasih tau usernya aja.
                 alert('Pendaftaran berhasil! Silakan cek email Anda untuk verifikasi (jika diperlukan) atau coba login.');
                 navigate('/login');
             }
@@ -56,7 +56,7 @@ export const Register = () => {
 
     return (
         <div className="min-h-screen pt-24 pb-12 flex flex-col items-center justify-center px-4 relative overflow-hidden">
-            {/* Background Ambience */}
+            {/* Efek Latar Belakang */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
                 <div className="absolute top-[20%] right-[20%] w-[500px] h-[500px] bg-rose-500/10 blur-[100px] rounded-full" />
                 <div className="absolute bottom-[20%] left-[20%] w-[500px] h-[500px] bg-indigo-500/10 blur-[100px] rounded-full" />

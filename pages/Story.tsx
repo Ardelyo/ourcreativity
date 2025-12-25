@@ -7,7 +7,7 @@ import { ArrowRight, Zap, Globe, Users, Share2, Info, ChevronRight, Activity } f
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-// --- Assets ---
+// --- Daftar Aset ---
 const ASSETS = {
   logoGeneric: '/assets/logo-infinity-gradient.png',
   logoMain: '/assets/logo-oc-main.jpg',
@@ -31,7 +31,7 @@ const ASSETS = {
   ]
 };
 
-// --- Sub-components ---
+// --- Sub-komponen ---
 
 const AnimatedNumber = ({ value, duration = 2 }: { value: string, duration?: number }) => {
   const elementRef = useRef<HTMLSpanElement>(null);
@@ -99,7 +99,7 @@ const SectionHeader = ({ subtitle, title, description }: { subtitle: string, tit
   </div>
 );
 
-// --- Sections ---
+// --- Bagian-bagian (Sections) ---
 
 const Hero = () => {
   const container = useRef(null);

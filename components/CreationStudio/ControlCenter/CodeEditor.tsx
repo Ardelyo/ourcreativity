@@ -23,15 +23,15 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     const handleEditorDidMount = (editor: any, monaco: Monaco) => {
         editorRef.current = editor;
 
-        // Configure p5.js autocompletion if language is Javascript
+        // setup autocompletion p5.js kalo bahasanya javascript
         monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
             target: monaco.languages.typescript.ScriptTarget.ES6,
             allowNonTsExtensions: true,
         });
 
         if (language === 'javascript') {
-            // Include p5.js global definitions mostly for Intellisense
-            // This is a simplified version; normally you'd fetch the actual .d.ts
+            // masukin definisi global p5.js buat intellisense
+            // ini versi simpel aja; aslinya mending ambil file .d.ts beneran
             const libSource = `
                 declare function setup(): void;
                 declare function draw(): void;

@@ -16,7 +16,7 @@ export default {
                 primary: '#ffffff',
                 accentRed: '#e11d48',
                 accentPurple: '#a855f7',
-                // Brutalist colors
+                // Warna gaya brutalist
                 brutalistYellow: '#FACC15',
                 brutalistPink: '#F472B6',
                 brutalistCyan: '#22D3EE',

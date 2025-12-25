@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom Scrollbar - Minimalist */
+/* Scrollbar Kustom - Minimalis */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -20,7 +20,7 @@
   background: #555;
 }
 
-/* Traditional Smooth Scrolling */
+/* Scrolling Halus Tradisional */
 html {
   scroll-behavior: smooth;
 }
@@ -30,12 +30,12 @@ body {
   color: #ffffff;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
+/* Sembunyiin scrollbar buat Chrome, Safari sama Opera */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
+/* Sembunyiin scrollbar buat IE, Edge sama Firefox */
 .no-scrollbar {
   -ms-overflow-style: none;
   /* IE and Edge */
@@ -43,7 +43,7 @@ body {
   /* Firefox */
 }
 
-/* Safe Area Utilities */
+/* Utilitas Safe Area */
 @supports (padding-top: env(safe-area-inset-top)) {
   .pt-safe {
     padding-top: env(safe-area-inset-top);
@@ -74,7 +74,7 @@ body {
   }
 }
 
-/* Fallback for browsers that don't support env() */
+/* Cadangan buat browser yang gak support env() */
 .pt-safe {
   padding-top: 0px;
 }

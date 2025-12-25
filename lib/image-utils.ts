@@ -2,20 +2,20 @@
 import imageCompression from 'browser-image-compression';
 
 /**
- * Compresses an image file to WebP format with optimized settings.
- * Target size: < 1MB
- * Max dimension: 1920px
+ * Kompres file gambar jadi format WebP dengan settingan optimal.
+ * Target ukuran: < 1MB
+ * Dimensi max: 1920px
  * Format: WebP
  */
 export const compressImage = async (file: File): Promise<File> => {
-    // If it's already a small WebP, return as is (optional optimization)
+    // Kalo emang udah WebP kecil, balikin aja langsung (optimasi opsional)
     if (file.type === 'image/webp' && file.size < 0.5 * 1024 * 1024) {
         return file;
     }
 
     const options = {
-        maxSizeMB: 0.8, // Target under 800KB
-        maxWidthOrHeight: 1920, // Full HD is sufficient for most web content
+        maxSizeMB: 0.8, // Target di bawah 800KB
+        maxWidthOrHeight: 1920, // Full HD udah cukup buat konten web kebanyakan
         useWebWorker: true,
         fileType: 'image/webp',
         initialQuality: 0.8
@@ -26,14 +26,14 @@ export const compressImage = async (file: File): Promise<File> => {
         console.log(`Compressed: ${(file.size / 1024 / 1024).toFixed(2)}MB -> ${(compressedFile.size / 1024 / 1024).toFixed(2)}MB`);
         return compressedFile;
     } catch (error) {
-        console.error("Compression failed, using original file:", error);
+        console.error("Kompresi gagal, pake file asli aja:", error);
         return file;
     }
 };
 
 /**
- * Validates video file size.
- * Limit: 50MB
+ * Validasi ukuran file video.
+ * Batas: 50MB
  */
 export const validateVideoSize = (file: File): boolean => {
     const MAX_SIZE_MB = 50;

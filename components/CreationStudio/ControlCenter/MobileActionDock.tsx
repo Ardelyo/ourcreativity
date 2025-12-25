@@ -12,7 +12,7 @@ interface MobileActionDockProps {
     isCodeMode?: boolean;
 }
 
-// Consistent "Zen" Branding: Monochrome/Minimalist
+// branding "zen": konsisten monokrom & minimalis
 const modeConfig: { id: WorkType; label: string; icon: any }[] = [
     { id: 'text', label: 'Tulisan', icon: Type },
     { id: 'image', label: 'Gambar', icon: ImageIcon },
@@ -36,9 +36,9 @@ export const MobileActionDock: React.FC<MobileActionDockProps> = ({
 
     return (
         <>
-            {/* MINIMAL FLOATING DOCK */}
+            {/* dock melayang minimalis */}
             <div className="fixed bottom-0 left-0 right-0 z-50 pb-safe flex items-center justify-center gap-4 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-                {/* Mode Selector Button */}
+                {/* tombol pilih mode */}
                 <motion.button
                     whileTap={{ scale: 0.92 }}
                     onClick={() => setShowModeSelector(true)}
@@ -47,7 +47,7 @@ export const MobileActionDock: React.FC<MobileActionDockProps> = ({
                     <CurrentIcon size={24} />
                 </motion.button>
 
-                {/* Preview/Run Button (Pill Shape) */}
+                {/* tombol pratinjau/run (bentuk pil) */}
                 <motion.button
                     whileTap={{ scale: 0.95 }}
                     onClick={onPreview}
@@ -66,7 +66,7 @@ export const MobileActionDock: React.FC<MobileActionDockProps> = ({
                     )}
                 </motion.button>
 
-                {/* Settings Button (Small) */}
+                {/* tombol setting (kecil) */}
                 <motion.button
                     whileTap={{ scale: 0.92 }}
                     onClick={onSettings}
@@ -76,11 +76,11 @@ export const MobileActionDock: React.FC<MobileActionDockProps> = ({
                 </motion.button>
             </div>
 
-            {/* MODE SELECTOR BOTTOM SHEET */}
+            {/* bottom sheet buat pilih mode */}
             <AnimatePresence>
                 {showModeSelector && (
                     <>
-                        {/* Backdrop */}
+                        {/* background gelap */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -89,7 +89,7 @@ export const MobileActionDock: React.FC<MobileActionDockProps> = ({
                             className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60]"
                         />
 
-                        {/* Sheet */}
+                        {/* panel sheetnya */}
                         <motion.div
                             initial={{ y: '100%' }}
                             animate={{ y: 0 }}
@@ -97,10 +97,10 @@ export const MobileActionDock: React.FC<MobileActionDockProps> = ({
                             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
                             className="fixed inset-x-0 bottom-0 z-[70] bg-[#0a0a0a] rounded-t-[2.5rem] border-t border-white/5 p-6 pb-safe"
                         >
-                            {/* Handle */}
+                            {/* garis handle */}
                             <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8" />
 
-                            {/* Title */}
+                            {/* judul panel */}
                             <div className="flex items-center justify-between mb-8 px-2">
                                 <h3 className="text-xl font-medium text-white font-serif">Pilih Kreativitas</h3>
                                 <button
@@ -111,7 +111,7 @@ export const MobileActionDock: React.FC<MobileActionDockProps> = ({
                                 </button>
                             </div>
 
-                            {/* Mode Grid - Zen Layout */}
+                            {/* grid mode - layout zen */}
                             <div className="grid grid-cols-3 gap-4 mb-4">
                                 {modeConfig.map((m) => {
                                     const Icon = m.icon;

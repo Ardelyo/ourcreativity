@@ -7,18 +7,18 @@ interface IframeSandboxProps {
 }
 
 /**
- * IframeSandbox - Executes code in a sandboxed iframe.
+ * IframeSandbox - Buat jalanin kode di dalem iframe yang terisolasi.
  * 
- * SECURITY CONSTRAINTS:
- * - Uses restrictive sandbox with only "allow-scripts" and "allow-forms"
- * - Removed "allow-same-origin" to prevent access to parent window
- * - Removed "allow-popups" and "allow-modals" for security
- * - All executed content is sandboxed and cannot escape the iframe
+ * BATASAN KEAMANAN:
+ * - Pake sandbox yang ketat cuma "allow-scripts" sama "allow-forms"
+ * - "allow-same-origin" diapus biar gak bisa ngakses window utama (parent)
+ * - "allow-popups" sama "allow-modals" diapus demi keamanan
+ * - Semua konten yang dijalanin terisolasi, gak bisa kabur dari iframe
  * 
- * Supports:
- * - HTML (with inline CSS/JS)
- * - JavaScript (wrapped in HTML)
- * - p5.js (auto-includes p5.js library)
+ * Support buat:
+ * - HTML (sama CSS/JS inline)
+ * - JavaScript (dibungkus HTML)
+ * - p5.js (otomatis masukin library p5.js)
  */
 export const IframeSandbox: React.FC<IframeSandboxProps> = ({ code, triggerRun, language = 'html' }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -81,7 +81,7 @@ export const IframeSandbox: React.FC<IframeSandboxProps> = ({ code, triggerRun, 
 
       case 'html':
       default:
-        // If code already has DOCTYPE, use as-is
+        // Kalo kodenya udah ada DOCTYPE, pake apa adanya aja
         if (inputCode.trim().toLowerCase().startsWith('<!doctype') || inputCode.trim().toLowerCase().startsWith('<html')) {
           return inputCode;
         }
@@ -108,7 +108,7 @@ export const IframeSandbox: React.FC<IframeSandboxProps> = ({ code, triggerRun, 
     }
   }, [triggerRun, code, language]);
 
-  // Auto-run on first render if code exists
+  // Auto-run pas render pertama kalo emang ada kodenya
   useEffect(() => {
     if (code && iframeRef.current) {
       iframeRef.current.srcdoc = generateHTML(code, language);

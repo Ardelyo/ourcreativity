@@ -9,7 +9,7 @@ interface CardProps {
     delay?: number;
 }
 
-// Komponen Noise Modern - Dioptimalkan
+// Efek Noise Modern - Biar tekstur gak flat
 const Noise = () => (
     <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none z-0 mix-blend-overlay"
@@ -43,10 +43,10 @@ export const BentoGrid = () => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 max-w-7xl mx-auto auto-rows-[minmax(180px,auto)] content-visibility-auto">
 
-            {/* 1. Kartu Fitur - Gaya Editorial */}
+            {/* 1. Kartu Fitur - Gaya Majalah/Editorial */}
             <Card className="md:col-span-8 md:row-span-2 bg-[#080808] text-white min-h-[450px] flex flex-col justify-between group border border-white/5 hover:border-white/10" delay={0.1}>
                 <Link to="/announcement" className="absolute inset-0 z-20"></Link>
-                {/* Titik Gradien Halus */}
+                {/* Gradasi Halus biar estetik */}
                 <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-gradient-to-b from-indigo-900/20 to-purple-900/10 rounded-full blur-[120px] transition-all duration-700 group-hover:opacity-100 opacity-60"></div>
 
                 <div className="relative z-10 flex justify-between items-start">
@@ -81,7 +81,7 @@ export const BentoGrid = () => {
                 </div>
             </Card>
 
-            {/* 2. Kartu Galeri - Visual Berat */}
+            {/* 2. Kartu Galeri - Fokus ke Visual */}
             <Card className="md:col-span-4 md:row-span-1 bg-black border border-white/5 hover:border-white/20 group cursor-pointer" delay={0.2}>
                 <Link to="/karya" className="block h-full w-full">
                     <img
@@ -101,7 +101,7 @@ export const BentoGrid = () => {
                 </Link>
             </Card>
 
-            {/* 3. Kartu Tim - Gaya Data/Statistik */}
+            {/* 3. Kartu Tim - Isinya Data/Statistik */}
             <Card className="md:col-span-4 md:row-span-1 bg-[#0a0a0a] border border-white/5 hover:border-white/20 group flex flex-col justify-center" delay={0.3}>
                 <Link to="/tim" className="block w-full">
                     <div className="flex items-center justify-between mb-2">
@@ -119,7 +119,7 @@ export const BentoGrid = () => {
                 </Link>
             </Card>
 
-            {/* 4. Kartu Cerita - Teks Minimalis */}
+            {/* 4. Kartu Cerita - Simpel aja tulisannya */}
             <Card className="md:col-span-4 bg-[#0a0a0a] border border-white/5 hover:bg-[#0f0f0f] transition-colors flex flex-col justify-center" delay={0.4}>
                 <Link to="/story" className="block h-full">
                     <BookOpen size={24} className="text-white mb-4" />
@@ -133,7 +133,7 @@ export const BentoGrid = () => {
                 </Link>
             </Card>
 
-            {/* 5. Kartu Info - Daftar Bersih */}
+            {/* 5. Kartu Info - List bersih/clean */}
             <Card className="md:col-span-4 bg-[#0a0a0a] border border-white/5 hover:bg-[#0f0f0f] flex flex-col justify-between" delay={0.5}>
                 <Link to="/info" className="block h-full">
                     <div className="flex justify-between items-start mb-4">
@@ -154,7 +154,7 @@ export const BentoGrid = () => {
                 </Link>
             </Card>
 
-            {/* 6. Kartu Panduan - Unduhan Menonjol */}
+            {/* 6. Kartu Panduan - Tombol download yang kelihatan jelas */}
             <Card className="md:col-span-4 bg-gradient-to-br from-[#111] to-[#050505] border border-white/5 hover:border-white/20 group relative" delay={0.6}>
                 <a
                     href="https://drive.google.com/file/d/17VIqQTeQCwX64zuzmQWAFy47KGdxJENM/view?usp=sharing"
@@ -178,7 +178,7 @@ export const BentoGrid = () => {
                         <Download size={16} className="text-white" />
                     </div>
                 </a>
-                {/* Blur Dekoratif */}
+                {/* Dekorasi Blur biar gak sepi */}
                 <div className="absolute bottom-0 right-0 w-24 h-24 bg-rose-500/10 blur-[40px] rounded-full pointer-events-none"></div>
             </Card>
 

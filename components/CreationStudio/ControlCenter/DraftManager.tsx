@@ -55,7 +55,7 @@ export const DraftManager: React.FC<DraftManagerProps> = ({
         return labels[mode] || mode;
     };
 
-    // Sort drafts by last saved (newest first)
+    // urutin draft sesuai trakhir disimpen (paling baru duluan)
     const sortedDrafts = [...drafts].sort((a, b) =>
         new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime()
     );
@@ -78,7 +78,7 @@ export const DraftManager: React.FC<DraftManagerProps> = ({
             >
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h2 className="text-xl font-bold text-white">Drafts</h2>
+                        <h2 className="text-xl font-bold text-white">Draf</h2>
                         <p className="text-xs text-gray-500 mt-1">Kelola semua karyamu</p>
                     </div>
                     <button onClick={onClose} className="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white">

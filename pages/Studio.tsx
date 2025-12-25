@@ -11,7 +11,7 @@ import { useAuth } from '../components/AuthProvider';
 import { supabase } from '../lib/supabase';
 import { useIsMobile } from '../hooks/useIsMobile';
 
-// Sub-components
+// sub-komponen buat studio
 import { EditorLayout } from '@/components/CreationStudio/ControlCenter/EditorLayout';
 import { MobileEditorLayout } from '@/components/CreationStudio/ControlCenter/MobileEditorLayout';
 import { MobileActionDock } from '@/components/CreationStudio/ControlCenter/MobileActionDock';
@@ -28,7 +28,7 @@ import { InteractiveSandbox } from '@/components/CreationStudio/ControlCenter/In
 import { StudioHeader } from '@/components/CreationStudio/StudioHeader';
 import { PreviewCarousel } from '@/components/CreationStudio/PreviewCarousel';
 import { compressImage, validateVideoSize } from '@/lib/image-utils';
-// Types
+// tipe data
 import { CreationData, WorkType, DivisionId } from '@/components/CreationStudio/types';
 
 type Division = 'graphics' | 'tech' | 'music' | 'writing' | 'meme' | 'video';
@@ -81,12 +81,12 @@ export const Studio = () => {
     const { user, profile, loading: authLoading } = useAuth();
     const isMobile = useIsMobile();
 
-    // --- STATE: DRAFT MANAGEMENT ---
+    // --- state: manage draft-draft ---
     const [drafts, setDrafts] = useState<any[]>([]);
     const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
     const [showDrafts, setShowDrafts] = useState(false);
 
-    // --- STATE: MODE & CONTENT ---
+    // --- state: mode sama konten ---
     const [mode, setMode] = useState<WorkType>('text');
     const [title, setTitle] = useState('Karya Tanpa Judul');
     const [content, setContent] = useState('');
@@ -97,24 +97,24 @@ export const Studio = () => {
     const [codeLanguage, setCodeLanguage] = useState('javascript');
     const [codeFiles, setCodeFiles] = useState<CodeFile[]>(DEFAULT_PROJECT_FILES);
 
-    // --- STATE: METADATA ---
+    // --- state: metadata karya ---
     const [description, setDescription] = useState('');
     const [division, setDivision] = useState<DivisionId>('graphics');
     const [tags, setTags] = useState<string[]>([]);
 
-    // --- STATE: UI ---
+    // --- state: tampilan ui ---
     const [showSettings, setShowSettings] = useState(false);
     const [isPreview, setIsPreview] = useState(false);
     const [isPublishing, setIsPublishing] = useState(false);
     const [draftStatus, setDraftStatus] = useState<'saved' | 'saving' | 'idle'>('idle');
     const [publishProgress, setPublishProgress] = useState({ percent: 0, message: '' });
 
-    // --- STATE: CODE EXECUTION ---
+    // --- state: jalanin kode ---
     const [triggerRun, setTriggerRun] = useState(0);
     const [dockMinimized, setDockMinimized] = useState(false);
-    const [isTyping, setIsTyping] = useState(false); // Mobile keyboard state
+    const [isTyping, setIsTyping] = useState(false); // state keyboard di mobile
 
-    // --- EFFECT: INITIAL LOAD ---
+    // --- effect: load awal ---
     useEffect(() => {
         if (!authLoading && !user) navigate('/login');
 
@@ -122,12 +122,12 @@ export const Studio = () => {
         if (savedDrafts) {
             try {
                 const parsed = JSON.parse(savedDrafts);
-                // Migrate any 'slide' drafts to 'image'
+                // migrate semua draft 'slide' jadi 'image'
                 const migrated = parsed.map((d: any) => d.mode === 'slide' ? { ...d, mode: 'image' } : d);
                 setDrafts(migrated);
 
                 if (migrated.length > 0) {
-                    // Try to load the most recent draft of the current mode (default text)
+                    // coba load draft paling baru dari mode yang aktif (default text)
                     const mostRecentOfMode = migrated
                         .filter((d: any) => d.mode === mode)
                         .sort((a: any, b: any) => new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime())[0];
@@ -135,7 +135,7 @@ export const Studio = () => {
                     if (mostRecentOfMode) {
                         applyDraft(mostRecentOfMode);
                     } else {
-                        // If no draft for current mode, load the most recent draft overall
+                        // kalo ga ada draft buat mode ini, load draft paling baru aja
                         const mostRecent = migrated.sort((a: any, b: any) =>
                             new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime()
                         )[0];
@@ -181,7 +181,7 @@ export const Studio = () => {
             content: '',
             lastSaved: new Date().toISOString()
         };
-        // Don't add to list yet, only on first save
+        // jangan tambahin ke list dulu, nanti pas save pertama kali aja
         applyDraft(newDraft);
         setShowDrafts(false);
     };
@@ -189,7 +189,7 @@ export const Studio = () => {
     const switchMode = (newMode: WorkType) => {
         if (newMode === mode) return;
 
-        // Try to find the most recent draft of the NEW mode
+        // coba cari draft paling baru dari mode BARU
         const existingDraft = drafts
             .filter(d => d.mode === newMode)
             .sort((a, b) => new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime())[0];
@@ -214,14 +214,14 @@ export const Studio = () => {
         }
     };
 
-    // --- EFFECT: AUTO-SAVE (OPTIMIZED) ---
+    // --- effect: auto-save (optimized) ---
     const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const lastSaveDataRef = useRef<string>('');
 
     const saveDraftsToStorage = useCallback(() => {
         if (!currentDraftId) return;
 
-        // Smart Save: Only save if title is changed or content is not empty
+        // smart save: cuma save kalo title berubah atau ada content
         const isDefaultTitle = title === 'Karya Tanpa Judul' || !title.trim();
         const hasContent = content.trim().length > 0 || slides.length > 0 || embedUrl.trim().length > 0 || codeFiles.length > 3;
 
@@ -230,7 +230,7 @@ export const Studio = () => {
             return;
         }
 
-        // Check if data actually changed
+        // cek apa datanya beneran berubah
         const currentData = {
             id: currentDraftId,
             title, mode, content, description, embedUrl, codeLanguage, slides, tags, division, codeFiles,
@@ -248,7 +248,7 @@ export const Studio = () => {
 
         setDraftStatus('saving');
         const updatedDrafts = drafts.filter(d => d.id !== currentDraftId);
-        updatedDrafts.unshift(currentData); // Put current at top
+        updatedDrafts.unshift(currentData); // taro current di paling atas
 
         setDrafts(updatedDrafts);
         localStorage.setItem('oc_studio_v2_drafts', JSON.stringify(updatedDrafts));
@@ -259,33 +259,33 @@ export const Studio = () => {
 
     useEffect(() => {
         if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-        // Increased debounce to 5 seconds to reduce save frequency
+        // debounce naikin jadi 5 detik biar ga terlalu sering save
         saveTimeoutRef.current = setTimeout(saveDraftsToStorage, 5000);
         return () => { if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current); };
     }, [saveDraftsToStorage]);
 
-    // --- UPLOAD HANDLERS ---
-    // --- UPLOAD HANDLERS ---
+    // --- handler upload ---
+
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
         if (file.type.startsWith('video/')) {
             if (!validateVideoSize(file)) {
-                e.target.value = ''; // Reset input
+                e.target.value = ''; // reset inputnya
                 return;
             }
             setMediaFile(file);
             setMediaPreview(URL.createObjectURL(file));
         } else {
-            // Image (Thumbnail) Compression
+            // kompres gambar (thumbnail)
             try {
                 const compressedFile = await compressImage(file);
                 setMediaFile(compressedFile);
                 setMediaPreview(URL.createObjectURL(compressedFile));
             } catch (err) {
                 console.error("Thumbnail compression failed", err);
-                // Fallback to original
+                // kalo gagal ya pake original aja
                 setMediaFile(file);
                 setMediaPreview(URL.createObjectURL(file));
             }
@@ -296,7 +296,7 @@ export const Studio = () => {
         const fileExt = file instanceof File ? file.name.split('.').pop() : 'jpg';
         const fileName = path || `${user?.id}/${Date.now()}.${fileExt}`;
 
-        // Convert base64 to blob if needed is handled before calling this, but ensure we have file/blob
+        // convert base64 ke blob kalo perlu udah di-handle sebelum panggil ini, pastiin ada file/blob
         const { error } = await supabase.storage.from('works').upload(fileName, file, {
             contentType: file.type || 'image/jpeg',
             upsert: true
@@ -310,24 +310,24 @@ export const Studio = () => {
         if (!slidesData || slidesData.length === 0) return [];
 
         const processedSlides = await Promise.all(slidesData.map(async (slide, index) => {
-            // Check if content is base64
+            // cek apa contentnya base64
             if (slide.content && slide.content.startsWith('data:image')) {
                 try {
-                    // Convert base64 to Blob
+                    // convert base64 jadi blob
                     const fetchRes = await fetch(slide.content);
                     const blob = await fetchRes.blob();
 
-                    // Upload
+                    // upload ke storage
                     const fileName = `${user?.id}/slides/${Date.now()}_${index}.jpg`;
                     const publicUrl = await uploadToSupabase(blob, fileName);
 
                     return { ...slide, content: publicUrl };
                 } catch (e) {
                     console.error("Failed to upload slide image", e);
-                    return slide; // Return original on fail, though it might fail DB insert
+                    return slide; // return original kalo gagal, tapi mungkin gagal insert db
                 }
             }
-            return slide; // Already a URL or text
+            return slide; // udah jadi url atau text
         }));
 
         return processedSlides;
@@ -378,7 +378,7 @@ export const Studio = () => {
             if (error) throw error;
 
             setPublishProgress({ percent: 100, message: 'Berhasil!' });
-            handleDeleteDraft(currentDraftId!); // Remove from drafts after publish
+            handleDeleteDraft(currentDraftId!); // hapus dari draft abis publish
             setTimeout(() => navigate('/karya'), 800);
         } catch (err: any) {
             alert("Gagal: " + err.message);
@@ -386,7 +386,7 @@ export const Studio = () => {
         }
     };
 
-    // Unified Content Renderer
+    // render konten sesuai mode
     const renderContent = () => {
         switch (mode) {
             case 'text':
@@ -415,7 +415,7 @@ export const Studio = () => {
                     </div>
                 );
             case 'image':
-            case 'meme': // Unified Visual Mode
+            case 'meme': // mode visual udah disatuin
                 return (
                     <div className={`w-full h-full flex flex-col ${isMobile ? 'pt-4 pb-20' : 'pt-24 pb-32'}`}>
                         <div className="max-w-6xl mx-auto w-full px-4 md:px-8 mb-4 md:mb-8 text-center md:text-left">
@@ -433,7 +433,7 @@ export const Studio = () => {
                 );
 
             case 'video':
-                // Keeping Video Separate as per plan (Phase 3)
+                // video masih terpisah sesuai plan (fase 3)
                 return (
                     <div className="w-full h-full flex flex-col items-center justify-center p-6 md:p-12">
                         <input
@@ -442,7 +442,7 @@ export const Studio = () => {
                             placeholder="Judul Video..."
                             className="text-2xl md:text-4xl font-bold bg-transparent text-center outline-none w-full max-w-2xl mb-8 md:mb-12 placeholder:text-gray-700"
                         />
-                        {/* Video Upload Logic remains similar for now until Phase 3 */}
+                        {/* logika upload video masih sama dulu sampe fase 3 */}
                         {mediaPreview ? (
                             <div className="relative group w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl border border-white/10">
                                 <video src={mediaPreview} controls className="w-full h-full object-contain" />
@@ -555,7 +555,7 @@ export const Studio = () => {
     }
     return (
         <div className="fixed inset-0 bg-[#050505] text-white font-sans selection:bg-rose-500/30 flex">
-            {/* DRAFT MANAGER SIDEBAR */}
+            {/* sidebar manager draft */}
             <AnimatePresence>
                 {showDrafts && (
                     <DraftManager
@@ -570,7 +570,7 @@ export const Studio = () => {
             </AnimatePresence>
 
             <div className="flex-1 flex flex-col relative overflow-hidden bg-black pt-safe pb-safe h-safe-screen">
-                {/* TOP HEADER */}
+                {/* header atas */}
                 <StudioHeader
                     title={title}
                     setTitle={setTitle}
@@ -588,20 +588,20 @@ export const Studio = () => {
                     isMobile={isMobile}
                 />
 
-                {/* MAIN CONTENT */}
+                {/* konten utama */}
                 <div className={`flex-1 overflow-hidden ${isMobile ? 'pt-[60px] pb-[80px]' : ''}`}>
                     {renderContent()}
                 </div>
 
-                {/* BOTTOM DOCK */}
+                {/* dock bawah */}
                 {isMobile ? (
                     !isTyping && <MobileActionDock mode={mode} onModeChange={switchMode} onPublish={handlePublish} onSettings={() => setShowSettings(true)} onPreview={() => mode === 'code' ? setTriggerRun(n => n + 1) : setIsPreview(true)} />
                 ) : (
                     <div className="fixed bottom-0 left-0 right-0 h-20 z-50 flex items-end justify-center group/footer pointer-events-none">
-                        {/* Invisibile trigger zone to catch hover because the wrapper is pointer-events-none */}
+                        {/* zone trigger hover invisible soalnya wrappernya pointer-events-none */}
                         <div className="absolute inset-0 pointer-events-auto" />
 
-                        {/* THE DOCK */}
+                        {/* docknya */}
                         <div className={`flex flex-col items-center transition-all duration-500 pointer-events-auto ${isPreview || mode === 'code' ? 'translate-y-32 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100' : 'translate-y-[-16px] opacity-100'}`}>
                             <AnimatePresence mode="wait">
                                 {!dockMinimized ? (
@@ -649,7 +649,7 @@ export const Studio = () => {
                 )}
             </div>
 
-            {/* SETTINGS (PUBLISH & DRAFT METADATA) */}
+            {/* settings (publish & metadata draft) */}
             <AnimatePresence>
                 {showSettings && (
                     <>
@@ -672,7 +672,7 @@ export const Studio = () => {
                             </div>
 
                             <div className="flex-1 space-y-6">
-                                {/* Thumbnail Upload (Optional) */}
+                                {/* thumbnail upload (opsional) */}
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
                                         Thumbnail

@@ -12,12 +12,12 @@ interface EditorLayoutProps {
 }
 
 export const EditorLayout: React.FC<EditorLayoutProps> = ({ files, setFiles }) => {
-    // --- STATE ---
+    // --- state ---
     const [activeFileId, setActiveFileId] = useState<string>('1');
     const [consoleLogs, setConsoleLogs] = useState<ConsoleMessage[]>([]);
     const [triggerRun, setTriggerRun] = useState(0);
 
-    // --- RESIZE & PREVIEW STATE ---
+    // --- state buat resize & preview ---
     const [previewWidth, setPreviewWidth] = useState(40); // Percentage
     const [consoleHeight, setConsoleHeight] = useState(192); // Pixels
     const [isResizingH, setIsResizingH] = useState(false);
@@ -26,13 +26,13 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({ files, setFiles }) =
 
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // --- RESET LAYOUT ---
+    // --- reset layout balikin ke awal ---
     const resetLayout = useCallback(() => {
         setPreviewWidth(40);
         setConsoleHeight(192);
     }, []);
 
-    // --- RESIZE HANDLERS ---
+    // --- handler buat resizing ---
     const startResizingH = useCallback((e: React.MouseEvent) => {
         e.preventDefault();
         setIsResizingH(true);
@@ -80,7 +80,7 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({ files, setFiles }) =
         };
     }, [isResizingH, isResizingV, resize, stopResizing]);
 
-    // Ensure activeFileId is valid
+    // pastiin id file aktifnya beneran ada
     useEffect(() => {
         if (!files.find(f => f.id === activeFileId) && files.length > 0) {
             setActiveFileId(files[0].id);
@@ -89,7 +89,7 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({ files, setFiles }) =
 
     const activeFile = files.find(f => f.id === activeFileId);
 
-    // --- ACTIONS ---
+    // --- aksi-aksi ---
     const handleFileChange = (val: string | undefined) => {
         if (val === undefined) return;
         setFiles(prev => prev.map(f => f.id === activeFileId ? { ...f, content: val } : f));
@@ -109,15 +109,15 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({ files, setFiles }) =
 
     const handleDeleteFile = (id: string) => {
         const fileToDelete = files.find(f => f.id === id);
-        if (fileToDelete?.isMain) return; // Prevent deleting main file
+        if (fileToDelete?.isMain) return; // jangan hapus file utama (main)
         setFiles(prev => prev.filter(f => f.id !== id));
     };
 
     return (
         <div ref={containerRef} className={`flex flex-col h-full bg-[#050505] ${isResizingH ? 'cursor-col-resize' : isResizingV ? 'cursor-row-resize' : ''}`}>
-            {/* Main Workspace */}
+            {/* workspace utama */}
             <div className="flex-1 flex min-h-0 relative">
-                {/* Left: Files */}
+                {/* kiri: daftar file */}
                 <FileManager
                     files={files}
                     activeFileId={activeFileId}
@@ -126,9 +126,9 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({ files, setFiles }) =
                     onDeleteFile={handleDeleteFile}
                 />
 
-                {/* Center: Editor & Console */}
+                {/* tengah: editor & konsol */}
                 <div className="flex-1 flex flex-col min-w-0 bg-[#080808]">
-                    {/* Editor Area */}
+                    {/* area editor */}
                     <div className="flex-1 relative overflow-hidden">
                         {activeFile ? (
                             <CodeEditor
@@ -141,7 +141,7 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({ files, setFiles }) =
                         )}
                     </div>
 
-                    {/* Vertical Divider (Console Resize) */}
+                    {/* pembatas vertikal (resize konsol) */}
                     <div
                         onMouseDown={startResizingV}
                         className={`h-1 cursor-row-resize transition-all flex items-center justify-center group relative ${isResizingV ? 'bg-rose-500 scale-y-150 z-50' : 'bg-white/5 hover:bg-rose-500/50'}`}
@@ -160,7 +160,7 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({ files, setFiles }) =
                     </div>
                 </div>
 
-                {/* Horizontal Divider (Preview Resize) */}
+                {/* pembatas horizontal (resize preview) */}
                 <div
                     onMouseDown={startResizingH}
                     className={`w-1 cursor-col-resize transition-all flex items-center justify-center group relative ${isResizingH ? 'bg-rose-500 scale-x-150 z-50' : 'bg-white/5 hover:bg-rose-500/50'}`}
@@ -173,7 +173,7 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({ files, setFiles }) =
                     )}
                 </div>
 
-                {/* Right: Preview */}
+                {/* kanan: pratinjau live */}
                 <div
                     style={{ width: `${previewWidth}%` }}
                     className="shrink-0 bg-black flex flex-col border-l border-white/5 relative"
@@ -203,7 +203,7 @@ export const EditorLayout: React.FC<EditorLayoutProps> = ({ files, setFiles }) =
                         </div>
                     </div>
                     <div className="flex-1 relative">
-                        {/* THE MASK: Prevents iframe from stealing pointer events during resize */}
+                        {/* masker: biar iframe ga ganggu pas lagi resize */}
                         {(isResizingH || isResizingV) && (
                             <div className="absolute inset-0 z-50 cursor-inherit select-none" />
                         )}

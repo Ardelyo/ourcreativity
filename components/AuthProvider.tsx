@@ -29,7 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // 1. Get initial session
+        // 1. Ambil session awal pas baru masuk
         const getInitialSession = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         getInitialSession();
 
-        // 2. Listen for auth changes
+        // 2. Pantau perubahan auth (login/logout)
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
             setSession(session);
             setUser(session?.user ?? null);

@@ -33,7 +33,7 @@ export const Login = () => {
 
     return (
         <div className="min-h-screen pt-24 pb-12 flex flex-col items-center justify-center px-4 relative overflow-hidden">
-            {/* Background Ambience */}
+            {/* Efek Latar Belakang */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
                 <div className="absolute top-[20%] left-[20%] w-[500px] h-[500px] bg-rose-500/10 blur-[100px] rounded-full" />
                 <div className="absolute bottom-[20%] right-[20%] w-[500px] h-[500px] bg-purple-500/10 blur-[100px] rounded-full" />

@@ -27,9 +27,11 @@ import { PyodideSandbox } from '@/components/CreationStudio/sandbox/PyodideSandb
 import { InteractiveSandbox } from '@/components/CreationStudio/ControlCenter/InteractiveSandbox';
 import { StudioHeader } from '@/components/CreationStudio/StudioHeader';
 import { PreviewCarousel } from '@/components/CreationStudio/PreviewCarousel';
-
+import { compressImage, validateVideoSize } from '@/lib/image-utils';
 // Types
-import { CreationData, WorkType, DivisionId } from '../components/CreationStudio/types';
+import { CreationData, WorkType, DivisionId } from '@/components/CreationStudio/types';
+
+type Division = 'graphics' | 'tech' | 'music' | 'writing' | 'meme' | 'video';
 
 const DIVISIONS = [
     { id: 'graphics', name: 'Divisi Grafis' },
@@ -263,12 +265,31 @@ export const Studio = () => {
     }, [saveDraftsToStorage]);
 
     // --- UPLOAD HANDLERS ---
-    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // --- UPLOAD HANDLERS ---
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        const previewUrl = URL.createObjectURL(file);
-        setMediaFile(file);
-        setMediaPreview(previewUrl);
+
+        if (file.type.startsWith('video/')) {
+            if (!validateVideoSize(file)) {
+                e.target.value = ''; // Reset input
+                return;
+            }
+            setMediaFile(file);
+            setMediaPreview(URL.createObjectURL(file));
+        } else {
+            // Image (Thumbnail) Compression
+            try {
+                const compressedFile = await compressImage(file);
+                setMediaFile(compressedFile);
+                setMediaPreview(URL.createObjectURL(compressedFile));
+            } catch (err) {
+                console.error("Thumbnail compression failed", err);
+                // Fallback to original
+                setMediaFile(file);
+                setMediaPreview(URL.createObjectURL(file));
+            }
+        }
     };
 
     const uploadToSupabase = async (file: File | Blob, path?: string) => {
@@ -442,7 +463,7 @@ export const Studio = () => {
                                 />
                                 <Upload size={64} className="mb-6 opacity-20" />
                                 <h3 className="text-2xl font-bold mb-2">Upload Video</h3>
-                                <p className="text-sm opacity-40">Klik atau seret file ke sini</p>
+                                <p className="text-sm opacity-40">Maks. 50MB (Lebih baik pakai Slide/Embed)</p>
                             </div>
                         )}
                     </div>
@@ -576,9 +597,12 @@ export const Studio = () => {
                 {isMobile ? (
                     !isTyping && <MobileActionDock mode={mode} onModeChange={switchMode} onPublish={handlePublish} onSettings={() => setShowSettings(true)} onPreview={() => mode === 'code' ? setTriggerRun(n => n + 1) : setIsPreview(true)} />
                 ) : (
-                    <div className="fixed bottom-0 left-0 right-0 h-16 z-50 flex items-center justify-center group/footer pointer-events-none">
+                    <div className="fixed bottom-0 left-0 right-0 h-20 z-50 flex items-end justify-center group/footer pointer-events-none">
+                        {/* Invisibile trigger zone to catch hover because the wrapper is pointer-events-none */}
+                        <div className="absolute inset-0 pointer-events-auto" />
+
                         {/* THE DOCK */}
-                        <div className={`flex flex-col items-center transition-all duration-500 pointer-events-auto ${isPreview || (mode === 'code' && !dockMinimized) ? 'translate-y-32 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100' : 'translate-y-[-16px] opacity-100'}`}>
+                        <div className={`flex flex-col items-center transition-all duration-500 pointer-events-auto ${isPreview || mode === 'code' ? 'translate-y-32 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100' : 'translate-y-[-16px] opacity-100'}`}>
                             <AnimatePresence mode="wait">
                                 {!dockMinimized ? (
                                     <motion.div

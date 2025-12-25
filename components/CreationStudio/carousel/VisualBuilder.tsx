@@ -13,7 +13,7 @@ import { compressImage } from '../../../lib/image-utils';
 interface VisualBuilderProps {
     slides: SlideContent[];
     onChange: (slides: SlideContent[]) => void;
-    isMobile?: boolean; // New prop
+    isMobile?: boolean; // prop baru
 }
 
 type AspectRatio = 'auto' | '1:1' | '4:5' | '9:16' | '3:4' | '16:9' | '21:9';
@@ -24,7 +24,7 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({ slides, onChange, 
     const [isProcessing, setIsProcessing] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-    // --- LOGIC: AUTO RATIO DETECTION ---
+    // --- logika: deteksi rasio otomatis ---
     const detectRatio = (url: string) => {
         const img = new Image();
         img.src = url;
@@ -46,7 +46,7 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({ slides, onChange, 
         return w / h;
     };
 
-    // --- LOGIC: PANORAMA SPLITTER ---
+    // --- logika: pemotong panorama ---
     const handlePanoramaUpload = async (file: File) => {
         setIsProcessing(true);
         const img = new Image();
@@ -94,7 +94,7 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({ slides, onChange, 
         setIsProcessing(false);
     };
 
-    // --- LOGIC: REGULAR UPLOAD ---
+    // --- logika: upload biasa ---
     const onDrop = async (acceptedFiles: File[]) => {
         const newSlides = await Promise.all(acceptedFiles.map(async (file, index) => {
             const compressedFile = await compressImage(file);
@@ -109,7 +109,7 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({ slides, onChange, 
                         id: `slide-${Date.now()}-${Math.random()}-${index}`,
                         type: 'image',
                         content,
-                        file: compressedFile, // Store compressed file
+                        file: compressedFile, // simpen file yang udah dikompres
                         order: slides.length + index
                     });
                 };
@@ -122,7 +122,7 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({ slides, onChange, 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         accept: { 'image/*': [] },
-        noClick: true // Prefer explicit add button interactions on mobile
+        noClick: true // mending pake tombol add eksplisit kalo di mobile
     });
 
     const { getRootProps: getPanoProps, getInputProps: getPanoInput } = useDropzone({
@@ -145,7 +145,7 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({ slides, onChange, 
 
     return (
         <div className="h-full flex flex-col relative group/builder">
-            {/* --- TOOLBAR (Responsive) --- */}
+            {/* --- toolbar (responsif) --- */}
             <div className={`absolute left-1/2 -translate-x-1/2 z-50 transition-all duration-300 w-full max-w-lg px-4
                 ${isMobile ? 'bottom-4' : 'top-0 -translate-y-4 opacity-0 group-hover/builder:opacity-100 group-hover/builder:translate-y-2'}
             `}>
@@ -181,7 +181,7 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({ slides, onChange, 
                 </div>
             </div>
 
-            {/* --- CENTRAL CANVAS --- */}
+            {/* --- kanvas utama --- */}
             <div
                 ref={scrollContainerRef}
                 className={`flex-1 overflow-x-auto overflow-y-hidden no-scrollbar bg-[#050505] rounded-[2rem] border border-white/5 relative shadow-inner ${isMobile ? 'mb-20' : ''}`}
@@ -257,7 +257,7 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({ slides, onChange, 
                                 </Reorder.Item>
                             ))}
 
-                            {/* --- ADD BUTTON --- */}
+                            {/* --- tombol tambah --- */}
                             <label
                                 className="shrink-0 group/add cursor-pointer border-2 border-dashed border-white/10 hover:border-rose-500/50 rounded-2xl flex items-center justify-center transition-all bg-white/[0.02] hover:bg-rose-500/[0.02]"
                                 style={{
@@ -278,7 +278,7 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({ slides, onChange, 
                 </AnimatePresence>
             </div>
 
-            {/* FOOTER HIDDEN ON MOBILE TO SAVE SPACE */}
+            {/* footernya diumpetin di mobile biar lega */}
             {!isMobile && (
                 <div className="p-4 flex justify-between items-center bg-[#0a0a0a] rounded-b-[2rem] border-x border-b border-white/5">
                     <div className="flex items-center gap-4">

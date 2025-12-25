@@ -3,15 +3,15 @@ import { motion } from 'framer-motion';
 import { Heart, MessageCircle, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Helper for generating code preview URL
+// Helper buat bikin URL pratinjau kode
 const generatePreviewUrl = (content: any, language: string) => {
-    // Check if content is JSON object/array
+    // Cek dulu apa kontennya objek JSON atau array
     let processedContent = content;
     if (typeof content !== 'string') {
         processedContent = JSON.stringify(content);
     }
 
-    // Wrap in HTML structure
+    // Bungkus ke struktur HTML pelan-pelan
     const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -23,7 +23,7 @@ body { background: #fff; height: 100vh; display: flex; align-items: center; just
 <body>
 <div id="app"></div>
 <script>
-    // Minimal error handling
+    // Penanganan error tipis-tipis
     window.onerror = function(msg) { document.body.innerHTML = '<div style="color:red">'+msg+'</div>'; };
     try {
         ${language === 'p5' || language === 'p5js' ? '/* p5 logic handled in main */' : ''}
@@ -32,9 +32,9 @@ body { background: #fff; height: 100vh; display: flex; align-items: center; just
 </body>
 </html>`;
 
-    // For now, simpler data URI approach if generating complex preview is too heavy here.
-    // Ideally use the same generator logic as Karya.tsx or pass it down.
-    // We will assume the parent passes a valid preview URL or render content directly.
+    // Sementara pake pendekatan URI data aja biar gak berat.
+    // Idealnya pake logika generator yang sama kayak di Karya.tsx.
+    // Kita asumsikan parent ngasih URL pratinjau yang valid atau render konten langsung.
     return '';
 };
 
@@ -58,16 +58,16 @@ export const KaryaCard: React.FC<KaryaCardProps> = ({ art, index, onClick, rende
             transition={{ type: "spring", stiffness: 260, damping: 20, delay: (index % 10) * 0.05 }}
             className="break-inside-avoid group relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden cursor-pointer bg-[#111] shadow-xl hover:shadow-2xl hover:shadow-rose-500/10 transition-all border border-white/5"
         >
-            {/* Main Content Area - Standardized Aspect Ratio for Grid Stability */}
+            {/* Area Konten Utama - Aspek Rasio Standar biar Gridnya gak berantakan */}
             <div className="relative w-full aspect-[4/5] md:aspect-[3/4]">
                 <div className="w-full h-full overflow-hidden">
                     {renderContent(art)}
                 </div>
 
-                {/* Mobile: Gradient Always Visible, Desktop: Hover Only */}
+                {/* Mobile: Gradasi muncul terus, Desktop: Muncul pas hover aja */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-4 md:p-6 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-500">
 
-                    {/* Title & Stats */}
+                    {/* Judul & Statistik */}
                     <div className="flex justify-between items-end mb-3 transform md:translate-y-4 md:group-hover:translate-y-0 transition-transform duration-500">
                         <div className="flex-1 mr-2">
                             <h3 className="text-white font-bold text-sm md:text-lg leading-tight line-clamp-2 mb-1">{art.title}</h3>
@@ -82,7 +82,7 @@ export const KaryaCard: React.FC<KaryaCardProps> = ({ art, index, onClick, rende
                         </div>
                     </div>
 
-                    {/* Author & Division */}
+                    {/* Penulis & Divisi */}
                     <div className="flex items-center justify-between transform md:translate-y-4 md:group-hover:translate-y-0 transition-transform duration-500 delay-75">
                         <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                             <Link to={`/profile/${art.author}`} className="flex items-center gap-2 hover:opacity-80">

@@ -5,11 +5,12 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { AuthProvider } from './components/AuthProvider';
-import { Home } from './pages/Home'; // Muat Home secara eager
+// Halaman yang dimuat secara eager
+import { Home } from './pages/Home';
 import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
 
-// Lazy loaded pages
+// Halaman yang dimuat secara lazy (biar enteng pas buka awal)
 const Karya = React.lazy(() => import('./pages/Karya').then(module => ({ default: module.Karya })));
 const Tim = React.lazy(() => import('./pages/Tim').then(module => ({ default: module.Tim })));
 const Info = React.lazy(() => import('./pages/Info').then(module => ({ default: module.Info })));
@@ -25,7 +26,7 @@ const Settings = React.lazy(() => import('./pages/Settings').then(module => ({ d
 const Profile = React.lazy(() => import('./pages/Profile').then(module => ({ default: module.Profile })));
 const V5Launch = React.lazy(() => import('./pages/V5Launch').then(module => ({ default: module.V5Launch })));
 
-// Admin Components
+// Komponen Admin
 import { AdminGuard } from './components/AdminGuard';
 import { AdminLayout } from './components/AdminLayout';
 const AdminDashboard = React.lazy(() => import('./pages/Admin/Dashboard').then(module => ({ default: module.Dashboard })));
@@ -75,7 +76,7 @@ const AnimatedRoutes = () => {
               <Route path="/profile/:username" element={<Profile />} />
               <Route path="/v5-launch" element={<V5Launch />} />
 
-              {/* Admin Routes */}
+              {/* Rute Admin */}
               <Route path="/admin" element={
                 <AdminGuard>
                   <AdminLayout />
@@ -105,7 +106,9 @@ const AppContent = () => {
   return (
     <div className="min-h-screen bg-[#030303] text-white selection:bg-rose-500/30 font-sans overflow-x-hidden flex flex-col relative">
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Efek noise tekstur */}
         <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: `url("https://grainy-gradients.vercel.app/noise.svg")`, backgroundSize: '100px 100px' }}></div>
+        {/* Gradien dekoratif buat estetika zen */}
         <div className="absolute top-[-20%] left-[10%] w-[800px] h-[800px] bg-rose-900/10 blur-[100px] rounded-full" />
         <div className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-indigo-900/10 blur-[100px] rounded-full" />
         <div className="absolute bottom-[-20%] left-[20%] w-[900px] h-[900px] bg-[#0a0a0a] blur-[80px] rounded-full" />

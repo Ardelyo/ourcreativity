@@ -30,7 +30,7 @@ export const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ slides }) => {
     }, [emblaApi, onSelect]);
 
     if (!slides || slides.length === 0) return (
-        <div className="flex items-center justify-center h-full text-white/50">No slides to display</div>
+        <div className="flex items-center justify-center h-full text-white/50">Gak ada slide buat ditampilin</div>
     );
 
     return (
@@ -39,14 +39,14 @@ export const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ slides }) => {
                 <div className="flex h-full">
                     {slides.map((slide, index) => (
                         <div className="relative flex-[0_0_100%] min-w-0 h-full" key={slide.id || index}>
-                            {/* Slide Content */}
+                            {/* konten slide */}
                             <img
                                 src={slide.content}
                                 className="block w-full h-full object-contain bg-[#111]"
                                 alt={`Slide ${index + 1}`}
                             />
 
-                            {/* Slide Number Overlay */}
+                            {/* nomor slide */}
                             <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white border border-white/10">
                                 {index + 1} / {slides.length}
                             </div>
@@ -55,7 +55,7 @@ export const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ slides }) => {
                 </div>
             </div>
 
-            {/* Navigation Buttons (Visible on Hover/Interaction) */}
+            {/* tombol navigasi (muncul pas hover) */}
             <button
                 className={`absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white transition-all hover:bg-white/20 disabled:opacity-0 ${!prevBtnEnabled && 'opacity-0 pointer-events-none'}`}
                 onClick={scrollPrev}
@@ -72,7 +72,7 @@ export const PreviewCarousel: React.FC<PreviewCarouselProps> = ({ slides }) => {
                 <ChevronRight size={24} />
             </button>
 
-            {/* Dot Indicators */}
+            {/* indikator titik */}
             <div className="flex gap-2 mt-6">
                 {slides.map((_, index) => (
                     <button

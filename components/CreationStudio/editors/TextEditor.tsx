@@ -20,9 +20,9 @@ interface TextEditorProps {
     onChange: (html: string) => void;
     placeholder?: string;
     className?: string;
-    isMobile?: boolean; // New prop
-    onFocus?: () => void; // New prop
-    onBlur?: () => void; // New prop
+    isMobile?: boolean; // prop baru
+    onFocus?: () => void; // prop baru
+    onBlur?: () => void; // prop baru
 }
 
 export const TextEditor: React.FC<TextEditorProps> = ({
@@ -113,7 +113,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({
     const charCount = editor.storage.characterCount?.characters() || 0;
     const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
-    // Common Toolbar Items (Extracted for reuse)
+    // item toolbar yang umum (dipisah biar bisa dipake ulang)
     const ToolbarItems = () => (
         <>
             <ToolbarButton onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} icon={<Undo size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
@@ -141,22 +141,22 @@ export const TextEditor: React.FC<TextEditorProps> = ({
     return (
         <div className={`flex flex-col h-full bg-[#0a0a0a] ${className}`}>
 
-            {/* TOOLBAR */}
+            {/* toolbar buat ngetik */}
             {isMobile ? (
-                // MOBILE SCROLLABLE TOOLBAR
+                // toolbar mobile yang bisa di-scroll
                 <div className="sticky top-0 z-30 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/10 px-2 py-2 overflow-x-auto no-scrollbar">
                     <div className="flex items-center gap-1 min-w-max">
                         <ToolbarItems />
                     </div>
                 </div>
             ) : (
-                // DESKTOP FIXED TOOLBAR
+                // toolbar desktop yang nempel di atas
                 <div className="flex-shrink-0 bg-[#111] border-b border-white/10 px-4 py-2">
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-1 flex-wrap">
                             <ToolbarItems />
                         </div>
-                        {/* Right: Stats */}
+                        {/* bagian kanan: statistik */}
                         <div className="flex items-center gap-4 text-xs text-gray-500 font-mono flex-shrink-0">
                             <span className="tabular-nums">{wordCount} kata</span>
                             <span className="tabular-nums">{charCount} huruf</span>
@@ -169,7 +169,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({
                 </div>
             )}
 
-            {/* ===== EDITOR CANVAS ===== */}
+            {/* ===== kanvas editornya ===== */}
             <div className={`flex-1 overflow-y-auto ${isMobile ? 'pb-safe' : ''}`}>
                 <div className={`max-w-4xl mx-auto ${isMobile ? 'px-4 py-6' : 'px-8 py-10'}`}>
                     <EditorContent editor={editor} />
@@ -179,7 +179,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({
     );
 };
 
-// ===== TOOLBAR COMPONENTS =====
+// ===== komponen-komponen toolbar =====
 
 const Divider = () => (
     <div className="w-px h-5 bg-white/10 mx-1.5" />
@@ -204,7 +204,7 @@ const ToolbarButton = ({
         title={tooltip}
         className={`flex items-center justify-center rounded-lg transition-all 
             ${disabled ? 'text-gray-600 cursor-not-allowed' : isActive ? 'text-white bg-white/20' : 'text-gray-400 hover:text-white hover:bg-white/10'}
-            ${/* Responsive Sizing */ ''}
+            ${/* ukuran responsifnya */ ''}
             w-9 h-9 md:w-8 md:h-8
         `}
     >

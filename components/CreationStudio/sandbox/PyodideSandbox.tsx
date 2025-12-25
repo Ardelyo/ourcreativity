@@ -8,22 +8,22 @@ interface PyodideSandboxProps {
 }
 
 /**
- * PyodideSandbox - Placeholder component
+ * PyodideSandbox - Komponen placeholder aja
  * 
- * Python execution via Pyodide is temporarily disabled due to CDN loading
- * conflicts with the Vite development server. This component now acts as
- * a placeholder that informs users about the limitation.
+ * Eksekusi Python lewat Pyodide lagi dimatiin dulu gara-gara ada konflik
+ * CDN pas lagi di mode development Vite. Komponen ini cuma ditaro
+ * buat ngasih tau user soal batasan ini.
  * 
- * For full Python support, consider:
- * - Using a backend service (e.g., Supabase Edge Function with Deno)
- * - Or deploying Pyodide assets locally
+ * Kalo pengen support Python beneran, pertimbangin:
+ * - Pake service backend (misal: Supabase Edge Function pake Deno)
+ * - Atau naro file Pyodide di lokal
  */
 export const PyodideSandbox: React.FC<PyodideSandboxProps> = ({ code, triggerRun, onOutput, onError }) => {
     React.useEffect(() => {
         if (triggerRun > 0 && code) {
-            onError("Python execution is currently unavailable. Please use HTML/JS mode.");
+            onError("Eksekusi Python lagi gak bisa dipake. Pake mode HTML/JS aja ya.");
         }
     }, [triggerRun, code, onError]);
 
-    return null; // Invisible component
+    return null; // Komponen gak keliatan
 };

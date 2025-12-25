@@ -10,15 +10,15 @@ import { useAuth } from '../components/AuthProvider';
 
 import { supabase } from '../lib/supabase';
 
-// Helper to generate live code preview HTML
-// Helper Component for Code Viewing
+// Helper buat generate pratinjau kode live (HTML)
+// Komponen Helper buat lihat Kode
 const CodeViewer = ({ content }: { content: any }) => {
   const [activeFileId, setActiveFileId] = useState<string | null>(null);
 
   const files = React.useMemo(() => {
     try {
       if (typeof content === 'string') {
-        // Try parsing if string
+        // Coba parse kalo string
         if (content.trim().startsWith('[')) {
           return JSON.parse(content);
         }
@@ -32,7 +32,7 @@ const CodeViewer = ({ content }: { content: any }) => {
     }
   }, [content]);
 
-  // Set initial active file when files load
+  // Atur file aktif awal pas file-filenya dimuat
   useEffect(() => {
     if (files && files.length > 0) {
       setActiveFileId(files[0].id);
@@ -42,7 +42,7 @@ const CodeViewer = ({ content }: { content: any }) => {
   const activeFile = files?.find((f: any) => f.id === activeFileId) || files?.[0];
 
   if (!files || !Array.isArray(files)) {
-    // Fallback logic for legacy/simple content
+    // Logika fallback buat konten lama/simple
     const displayContent = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
     return (
       <div className="flex-1 overflow-auto p-3 md:p-6 bg-[#0d1117]">
@@ -75,7 +75,7 @@ const CodeViewer = ({ content }: { content: any }) => {
         ))}
       </div>
 
-      {/* Code Content - Responsive */}
+      {/* Konten Kode - Responsif */}
       <div className="flex-1 overflow-auto p-3 md:p-6 bg-[#0d1117]">
         <pre className="font-mono text-[10px] md:text-xs leading-relaxed">
           <code className={`${activeFile?.language === 'html' ? 'text-orange-300' :
@@ -105,18 +105,18 @@ const generateCodePreview = (content: string, language: string = 'html'): string
     canvas { display: block; margin: auto; }
   `;
 
-  // Handle new multi-file JSON format
+  // Tangani format JSON multi-file yang baru
   if (language === 'json_multifile') {
     try {
       const files = JSON.parse(content);
 
-      // Find files by type
+      // Cari file berdasarkan tipe
       const htmlFile = files.find((f: any) => f.name?.endsWith('.html'));
       const cssFile = files.find((f: any) => f.name?.endsWith('.css'));
       const mainJsFile = files.find((f: any) => f.isMain && f.name?.endsWith('.js'));
       const otherJsFile = files.find((f: any) => f.name?.endsWith('.js') && !f.isMain);
 
-      // SCENARIO A: Has HTML file - use it as base
+      // SKENARIO A: Ada file HTML - pake sebagai basis
       if (htmlFile?.content) {
         let html = htmlFile.content;
         if (cssFile?.content) {
@@ -128,13 +128,13 @@ const generateCodePreview = (content: string, language: string = 'html'): string
         return html;
       }
 
-      // SCENARIO B: No HTML, but has main JS file (likely p5.js or vanilla JS)
+      // SKENARIO B: Gak ada HTML, tapi ada file JS utama (kayaknya p5.js atau vanilla JS)
       if (mainJsFile?.content) {
         const jsCode = mainJsFile.content;
         const isP5 = jsCode.includes('createCanvas') || jsCode.includes('setup()') || jsCode.includes('draw()');
 
         if (isP5) {
-          // p5.js project - wrap with p5 CDN
+          // Proyek p5.js - bungkus pake p5 CDN
           return `<!DOCTYPE html>
 <html><head>
 <style>${baseStyles}</style>
@@ -145,7 +145,7 @@ ${cssFile?.content ? `<style>${cssFile.content}</style>` : ''}
 <script>${jsCode}</script>
 </body></html>`;
         } else {
-          // Vanilla JS
+          // Vanilla JS biasa
           return `<!DOCTYPE html>
 <html><head>
 <style>${baseStyles}</style>
@@ -158,7 +158,7 @@ ${cssFile?.content ? `<style>${cssFile.content}</style>` : ''}
         }
       }
 
-      // SCENARIO C: Fallback - show error
+      // SKENARIO C: Fallback - kasih tau errornya
       return `<!DOCTYPE html><html><body style="background:#0a0a0a;color:#ff6b6b;padding:20px;font-family:monospace;">
         <p>⚠️ Tidak dapat merender pratinjau</p>
         <p style="color:#888;font-size:12px;">Format file tidak dikenali</p>
@@ -172,7 +172,7 @@ ${cssFile?.content ? `<style>${cssFile.content}</style>` : ''}
     }
   }
 
-  // Fallback for old string format
+  // Fallback buat format string yang lama (legacy)
   const code = content || '';
 
   switch (language) {
@@ -213,7 +213,7 @@ export const Karya = () => {
   const [hasMore, setHasMore] = useState(true);
   const ITEMS_PER_PAGE = 6;
 
-  // Social State
+  // State Sosial (Like/Comment)
   const [likesCount, setLikesCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [comments, setComments] = useState<any[]>([]);
@@ -221,7 +221,7 @@ export const Karya = () => {
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   const fetchWorks = async (pageNum = 0, currentFilter = filter) => {
-    // If auth is still initializing, don't fetch yet as it might lead to empty results if RLS is strict
+    // Kalo auth masih inisialisasi, jangan ambil data dulu biar gak kosong (karena aturan RLS)
     if (authLoading) return;
 
     try {
@@ -287,7 +287,7 @@ export const Karya = () => {
     fetchWorks(nextPage, filter);
   };
 
-  // Reset active slide when switching artworks
+  // Reset slide aktif pas ganti karya
   useEffect(() => {
     setActiveSlide(0);
     if (selectedId) {
@@ -297,7 +297,7 @@ export const Karya = () => {
 
   const fetchSocialData = async (workId: string) => {
     try {
-      // 1. Fetch Likes Count
+      // 1. Ambil Jumlah Like
       const { count: likesData, error: likesError } = await supabase
         .from('likes')
         .select('*', { count: 'exact', head: true })
@@ -305,7 +305,7 @@ export const Karya = () => {
 
       if (!likesError) setLikesCount(likesData || 0);
 
-      // 2. Check if user liked
+      // 2. Cek apakah user udah like
       if (user) {
         const { data: userLike } = await supabase
           .from('likes')
@@ -318,7 +318,7 @@ export const Karya = () => {
         setIsLiked(false);
       }
 
-      // 3. Fetch Comments
+      // 3. Ambil Komentar
       const { data: commentsData, error: commentsError } = await supabase
         .from('comments')
         .select(`
@@ -344,7 +344,7 @@ export const Karya = () => {
       return;
     }
 
-    // Optimistic Update
+    // Update Optimis (Biar berasa cepet)
     const previousIsLiked = isLiked;
     const previousLikesCount = likesCount;
     setIsLiked(!isLiked);
@@ -352,14 +352,14 @@ export const Karya = () => {
 
     try {
       if (previousIsLiked) {
-        // Unlike
+        // Hapus Like
         await supabase.from('likes').delete().eq('work_id', selectedId).eq('user_id', user.id);
       } else {
-        // Like
+        // Tambah Like
         await supabase.from('likes').insert({ work_id: selectedId, user_id: user.id });
       }
     } catch (error) {
-      // Revert if error
+      // Balikin lagi kalo error
       setIsLiked(previousIsLiked);
       setLikesCount(previousLikesCount);
       console.error('Error toggling like:', error);
@@ -384,12 +384,12 @@ export const Karya = () => {
 
       if (error) throw error;
 
-      // Add to local state (Optimistic-ish, or just append result)
+      // Tambah ke state lokal (Agak optimis, atau langsung tempel hasilnya)
       if (data) {
-        // We need profile data for display, usually we refetch or simpler: mock it
+        // Kita butuh data profil buat tampilan, biasanya ambil ulang atau simulasi aja:
         const newCommentObj = {
           ...data,
-          profiles: profile // Use current user profile
+          profiles: profile // Pake profil user saat ini
         };
         setComments(prev => [newCommentObj, ...prev]);
         setNewComment('');
@@ -402,7 +402,7 @@ export const Karya = () => {
     }
   };
 
-  // Handle scroll snap to update active dot
+  // Atur scroll snap buat update dot yang aktif
   const handleCarouselScroll = () => {
     if (!carouselRef.current) return;
     const scrollLeft = carouselRef.current.scrollLeft;
@@ -439,7 +439,7 @@ export const Karya = () => {
           </div>
         );
       case 'code':
-        // If showCode is true, render CodeViewer instead of iframe
+        // Kalo showCode true, tampilin CodeViewer (bukan iframe)
         if (showCode) {
           return (
             <div className="w-full h-full bg-[#0d1117]">
@@ -449,11 +449,11 @@ export const Karya = () => {
         }
         return (
           <div className="w-full h-full bg-[#0d1117] relative group overflow-hidden">
-            {/* Preview Iframe for Card - Data URI for better compatibility */}
+            {/* Iframe Pratinjau buat Kartu - Pake Data URI biar lebih kompatibel */}
             <iframe
               src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(art.content, art.code_language || 'html'))}`}
               sandbox="allow-scripts allow-same-origin"
-              className="w-[200%] h-[200%] border-0 transform scale-50 origin-top-left pointer-events-none bg-white" // Force white bg for iframe content
+              className="w-[200%] h-[200%] border-0 transform scale-50 origin-top-left pointer-events-none bg-white" // Paksa background putih buat konten iframe
               title="Code Preview"
             />
             <div className="absolute inset-0 bg-transparent hover:bg-black/10 transition-colors" />
@@ -481,13 +481,13 @@ export const Karya = () => {
     }
   };
 
-  // State for Code View Toggle in Modal
+  // State buat Ganti Tampilan Kode di Modal
   const [showSourceCode, setShowSourceCode] = useState(false);
 
   return (
     <div className="min-h-screen pt-32 pb-20 px-4 max-w-[1600px] mx-auto relative">
 
-      {/* Header & Kontrol - SAME */}
+      {/* Header & Kontrol - SAMA (Gak Berubah) */}
       <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
         <div>
           <h1 className="text-5xl md:text-7xl font-serif text-white mb-4">Galeri Karya</h1>
@@ -517,7 +517,7 @@ export const Karya = () => {
         </div>
       </div>
 
-      {/* Grid Masonry Modern - Pinterest Style - SAME */}
+      {/* Grid Masonry Modern - Pinterest Style - SAMA (Gak berubah) */}
       {error ? (
         <FetchErrorState message={error} onRetry={fetchWorks} />
       ) : loading && artworks.length === 0 ? (
@@ -585,7 +585,7 @@ export const Karya = () => {
       >
         <Plus size={28} />
       </Link>
-      {/* Modal Detail */}
+      {/* Modal Detail Karya */}
       <AnimatePresence>
         {selectedId && selectedArtwork && (
           isMobile ? (
@@ -594,17 +594,17 @@ export const Karya = () => {
               art={selectedArtwork}
               onClose={() => setSelectedId(null)}
               renderContent={(art, showCode) => {
-                // For code type, we need to render differently based on showCode
+                // Buat tipe kode, kita rendernya beda tergantung showCode
                 if (art.type === 'code') {
                   if (showCode) {
-                    // Show code viewer
+                    // Tampilin tampilan kode
                     return (
                       <div className="w-full h-full bg-[#0d1117] overflow-auto">
                         <CodeViewer content={art.content} />
                       </div>
                     );
                   } else {
-                    // Show interactive preview - FULL SIZE, NO SCALING
+                    // Tampilin pratinjau interaktif - UKURAN PENUH, TANPA SCALING
                     return (
                       <iframe
                         src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(art.content, art.code_language || 'html'))}`}
@@ -617,7 +617,7 @@ export const Karya = () => {
                   }
                 }
 
-                // For other types, use default card content
+                // Buat tipe lain, pake konten kartu standar aja
                 return (
                   <div className="w-full h-full flex items-center justify-center bg-black">
                     {renderCardContent(art, false)}
@@ -641,12 +641,12 @@ export const Karya = () => {
                 className="relative w-full max-w-6xl bg-[#111] rounded-t-[2rem] md:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-[90vh] md:max-h-[85vh] pointer-events-auto border border-white/10"
                 transition={{ type: "spring", stiffness: 200, damping: 25 }}
               >
-                {/* Close Button - Safe Position for Mobile */}
+                {/* Tombol Tutup - Posisi Aman buat Mobile */}
                 <div className="absolute top-3 right-3 md:top-4 md:right-4 z-50 flex gap-2">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Toggle Fullscreen logic
+                      // Logika Toggle Fullscreen (Layar Penuh)
                       const card = document.getElementById(`modal-card-${selectedId}`);
                       if (!document.fullscreenElement) {
                         card?.requestFullscreen().catch(err => console.log(err));
@@ -671,7 +671,7 @@ export const Karya = () => {
                 <div className="w-full h-[40vh] md:h-auto md:w-3/5 bg-black flex items-center justify-center relative overflow-hidden group flex-shrink-0">
                   <motion.div layoutId={`content-${selectedId}`} className="w-full h-full flex items-center justify-center">
 
-                    {/* ...Slide Logic... */}
+                    {/* ...Logika Slide... */}
                     {selectedArtwork.type === 'slide' && (
                       <div className="relative w-full h-full flex items-center justify-center group/carousel">
                         <div
@@ -685,8 +685,8 @@ export const Karya = () => {
                             </div>
                           ))}
                         </div>
-                        {/* Arrows & Dots logic ... */}
-                        {/* Navigation Arrows */}
+                        {/* Logika Panah & Dot ... */}
+                        {/* Panah Navigasi */}
                         {selectedArtwork.slides && selectedArtwork.slides.length > 1 && (
                           <>
                             {activeSlide > 0 && (
@@ -725,8 +725,8 @@ export const Karya = () => {
                     )}
                     {selectedArtwork.type === 'video' && (
                       <div className="relative w-full h-full">
-                        {/* Video Player or Image Preview */}
-                        {/* For now keeping original logic unless improved */}
+                        {/* Pemutar Video atau Pratinjau Gambar */}
+                        {/* Sementara pake logika aslinya dulu kecuali ada peningkatan */}
                         <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-cover opacity-50" />
                         <div className="absolute inset-0 flex items-center justify-center">
                           <Play size={64} className="text-white fill-current" />
@@ -743,7 +743,7 @@ export const Karya = () => {
                     )}
                     {selectedArtwork.type === 'code' && (
                       <div className="w-full h-full bg-[#0d1117] relative flex flex-col">
-                        {/* Toggle View Button - Mobile Friendly */}
+                        {/* Tombol Ganti Tampilan - Ramah Mobile */}
                         <div className="absolute top-2 right-2 md:top-4 md:right-4 z-50">
                           <button
                             onClick={() => setShowSourceCode(!showSourceCode)}
@@ -810,7 +810,7 @@ export const Karya = () => {
                     ))}
                   </div>
 
-                  {/* Social Actions (Like) */}
+                  {/* Aksi Sosial (Like) */}
                   <div className="flex gap-4 mb-8">
                     <button
                       onClick={handleToggleLike}
@@ -824,14 +824,14 @@ export const Karya = () => {
                     </button>
                   </div>
 
-                  {/* Comments Section */}
+                  {/* Bagian Komentar */}
                   <div className="border-t border-white/10 pt-8">
                     <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                       <MessageCircle size={20} className="text-gray-400" />
                       Diskusi ({comments.length})
                     </h3>
 
-                    {/* Comment Input */}
+                    {/* Input Komentar */}
                     {user ? (
                       <form onSubmit={handleSubmitComment} className="flex gap-4 mb-8">
                         <div className="w-10 h-10 rounded-full bg-gray-700 overflow-hidden shrink-0">
@@ -868,7 +868,7 @@ export const Karya = () => {
                       </div>
                     )}
 
-                    {/* Comments List */}
+                    {/* Daftar Komentar */}
                     <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                       {comments.length > 0 ? comments.map(comment => (
                         <div key={comment.id} className="flex gap-4">

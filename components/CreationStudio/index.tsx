@@ -2,14 +2,12 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowLeft, ArrowRight, Check, Upload, Globe, FileText } from 'lucide-react';
 
-import { Medium, CreationData, SlideContent } from './types';
+import { Medium, CreationData, SlideContent, WorkType } from './types';
 import { MediumSelector } from './MediumSelector';
-import { CodeEditor } from './editors/CodeEditor';
-import { TextEditor } from './editors/TextEditor';
+import { CodeEditor, TextEditor, DocumentUploader } from './editors';
 import { IframeSandbox } from './sandbox/IframeSandbox';
 import { PyodideSandbox } from './sandbox/PyodideSandbox';
 import { WebsiteEmbed } from './embed/WebsiteEmbed';
-import { DocumentUploader } from './editors/DocumentUploader';
 import { SlideBuilder } from './carousel/SlideBuilder';
 import { supabase } from '../../lib/supabase';
 
@@ -170,7 +168,7 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
             // Priority: Trust the subMode selection
             if (medium === 'visual') {
                 if (subMode === 'slide') {
-                    finalType = 'slide';
+                    finalType = 'image';
                 } else {
                     finalType = 'image';
                 }
@@ -288,7 +286,22 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                             {/* Step 1: Selection */}
                             {step === 'selection' && (
                                 <div className="w-full h-full overflow-y-auto">
-                                    <MediumSelector onSelect={handleMediumSelect} />
+                                    <MediumSelector
+                                        activeType={(medium === 'visual' ? 'image' : medium === 'narasi' ? 'text' : medium === 'sinema' ? 'video' : medium === 'kode' ? 'code' : 'text') as WorkType}
+                                        onChange={(type) => {
+                                            // Map WorkType back to Medium for current component state
+                                            const map: Record<string, Medium> = {
+                                                text: 'narasi',
+                                                document: 'narasi',
+                                                image: 'visual',
+                                                video: 'sinema',
+                                                code: 'kode'
+                                            };
+                                            const m = map[type] || 'visual';
+                                            handleMediumSelect(m);
+                                            if (type === 'document') setSubMode('document');
+                                        }}
+                                    />
                                 </div>
                             )}
 
@@ -314,9 +327,10 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                                         {medium === 'narasi' && (
                                             subMode === 'document' ? (
                                                 <DocumentUploader
-                                                    onContentExtracted={(html, filename) => {
-                                                        setFormData(prev => ({ ...prev, content: html, document_source: filename }));
-                                                        setSubMode('default'); // Switch back to editor to show content
+                                                    content={formData.content || ''}
+                                                    onChange={(html) => {
+                                                        setFormData(prev => ({ ...prev, content: html }));
+                                                        setSubMode('default');
                                                     }}
                                                 />
                                             ) : (

@@ -176,7 +176,7 @@ export const Graphics = () => {
                                     className="w-full h-full object-cover grayscale contrast-125 brightness-90 group-hover:grayscale-0 transition-all duration-500"
                                 />
 
-                                {/* Efek Selotip */}
+                                {/* Efek Selotip (Miring) */}
                                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-24 h-8 bg-white/80 rotate-[-2deg] shadow-sm backdrop-blur-sm"></div>
 
                                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-black/90 text-white transform translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">

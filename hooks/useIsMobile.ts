@@ -8,13 +8,13 @@ export const useIsMobile = (breakpoint: number = 768) => {
             setIsMobile(window.innerWidth < breakpoint);
         };
 
-        // Initial check
+        // Cek awal
         checkIsMobile();
 
-        // Listener
+        // Pasang listener
         window.addEventListener('resize', checkIsMobile);
 
-        // Cleanup
+        // Bersihin pas unmount
         return () => window.removeEventListener('resize', checkIsMobile);
     }, [breakpoint]);
 

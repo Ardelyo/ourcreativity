@@ -1,3 +1,4 @@
+// Komponen paginasi simpel buat navigasi halaman.
 import React from 'react';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 

@@ -24,7 +24,7 @@ export const FileManager: React.FC<FileManagerProps> = ({
     const handleAdd = () => {
         if (!newFileName.trim()) return;
         const ext = newFileName.split('.').pop();
-        // Simple extension detection
+        // deteksi ekstensi simpel aja
         let lang: FileType = 'javascript';
         if (ext === 'js') lang = 'javascript';
         if (ext === 'html') lang = 'html';

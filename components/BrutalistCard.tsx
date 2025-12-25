@@ -43,7 +43,7 @@ export const BrutalistCard: React.FC<BrutalistCardProps> = ({
                     : 'bg-white/5 border border-white/10 backdrop-blur-sm'
                 }`}
         >
-            {/* Soft Ambient Glow */}
+            {/* Efek Cahaya Halus (Ambient) */}
             <div className={`absolute -top-24 -right-24 w-48 h-48 blur-[80px] opacity-20 rounded-full pointer-events-none ${isOwner ? 'bg-rose-500' : isReporter ? 'bg-purple-500' : 'bg-white'
                 }`} />
 
@@ -121,7 +121,7 @@ export const BrutalistCard: React.FC<BrutalistCardProps> = ({
                 </div>
             </div>
 
-            {/* Bottom Decoration */}
+            {/* Dekorasi Bagian Bawah */}
             <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-current to-transparent opacity-0 group-hover:opacity-10 transition-opacity duration-500 ${isOwner ? 'text-rose-500' : isReporter ? 'text-purple-500' : 'text-white'
                 }`} />
         </motion.div>

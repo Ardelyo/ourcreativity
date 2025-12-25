@@ -8,11 +8,11 @@ interface ChangelogEntry {
     version: string;
     major_version: number;
     title: string;
-    subtitle?: string; // Added optional subtitle support if data exists
+    subtitle?: string; // Tambahin subtitle opsional kalo ada datanya
     date: string;
     description: string;
-    content?: string; // Full story content
-    changes?: string[]; // Assuming this field exists based on previous file content or intention
+    content?: string; // Konten cerita lengkapnya
+    changes?: string[]; // Asumsi field ini ada (berdasarkan niat/file sebelumnya)
     highlights?: string[];
     color: string;
     category?: string;
@@ -49,7 +49,7 @@ export const ChangelogTimeline = () => {
         setExpandedId(expandedId === id ? null : id);
     };
 
-    // Group by Major Version
+    // Kelompokin berdasarkan Major Version (v1, v2, dst)
     const groupedChangelogs = changelogs.reduce((acc, entry) => {
         const major = entry.major_version || 0;
         if (!acc[major]) acc[major] = [];
@@ -69,12 +69,12 @@ export const ChangelogTimeline = () => {
 
     return (
         <div className="relative max-w-3xl mx-auto px-4 pb-20">
-            {/* Main Timeline Line - Designed to look like a "Story Path" */}
+            {/* Garis Timeline Utama - Dibuat kayak "Jalur Cerita" */}
             <div className="absolute left-8 md:left-12 top-0 bottom-0 w-1 bg-gradient-to-b from-white/20 via-white/5 to-transparent rounded-full" />
 
             <div className="space-y-16">
                 {sortedMajorVersions.map((majorVer) => {
-                    // Era-specific theming
+                    // Tema khusus buat tiap Era/Major Version
                     const eraTheme = {
                         5: { gradient: 'from-purple-500 to-rose-500', glow: 'shadow-[0_0_30px_rgba(168,85,247,0.4)]', name: 'Luminous Revolution', borderColor: 'border-purple-500/50' },
                         4: { gradient: 'from-cyan-500 to-teal-500', glow: 'shadow-[0_0_30px_rgba(6,182,212,0.4)]', name: 'Glowar Neon', borderColor: 'border-cyan-500/50' },
@@ -86,7 +86,7 @@ export const ChangelogTimeline = () => {
 
                     return (
                         <div key={majorVer} className="relative">
-                            {/* Major Version Marker - Sticky Header with Era Theme */}
+                            {/* Penanda Major Version - Header Lengket sesuai Tema Era */}
                             <div className="sticky top-24 z-30 flex items-center gap-4 mb-8 pl-2">
                                 {/* Era Badge */}
                                 <div className={`relative z-10 w-14 h-14 md:w-18 md:h-18 rounded-full bg-[#0a0a0a] border-4 border-[#0a0a0a] flex items-center justify-center ${eraTheme.glow}`}>
@@ -117,15 +117,15 @@ export const ChangelogTimeline = () => {
                                             transition={{ duration: 0.4, delay: index * 0.08 }}
                                             className="relative group"
                                         >
-                                            {/* Connector Line to Node */}
+                                            {/* Garis Penghubung ke Node/Titik */}
                                             <div className={`absolute -left-[2.5rem] md:-left-[3.5rem] top-8 w-6 md:w-10 h-px bg-gradient-to-r ${eraTheme.gradient} opacity-30 group-hover:opacity-60 transition-opacity`} />
 
-                                            {/* Connector Node - Era Themed */}
+                                            {/* Node Penghubung - Sesuai Tema Era */}
                                             <div className={`absolute -left-[3rem] md:-left-[4rem] top-5 w-7 h-7 rounded-full bg-[#0a0a0a] border-2 ${isExpanded ? eraTheme.borderColor : 'border-white/20'} ring-4 ring-[#0a0a0a] flex items-center justify-center z-10 transition-all duration-300 group-hover:scale-110 ${isExpanded ? eraTheme.glow : ''}`}>
                                                 <div className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${isExpanded ? `bg-gradient-to-br ${eraTheme.gradient}` : 'bg-white/30 group-hover:bg-white/60'}`} />
                                             </div>
 
-                                            {/* Content Card - Enhanced */}
+                                            {/* Kartu Konten - Ditingkatkan Visualnya */}
                                             <motion.div
                                                 layout
                                                 onClick={() => toggleExpand(entry.id)}
@@ -139,10 +139,10 @@ export const ChangelogTimeline = () => {
                                                 `}
                                                 style={isMajorVersion && !isExpanded ? { borderLeftColor: `var(--tw-gradient-from)` } : {}}
                                             >
-                                                {/* Decorative Corner Accent */}
+                                                {/* Aksen Sudut Dekoratif */}
                                                 <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl ${entry.color || eraTheme.gradient} opacity-5 rounded-bl-full pointer-events-none`} />
 
-                                                {/* Glow Effect Background when Expanded */}
+                                                {/* Efek Glow Latar pas Di-expand */}
                                                 {isExpanded && (
                                                     <>
                                                         <div className={`absolute inset-0 bg-gradient-to-br ${entry.color || eraTheme.gradient} opacity-[0.03] pointer-events-none`} />
@@ -150,7 +150,7 @@ export const ChangelogTimeline = () => {
                                                     </>
                                                 )}
 
-                                                {/* Category Ribbon for Major Versions */}
+                                                {/* Pita Kategori buat Major Version */}
                                                 {isMajorVersion && (
                                                     <div className={`absolute top-3 right-3 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-gradient-to-r ${entry.color || eraTheme.gradient} text-white shadow-lg`}>
                                                         ★ MAJOR
@@ -163,10 +163,10 @@ export const ChangelogTimeline = () => {
                                                 )}
 
                                                 <div className="p-5 md:p-6">
-                                                    {/* Card Header Section */}
+                                                    {/* Bagian Header Kartu */}
                                                     <div className="flex justify-between items-start gap-4">
                                                         <div className="space-y-2 flex-1">
-                                                            {/* Version & Date Row */}
+                                                            {/* Baris Versi & Tanggal */}
                                                             <div className="flex flex-wrap items-center gap-2 mb-2">
                                                                 <span className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide border ${entry.color ? `bg-gradient-to-r ${entry.color} text-white border-transparent` : 'bg-white/10 text-gray-300 border-white/10'}`}>
                                                                     {entry.version}
@@ -185,7 +185,7 @@ export const ChangelogTimeline = () => {
                                                             <h3 className={`font-serif text-xl md:text-2xl font-bold leading-tight transition-colors ${isExpanded ? 'text-white' : 'text-gray-200 group-hover:text-white'}`}>
                                                                 {entry.title}
                                                             </h3>
-                                                            {/* Description Preview */}
+                                                            {/* Pratinjau Deskripsi */}
                                                             {!isExpanded && (
                                                                 <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">
                                                                     {entry.description}
@@ -193,7 +193,7 @@ export const ChangelogTimeline = () => {
                                                             )}
                                                         </div>
 
-                                                        {/* Expand/Collapse Button */}
+                                                        {/* Tombol Expand/Collapse */}
                                                         <button
                                                             className={`
                                                                 p-2.5 rounded-xl transition-all duration-300 shrink-0
@@ -207,7 +207,7 @@ export const ChangelogTimeline = () => {
                                                         </button>
                                                     </div>
 
-                                                    {/* Expanded Content Section */}
+                                                    {/* Bagian Konten pas Di-expand */}
                                                     <AnimatePresence>
                                                         {isExpanded && (
                                                             <motion.div
@@ -218,10 +218,10 @@ export const ChangelogTimeline = () => {
                                                                 className="overflow-hidden"
                                                             >
                                                                 <div className="pt-6 space-y-5">
-                                                                    {/* Decorative Divider */}
+                                                                    {/* Pembatas Dekoratif */}
                                                                     <div className={`h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent`} />
 
-                                                                    {/* Main Story Content */}
+                                                                    {/* Konten Cerita Utama */}
                                                                     <div className="relative pl-4 border-l-2 border-white/10">
                                                                         <div className="absolute -left-2 -top-1 text-2xl text-white/20 font-serif">"</div>
                                                                         <p className="text-gray-300 leading-relaxed text-sm md:text-base">
@@ -229,7 +229,7 @@ export const ChangelogTimeline = () => {
                                                                         </p>
                                                                     </div>
 
-                                                                    {/* Changes List (if available) */}
+                                                                    {/* Daftar Perubahan (kalo ada) */}
                                                                     {entry.changes && entry.changes.length > 0 && (
                                                                         <div className="bg-black/40 rounded-xl p-4 border border-white/5">
                                                                             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
@@ -246,7 +246,7 @@ export const ChangelogTimeline = () => {
                                                                         </div>
                                                                     )}
 
-                                                                    {/* Highlights Tags - Enhanced */}
+                                                                    {/* Highlight Fitur Utama - Ditingkatkan */}
                                                                     {entry.highlights && entry.highlights.length > 0 && (
                                                                         <div className="space-y-2">
                                                                             <h4 className="text-xs font-bold text-gray-600 uppercase tracking-widest">Fitur Utama</h4>
@@ -268,7 +268,7 @@ export const ChangelogTimeline = () => {
                                                                         </div>
                                                                     )}
 
-                                                                    {/* Footer/Meta */}
+                                                                    {/* Bagian Bawah / Meta */}
                                                                     <div className="pt-4 border-t border-white/5 flex justify-between items-center text-xs text-gray-600 font-mono">
                                                                         <span>ID: {entry.id.slice(0, 8)}</span>
                                                                         <div className="flex items-center gap-1">
@@ -291,7 +291,7 @@ export const ChangelogTimeline = () => {
                 })}
             </div>
 
-            {/* End of Timeline Indicator */}
+            {/* Indikator Akhir Timeline */}
             <div className="absolute left-8 md:left-12 bottom-0 transform -translate-x-1/2 translate-y-1/2">
                 <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-white to-gray-500 blur-[2px] animate-pulse" />
             </div>

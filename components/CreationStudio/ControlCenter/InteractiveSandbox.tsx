@@ -11,10 +11,10 @@ interface InteractiveSandboxProps {
 
 export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, triggerRun, onConsole, isPaused = false }) => {
     const iframeRef = useRef<HTMLIFrameElement>(null);
-    const [key, setKey] = useState(0); // Force re-render iframe
+    const [key, setKey] = useState(0); // paksa re-render iframe
 
     useEffect(() => {
-        // Force refresh iframe on run trigger, unless paused
+        // paksa refresh iframe pas ada trigger run, kecuali lagi di-pause
         if (!isPaused) {
             setKey(prev => prev + 1);
         }
@@ -38,7 +38,7 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, t
         const mainFile = files.find(f => f.isMain) || files[0];
         if (!mainFile) return '';
 
-        // Inject Console Capture Script
+        // masukin script buat nangkep log konsol
         const consoleScript = `
         <script>
             (function(){
@@ -49,7 +49,7 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, t
 
                 function send(level, args) {
                     try {
-                        // Convert args to safe strings/JSON
+                        // ubah argumen jadi string/json yang aman
                         const safeArgs = args.map(arg => {
                             try { return JSON.parse(JSON.stringify(arg)); }
                             catch(e) { return String(arg); }
@@ -71,7 +71,7 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, t
         `;
 
         if (mainFile.language === 'javascript') {
-            // Assume p5.js mode for now if it's a single JS file or explicitly p5
+            // anggep aja mode p5.js buat sekarang kalo filenya cuma satu atau emang p5
             return `
                 <!DOCTYPE html>
                 <html>
@@ -95,7 +95,7 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, t
         }
 
         if (mainFile.language === 'html') {
-            // Inject console script into Head
+            // masukin script konsol ke bagian Head
             let content = mainFile.content;
             if (content.includes('<head>')) {
                 content = content.replace('<head>', `<head>${consoleScript}`);
@@ -103,7 +103,7 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, t
                 content = `${consoleScript}${content}`;
             }
 
-            // Inject CSS and JS files if related (Naive approach: inject all other CSS/JS)
+            // masukin file css sama js kalo ada hubungannya (cara simpel: masukin semua css/js lain)
             const cssFiles = files.filter(f => f.language === 'css');
             const jsFiles = files.filter(f => f.language === 'javascript' && f.id !== mainFile.id);
 

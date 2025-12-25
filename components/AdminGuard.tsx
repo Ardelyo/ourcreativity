@@ -1,3 +1,4 @@
+// Pelindung rute khusus admin. Kalo bukan admin, tendang ke home.
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from './AuthProvider';

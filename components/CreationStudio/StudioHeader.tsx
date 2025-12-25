@@ -33,7 +33,7 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
 }) => {
     const [isHovered, setIsHovered] = useState(false);
 
-    // --- MOBILE HEADER ---
+    // --- header mobile ---
     if (isMobile) {
         return (
             <motion.div
@@ -42,7 +42,7 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
                 className="fixed top-0 left-0 right-0 z-40 px-3 py-2 bg-black/60 backdrop-blur-xl border-b border-white/5 pt-safe"
             >
                 <div className="flex items-center justify-between">
-                    {/* Left: Back & Drafts */}
+                    {/* kiri: balik & draft */}
                     <div className="flex items-center gap-2">
                         <motion.button
                             whileTap={{ scale: 0.9 }}
@@ -60,7 +60,7 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
                         </motion.button>
                     </div>
 
-                    {/* Center: Title (Truncated) */}
+                    {/* tengah: judul (dipotong kalo panjang) */}
                     <div className="flex-1 mx-3 flex items-center justify-center gap-2">
                         {draftStatus !== 'idle' && (
                             <motion.div
@@ -80,7 +80,7 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
                         </span>
                     </div>
 
-                    {/* Right: Publish Only (Other actions in MobileActionDock) */}
+                    {/* kanan: kirim aja (action lain ada di dock) */}
                     <motion.button
                         whileTap={{ scale: 0.95 }}
                         onClick={onPublish}
@@ -99,7 +99,7 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
         );
     }
 
-    // --- DESKTOP HEADER ---
+    // --- header desktop ---
     return (
         <motion.div
             initial={{ y: -20, opacity: 0 }}
@@ -108,7 +108,7 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
         >
             <div className="max-w-7xl mx-auto flex items-center justify-between pointer-events-auto">
 
-                {/* LEFT: NAVIGATION & DRAFTS */}
+                {/* kiri: navigasi & draf */}
                 <div className="flex items-center gap-3">
                     <button
                         onClick={onBack}
@@ -135,7 +135,7 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
                     </button>
                 </div>
 
-                {/* CENTER: TITLE & MODE (Visible on Desktop) */}
+                {/* tengah: judul & mode (keliatan di desktop) */}
                 <div className="hidden md:flex flex-col items-center absolute left-1/2 -translate-x-1/2 top-4 md:top-6">
                     <div
                         className="relative group"
@@ -170,7 +170,7 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
                     </div>
                 </div>
 
-                {/* RIGHT: ACTIONS */}
+                {/* kanan: aksi */}
                 <div className="flex items-center gap-3">
                     <div className="flex items-center bg-black/40 backdrop-blur-md rounded-full border border-white/5 p-1 ring-1 ring-white/5 shadow-lg">
                         <button

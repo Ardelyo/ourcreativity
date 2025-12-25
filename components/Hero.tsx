@@ -25,7 +25,7 @@ export const Hero = () => {
 
             {/* Judul Utama - Pelacakan Ketat & Kontras Tinggi */}
             <motion.h1
-                // Optimasi LCP: Mulai terlihat, animasikan dari keadaan yang sedikit berbeda atau gunakan animasi tata letak
+                // Optimasi LCP: Biar cepet nongol, pake animasi tipis-tipis aja
                 initial={{ opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="font-serif text-6xl md:text-8xl lg:text-9xl leading-[0.9] md:leading-[0.85] tracking-tight mb-8"

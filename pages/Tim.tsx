@@ -5,7 +5,7 @@ import { ContributorModal } from '../components/ContributorModal';
 import { FetchErrorState } from '../components/FetchErrorState';
 import { Users, AlertCircle, Github } from 'lucide-react';
 
-// --- Types ---
+// --- Tipe Data ---
 interface Contributor {
   login: string;
   avatar_url: string;
@@ -116,7 +116,7 @@ export const Tim = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedContributor, setSelectedContributor] = useState<EnhancedContributor | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = async () => { // Ambil data dari GitHub API
     try {
       setLoading(true);
       setError(null);
@@ -132,12 +132,12 @@ export const Tim = () => {
         }
       }
 
-      // 1. Fetch Contributors
+      // 1. Ambil Kontributor
       const contribRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contributors`);
       if (!contribRes.ok) throw new Error(`GitHub API Error: ${contribRes.status}`);
       const contribData: Contributor[] = await contribRes.json();
 
-      // 2. Fetch Issues to find reporters
+      // 2. Ambil Masalah (Issues) buat cari pelapor bug
       const issuesRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&per_page=100`);
       let reportersMap: Record<string, ReporterData> = {};
 

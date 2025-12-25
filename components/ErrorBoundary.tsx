@@ -1,3 +1,4 @@
+// Boundary buat nangkep error React biar gak nge-crash satu aplikasi.
 import React, { Component, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 

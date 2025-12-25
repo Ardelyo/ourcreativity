@@ -5,7 +5,7 @@ import { ArrowLeft, Share2, Zap, Heart, Camera, MessageSquare } from 'lucide-rea
 export const Meme = () => {
     return (
         <div className="min-h-screen bg-black text-white selection:bg-rose-500 selection:text-white overflow-x-hidden">
-            {/* Load Fonts */}
+            {/* Muat Font Biar Estetik */}
             <style>
                 {`
           @import url('https://fonts.googleapis.com/css2?family=VT323&family=Anton&display=swap');
@@ -33,10 +33,10 @@ export const Meme = () => {
         `}
             </style>
 
-            {/* Main Container with Dynamic Island Fix */}
+            {/* Kontainer Utama dengan Perbaikan Dynamic Island */}
             <div className="max-w-4xl mx-auto px-6 pt-12 md:pt-20 pb-20 relative z-20">
 
-                {/* Simple Navigation */}
+                {/* Navigasi Sederhana */}
                 <div className="mb-16">
                     <Link
                         to="/info"
@@ -47,7 +47,7 @@ export const Meme = () => {
                     </Link>
                 </div>
 
-                {/* Hero Section - Clean & High Impact */}
+                {/* Bagian Hero - Bersih & Dampak Tinggi */}
                 <div className="mb-20 text-center">
                     <div className="inline-block relative mb-8 group">
                         <div className="absolute inset-0 bg-rose-500 rounded-full blur-2xl opacity-10 group-hover:opacity-30 transition-opacity duration-500"></div>
@@ -68,7 +68,7 @@ export const Meme = () => {
                     </p>
                 </div>
 
-                {/* Content Section - Simplified Cards */}
+                {/* Bagian Konten - Kartu yang Disederhanakan */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-16 md:mb-20">
 
                     {/* Identity Card */}
@@ -100,7 +100,7 @@ export const Meme = () => {
                     </div>
                 </div>
 
-                {/* Information Table - Clean Typography */}
+                {/* Tabel Informasi - Tipografi Bersih */}
                 <div className="mb-16 md:mb-20">
                     <h2 className="text-4xl md:text-5xl font-meme mb-8 md:mb-10 text-center underline decoration-zinc-800 underline-offset-8">PROGRAM & KEGIATAN</h2>
 
@@ -123,7 +123,7 @@ export const Meme = () => {
                     </div>
                 </div>
 
-                {/* Call to Action - Massive & Simple */}
+                {/* Ajakan Bertindak (CTA) - Besar & Sederhana */}
                 <div className="relative overflow-hidden rounded-3xl bg-zinc-900 border border-zinc-800 p-8 md:p-20 text-center">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 via-yellow-500 to-purple-500"></div>
 
@@ -144,7 +144,7 @@ export const Meme = () => {
                     </a>
                 </div>
 
-                {/* Minimal Footer */}
+                {/* Footer Minimalis */}
                 <footer className="mt-20 text-center">
                     <p className="font-pixel text-zinc-700 text-xl tracking-widest uppercase">
                         © 2025 OURCREATIVITY / DIVISI MEME / BEYOND THE PIXEL

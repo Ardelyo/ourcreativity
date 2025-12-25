@@ -128,7 +128,7 @@ export const VideoPage = () => {
 
                             <div className="aspect-video w-full max-h-full bg-black shadow-2xl relative overflow-hidden border border-[#333] group">
 
-                                {/* Safe Margins Overlay (Hidden by default, shown on hover/play) */}
+                                {/* Overlay Batas Aman (Sembunyi default, muncul pas hover/play) */}
                                 <div className="absolute inset-[5%] border border-cyan-500/20 pointer-events-none z-[60] opacity-50"></div>
                                 <div className="absolute inset-[10%] border border-cyan-500/20 pointer-events-none z-[60] opacity-30"></div>
                                 <div className="absolute top-4 right-4 flex gap-2 z-[60]">
@@ -138,7 +138,7 @@ export const VideoPage = () => {
 
                                 {/* --- SCENES --- */}
 
-                                {/* 1. Intro */}
+                                {/* 1. Pembukaan (Intro) */}
                                 <motion.div style={{ opacity: introOpacity, scale: introScale }} className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-[#050505]">
                                     <div className="w-32 md:w-48 mb-6 relative">
                                         <div className="absolute inset-0 bg-orange-500 blur-[50px] opacity-20"></div>
@@ -155,7 +155,7 @@ export const VideoPage = () => {
                                     </p>
                                 </motion.div>
 
-                                {/* 2. Philosophy */}
+                                {/* 2. Filosofi */}
                                 <motion.div style={{ opacity: philoOpacity }} className="absolute inset-0 z-20 flex bg-[#0a0a0a] items-center justify-center p-12">
                                     <div className="text-center max-w-3xl">
                                         <motion.div
@@ -182,7 +182,7 @@ export const VideoPage = () => {
                                     </div>
                                 </motion.div>
 
-                                {/* 3. Workflow A: Editing */}
+                                {/* 3. Alur Kerja A: Editing */}
                                 <motion.div style={{ opacity: wfEditOpacity, x: wfEditX }} className="absolute inset-0 z-30 flex bg-[#111] items-center px-16">
                                     <div className="w-1/2 pr-8 space-y-6">
                                         <div className="flex items-center gap-3 text-orange-500 font-mono text-xs font-bold">
@@ -200,7 +200,7 @@ export const VideoPage = () => {
                                         </div>
                                     </div>
                                     <div className="w-1/2 h-64 bg-gray-900 border border-gray-800 rounded relative overflow-hidden">
-                                        {/* Abstract Timeline Visualization */}
+                                        {/* Visualisasi Timeline Abstrak */}
                                         <div className="absolute inset-0 flex flex-col justify-center gap-2 p-4 opacity-50">
                                             {[...Array(5)].map((_, i) => (
                                                 <motion.div
@@ -214,7 +214,7 @@ export const VideoPage = () => {
                                     </div>
                                 </motion.div>
 
-                                {/* 4. Workflow B: VFX */}
+                                {/* 4. Alur Kerja B: VFX */}
                                 <motion.div style={{ opacity: wfVfxOpacity, scale: wfVfxScale }} className="absolute inset-0 z-30 flex flex-row-reverse bg-[#0d0d0d] items-center px-16">
                                     <div className="w-1/2 pl-8 space-y-6 text-right">
                                         <div className="flex items-center justify-end gap-3 text-purple-500 font-mono text-xs font-bold">
@@ -245,7 +245,7 @@ export const VideoPage = () => {
                                     </div>
                                 </motion.div>
 
-                                {/* 5. Workflow C: Color */}
+                                {/* 5. Alur Kerja C: Warna */}
                                 <motion.div style={{ opacity: wfColorOpacity }} className="absolute inset-0 z-30 flex bg-[#111] items-center px-16">
                                     <div className="w-1/2 pr-8 space-y-6">
                                         <div className="flex items-center gap-3 text-pink-500 font-mono text-xs font-bold">
@@ -270,7 +270,7 @@ export const VideoPage = () => {
                                     </div>
                                 </motion.div>
 
-                                {/* 6. Workflow D: Sound */}
+                                {/* 6. Alur Kerja D: Suara */}
                                 <motion.div style={{ opacity: wfSoundOpacity }} className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-[#080808]">
                                     <div className="text-center mb-8">
                                         <Music size={40} className="text-emerald-500 mx-auto mb-4" />
@@ -289,11 +289,11 @@ export const VideoPage = () => {
                                     </div>
                                 </motion.div>
 
-                                {/* 7. Gallery */}
+                                {/* 7. Galeri */}
                                 <motion.div style={{ opacity: galleryOpacity }} className="absolute inset-0 z-40 bg-[#0a0a0a] p-8 flex flex-col">
                                     <div className="flex justify-between items-end mb-6 border-b border-gray-800 pb-2">
                                         <h2 className="text-2xl font-black text-white">GALERI KARYA</h2>
-                                        <span className="text-[10px] text-gray-500 font-mono">PORTFOLIO_TERPILIH</span>
+                                        <span className="text-[10px] text-gray-500 font-mono">PORTOFOLIO_PILIHAN</span>
                                     </div>
                                     <div className="flex-1 flex items-center justify-center gap-16">
                                         {workGallery.map((item, i) => (
@@ -333,7 +333,7 @@ export const VideoPage = () => {
                                     <p className="text-[#444] text-[10px] font-mono text-center mt-8 uppercase tracking-[0.5em]">Klik untuk memutar pratinjau</p>
                                 </motion.div>
 
-                                {/* 8. CTA */}
+                                {/* 8. Aksi (CTA) */}
                                 <motion.div style={{ opacity: ctaOpacity }} className="absolute inset-0 z-50 bg-[#000] flex flex-col items-center justify-center">
                                     <motion.div
                                         initial={{ scale: 0.9 }}

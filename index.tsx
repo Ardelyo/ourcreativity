@@ -7,6 +7,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/react-query';
 
+// Inisialisasi root React.
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");

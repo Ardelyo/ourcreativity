@@ -40,12 +40,18 @@ export const TextEditor: React.FC<TextEditorProps> = ({
                 heading: {
                     levels: [1, 2, 3],
                 },
+                // Matikan fitur yang kita tambahin manual di bawah biar ga duplicate
+                codeBlock: false,
+                blockquote: false,
             }),
             Placeholder.configure({
                 placeholder,
             }),
             Underline,
-            Link.configure({
+            Link.extend({
+                // Ini teknik buat nge-handle duplicate kalo StarterKit atau extension lain bawa Link
+                priority: 100,
+            }).configure({
                 openOnClick: false,
                 HTMLAttributes: {
                     class: 'text-rose-400 underline decoration-rose-500/30 underline-offset-4 hover:text-rose-300 transition-colors cursor-pointer',

@@ -270,6 +270,8 @@ export const Studio = () => {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        console.log(`[Studio] File selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+
         if (file.type.startsWith('video/')) {
             if (!validateVideoSize(file)) {
                 e.target.value = ''; // reset inputnya
@@ -280,11 +282,12 @@ export const Studio = () => {
         } else {
             // kompres gambar (thumbnail)
             try {
+                console.log(`[Studio] Compressing image...`);
                 const compressedFile = await compressImage(file);
                 setMediaFile(compressedFile);
                 setMediaPreview(URL.createObjectURL(compressedFile));
             } catch (err) {
-                console.error("Thumbnail compression failed", err);
+                console.error("[Studio] Thumbnail compression failed", err);
                 // kalo gagal ya pake original aja
                 setMediaFile(file);
                 setMediaPreview(URL.createObjectURL(file));
@@ -292,27 +295,58 @@ export const Studio = () => {
         }
     };
 
-    const uploadToSupabase = async (file: File | Blob, path?: string) => {
-        const fileExt = file instanceof File ? file.name.split('.').pop() : 'jpg';
-        const fileName = path || `${user?.id}/${Date.now()}.${fileExt}`;
+    const uploadToSupabase = async (file: File | Blob, path?: string, onProgress?: (percent: number) => void) => {
+        if (!user) throw new Error("User session not found");
 
-        // convert base64 ke blob kalo perlu udah di-handle sebelum panggil ini, pastiin ada file/blob
-        const { error } = await supabase.storage.from('works').upload(fileName, file, {
-            contentType: file.type || 'image/jpeg',
-            upsert: true
+        const fileExt = file instanceof File ? file.name.split('.').pop() : 'jpg';
+        const fileName = path || `${user.id}/${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const bucketName = 'works'; // Primary bucket
+
+        console.log(`[Studio] Starting upload to bucket '${bucketName}': ${fileName}`, {
+            size: file.size,
+            type: file.type
         });
-        if (error) throw error;
-        const { data } = supabase.storage.from('works').getPublicUrl(fileName);
-        return data.publicUrl;
+
+        const { error, data } = await supabase.storage.from(bucketName).upload(fileName, file, {
+            contentType: file.type || 'image/jpeg',
+            upsert: true,
+            // @ts-ignore - Supabase v2 support onUploadProgress
+            onUploadProgress: (progress) => {
+                const percent = (progress.loaded / progress.total) * 100;
+                console.log(`[Studio] Upload progress: ${percent.toFixed(2)}%`);
+                if (onProgress) onProgress(percent);
+            }
+        });
+
+        if (error) {
+            console.error(`[Studio] Upload failed for bucket '${bucketName}':`, error);
+
+            // Helpful error mapping
+            if (error.message.includes('bucket not found') || error.message.includes('Bucket not found')) {
+                throw new Error(`Bucket '${bucketName}' tidak ditemukan di Supabase. Pastikan bucket sudah dibuat di Storage Dashboard.`);
+            }
+            if (error.message.includes('Policy') || error.message.includes('permission')) {
+                throw new Error(`Gagal upload: Masalah hak akses (RLS Policies). Pastikan bucket '${bucketName}' mengizinkan upload oleh user.`);
+            }
+
+            throw error;
+        }
+
+        console.log(`[Studio] Upload successful:`, data);
+        const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(fileName);
+        return urlData.publicUrl;
     };
 
     const processSlidesForUpload = async (slidesData: any[]) => {
         if (!slidesData || slidesData.length === 0) return [];
 
+        console.log(`[Studio] Processing ${slidesData.length} slides for upload`);
+
         const processedSlides = await Promise.all(slidesData.map(async (slide, index) => {
             // cek apa contentnya base64
             if (slide.content && slide.content.startsWith('data:image')) {
                 try {
+                    console.log(`[Studio] Uploading slide ${index + 1}/${slidesData.length}`);
                     // convert base64 jadi blob
                     const fetchRes = await fetch(slide.content);
                     const blob = await fetchRes.blob();
@@ -323,7 +357,7 @@ export const Studio = () => {
 
                     return { ...slide, content: publicUrl };
                 } catch (e) {
-                    console.error("Failed to upload slide image", e);
+                    console.error(`[Studio] Failed to upload slide ${index + 1}`, e);
                     return slide; // return original kalo gagal, tapi mungkin gagal insert db
                 }
             }
@@ -334,6 +368,15 @@ export const Studio = () => {
     };
 
     const handlePublish = async () => {
+        // Detailed debugging log
+        console.log("[Studio] handlePublish triggered", {
+            mode,
+            title,
+            division,
+            mediaFile: mediaFile ? `${mediaFile.name} (${mediaFile.size} bytes)` : "NULL",
+            mediaPreview: mediaPreview ? (mediaPreview.length > 50 ? mediaPreview.substring(0, 50) + "..." : mediaPreview) : "NULL"
+        });
+
         if (!title.trim() || title === 'Karya Tanpa Judul') {
             setShowSettings(true);
             alert("Judul wajib diisi. Silakan berikan judul yang unik untuk karyamu.");
@@ -346,42 +389,99 @@ export const Studio = () => {
             return;
         }
 
+        // Safety check for missing file scenarios (e.g. Broken draft state)
+        if ((mode === 'video' || mode === 'image') && !mediaFile && mediaPreview && mediaPreview.startsWith('blob:')) {
+            alert("File media tidak ditemukan! Kemungkinan Anda me-refresh halaman sehingga referensi file hilang. Silakan pilih ulang file media Anda.");
+            // Reset state to force re-selection
+            setMediaFile(null);
+            setMediaPreview(null);
+            return;
+        }
+
         try {
             setIsPublishing(true);
-            setPublishProgress({ percent: 10, message: 'Menyiapkan...' });
+            setPublishProgress({ percent: 5, message: 'Menyiapkan publikasi...' });
 
+            // 1. Upload Thumbnail/Media utama
             let finalImageUrl = mediaPreview;
+
+            // Priority: Upload mediaFile if exists
             if (mediaFile) {
-                setPublishProgress({ percent: 30, message: 'Mengunggah media...' });
-                finalImageUrl = await uploadToSupabase(mediaFile);
+                console.log("[Studio] Uploading primary media file...");
+                setPublishProgress({ percent: 10, message: 'Mengunggah media utama...' });
+
+                // Determine path based on mode
+                let pathStr = undefined;
+                if (mode === 'video') {
+                    const ext = mediaFile.name.split('.').pop();
+                    pathStr = `${user?.id}/videos/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
+                }
+
+                finalImageUrl = await uploadToSupabase(mediaFile, pathStr, (percent) => {
+                    const mappedProgress = 10 + (percent * 0.3); // Map 0-100% upload to 10-40% total
+                    setPublishProgress({
+                        percent: Math.round(mappedProgress),
+                        message: `Mengunggah media utama (${Math.round(percent)}%)...`
+                    });
+                });
+                console.log("[Studio] Primary media uploaded:", finalImageUrl);
+            } else if (mode === 'video' && !finalImageUrl) {
+                // Critical safeguard for video mode
+                throw new Error("File video wajib diupload!");
             }
 
-            setPublishProgress({ percent: 50, message: 'Memproses slide visual...' });
+            // 2. Upload Slide (kalo mode visual)
+            setPublishProgress({ percent: 40, message: 'Memproses slide visual...' });
             let finalSlides = slides;
             if (mode === 'image' || mode === 'meme') {
                 finalSlides = await processSlidesForUpload(slides);
             }
 
-            setPublishProgress({ percent: 80, message: 'Menyimpan ke database...' });
+            // 3. Handle PDF upload buat Document mode (kalo content-nya blob URL)
+            let finalContent = mode === 'code' ? JSON.stringify(codeFiles) : content;
+            if (mode === 'document' && content.startsWith('blob:')) {
+                console.log("[Studio] Uploading document blob...");
+                setPublishProgress({ percent: 70, message: 'Mengunggah file dokumen...' });
+                try {
+                    const res = await fetch(content);
+                    const blob = await res.blob();
+                    const docUrl = await uploadToSupabase(blob, `${user?.id}/docs/${Date.now()}.pdf`);
+                    finalContent = docUrl;
+                } catch (e) {
+                    console.error("[Studio] Failed to upload document blob", e);
+                    throw new Error("Gagal mengupload dokumen. Silakan coba lagi.");
+                }
+            }
+
+            setPublishProgress({ percent: 85, message: 'Menyimpan metadata ke database...' });
+            console.log("[Studio] Preparing payload for database insert");
+
             const payload = {
-                title, description, image_url: finalImageUrl,
+                title,
+                description,
+                image_url: finalImageUrl,
                 author: profile?.username || 'Anonymous',
-                author_id: user?.id, role: profile?.role || 'Member',
-                division, type: mode, tags,
-                content: mode === 'code' ? JSON.stringify(codeFiles) : content,
+                author_id: user?.id,
+                role: profile?.role || 'Member',
+                division,
+                type: mode,
+                tags,
+                content: finalContent,
                 code_language: mode === 'code' ? 'json_multifile' : codeLanguage,
                 slides: (mode === 'image' || mode === 'meme') ? finalSlides : null,
                 embed_url: embedUrl
             };
 
-            const { error } = await supabase.from('works').insert([payload]);
-            if (error) throw error;
+            const { error: dbError } = await supabase.from('works').insert([payload]);
+            if (dbError) throw dbError;
 
+            console.log("[Studio] Publish successful!");
             setPublishProgress({ percent: 100, message: 'Berhasil!' });
             handleDeleteDraft(currentDraftId!); // hapus dari draft abis publish
             setTimeout(() => navigate('/karya'), 800);
         } catch (err: any) {
-            alert("Gagal: " + err.message);
+            console.error("[Studio] Publish error:", err);
+            alert("Gagal Publikasi: " + (err.message || "Terjadi kesalahan pada server."));
             setIsPublishing(false);
         }
     };

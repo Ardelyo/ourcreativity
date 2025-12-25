@@ -110,6 +110,7 @@ export const Studio = () => {
     // --- STATE: CODE EXECUTION ---
     const [triggerRun, setTriggerRun] = useState(0);
     const [dockMinimized, setDockMinimized] = useState(false);
+    const [isTyping, setIsTyping] = useState(false); // Mobile keyboard state
 
     // --- EFFECT: INITIAL LOAD ---
     useEffect(() => {
@@ -369,14 +370,21 @@ export const Studio = () => {
         switch (mode) {
             case 'text':
                 return (
-                    <div className="w-full h-full max-w-4xl mx-auto pt-24 pb-32 px-6 md:px-0 overflow-y-auto custom-scrollbar">
+                    <div className={`w-full h-full max-w-4xl mx-auto px-6 md:px-0 overflow-y-auto custom-scrollbar ${isMobile ? 'pt-4 pb-20' : 'pt-24 pb-32'}`}>
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Judul Karya Tulis..."
                             className="text-4xl md:text-5xl font-serif font-bold bg-transparent outline-none w-full mb-8 placeholder:text-white/10"
                         />
-                        <TextEditor content={content} onChange={setContent} className="min-h-[60vh]" />
+                        <TextEditor
+                            content={content}
+                            onChange={setContent}
+                            className={isMobile ? "min-h-[50vh]" : "min-h-[60vh]"}
+                            isMobile={isMobile}
+                            onFocus={() => isMobile && setIsTyping(true)}
+                            onBlur={() => isMobile && setIsTyping(false)}
+                        />
                     </div>
                 );
             case 'code':
@@ -388,7 +396,7 @@ export const Studio = () => {
             case 'image':
             case 'meme': // Unified Visual Mode
                 return (
-                    <div className="w-full h-full flex flex-col pt-16 md:pt-24 pb-32">
+                    <div className={`w-full h-full flex flex-col ${isMobile ? 'pt-4 pb-20' : 'pt-24 pb-32'}`}>
                         <div className="max-w-6xl mx-auto w-full px-4 md:px-8 mb-4 md:mb-8 text-center md:text-left">
                             <input
                                 value={title}
@@ -398,7 +406,7 @@ export const Studio = () => {
                             />
                         </div>
                         <div className="flex-1 overflow-hidden px-4 md:px-8">
-                            <VisualBuilder slides={slides} onChange={setSlides} />
+                            <VisualBuilder slides={slides} onChange={setSlides} isMobile={isMobile} />
                         </div>
                     </div>
                 );
@@ -478,8 +486,13 @@ export const Studio = () => {
         if (mode === 'image' || mode === 'meme') {
             return (
                 <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
-                    <button onClick={() => setIsPreview(false)} className="absolute top-8 right-8 bg-white/10 text-white p-3 rounded-full hover:bg-white/20 transition-all z-10 backdrop-blur-md"><X size={24} /></button>
-                    <div className="w-full h-full p-4">
+                    <button
+                        onClick={() => setIsPreview(false)}
+                        className="absolute top-4 right-4 mt-safe mr-safe bg-black/50 text-white p-3 rounded-full hover:bg-rose-500 transition-all z-10 backdrop-blur-md border border-white/10 shadow-2xl"
+                    >
+                        <X size={24} />
+                    </button>
+                    <div className="w-full h-full p-4 pb-safe flex flex-col justify-center">
                         <PreviewCarousel slides={slides} />
                     </div>
                 </div>
@@ -487,9 +500,14 @@ export const Studio = () => {
         }
 
         return (
-            <div className="fixed inset-0 z-50 overflow-y-auto bg-black p-4 md:p-8 flex justify-center custom-scrollbar">
-                <div className="max-w-4xl w-full bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-6 md:p-16 min-h-full shadow-2xl relative">
-                    <button onClick={() => setIsPreview(false)} className="absolute top-8 right-8 bg-white/5 text-white p-3 rounded-full hover:bg-white/10 transition-all z-10"><X size={24} /></button>
+            <div className="fixed inset-0 z-50 overflow-y-auto bg-black flex justify-center custom-scrollbar">
+                <div className={`w-full h-full min-h-screen bg-[#0a0a0a] p-6 md:p-16 relative ${isMobile ? 'pt-safe' : ''}`}>
+                    <button
+                        onClick={() => setIsPreview(false)}
+                        className="fixed top-4 right-4 mt-safe mr-safe bg-black/50 text-white p-3 rounded-full hover:bg-rose-500 transition-all z-[60] backdrop-blur-md border border-white/10 shadow-2xl"
+                    >
+                        <X size={24} />
+                    </button>
                     <h1 className="text-4xl md:text-7xl font-serif font-bold mb-6 leading-[1.1]">{title}</h1>
                     <div className="flex gap-3 mb-12">
                         <span className="px-4 py-1.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/20 text-[10px] font-bold uppercase tracking-widest">{DIVISIONS.find(d => d.id === division)?.name}</span>
@@ -530,7 +548,7 @@ export const Studio = () => {
                 )}
             </AnimatePresence>
 
-            <div className="flex-1 flex flex-col relative overflow-hidden">
+            <div className="flex-1 flex flex-col relative overflow-hidden bg-black pt-safe pb-safe h-safe-screen">
                 {/* TOP HEADER */}
                 <StudioHeader
                     title={title}
@@ -550,15 +568,17 @@ export const Studio = () => {
                 />
 
                 {/* MAIN CONTENT */}
-                <div className="flex-1 overflow-hidden">{renderContent()}</div>
+                <div className={`flex-1 overflow-hidden ${isMobile ? 'pt-[60px] pb-[80px]' : ''}`}>
+                    {renderContent()}
+                </div>
 
                 {/* BOTTOM DOCK */}
                 {isMobile ? (
-                    <MobileActionDock mode={mode} onModeChange={switchMode} onPublish={handlePublish} onSettings={() => setShowSettings(true)} onPreview={() => mode === 'code' ? setTriggerRun(n => n + 1) : setIsPreview(true)} />
+                    !isTyping && <MobileActionDock mode={mode} onModeChange={switchMode} onPublish={handlePublish} onSettings={() => setShowSettings(true)} onPreview={() => mode === 'code' ? setTriggerRun(n => n + 1) : setIsPreview(true)} />
                 ) : (
-                    <div className="fixed bottom-0 left-0 right-0 h-16 z-50 flex items-center justify-center group/footer">
+                    <div className="fixed bottom-0 left-0 right-0 h-16 z-50 flex items-center justify-center group/footer pointer-events-none">
                         {/* THE DOCK */}
-                        <div className={`flex flex-col items-center transition-all duration-500 ${isPreview || (mode === 'code' && !dockMinimized) ? 'translate-y-32 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100' : 'translate-y-[-16px] opacity-100'}`}>
+                        <div className={`flex flex-col items-center transition-all duration-500 pointer-events-auto ${isPreview || (mode === 'code' && !dockMinimized) ? 'translate-y-32 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100' : 'translate-y-[-16px] opacity-100'}`}>
                             <AnimatePresence mode="wait">
                                 {!dockMinimized ? (
                                     <motion.div

@@ -66,37 +66,54 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
     return (
         <div className="flex flex-col h-full bg-[#050505] relative overflow-hidden">
 
-            {/* TOP NAVIGATION TABS */}
-            <div className="flex items-center justify-between px-2 pt-2 pb-2 bg-[#0a0a0a] border-b border-white/5 z-20">
-                <div className="flex bg-[#111] rounded-lg p-1 border border-white/5">
-                    <button
-                        onClick={() => setActiveTab('editor')}
-                        className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-xs font-bold transition-all ${activeTab === 'editor' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-200'}`}
-                    >
-                        <Code size={14} /> Editor
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('preview')}
-                        className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-xs font-bold transition-all ${activeTab === 'preview' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-200'}`}
-                    >
-                        <Eye size={14} /> Preview
-                    </button>
+            {/* TOP NAVIGATION HEADER (Merged & Clean) */}
+            <div className="flex flex-col bg-[#050505] z-20">
+                {/* Visual Header */}
+                <div className="flex items-center justify-between px-4 py-3 bg-[#0a0a0a]/50 backdrop-blur-md border-b border-white/5">
+
+                    {/* Simplified Tabs */}
+                    <div className="flex bg-[#111] rounded-full p-0.5 border border-white/5">
+                        <button
+                            onClick={() => setActiveTab('editor')}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all ${activeTab === 'editor' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-200'}`}
+                        >
+                            <Code size={12} /> Editor
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('preview')}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all ${activeTab === 'preview' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-200'}`}
+                        >
+                            <Eye size={12} /> Live
+                        </button>
+                    </div>
+
+                    {/* Integrated Tools (Files & Console) */}
+                    <div className="flex gap-1">
+                        <button
+                            onClick={() => setShowFiles(true)}
+                            className={`p-2 rounded-full text-gray-400 hover:bg-white/10 transition-colors ${!activeFile ? 'animate-pulse text-rose-500' : ''}`}
+                        >
+                            <Folder size={18} />
+                        </button>
+                        <button
+                            onClick={() => setShowConsole(!showConsole)}
+                            className={`p-2 rounded-full text-gray-400 hover:bg-white/10 transition-colors ${consoleLogs.length > 0 ? 'text-yellow-400' : ''}`}
+                        >
+                            <Terminal size={18} />
+                        </button>
+                    </div>
                 </div>
 
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => setShowFiles(true)}
-                        className={`p-2 rounded-lg bg-[#111] border border-white/5 text-gray-400 hover:text-white ${!activeFile ? 'animate-pulse text-rose-500' : ''}`}
-                    >
-                        <Folder size={16} />
-                    </button>
-                    <button
-                        onClick={() => setShowConsole(!showConsole)}
-                        className={`p-2 rounded-lg bg-[#111] border border-white/5 text-gray-400 hover:text-white ${consoleLogs.length > 0 ? 'text-yellow-400' : ''}`}
-                    >
-                        <Terminal size={16} />
-                    </button>
-                </div>
+                {/* File Information (Only in Editor Mode) */}
+                {activeTab === 'editor' && (
+                    <div className="px-4 py-1.5 bg-[#050505] text-[10px] font-mono text-gray-500 flex justify-center items-center gap-2 border-b border-white/5">
+                        <span className="opacity-50">EDITING:</span>
+                        <span className="text-gray-300 font-bold">{activeFile?.name || 'No file selected'}</span>
+                        <span className={`px-1.5 py-0.5 rounded text-[8px] uppercase font-bold ${activeFile?.language === 'html' ? 'bg-orange-500/10 text-orange-400' : activeFile?.language === 'css' ? 'bg-blue-500/10 text-blue-400' : 'bg-yellow-500/10 text-yellow-400'}`}>
+                            {activeFile?.language}
+                        </span>
+                    </div>
+                )}
             </div>
 
             {/* MAIN CONTENT AREA */}
@@ -111,13 +128,8 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                             transition={{ duration: 0.2 }}
                             className="h-full flex flex-col"
                         >
-                            {/* File Name Banner */}
-                            <div className="px-4 py-2 bg-[#0a0a0a] border-b border-white/5 text-xs font-mono text-gray-500 flex justify-between items-center">
-                                <span>{activeFile?.name || 'No file selected'}</span>
-                                <span className={activeFile?.language === 'html' ? 'text-orange-400' : activeFile?.language === 'css' ? 'text-blue-400' : 'text-yellow-400'}>
-                                    {activeFile?.language}
-                                </span>
-                            </div>
+                        >
+                            {/* File Name Banner Removed (Integrated above) */}
 
                             <div className="flex-1 relative">
                                 {activeFile ? (

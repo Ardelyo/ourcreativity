@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Github, Twitter, Link as LinkIcon, Crown, Bug } from 'lucide-react';
+import { motionConfig } from '../lib/motion';
 
 interface BrutalistCardProps {
     login: string;
@@ -34,8 +35,9 @@ export const BrutalistCard: React.FC<BrutalistCardProps> = ({
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -5 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: motionConfig.durations.normal, ease: motionConfig.easings.smooth }}
+            whileHover={{ y: -5, transition: { duration: motionConfig.durations.fast } }}
             className={`relative group p-6 rounded-3xl transition-all duration-500 overflow-hidden ${isOwner
                 ? 'bg-gradient-to-br from-rose-500/10 to-transparent border border-rose-500/20 shadow-[0_0_40px_rgba(244,63,94,0.1)]'
                 : isReporter

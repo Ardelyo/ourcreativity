@@ -10,6 +10,7 @@ import { FetchErrorState } from '../components/FetchErrorState';
 import { useAuth } from '../components/AuthProvider';
 
 import { supabase } from '../lib/supabase';
+import { motionConfig } from '../lib/motion';
 
 // Helper buat generate pratinjau kode live (HTML)
 // Komponen Helper buat lihat Kode
@@ -509,18 +510,28 @@ export const Karya = () => {
           ))}
         </div>
       ) : artworks.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <motion.div
+          variants={motionConfig.variants.staggerContainer}
+          initial="initial"
+          animate="animate"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
           {artworks.map((art, index) => (
-            <div key={art.id} className="h-full">
+            <motion.div
+              key={art.id}
+              className="h-full"
+              variants={motionConfig.variants.fadeInUp}
+              transition={{ duration: motionConfig.durations.normal, ease: motionConfig.easings.smooth }}
+            >
               <KaryaCard
                 art={art}
                 index={index}
                 onClick={() => { setSelectedId(art.id); setShowSourceCode(false); }}
                 renderContent={renderCardContent}
               />
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       ) : null}
 
       {/* Load More & Empty State */}

@@ -589,11 +589,37 @@ export const Karya = () => {
               key="mobile-immersive-view"
               art={selectedArtwork}
               onClose={() => setSelectedId(null)}
-              renderContent={(art) => (
-                <div className="w-full h-full flex items-center justify-center bg-black">
-                  {renderCardContent(art)}
-                </div>
-              )}
+              renderContent={(art, showCode) => {
+                // For code type, we need to render differently based on showCode
+                if (art.type === 'code') {
+                  if (showCode) {
+                    // Show code viewer
+                    return (
+                      <div className="w-full h-full bg-[#0d1117] overflow-auto">
+                        <CodeViewer content={art.content} />
+                      </div>
+                    );
+                  } else {
+                    // Show interactive preview - FULL SIZE, NO SCALING
+                    return (
+                      <iframe
+                        src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(art.content, art.code_language || 'html'))}`}
+                        sandbox="allow-scripts allow-same-origin"
+                        className="w-full h-full border-0 bg-white"
+                        style={{ touchAction: 'auto' }}
+                        title="Interactive Code Preview"
+                      />
+                    );
+                  }
+                }
+
+                // For other types, use default card content
+                return (
+                  <div className="w-full h-full flex items-center justify-center bg-black">
+                    {renderCardContent(art, false)}
+                  </div>
+                );
+              }}
             />
           ) : (
             <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:px-4 md:pt-20 md:pb-10 pointer-events-none">

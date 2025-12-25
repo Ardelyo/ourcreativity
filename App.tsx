@@ -53,6 +53,11 @@ const ScrollToTop = () => {
   return null;
 };
 
+// ... imports
+const KotakSurat = React.lazy(() => import('./pages/KotakSurat').then(module => ({ default: module.KotakSurat })));
+
+// ... existing lazy imports
+
 const AnimatedRoutes = () => {
   const location = useLocation();
 
@@ -68,8 +73,10 @@ const AnimatedRoutes = () => {
               <Route path="/karya" element={<MotionPage><Karya /></MotionPage>} />
               <Route path="/tim" element={<MotionPage><Tim /></MotionPage>} />
               <Route path="/info" element={<MotionPage><Info /></MotionPage>} />
+              <Route path="/kotak-surat" element={<MotionPage><KotakSurat /></MotionPage>} />
               <Route path="/story" element={<MotionPage><Story /></MotionPage>} />
               <Route path="/announcement" element={<MotionPage><Announcement /></MotionPage>} />
+// ... rest of routes
               <Route path="/division/graphics" element={<MotionPage><Graphics /></MotionPage>} />
               <Route path="/division/video" element={<MotionPage><VideoPage /></MotionPage>} />
               <Route path="/division/writing" element={<MotionPage><Writing /></MotionPage>} />

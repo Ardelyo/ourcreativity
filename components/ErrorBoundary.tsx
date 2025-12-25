@@ -24,6 +24,23 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+
+    // Otomatis muat ulang kalo ada error ChunkLoad / modul gak ketemu (biasanya pas deploy baru)
+    const isChunkError = error.name === 'ChunkLoadError' ||
+      error.message?.includes('Failed to fetch dynamically imported module') ||
+      error.message?.includes('Loading chunk');
+
+    if (isChunkError) {
+      console.warn('Deteksi error modul (ChunkLoadError)! Mencoba memuat ulang halaman untuk versi terbaru...');
+      // To avoid infinite reload loops, we could check a session storage flag
+      const lastReload = sessionStorage.getItem('last-chunk-reload');
+      const now = Date.now();
+
+      if (!lastReload || now - parseInt(lastReload) > 10000) {
+        sessionStorage.setItem('last-chunk-reload', now.toString());
+        window.location.reload();
+      }
+    }
   }
 
   handleReset = () => {

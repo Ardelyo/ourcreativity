@@ -1,49 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, ChevronDown, ChevronUp, Clock, Tag } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useQuery } from '@tanstack/react-query';
 
 interface ChangelogEntry {
     id: string;
     version: string;
     major_version: number;
     title: string;
-    subtitle?: string; // Tambahin subtitle opsional kalo ada datanya
+    subtitle?: string;
     date: string;
     description: string;
-    content?: string; // Konten cerita lengkapnya
-    changes?: string[]; // Asumsi field ini ada (berdasarkan niat/file sebelumnya)
+    content?: string;
+    changes?: string[];
     highlights?: string[];
     color: string;
     category?: string;
 }
 
 export const ChangelogTimeline = () => {
-    const [changelogs, setChangelogs] = useState<ChangelogEntry[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { data: changelogs = [], isLoading: loading } = useQuery<ChangelogEntry[]>({
+        queryKey: ['changelogs'],
+        queryFn: async () => {
+            const { data, error } = await supabase
+                .from('announcements')
+                .select('id, version, major_version, title, subtitle, date, description, content, changes, highlights, color, category')
+                .eq('type', 'changelog')
+                .order('major_version', { ascending: false })
+                .order('date', { ascending: false });
+
+            if (error) throw error;
+            return data || [];
+        }
+    });
+
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchChangelogs = async () => {
-            try {
-                const { data, error } = await supabase
-                    .from('announcements')
-                    .select('id, version, major_version, title, subtitle, date, description, content, changes, highlights, color, category')
-                    .eq('type', 'changelog')
-                    .order('major_version', { ascending: false })
-                    .order('date', { ascending: false });
-
-                if (error) throw error;
-                if (data) setChangelogs(data);
-            } catch (error) {
-                console.error('Error fetching changelogs:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchChangelogs();
-    }, []);
+    // useEffect fetch dihapus karena sudah pake useQuery yang jauh lebih sakti (cache, refetch, dsb)
 
     const toggleExpand = (id: string) => {
         setExpandedId(expandedId === id ? null : id);

@@ -272,9 +272,14 @@ export const Karya = () => {
     }
   }, [worksData, page]);
 
+  // Efek ini dihapus karena setPage(0) dan setArtworks([]) sudah ditangani di onClick tombol filter.
+  // Menjaga useEffect ini di sini bakal bikin data ilang pas navigasi balik (remount).
+  /* 
   useEffect(() => {
     setPage(0);
-  }, [filter]);
+    setArtworks([]);
+  }, [filter]); 
+  */
 
   const handleLoadMore = () => {
     setPage(prev => prev + 1);
@@ -443,12 +448,21 @@ export const Karya = () => {
           </div>
         );
       case 'video':
+      case 'video':
         return (
-          <div className="relative w-full h-full">
-            <img src={art.image_url} alt={art.title} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
-              <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform">
-                <Play className="text-white fill-current ml-1" size={32} />
+          <div className="relative w-full h-full group/video">
+            <video
+              src={art.image_url}
+              className="w-full h-full object-cover"
+              muted
+              loop
+              playsInline
+              onMouseOver={(e) => e.currentTarget.play()}
+              onMouseOut={(e) => e.currentTarget.pause()}
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover/video:bg-transparent transition-colors pointer-events-none">
+              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 group-hover/video:scale-110 transition-transform">
+                <Play className="text-white fill-current ml-1" size={24} />
               </div>
             </div>
           </div>
@@ -479,7 +493,11 @@ export const Karya = () => {
             {['all', 'graphics', 'video', 'writing', 'coding', 'meme'].map(f => (
               <button
                 key={f}
-                onClick={() => setFilter(f)}
+                onClick={() => {
+                  setFilter(f);
+                  setPage(0);
+                  setArtworks([]);
+                }}
                 className={`px-4 py-2 rounded-full text-sm font-bold capitalize transition-all ${filter === f ? 'bg-white text-black' : 'text-gray-400 hover:text-white'
                   }`}
               >
@@ -500,7 +518,7 @@ export const Karya = () => {
       {/* Grid Masonry Modern - Pinterest Style - SAMA (Gak berubah) */}
       {worksError ? (
         <FetchErrorState message={(worksError as any).message || 'Gagal memuat karya'} onRetry={() => setPage(0)} />
-      ) : worksLoading && artworks.length === 0 ? (
+      ) : (worksLoading || (worksFetching && artworks.length === 0)) ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="bg-white/[0.03] rounded-[2rem] overflow-hidden h-[400px] animate-pulse border border-white/5 shadow-lg">
@@ -550,7 +568,7 @@ export const Karya = () => {
         </div>
       )}
 
-      {artworks.length === 0 && !worksLoading && (
+      {artworks.length === 0 && !worksLoading && !worksFetching && !worksData?.length && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-24 h-24 bg-gray-900 rounded-full flex items-center justify-center mb-6">
             <ImageIcon size={40} className="text-gray-600" />
@@ -605,6 +623,19 @@ export const Karya = () => {
                       />
                     );
                   }
+                } else if (art.type === 'video') {
+                  // Video Player Full
+                  return (
+                    <div className="w-full h-full flex items-center justify-center bg-black">
+                      <video
+                        src={art.image_url}
+                        controls
+                        autoPlay
+                        className="max-w-full max-h-full aspect-video"
+                        controlsList="nodownload"
+                      />
+                    </div>
+                  );
                 }
 
                 // Buat tipe lain, pake konten kartu standar aja
@@ -714,13 +745,14 @@ export const Karya = () => {
                       <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-contain" />
                     )}
                     {selectedArtwork.type === 'video' && (
-                      <div className="relative w-full h-full">
-                        {/* Pemutar Video atau Pratinjau Gambar */}
-                        {/* Sementara pake logika aslinya dulu kecuali ada peningkatan */}
-                        <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-cover opacity-50" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Play size={64} className="text-white fill-current" />
-                        </div>
+                      <div className="w-full h-full flex items-center justify-center bg-black">
+                        <video
+                          src={selectedArtwork.image_url}
+                          controls
+                          autoPlay
+                          className="max-w-full max-h-full aspect-video"
+                          controlsList="nodownload"
+                        />
                       </div>
                     )}
                     {selectedArtwork.type === 'text' && (

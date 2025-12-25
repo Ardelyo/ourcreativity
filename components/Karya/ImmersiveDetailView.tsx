@@ -5,12 +5,13 @@ import { ChevronUp, Heart, MessageCircle, Share2, X, Maximize2, User } from 'luc
 interface ImmersiveDetailViewProps {
     art: any; // Using any for now to match Artwork type flexibility, ideally strictly typed
     onClose: () => void;
-    renderContent: (art: any) => React.ReactNode;
+    renderContent: (art: any, showCode?: boolean) => React.ReactNode;
 }
 
 export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, onClose, renderContent }) => {
     const controls = useAnimation();
     const [isExpanded, setIsExpanded] = useState(false);
+    const [showCode, setShowCode] = useState(false);
 
     const handleDragEnd = (event: any, info: PanInfo) => {
         if (info.offset.y < -100) {
@@ -46,8 +47,8 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                    if needed, but usually we want interaction. 
                    For 'Immersive', content is king.
                */}
-                <div className="w-full h-full relative" style={{ touchAction: 'none', overscrollBehavior: 'contain' }}>
-                    {renderContent(art)}
+                <div className="w-full h-full relative" style={{ touchAction: 'manipulation', overscrollBehavior: 'contain' }}>
+                    {renderContent(art, showCode)}
                 </div>
 
                 {/* Top Bar Floating */}
@@ -58,7 +59,16 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                     >
                         <X size={24} />
                     </button>
-                    {/* Add more top controls if needed */}
+
+                    {/* Code Toggle Button (Only for code type) */}
+                    {art.type === 'code' && (
+                        <button
+                            onClick={() => setShowCode(!showCode)}
+                            className="pointer-events-auto px-4 py-2 bg-black/30 backdrop-blur-md rounded-full text-white hover:bg-white/20 text-sm font-bold border border-white/20"
+                        >
+                            {showCode ? '▶ Preview' : '</> Code'}
+                        </button>
+                    )}
                 </div>
             </div>
 

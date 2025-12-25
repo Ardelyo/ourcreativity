@@ -425,7 +425,7 @@ export const Karya = () => {
   const filteredArtworks = artworks;
 
   // Helper untuk merender konten kartu berdasarkan tipe
-  const renderCardContent = (art: any) => {
+  const renderCardContent = (art: any, showCode: boolean = false) => {
     switch (art.type) {
       case 'text':
         return (
@@ -436,6 +436,14 @@ export const Karya = () => {
           </div>
         );
       case 'code':
+        // If showCode is true, render CodeViewer instead of iframe
+        if (showCode) {
+          return (
+            <div className="w-full h-full bg-[#0d1117]">
+              <CodeViewer content={art.content} />
+            </div>
+          );
+        }
         return (
           <div className="w-full h-full bg-[#0d1117] relative group overflow-hidden">
             {/* Preview Iframe for Card - Data URI for better compatibility */}
@@ -719,7 +727,7 @@ export const Karya = () => {
                             src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(selectedArtwork.content, selectedArtwork.code_language || 'html'))}`}
                             sandbox="allow-scripts allow-same-origin"
                             className="w-full h-full border-0 bg-white"
-                            style={{ touchAction: 'none' }}
+                            style={{ touchAction: 'manipulation' }}
                             title="Code Preview"
                           />
                         )}

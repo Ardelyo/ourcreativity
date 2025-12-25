@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2, ArrowLeft, ArrowRight, ArrowDown, Send, MessageCircle } from 'lucide-react';
+import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2, ArrowLeft, ArrowRight, ArrowDown, Send, MessageCircle, MoreVertical } from 'lucide-react';
+import { KaryaCard } from '../components/KaryaCard';
 import { Link, useNavigate } from 'react-router-dom'; // Changed import
 import { FetchErrorState } from '../components/FetchErrorState';
 import { useAuth } from '../components/AuthProvider';
@@ -516,73 +517,24 @@ export const Karya = () => {
       ) : artworks.length > 0 ? (
         <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 md:gap-6 space-y-4 md:space-y-6">
           {artworks.map((art, index) => (
-            <motion.div
+            <KaryaCard
               key={art.id}
-              layoutId={`card-${art.id}`}
-              onClick={() => { setSelectedId(art.id); setShowSourceCode(false); }} // Reset view mode
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                type: "spring",
-                stiffness: 260,
-                damping: 20,
-                delay: (index % 10) * 0.05
-              }}
-              className="break-inside-avoid group relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden cursor-pointer bg-[#111] mb-4 md:mb-6 shadow-xl hover:shadow-2xl hover:shadow-rose-500/10 transition-all duration-500 border border-white/5 active:scale-[0.98]"
-            >
-              {/* Konten Kartu (Gambar/Teks/Kode) */}
-              <div className={`relative w-full ${art.type === 'text' || art.type === 'code' ? 'aspect-[3/4]' : ''}`}>
-                <div className="w-full h-full overflow-hidden">
-                  {renderCardContent(art)}
-                </div>
-
-                {/* Hamparan Hover Premium - Pinterest Inspired */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-4 md:p-6 translate-y-2 group-hover:translate-y-0">
-                  {/* ... same hover meta ... */}
-                  <div className="flex justify-between items-center mb-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <h3 className="text-white font-bold text-sm md:text-lg leading-tight line-clamp-2">{art.title}</h3>
-                    <div className="flex gap-2">
-                      <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 text-white text-[10px] font-bold">
-                        <Heart size={10} className="fill-rose-500 text-rose-500" />
-                        {art.likes?.[0]?.count || 0}
-                      </div>
-                      <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 text-white text-[10px] font-bold">
-                        <MessageCircle size={10} className="text-blue-400" />
-                        {art.comments?.[0]?.count || 0}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
-                    <Link
-                      to={`/profile/${art.author}`}
-                      className="flex items-center gap-2 hover:opacity-80 transition-opacity bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-gray-700 overflow-hidden ring-1 ring-white/20">
-                        <img src={`https://ui-avatars.com/api/?name=${art.author}&background=random`} alt="Avatar" className="w-full h-full object-cover" />
-                      </div>
-                      <p className="text-[10px] md:text-xs text-white font-medium">{art.author}</p>
-                    </Link>
-
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#999] bg-black/40 px-2 py-1 rounded-lg border border-white/5">
-                      {art.division}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+              art={art}
+              index={index}
+              onClick={() => { setSelectedId(art.id); setShowSourceCode(false); }}
+              renderContent={renderCardContent}
+            />
           ))}
         </div>
       ) : null}
 
-      {/* ...Load More & Empty State... */}
+      {/* Load More & Empty State */}
       {hasMore && artworks.length > 0 && (
         <div className="flex justify-center mt-12 pb-12">
           <button
             onClick={handleLoadMore}
             disabled={loading}
-            className="px-10 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold hover:bg-white hover:text-black transition-all flex items-center gap-2 group active:scale-95 disabled:opacity-50"
+            className="px-10 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold hover:bg-white hover:text-black transition-all flex items-center gap-2 group active:scale-[0.98] disabled:opacity-50"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
@@ -614,11 +566,10 @@ export const Karya = () => {
       {/* Tombol Aksi Mengambang (Seluler) */}
       <Link
         to="/studio"
-        className="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-white text-black rounded-full shadow-2xl flex items-center justify-center z-40 hover:scale-110 transition-transform active:scale-95"
+        className="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-white text-black rounded-full shadow-2xl flex items-center justify-center z-40 hover:scale-110 transition-transform active:scale-[0.98]"
       >
         <Plus size={28} />
       </Link>
-
       {/* Modal Detail */}
       <AnimatePresence>
         {selectedId && selectedArtwork && (
@@ -633,16 +584,35 @@ export const Karya = () => {
 
             <motion.div
               layoutId={`card-${selectedId}`}
+              id={`modal-card-${selectedId}`}
               className="relative w-full max-w-6xl bg-[#111] rounded-t-[2rem] md:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-[90vh] md:max-h-[85vh] pointer-events-auto border border-white/10"
               transition={{ type: "spring", stiffness: 200, damping: 25 }}
             >
               {/* Close Button - Safe Position for Mobile */}
-              <button
-                onClick={() => setSelectedId(null)}
-                className="absolute top-3 right-3 md:top-4 md:right-4 z-50 p-2 bg-black/70 hover:bg-white text-white hover:text-black rounded-full transition-colors backdrop-blur-md border border-white/20"
-              >
-                <X size={20} />
-              </button>
+              <div className="absolute top-3 right-3 md:top-4 md:right-4 z-50 flex gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Toggle Fullscreen logic
+                    const card = document.getElementById(`modal-card-${selectedId}`);
+                    if (!document.fullscreenElement) {
+                      card?.requestFullscreen().catch(err => console.log(err));
+                    } else {
+                      document.exitFullscreen();
+                    }
+                  }}
+                  className="p-2 bg-black/70 hover:bg-white text-white hover:text-black rounded-full transition-colors backdrop-blur-md border border-white/20 hidden md:flex"
+                  title="Toggle Fullscreen"
+                >
+                  <Maximize2 size={20} />
+                </button>
+                <button
+                  onClick={() => setSelectedId(null)}
+                  className="p-2 bg-black/70 hover:bg-white text-white hover:text-black rounded-full transition-colors backdrop-blur-md border border-white/20"
+                >
+                  <X size={20} />
+                </button>
+              </div>
 
               {/* Bagian Media */}
               <div className="w-full h-[40vh] md:h-auto md:w-3/5 bg-black flex items-center justify-center relative overflow-hidden group flex-shrink-0">
@@ -872,8 +842,9 @@ export const Karya = () => {
               </div>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
-    </div>
+        )
+        }
+      </AnimatePresence >
+    </div >
   );
 };

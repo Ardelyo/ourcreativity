@@ -7,6 +7,7 @@ interface CodeEditorProps {
     language: string;
     theme?: 'vs-dark' | 'light';
     readOnly?: boolean;
+    fontSize?: number;
 }
 
 export const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -14,7 +15,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     onChange,
     language,
     theme = 'vs-dark',
-    readOnly = false
+    readOnly = false,
+    fontSize = 14
 }) => {
     const editorRef = useRef<any>(null);
 
@@ -59,7 +61,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
                 onMount={handleEditorDidMount}
                 options={{
                     minimap: { enabled: false },
-                    fontSize: 14,
+                    fontSize: fontSize,
                     fontFamily: 'JetBrains Mono, Menlo, monospace',
                     lineNumbers: 'on',
                     scrollBeyondLastLine: false,

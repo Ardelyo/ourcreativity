@@ -66,8 +66,8 @@ export const SlideBuilder: React.FC<SlideBuilderProps> = ({ slides, onChange }) 
             <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
                 {slides.map((slide, index) => (
                     <div key={slide.id} className="group relative flex items-center bg-[#1a1a1a] rounded-xl p-2 border border-white/5 hover:border-white/20 transition-all">
-                        <div className="px-2 text-gray-600 cursor-move">
-                            <GripVertical size={16} />
+                        <div className="px-3 md:px-2 text-gray-600 cursor-move py-2">
+                            <GripVertical size={20} />
                         </div>
 
                         <div className="w-16 h-16 bg-black rounded-lg overflow-hidden flex-shrink-0 border border-white/5">
@@ -106,9 +106,9 @@ export const SlideBuilder: React.FC<SlideBuilderProps> = ({ slides, onChange }) 
 
                         <button
                             onClick={() => removeSlide(slide.id)}
-                            className="p-2 text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="p-3 md:p-2 text-gray-500 hover:text-red-400 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                         >
-                            <X size={16} />
+                            <X size={20} />
                         </button>
                     </div>
                 ))}

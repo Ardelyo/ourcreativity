@@ -370,12 +370,12 @@ export const Studio = () => {
         switch (mode) {
             case 'text':
                 return (
-                    <div className="w-full h-full max-w-4xl mx-auto pt-24 pb-32 px-12 overflow-y-auto">
+                    <div className="w-full h-full max-w-4xl mx-auto pt-20 md:pt-24 pb-32 px-6 md:px-12 overflow-y-auto">
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Judul Tulisan..."
-                            className="text-5xl font-serif font-bold bg-transparent outline-none w-full mb-8 placeholder:text-gray-700"
+                            className="text-3xl md:text-5xl font-serif font-bold bg-transparent outline-none w-full mb-6 md:mb-8 placeholder:text-gray-700"
                         />
                         <TextEditor content={content} onChange={setContent} />
                     </div>
@@ -385,16 +385,16 @@ export const Studio = () => {
             case 'video':
             case 'meme': // Treat meme as image/video upload for now or specific editor if needed
                 return (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-12">
+                    <div className="w-full h-full flex flex-col items-center justify-center p-6 md:p-12">
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder={mode === 'video' ? "Judul Video..." : "Judul Karya Visual..."}
-                            className="text-4xl font-bold bg-transparent text-center outline-none w-full max-w-2xl mb-12 placeholder:text-gray-700"
+                            className="text-2xl md:text-4xl font-bold bg-transparent text-center outline-none w-full max-w-2xl mb-8 md:mb-12 placeholder:text-gray-700"
                         />
 
                         {mediaPreview ? (
-                            <div className="relative group max-w-3xl max-h-[60vh] rounded-3xl overflow-hidden shadow-2xl border border-white/10">
+                            <div className="relative group w-full max-w-3xl max-h-[50vh] md:max-h-[60vh] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-white/10">
                                 {mode === 'video' || (mediaFile?.type.startsWith('video')) ? (
                                     <video src={mediaPreview} controls className="w-full h-full object-contain" />
                                 ) : (
@@ -402,22 +402,22 @@ export const Studio = () => {
                                 )}
                                 <button
                                     onClick={() => { setMediaPreview(null); setMediaFile(null); }}
-                                    className="absolute top-4 right-4 bg-black/50 hover:bg-red-500 text-white p-2 rounded-full backdrop-blur-md transition-colors"
+                                    className="absolute top-2 right-2 md:top-4 md:right-4 bg-black/50 hover:bg-red-500 text-white p-2 rounded-full backdrop-blur-md transition-colors"
                                 >
-                                    <Trash2 size={20} />
+                                    <Trash2 size={16} />
                                 </button>
                             </div>
                         ) : (
-                            <div className="w-full max-w-xl h-96 border-4 border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center text-gray-500 hover:border-white/20 hover:bg-white/5 transition-all cursor-pointer relative">
+                            <div className="w-full max-w-xl h-64 md:h-96 border-4 border-dashed border-white/10 rounded-2xl md:rounded-3xl flex flex-col items-center justify-center text-gray-500 hover:border-white/20 hover:bg-white/5 transition-all cursor-pointer relative">
                                 <input
                                     type="file"
                                     accept={mode === 'video' ? "video/*" : "image/*"}
                                     onChange={handleFileSelect}
                                     className="absolute inset-0 opacity-0 cursor-pointer"
                                 />
-                                <Upload size={64} className="mb-6 opacity-50" />
-                                <h3 className="text-2xl font-bold mb-2">Upload {mode === 'video' ? 'Video' : 'Gambar'}</h3>
-                                <p className="text-sm opacity-60">Klik atau geser file ke sini</p>
+                                <Upload size={48} className="mb-4 md:mb-6 opacity-50 md:w-16 md:h-16" />
+                                <h3 className="text-xl md:text-2xl font-bold mb-2">Upload {mode === 'video' ? 'Video' : 'Gambar'}</h3>
+                                <p className="text-xs md:text-sm opacity-60">Klik atau geser file ke sini</p>
                             </div>
                         )}
                     </div>
@@ -425,16 +425,16 @@ export const Studio = () => {
 
             case 'slide':
                 return (
-                    <div className="w-full h-full flex flex-col pt-24 pb-32">
-                        <div className="max-w-6xl mx-auto w-full px-8 mb-8">
+                    <div className="w-full h-full flex flex-col pt-20 md:pt-24 pb-32">
+                        <div className="max-w-6xl mx-auto w-full px-4 md:px-8 mb-4 md:mb-8">
                             <input
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 placeholder="Judul Presentasi..."
-                                className="text-4xl font-bold bg-transparent outline-none w-full placeholder:text-gray-700"
+                                className="text-2xl md:text-4xl font-bold bg-transparent outline-none w-full placeholder:text-gray-700"
                             />
                         </div>
-                        <div className="flex-1 overflow-hidden px-8">
+                        <div className="flex-1 overflow-hidden px-4 md:px-8">
                             <SlideBuilder slides={slides} onChange={setSlides} />
                         </div>
                     </div>

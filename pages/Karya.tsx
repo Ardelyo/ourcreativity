@@ -8,6 +8,85 @@ import { useAuth } from '../components/AuthProvider';
 import { supabase } from '../lib/supabase';
 
 // Helper to generate live code preview HTML
+// Helper Component for Code Viewing
+const CodeViewer = ({ content }: { content: any }) => {
+  const [activeFileId, setActiveFileId] = useState<string | null>(null);
+
+  const files = React.useMemo(() => {
+    try {
+      if (typeof content === 'string') {
+        // Try parsing if string
+        if (content.trim().startsWith('[')) {
+          return JSON.parse(content);
+        }
+      }
+      if (Array.isArray(content)) {
+        return content;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }, [content]);
+
+  // Set initial active file when files load
+  useEffect(() => {
+    if (files && files.length > 0) {
+      setActiveFileId(files[0].id);
+    }
+  }, [files]);
+
+  const activeFile = files?.find((f: any) => f.id === activeFileId) || files?.[0];
+
+  if (!files || !Array.isArray(files)) {
+    // Fallback logic for legacy/simple content
+    const displayContent = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
+    return (
+      <div className="flex-1 overflow-auto p-3 md:p-6 bg-[#0d1117]">
+        <pre className="font-mono text-[10px] md:text-xs text-green-400 leading-relaxed whitespace-pre-wrap break-words">
+          {displayContent}
+        </pre>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-full flex flex-col overflow-hidden">
+      {/* Tab Bar - Scrollable on Mobile */}
+      <div className="flex-shrink-0 bg-[#161b22] border-b border-white/10 flex overflow-x-auto no-scrollbar">
+        {files.map((file: any) => (
+          <button
+            key={file.id}
+            onClick={() => setActiveFileId(file.id)}
+            className={`px-3 md:px-4 py-2 md:py-3 text-[10px] md:text-xs font-mono whitespace-nowrap border-b-2 transition-colors ${file.id === activeFileId
+              ? 'border-blue-500 text-white bg-[#0d1117]'
+              : 'border-transparent text-gray-500 hover:text-gray-300'
+              }`}
+          >
+            <span className={`mr-1.5 ${file.name?.endsWith('.html') ? 'text-orange-400' :
+              file.name?.endsWith('.css') ? 'text-blue-400' :
+                file.name?.endsWith('.js') ? 'text-yellow-400' : 'text-gray-400'
+              }`}>●</span>
+            {file.name || 'file'}
+          </button>
+        ))}
+      </div>
+
+      {/* Code Content - Responsive */}
+      <div className="flex-1 overflow-auto p-3 md:p-6 bg-[#0d1117]">
+        <pre className="font-mono text-[10px] md:text-xs leading-relaxed">
+          <code className={`${activeFile?.language === 'html' ? 'text-orange-300' :
+            activeFile?.language === 'css' ? 'text-blue-300' :
+              activeFile?.language === 'javascript' ? 'text-yellow-300' : 'text-green-300'
+            }`}>
+            {activeFile?.content || '// No content'}
+          </code>
+        </pre>
+      </div>
+    </div>
+  );
+};
+
 const generateCodePreview = (content: string, language: string = 'html'): string => {
   const baseStyles = `
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -543,7 +622,7 @@ export const Karya = () => {
       {/* Modal Detail */}
       <AnimatePresence>
         {selectedId && selectedArtwork && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 pt-20 pb-10 pointer-events-none">
+          <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:px-4 md:pt-20 md:pb-10 pointer-events-none">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -554,18 +633,19 @@ export const Karya = () => {
 
             <motion.div
               layoutId={`card-${selectedId}`}
-              className="relative w-full max-w-6xl bg-[#111] rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[85vh] pointer-events-auto border border-white/10"
+              className="relative w-full max-w-6xl bg-[#111] rounded-t-[2rem] md:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-[90vh] md:max-h-[85vh] pointer-events-auto border border-white/10"
               transition={{ type: "spring", stiffness: 200, damping: 25 }}
             >
+              {/* Close Button - Safe Position for Mobile */}
               <button
                 onClick={() => setSelectedId(null)}
-                className="absolute top-4 right-4 z-50 p-2 bg-black/50 hover:bg-white text-white hover:text-black rounded-full transition-colors backdrop-blur-md"
+                className="absolute top-3 right-3 md:top-4 md:right-4 z-50 p-2 bg-black/70 hover:bg-white text-white hover:text-black rounded-full transition-colors backdrop-blur-md border border-white/20"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
 
               {/* Bagian Media */}
-              <div className="w-full md:w-3/5 bg-black flex items-center justify-center relative overflow-hidden group">
+              <div className="w-full h-[40vh] md:h-auto md:w-3/5 bg-black flex items-center justify-center relative overflow-hidden group flex-shrink-0">
                 <motion.div layoutId={`content-${selectedId}`} className="w-full h-full flex items-center justify-center">
 
                   {/* ...Slide Logic... */}
@@ -636,21 +716,19 @@ export const Karya = () => {
                     </div>
                   )}
                   {selectedArtwork.type === 'code' && (
-                    <div className="w-full h-full bg-black relative flex flex-col">
-                      {/* Toggle View Button */}
-                      <div className="absolute top-4 left-4 z-50 flex gap-2">
+                    <div className="w-full h-full bg-[#0d1117] relative flex flex-col">
+                      {/* Toggle View Button - Mobile Friendly */}
+                      <div className="absolute top-2 right-2 md:top-4 md:right-4 z-50">
                         <button
                           onClick={() => setShowSourceCode(!showSourceCode)}
-                          className="bg-black/80 text-white px-3 py-1.5 rounded-full text-xs font-bold border border-white/20 backdrop-blur-md hover:bg-white hover:text-black transition-colors"
+                          className="bg-black/80 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full text-[10px] md:text-xs font-bold border border-white/20 backdrop-blur-md hover:bg-white hover:text-black transition-colors"
                         >
-                          {showSourceCode ? 'LIHAT HASIL' : 'LIHAT KODE'}
+                          {showSourceCode ? '▶ HASIL' : '</> KODE'}
                         </button>
                       </div>
 
                       {showSourceCode ? (
-                        <div className="w-full h-full overflow-auto bg-[#0d1117] p-6 font-mono text-xs text-green-400">
-                          <pre>{typeof selectedArtwork.content === 'string' ? selectedArtwork.content : JSON.stringify(selectedArtwork.content, null, 2)}</pre>
-                        </div>
+                        <CodeViewer content={selectedArtwork.content} />
                       ) : (
                         <iframe
                           src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(selectedArtwork.content, selectedArtwork.code_language || 'html'))}`}
@@ -664,8 +742,8 @@ export const Karya = () => {
                 </motion.div>
               </div>
 
-              {/* Bagian Detail */}
-              <div className="w-full md:w-2/5 p-8 md:p-12 overflow-y-auto custom-scrollbar bg-[#111] border-l border-white/10">
+              {/* Bagian Detail - Flex-1 to fill remaining space, scrollable */}
+              <div className="flex-1 md:w-2/5 p-4 md:p-8 lg:p-12 overflow-y-auto custom-scrollbar bg-[#111] border-t md:border-t-0 md:border-l border-white/10">
                 <div className="flex items-center justify-between mb-8">
                   <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 ${selectedArtwork.division === 'coding' ? 'bg-green-500/10 text-green-400' :
                     selectedArtwork.division === 'video' ? 'bg-orange-500/10 text-orange-400' :

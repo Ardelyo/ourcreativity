@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Maximize2, Minimize2, Settings, ArrowLeft,
-    Image as ImageIcon, Type, Code, Globe,
-    Save, Upload, ChevronRight, X, Play,
-    Monitor, Check, Clock, Trash2, RotateCcw,
-    Layers
+    Maximize2, Settings,
+    Image as ImageIcon, Globe,
+    Save, Upload, ChevronDown, X,
+    Trash2, Layers
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthProvider';
@@ -13,19 +12,21 @@ import { supabase } from '../lib/supabase';
 import { useIsMobile } from '../hooks/useIsMobile';
 
 // Sub-components
-import { EditorLayout } from '../components/CreationStudio/ControlCenter/EditorLayout';
-import { MobileEditorLayout } from '../components/CreationStudio/ControlCenter/MobileEditorLayout';
-import { MobileActionDock } from '../components/CreationStudio/ControlCenter/MobileActionDock';
-import { CodeFile } from '../components/CreationStudio/ControlCenter/types';
-
-import { TextEditor } from '../components/CreationStudio/editors/TextEditor';
-import { SlideBuilder } from '../components/CreationStudio/carousel/SlideBuilder';
-import { WebsiteEmbed } from '../components/CreationStudio/embed/WebsiteEmbed';
-import { DocumentUploader } from '../components/CreationStudio/editors/DocumentUploader';
-import { MediumSelector } from '../components/CreationStudio/MediumSelector';
-import { IframeSandbox } from '../components/CreationStudio/sandbox/IframeSandbox'; // Legacy Keep for Preview if needed
-import { PyodideSandbox } from '../components/CreationStudio/sandbox/PyodideSandbox';
-import { InteractiveSandbox } from '../components/CreationStudio/ControlCenter/InteractiveSandbox'; // Legacy Keep for Preview if needed
+import { EditorLayout } from '@/components/CreationStudio/ControlCenter/EditorLayout';
+import { MobileEditorLayout } from '@/components/CreationStudio/ControlCenter/MobileEditorLayout';
+import { MobileActionDock } from '@/components/CreationStudio/ControlCenter/MobileActionDock';
+import { CodeFile } from '@/components/CreationStudio/ControlCenter/types';
+import { DraftManager } from '@/components/CreationStudio/ControlCenter/DraftManager';
+import { TextEditor } from '@/components/CreationStudio/editors/TextEditor';
+import { VisualBuilder } from '@/components/CreationStudio/carousel/VisualBuilder';
+import { WebsiteEmbed } from '@/components/CreationStudio/embed/WebsiteEmbed';
+import { DocumentUploader } from '@/components/CreationStudio/editors/DocumentUploader';
+import { MediumSelector } from '@/components/CreationStudio/MediumSelector';
+import { IframeSandbox } from '@/components/CreationStudio/sandbox/IframeSandbox';
+import { PyodideSandbox } from '@/components/CreationStudio/sandbox/PyodideSandbox';
+import { InteractiveSandbox } from '@/components/CreationStudio/ControlCenter/InteractiveSandbox';
+import { StudioHeader } from '@/components/CreationStudio/StudioHeader';
+import { PreviewCarousel } from '@/components/CreationStudio/PreviewCarousel';
 
 // Types
 import { CreationData, WorkType, DivisionId } from '../components/CreationStudio/types';
@@ -50,15 +51,10 @@ const DEFAULT_PROJECT_FILES = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Creation</title>
-    <!-- CSS is injected automatically -->
-    <!-- Libraries: Uncomment to use -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
 </head>
 <body>
-    <main>
-    </main>
-    <!-- Scripts injected automatically -->
+    <main></main>
 </body>
 </html>`
     },
@@ -67,46 +63,29 @@ const DEFAULT_PROJECT_FILES = [
         name: 'style.css',
         language: 'css' as const,
         isMain: false,
-        content: `body {
-    margin: 0;
-    padding: 0;
-    background: #111;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-family: sans-serif;
-}
-canvas {
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-}`
+        content: `body { margin: 0; background: #111; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; }`
     },
     {
         id: '3',
         name: 'script.js',
         language: 'javascript' as const,
         isMain: false,
-        content: `function setup() {
-  createCanvas(400, 400);
-}
-
-function draw() {
-  background(20);
-  fill(255, 0, 100);
-  noStroke();
-  circle(mouseX, mouseY, 50);
-}`
+        content: `function setup() { createCanvas(400, 400); } \nfunction draw() { background(20); fill(255, 0, 100); circle(mouseX, mouseY, 50); }`
     }
 ];
 
 export const Studio = () => {
     const navigate = useNavigate();
     const { user, profile, loading: authLoading } = useAuth();
-    const isMobile = useIsMobile(); // Hook for responsive logic
+    const isMobile = useIsMobile();
+
+    // --- STATE: DRAFT MANAGEMENT ---
+    const [drafts, setDrafts] = useState<any[]>([]);
+    const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
+    const [showDrafts, setShowDrafts] = useState(false);
 
     // --- STATE: MODE & CONTENT ---
-    const [mode, setMode] = useState<WorkType>('text'); // text, image, video, slide, code, embed
+    const [mode, setMode] = useState<WorkType>('text');
     const [title, setTitle] = useState('Karya Tanpa Judul');
     const [content, setContent] = useState('');
     const [mediaFile, setMediaFile] = useState<File | null>(null);
@@ -114,8 +93,6 @@ export const Studio = () => {
     const [slides, setSlides] = useState<any[]>([]);
     const [embedUrl, setEmbedUrl] = useState('');
     const [codeLanguage, setCodeLanguage] = useState('javascript');
-
-    // CODE STATE
     const [codeFiles, setCodeFiles] = useState<CodeFile[]>(DEFAULT_PROJECT_FILES);
 
     // --- STATE: METADATA ---
@@ -133,103 +110,205 @@ export const Studio = () => {
     // --- STATE: CODE EXECUTION ---
     const [triggerRun, setTriggerRun] = useState(0);
     const [dockMinimized, setDockMinimized] = useState(false);
-    const [consoleOutput, setConsoleOutput] = useState('');
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // --- EFFECT: AUTH & INIT ---
+    // --- EFFECT: INITIAL LOAD ---
     useEffect(() => {
         if (!authLoading && !user) navigate('/login');
 
-        // Load Draft
-        const savedDraft = localStorage.getItem('oc_studio_draft');
-        if (savedDraft) {
+        const savedDrafts = localStorage.getItem('oc_studio_v2_drafts');
+        if (savedDrafts) {
             try {
-                const parsed = JSON.parse(savedDraft);
-                // Confirm restore logic could go here, for now auto-restore
-                setTitle(parsed.title || 'Karya Tanpa Judul');
-                setMode(parsed.mode || 'text');
-                setContent(parsed.content || '');
-                setDescription(parsed.description || '');
-                setEmbedUrl(parsed.embedUrl || '');
-                setCodeLanguage(parsed.codeLanguage || 'javascript');
-                setSlides(parsed.slides || []);
-                setTags(parsed.tags || []);
-                setDivision(parsed.division || 'graphics');
-                if (parsed.codeFiles) setCodeFiles(parsed.codeFiles);
+                const parsed = JSON.parse(savedDrafts);
+                // Migrate any 'slide' drafts to 'image'
+                const migrated = parsed.map((d: any) => d.mode === 'slide' ? { ...d, mode: 'image' } : d);
+                setDrafts(migrated);
+
+                if (migrated.length > 0) {
+                    // Try to load the most recent draft of the current mode (default text)
+                    const mostRecentOfMode = migrated
+                        .filter((d: any) => d.mode === mode)
+                        .sort((a: any, b: any) => new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime())[0];
+
+                    if (mostRecentOfMode) {
+                        applyDraft(mostRecentOfMode);
+                    } else {
+                        // If no draft for current mode, load the most recent draft overall
+                        const mostRecent = migrated.sort((a: any, b: any) =>
+                            new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime()
+                        )[0];
+                        applyDraft(mostRecent);
+                    }
+                } else {
+                    handleNewDraft(mode);
+                }
             } catch (e) {
-                console.error("Failed to restore draft", e);
+                console.error("Failed to load drafts", e);
+                handleNewDraft(mode);
+            }
+        } else {
+            handleNewDraft(mode);
+        }
+    }, [authLoading, user]);
+
+    const applyDraft = (draft: any) => {
+        setCurrentDraftId(draft.id);
+        setTitle(draft.title || 'Karya Tanpa Judul');
+        setMode(draft.mode || 'text');
+        setContent(draft.content || '');
+        setDescription(draft.description || '');
+        setEmbedUrl(draft.embedUrl || '');
+        setCodeLanguage(draft.codeLanguage || 'javascript');
+        setSlides(draft.slides || []);
+        setTags(draft.tags || []);
+        setDivision(draft.division || 'graphics');
+        if (draft.codeFiles) setCodeFiles(draft.codeFiles);
+        setMediaPreview(draft.mediaPreview || null);
+    };
+
+    const handleNewDraft = (specificMode?: WorkType) => {
+        const newId = typeof crypto.randomUUID === 'function'
+            ? crypto.randomUUID()
+            : Math.random().toString(36).substring(2, 15);
+
+        const targetMode = specificMode || mode;
+        const newDraft = {
+            id: newId,
+            title: 'Karya Tanpa Judul',
+            mode: targetMode,
+            content: '',
+            lastSaved: new Date().toISOString()
+        };
+        // Don't add to list yet, only on first save
+        applyDraft(newDraft);
+        setShowDrafts(false);
+    };
+
+    const switchMode = (newMode: WorkType) => {
+        if (newMode === mode) return;
+
+        // Try to find the most recent draft of the NEW mode
+        const existingDraft = drafts
+            .filter(d => d.mode === newMode)
+            .sort((a, b) => new Date(b.lastSaved).getTime() - new Date(a.lastSaved).getTime())[0];
+
+        if (existingDraft) {
+            applyDraft(existingDraft);
+        } else {
+            handleNewDraft(newMode);
+        }
+    };
+
+    const handleDeleteDraft = (id: string) => {
+        const updated = drafts.filter(d => d.id !== id);
+        setDrafts(updated);
+        localStorage.setItem('oc_studio_v2_drafts', JSON.stringify(updated));
+        if (currentDraftId === id) {
+            if (updated.length > 0) {
+                applyDraft(updated[0]);
+            } else {
+                handleNewDraft();
             }
         }
-    }, [authLoading, user, navigate]);
+    };
 
     // --- EFFECT: AUTO-SAVE ---
     const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const saveDraft = useCallback(() => {
+    const saveDraftsToStorage = useCallback(() => {
+        if (!currentDraftId) return;
+
+        // Smart Save: Only save if title is changed or content is not empty
+        const isDefaultTitle = title === 'Karya Tanpa Judul' || !title.trim();
+        const hasContent = content.trim().length > 0 || slides.length > 0 || embedUrl.trim().length > 0;
+
+        if (isDefaultTitle && !hasContent) {
+            console.log("Skipping auto-draft: empty draft");
+            return;
+        }
+
         setDraftStatus('saving');
-        const draftData = {
+        const currentData = {
+            id: currentDraftId,
             title, mode, content, description, embedUrl, codeLanguage, slides, tags, division, codeFiles,
+            mediaPreview,
             lastSaved: new Date().toISOString()
         };
-        localStorage.setItem('oc_studio_draft', JSON.stringify(draftData));
+
+        const updatedDrafts = drafts.filter(d => d.id !== currentDraftId);
+        updatedDrafts.unshift(currentData); // Put current at top
+
+        setDrafts(updatedDrafts);
+        localStorage.setItem('oc_studio_v2_drafts', JSON.stringify(updatedDrafts));
+
         setTimeout(() => setDraftStatus('saved'), 500);
         setTimeout(() => setDraftStatus('idle'), 2000);
-    }, [title, mode, content, description, embedUrl, codeLanguage, slides, tags, division, codeFiles]);
+    }, [currentDraftId, title, mode, content, description, embedUrl, codeLanguage, slides, tags, division, codeFiles, mediaPreview, drafts]);
 
     useEffect(() => {
         if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-        saveTimeoutRef.current = setTimeout(saveDraft, 2000); // Debounce 2s
-        return () => clearTimeout(saveTimeoutRef.current);
-    }, [saveDraft]);
+        saveTimeoutRef.current = setTimeout(saveDraftsToStorage, 2000);
+        return () => { if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current); };
+    }, [saveDraftsToStorage]);
 
     // --- UPLOAD HANDLERS ---
-
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-
-        // Validation
-        if (mode === 'image' && !file.type.startsWith('image/')) {
-            alert('Please select an image file');
-            return;
-        }
-        if (mode === 'video' && !file.type.startsWith('video/')) {
-            alert('Please select a video file');
-            return;
-        }
-
         const previewUrl = URL.createObjectURL(file);
         setMediaFile(file);
         setMediaPreview(previewUrl);
     };
 
-    const handleMediaUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setMediaFile(file);
-            const reader = new FileReader();
-            reader.onloadend = () => setMediaPreview(reader.result as string);
-            reader.readAsDataURL(file);
-        }
-    };
+    const uploadToSupabase = async (file: File | Blob, path?: string) => {
+        const fileExt = file instanceof File ? file.name.split('.').pop() : 'jpg';
+        const fileName = path || `${user?.id}/${Date.now()}.${fileExt}`;
 
-    const uploadToSupabase = async (file: File) => {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${user?.id}/${Date.now()}.${fileExt}`;
-        const { error } = await supabase.storage.from('works').upload(fileName, file);
+        // Convert base64 to blob if needed is handled before calling this, but ensure we have file/blob
+        const { error } = await supabase.storage.from('works').upload(fileName, file, {
+            contentType: file.type || 'image/jpeg',
+            upsert: true
+        });
         if (error) throw error;
         const { data } = supabase.storage.from('works').getPublicUrl(fileName);
         return data.publicUrl;
     };
 
+    const processSlidesForUpload = async (slidesData: any[]) => {
+        if (!slidesData || slidesData.length === 0) return [];
+
+        const processedSlides = await Promise.all(slidesData.map(async (slide, index) => {
+            // Check if content is base64
+            if (slide.content && slide.content.startsWith('data:image')) {
+                try {
+                    // Convert base64 to Blob
+                    const fetchRes = await fetch(slide.content);
+                    const blob = await fetchRes.blob();
+
+                    // Upload
+                    const fileName = `${user?.id}/slides/${Date.now()}_${index}.jpg`;
+                    const publicUrl = await uploadToSupabase(blob, fileName);
+
+                    return { ...slide, content: publicUrl };
+                } catch (e) {
+                    console.error("Failed to upload slide image", e);
+                    return slide; // Return original on fail, though it might fail DB insert
+                }
+            }
+            return slide; // Already a URL or text
+        }));
+
+        return processedSlides;
+    };
+
     const handlePublish = async () => {
-        if (!title.trim()) {
+        if (!title.trim() || title === 'Karya Tanpa Judul') {
             setShowSettings(true);
-            alert("Mohon isi Judul Karya terlebih dahulu sebelum mempublikasikan."); // Or use a toast if available, but alert is simple for now as requested "wajib kasih title"
+            alert("Judul wajib diisi. Silakan berikan judul yang unik untuk karyamu.");
             return;
         }
 
-        if (!user) {
-            alert("Silakan login untuk mempublikasikan karya.");
+        if (!division) {
+            setShowSettings(true);
+            alert("Harap pilih Divisi yang sesuai sebelum publikasi.");
             return;
         }
 
@@ -237,453 +316,347 @@ export const Studio = () => {
             setIsPublishing(true);
             setPublishProgress({ percent: 10, message: 'Menyiapkan...' });
 
-            let finalImageUrl = mediaPreview; // Default to preview (base64) or existing
-            let finalSlides = [...slides];
-
-            // 1. Upload Media Principal
-            // 1. Upload Media Principal
+            let finalImageUrl = mediaPreview;
             if (mediaFile) {
-                setPublishProgress({ percent: 30, message: 'Mengunggah media utama...' });
+                setPublishProgress({ percent: 30, message: 'Mengunggah media...' });
                 finalImageUrl = await uploadToSupabase(mediaFile);
-            } else if (mediaPreview && mediaPreview.startsWith('data:')) {
-                // Handle restored draft or base64 without file object
-                setPublishProgress({ percent: 35, message: 'Mengunggah ulang media dari draft...' });
-                try {
-                    const res = await fetch(mediaPreview);
-                    const blob = await res.blob();
-                    const file = new File([blob], `restored_cover_${Date.now()}.jpg`, { type: blob.type || 'image/jpeg' });
-                    finalImageUrl = await uploadToSupabase(file);
-                } catch (e) {
-                    console.error("Failed to process base64 image", e);
-                    // Fallback: keep base64 or set null? keeping it might fail DB, but better than crash.
-                    // Actually, if fail, warn user.
-                    // alert("Gagal memproses gambar. Silakan unggah ulang gambar utama.");
-                    // throw new Error("Gagal memproses gambar.");
-                }
             }
 
-            // 2. Process Slides
-            if (mode === 'slide' && slides.length > 0) {
-                setPublishProgress({ percent: 50, message: 'Mengunggah slide...' });
-                finalSlides = await Promise.all(slides.map(async (slide) => {
-                    if (slide.type === 'image' && slide.content.startsWith('data:')) {
-                        const res = await fetch(slide.content);
-                        const blob = await res.blob();
-                        const file = new File([blob], `slide_${slide.id}.jpg`, { type: 'image/jpeg' });
-                        const url = await uploadToSupabase(file);
-                        return { ...slide, content: url };
-                    }
-                    return slide;
-                }));
+            setPublishProgress({ percent: 50, message: 'Memproses slide visual...' });
+            let finalSlides = slides;
+            if (mode === 'image' || mode === 'meme') {
+                finalSlides = await processSlidesForUpload(slides);
             }
 
-            // 3. Simpan Database
             setPublishProgress({ percent: 80, message: 'Menyimpan ke database...' });
-
             const payload = {
-                title,
-                description,
+                title, description, image_url: finalImageUrl,
+                author: profile?.username || 'Anonymous',
+                author_id: user?.id, role: profile?.role || 'Member',
+                division, type: mode, tags,
                 content: mode === 'code' ? JSON.stringify(codeFiles) : content,
-                image_url: finalImageUrl,
-                author: user?.user_metadata?.username || profile?.username || 'Anonymous',
-                author_id: user?.id,
-                profile_id: profile?.id,
-                role: profile?.role || 'Member',
-                division,
-                type: mode,
-                tags,
-                slides: finalSlides,
                 code_language: mode === 'code' ? 'json_multifile' : codeLanguage,
+                slides: (mode === 'image' || mode === 'meme') ? finalSlides : null,
                 embed_url: embedUrl
             };
-
-            console.log("Publish Payload:", { ...payload, content: payload.content?.substring(0, 100) + '...', image_url: finalImageUrl?.substring(0, 50) + '...' });
 
             const { error } = await supabase.from('works').insert([payload]);
             if (error) throw error;
 
             setPublishProgress({ percent: 100, message: 'Berhasil!' });
-            localStorage.removeItem('oc_studio_draft'); // Clear draft
+            handleDeleteDraft(currentDraftId!); // Remove from drafts after publish
             setTimeout(() => navigate('/karya'), 800);
-
         } catch (err: any) {
-            console.error(err);
-            alert("Gagal mempublikasikan: " + err.message);
+            alert("Gagal: " + err.message);
             setIsPublishing(false);
         }
     };
 
-    // --- RENDERERS ---
-
-    const renderCanvas = () => {
-        if (isPreview && mode === 'code') {
-            return (
-                <div className="w-full h-full flex flex-col bg-white text-black overflow-hidden relative">
-                    <InteractiveSandbox
-                        files={codeFiles}
-                        triggerRun={triggerRun}
-                        onConsole={(msg) => console.log('Fullscreen Console:', msg)}
-                    />
-                    <button
-                        onClick={() => setIsPreview(false)}
-                        className="absolute top-4 right-4 bg-black text-white px-4 py-2 rounded-full text-xs font-bold z-50 flex items-center gap-2 hover:scale-105 transition-transform"
-                    >
-                        <Code size={14} /> KEMBALI KE EDITOR
-                    </button>
-                    {/* Replaced legacy IframeSandbox with InteractiveSandbox */}
-                </div>
-            )
-        }
-
-        if (isPreview) {
-            return (
-                <div className="w-full h-full overflow-y-auto bg-black p-8 flex justify-center">
-                    <div className="max-w-4xl w-full bg-[#0a0a0a] border border-white/10 rounded-3xl p-12 min-h-full shadow-2xl relative">
-                        <button
-                            onClick={() => setIsPreview(false)}
-                            className="absolute top-6 right-6 bg-white/10 text-white p-2 rounded-full hover:bg-white/20 transition-all"
-                        >
-                            <X size={20} />
-                        </button>
-                        <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4 leading-tight">{title}</h1>
-                        <div className="flex gap-3 mb-8">
-                            <span className="px-3 py-1 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/20 text-xs font-bold uppercase tracking-wider">{DIVISIONS.find(d => d.id === division)?.name}</span>
-                            <span className="px-3 py-1 rounded-full bg-white/5 text-gray-400 border border-white/5 text-xs font-bold uppercase tracking-wider">{mode}</span>
-                        </div>
-                        <div className="prose prose-invert prose-lg max-w-none">
-                            {mode === 'text' && <div dangerouslySetInnerHTML={{ __html: content }} />}
-                            {mode === 'embed' && <WebsiteEmbed url={embedUrl} />}
-                            {(mode === 'image' || mode === 'video') && mediaPreview && (
-                                mode === 'image' ? <img src={mediaPreview} className="rounded-2xl w-full" /> : <video src={mediaPreview} controls className="rounded-2xl w-full" />
-                            )}
-                            {mode === 'slide' && (
-                                <div className="grid grid-cols-2 gap-4">
-                                    {slides.map(s => (
-                                        <div key={s.id} className="aspect-video bg-white/5 rounded-xl overflow-hidden relative">
-                                            {s.type === 'image' ? <img src={s.content} className="w-full h-full object-cover" /> : <div className="p-4 text-xs">{s.content}</div>}
-                                            <div className="absolute bottom-2 right-2 bg-black/50 px-2 py-1 rounded text-[10px] font-bold">Slide {s.order + 1}</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            )
-        }
-
+    // Unified Content Renderer
+    const renderContent = () => {
         switch (mode) {
             case 'text':
                 return (
-                    <div className="w-full h-full max-w-4xl mx-auto pt-16 md:pt-24 pb-32 px-4 md:px-12 overflow-y-auto">
+                    <div className="w-full h-full max-w-4xl mx-auto pt-24 pb-32 px-6 md:px-0 overflow-y-auto custom-scrollbar">
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Judul Tulisan..."
-                            className="text-3xl md:text-5xl font-serif font-bold bg-transparent outline-none w-full mb-6 md:mb-8 placeholder:text-gray-700"
+                            placeholder="Judul Karya Tulis..."
+                            className="text-4xl md:text-5xl font-serif font-bold bg-transparent outline-none w-full mb-8 placeholder:text-white/10"
                         />
-                        <TextEditor content={content} onChange={setContent} />
+                        <TextEditor content={content} onChange={setContent} className="min-h-[60vh]" />
+                    </div>
+                );
+            case 'code':
+                return (
+                    <div className="w-full h-full relative pt-[4.5rem]">
+                        {isMobile ? <MobileEditorLayout files={codeFiles} setFiles={setCodeFiles} triggerRun={triggerRun} /> : <EditorLayout files={codeFiles} setFiles={setCodeFiles} />}
+                    </div>
+                );
+            case 'image':
+            case 'meme': // Unified Visual Mode
+                return (
+                    <div className="w-full h-full flex flex-col pt-16 md:pt-24 pb-32">
+                        <div className="max-w-6xl mx-auto w-full px-4 md:px-8 mb-4 md:mb-8 text-center md:text-left">
+                            <input
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                placeholder="Judul Visual Story..."
+                                className="text-3xl md:text-5xl font-serif font-bold bg-transparent outline-none w-full placeholder:text-gray-700"
+                            />
+                        </div>
+                        <div className="flex-1 overflow-hidden px-4 md:px-8">
+                            <VisualBuilder slides={slides} onChange={setSlides} />
+                        </div>
                     </div>
                 );
 
-            case 'image':
             case 'video':
-            case 'meme': // Treat meme as image/video upload for now or specific editor if needed
+                // Keeping Video Separate as per plan (Phase 3)
                 return (
                     <div className="w-full h-full flex flex-col items-center justify-center p-6 md:p-12">
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder={mode === 'video' ? "Judul Video..." : "Judul Karya Visual..."}
+                            placeholder="Judul Video..."
                             className="text-2xl md:text-4xl font-bold bg-transparent text-center outline-none w-full max-w-2xl mb-8 md:mb-12 placeholder:text-gray-700"
                         />
-
+                        {/* Video Upload Logic remains similar for now until Phase 3 */}
                         {mediaPreview ? (
-                            <div className="relative group w-full max-w-3xl max-h-[50vh] md:max-h-[60vh] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-white/10">
-                                {mode === 'video' || (mediaFile?.type.startsWith('video')) ? (
-                                    <video src={mediaPreview} controls className="w-full h-full object-contain" />
-                                ) : (
-                                    <img src={mediaPreview} className="w-full h-full object-contain" />
-                                )}
+                            <div className="relative group w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl border border-white/10">
+                                <video src={mediaPreview} controls className="w-full h-full object-contain" />
                                 <button
                                     onClick={() => { setMediaPreview(null); setMediaFile(null); }}
-                                    className="absolute top-2 right-2 md:top-4 md:right-4 bg-black/50 hover:bg-red-500 text-white p-2 rounded-full backdrop-blur-md transition-colors"
+                                    className="absolute top-4 right-4 bg-black/50 hover:bg-red-500 text-white p-2 rounded-full backdrop-blur-md transition-colors"
                                 >
                                     <Trash2 size={16} />
                                 </button>
                             </div>
                         ) : (
-                            <div className="w-full max-w-xl h-64 md:h-96 border-4 border-dashed border-white/10 rounded-2xl md:rounded-3xl flex flex-col items-center justify-center text-gray-500 hover:border-white/20 hover:bg-white/5 transition-all cursor-pointer relative">
+                            <div className="w-full max-w-xl h-64 md:h-96 border-4 border-dashed border-white/10 rounded-[3rem] flex flex-col items-center justify-center text-gray-500 hover:border-white/20 hover:bg-white/5 transition-all cursor-pointer relative">
                                 <input
                                     type="file"
-                                    accept={mode === 'video' ? "video/*" : "image/*"}
+                                    accept="video/*"
                                     onChange={handleFileSelect}
                                     className="absolute inset-0 opacity-0 cursor-pointer"
                                 />
-                                <Upload size={48} className="mb-4 md:mb-6 opacity-50 md:w-16 md:h-16" />
-                                <h3 className="text-xl md:text-2xl font-bold mb-2">Upload {mode === 'video' ? 'Video' : 'Gambar'}</h3>
-                                <p className="text-xs md:text-sm opacity-60">Klik atau geser file ke sini</p>
+                                <Upload size={64} className="mb-6 opacity-20" />
+                                <h3 className="text-2xl font-bold mb-2">Upload Video</h3>
+                                <p className="text-sm opacity-40">Klik atau seret file ke sini</p>
                             </div>
                         )}
                     </div>
                 );
-
-            case 'slide':
+            case 'document':
                 return (
                     <div className="w-full h-full flex flex-col pt-16 md:pt-24 pb-32">
-                        <div className="max-w-6xl mx-auto w-full px-4 md:px-8 mb-4 md:mb-8">
+                        <div className="max-w-4xl mx-auto w-full px-6 md:px-0 mb-8">
                             <input
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                placeholder="Judul Presentasi..."
-                                className="text-2xl md:text-4xl font-bold bg-transparent outline-none w-full placeholder:text-gray-700"
+                                placeholder="Judul Dokumen..."
+                                className="text-4xl md:text-5xl font-serif font-bold bg-transparent outline-none w-full placeholder:text-gray-700"
                             />
                         </div>
-                        <div className="flex-1 overflow-hidden px-4 md:px-8">
-                            <SlideBuilder slides={slides} onChange={setSlides} />
+                        <div className="flex-1 min-h-[60vh] md:min-h-[75vh] overflow-hidden">
+                            <DocumentUploader content={content} onChange={setContent} />
                         </div>
                     </div>
                 );
-
             case 'embed':
                 return (
-                    <div className="w-full h-full flex flex-col items-center pt-24 px-4 md:px-8">
-                        <div className="w-full max-w-3xl space-y-4 md:space-y-8">
-                            <input
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                placeholder="Judul Bookmark..."
-                                className="text-4xl font-bold bg-transparent text-center outline-none w-full placeholder:text-gray-700"
-                            />
-
-                            <div className="bg-[#111] p-2 rounded-2xl border border-white/10 flex gap-4 items-center pl-6 pr-2 shadow-xl">
+                    <div className="w-full h-full flex flex-col items-center pt-24 px-8">
+                        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Judul Embed..." className="text-4xl font-bold bg-transparent text-center outline-none w-full mb-12" />
+                        <div className="w-full max-w-3xl space-y-8">
+                            <div className="bg-[#111] p-2 rounded-2xl border border-white/10 flex gap-4 items-center px-6 shadow-xl leading-none">
                                 <Globe className="text-gray-500" />
-                                <input
-                                    value={embedUrl}
-                                    onChange={(e) => setEmbedUrl(e.target.value)}
-                                    placeholder="https://example.com"
-                                    className="bg-transparent flex-1 py-4 outline-none text-white font-mono"
-                                />
+                                <input value={embedUrl} onChange={(e) => setEmbedUrl(e.target.value)} placeholder="https://..." className="bg-transparent flex-1 py-5 outline-none font-mono" />
                             </div>
-
-                            <div className="w-full h-[50vh] bg-black rounded-2xl border border-white/10 overflow-hidden relative">
-                                {embedUrl ? (
-                                    <WebsiteEmbed url={embedUrl} />
-                                ) : (
-                                    <div className="absolute inset-0 flex items-center justify-center text-gray-700 font-bold tracking-widest uppercase">
-                                        Preview Tampil Disini
-                                    </div>
-                                )}
+                            <div className="aspect-video bg-black rounded-[2rem] border border-white/10 overflow-hidden shadow-2xl relative">
+                                {embedUrl ? <WebsiteEmbed url={embedUrl} /> : <div className="absolute inset-0 flex items-center justify-center text-gray-800 font-bold uppercase tracking-widest">Preview Area</div>}
                             </div>
                         </div>
                     </div>
                 );
-
-            case 'code':
-                return (
-                    <div className="w-full h-full relative flex flex-col">
-                        <div className="absolute top-2 left-64 z-10 w-96 transform translate-y-2">
-                            <input
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                placeholder="Nama Project..."
-                                className="bg-transparent text-sm font-bold text-gray-400 placeholder:text-gray-700 outline-none w-full focus:text-white transition-colors"
-                            />
-                        </div>
-                        {/* Pass state to EditorLayout or MobileEditorLayout */}
-                        {isMobile ? (
-                            <MobileEditorLayout
-                                files={codeFiles}
-                                setFiles={setCodeFiles}
-                                triggerRun={triggerRun} // Pass trigger run
-                            />
-                        ) : (
-                            <EditorLayout files={codeFiles} setFiles={setCodeFiles} />
-                        )}
-                    </div>
-                );
+            default: return null;
         }
     };
 
-    // --- RENDER ---
+    if (isPreview) {
+        if (mode === 'image' || mode === 'meme') {
+            return (
+                <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
+                    <button onClick={() => setIsPreview(false)} className="absolute top-8 right-8 bg-white/10 text-white p-3 rounded-full hover:bg-white/20 transition-all z-10 backdrop-blur-md"><X size={24} /></button>
+                    <div className="w-full h-full p-4">
+                        <PreviewCarousel slides={slides} />
+                    </div>
+                </div>
+            );
+        }
 
-    if (authLoading) return <div className="h-screen bg-black flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white animate-spin" /></div>;
-
+        return (
+            <div className="fixed inset-0 z-50 overflow-y-auto bg-black p-4 md:p-8 flex justify-center custom-scrollbar">
+                <div className="max-w-4xl w-full bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-6 md:p-16 min-h-full shadow-2xl relative">
+                    <button onClick={() => setIsPreview(false)} className="absolute top-8 right-8 bg-white/5 text-white p-3 rounded-full hover:bg-white/10 transition-all z-10"><X size={24} /></button>
+                    <h1 className="text-4xl md:text-7xl font-serif font-bold mb-6 leading-[1.1]">{title}</h1>
+                    <div className="flex gap-3 mb-12">
+                        <span className="px-4 py-1.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/20 text-[10px] font-bold uppercase tracking-widest">{DIVISIONS.find(d => d.id === division)?.name}</span>
+                    </div>
+                    <div className="prose prose-invert prose-xl max-w-none">
+                        {mode === 'text' && <div dangerouslySetInnerHTML={{ __html: content }} />}
+                        {mode === 'embed' && <WebsiteEmbed url={embedUrl} />}
+                        {mode === 'video' && mediaPreview && (
+                            <video src={mediaPreview} controls className="rounded-3xl w-full" />
+                        )}
+                        {mode === 'code' && (
+                            <div className="aspect-video bg-white rounded-3xl overflow-hidden shadow-2xl">
+                                <InteractiveSandbox
+                                    files={codeFiles}
+                                    triggerRun={triggerRun}
+                                    onConsole={(log) => console.log(log)}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
     return (
-        <div className="fixed inset-0 bg-[#050505] text-white font-sans selection:bg-rose-500/30 flex flex-col">
-
-            {/* OVERLAY: PUBLISHING */}
+        <div className="fixed inset-0 bg-[#050505] text-white font-sans selection:bg-rose-500/30 flex">
+            {/* DRAFT MANAGER SIDEBAR */}
             <AnimatePresence>
-                {isPublishing && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center flex-col">
-                        <div className="w-24 h-24 rounded-full border-4 border-white/10 border-t-rose-500 animate-spin mb-8" />
-                        <h2 className="text-2xl font-serif font-bold mb-2">{publishProgress.message}</h2>
-                        <div className="w-64 h-1 bg-white/10 rounded-full overflow-hidden mt-4">
-                            <motion.div className="h-full bg-rose-500" animate={{ width: `${publishProgress.percent}%` }} />
-                        </div>
-                    </motion.div>
+                {showDrafts && (
+                    <DraftManager
+                        currentDraftId={currentDraftId}
+                        drafts={drafts.filter(d => d.mode === mode)}
+                        onSelect={applyDraft}
+                        onDelete={handleDeleteDraft}
+                        onNew={() => handleNewDraft(mode)}
+                        onClose={() => setShowDrafts(false)}
+                    />
                 )}
             </AnimatePresence>
 
-            {/* HEADERLESS TOP AREA (Just Back Button & Status) */}
-            <div className={`absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-40 pointer-events-none ${isPreview ? 'opacity-0' : 'opacity-100'} transition-opacity hover:opacity-100`}>
-                <button onClick={() => navigate('/karya')} className="pointer-events-auto w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all backdrop-blur-sm">
-                    <ArrowLeft size={20} />
-                </button>
-
-                <div className="flex flex-col items-end gap-2">
-                    <AnimatePresence>
-                        {draftStatus !== 'idle' && (
-                            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 bg-black/40 px-3 py-1.5 rounded-full border border-white/5 backdrop-blur-sm">
-                                {draftStatus === 'saving' ? <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" /> : <Check size={12} className="text-green-500" />}
-                                {draftStatus === 'saving' ? 'MENYIMPAN DRAFT...' : 'DRAFT TERSIMPAN'}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                    <button onClick={() => setTriggerRun(n => n + 1)} className="pointer-events-auto opacity-0 group-hover:opacity-100"></button>
-                </div>
-            </div>
-
-            {/* ZEN CANVAS */}
-            <div className="flex-1 relative overflow-hidden flex flex-col">
-                {renderCanvas()}
-            </div>
-
-            {/* FLOATING CONTROL BAR (ZEN DOCK) */}
-            {isMobile ? (
-                /* MOBILE: Clean Minimal Dock */
-                <MobileActionDock
+            <div className="flex-1 flex flex-col relative overflow-hidden">
+                {/* TOP HEADER */}
+                <StudioHeader
+                    title={title}
+                    setTitle={setTitle}
                     mode={mode}
-                    onModeChange={(newMode) => setMode(newMode)}
+                    onModeChange={switchMode}
+                    draftStatus={draftStatus}
+                    draftsCount={drafts.length}
+                    showDrafts={showDrafts}
+                    onToggleDrafts={() => setShowDrafts(!showDrafts)}
                     onPublish={handlePublish}
+                    isPublishing={isPublishing}
                     onSettings={() => setShowSettings(true)}
-                    onPreview={() => {
-                        if (mode === 'code') {
-                            setTriggerRun(n => n + 1);
-                        } else {
-                            setIsPreview(true);
-                        }
-                    }}
-                    isCodeMode={mode === 'code'}
+                    onPreview={() => setIsPreview(true)}
+                    onBack={() => navigate('/karya')}
+                    isMobile={isMobile}
                 />
-            ) : (
-                /* DESKTOP: Full Feature Dock */
-                <div
-                    className={`fixed z-50 flex flex-col items-center justify-center transition-all duration-500 ${isPreview ? 'translate-y-[200%] opacity-0' : 'translate-y-0 opacity-100'}`}
-                    style={{
-                        bottom: '2rem',
-                        left: '50%',
-                        transform: `translate(-50%, ${isPreview ? '200%' : '0'})`
-                    }}
-                >
-                    {/* Collapse Toggle */}
-                    <button
-                        onClick={() => setDockMinimized(!dockMinimized)}
-                        className="mb-2 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-gray-400 backdrop-blur-md border border-white/5 transition-colors"
-                    >
-                        {dockMinimized ? <ChevronRight className="-rotate-90" size={14} /> : <ChevronRight className="rotate-90" size={14} />}
-                    </button>
 
-                    {/* Main Dock */}
-                    <AnimatePresence>
-                        {!dockMinimized && (
-                            <motion.div
-                                initial={{ scale: 0.9, opacity: 0, y: 10 }}
-                                animate={{ scale: 1, opacity: 1, y: 0 }}
-                                exit={{ scale: 0.9, opacity: 0, y: 10 }}
-                                className="bg-[#111]/80 backdrop-blur-xl border border-white/10 p-2 rounded-[2rem] shadow-2xl flex items-center gap-2 group hover:bg-[#111] transition-colors"
-                            >
-                                {/* Mode Switcher */}
-                                <div className="mr-2">
-                                    <MediumSelector activeType={mode} onChange={(newMode) => setMode(newMode)} />
-                                </div>
+                {/* MAIN CONTENT */}
+                <div className="flex-1 overflow-hidden">{renderContent()}</div>
 
-                                <div className="w-px h-8 bg-white/10 mx-2" />
+                {/* BOTTOM DOCK */}
+                {isMobile ? (
+                    <MobileActionDock mode={mode} onModeChange={switchMode} onPublish={handlePublish} onSettings={() => setShowSettings(true)} onPreview={() => mode === 'code' ? setTriggerRun(n => n + 1) : setIsPreview(true)} />
+                ) : (
+                    <div className="fixed bottom-0 left-0 right-0 h-16 z-50 flex items-center justify-center group/footer">
+                        {/* THE DOCK */}
+                        <div className={`flex flex-col items-center transition-all duration-500 ${isPreview || (mode === 'code' && !dockMinimized) ? 'translate-y-32 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100' : 'translate-y-[-16px] opacity-100'}`}>
+                            <AnimatePresence mode="wait">
+                                {!dockMinimized ? (
+                                    <motion.div
+                                        key="expanded-dock"
+                                        initial={{ y: 20, opacity: 0, scale: 0.9 }}
+                                        animate={{ y: 0, opacity: 1, scale: 1 }}
+                                        exit={{ y: 20, opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                                        className="bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 p-2 rounded-full shadow-2xl flex items-center gap-2 ring-1 ring-white/5 relative group/dockinner"
+                                    >
+                                        <button
+                                            onClick={() => setDockMinimized(true)}
+                                            className="absolute -top-12 left-1/2 -translate-x-1/2 p-2 rounded-full bg-black/50 border border-white/5 text-white/50 hover:text-white hover:bg-white/10 backdrop-blur-md transition-all opacity-0 group-hover/dockinner:opacity-100 translate-y-2 group-hover/dockinner:translate-y-0"
+                                            title="Sembunyikan Menu"
+                                        >
+                                            <ChevronDown size={14} />
+                                        </button>
 
-                                <button
-                                    onClick={() => setIsPreview(true)}
-                                    onPointerDown={(e) => e.stopPropagation()}
-                                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all tooltip"
-                                    title="Preview"
-                                >
-                                    {mode === 'code' ? <Play size={18} /> : <Maximize2 size={18} />}
-                                </button>
+                                        <div className="px-2">
+                                            <MediumSelector activeType={mode} onChange={switchMode} />
+                                        </div>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        key="minimized-dock"
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        exit={{ y: 20, opacity: 0 }}
+                                        className="h-10 flex items-end justify-center pb-2 cursor-pointer"
+                                    >
+                                        <button
+                                            onClick={() => setDockMinimized(false)}
+                                            className="w-16 h-1 rounded-full bg-white/20 hover:bg-rose-500/50 transition-all shadow-lg hover:w-24 group/minhandle relative"
+                                        >
+                                            <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover/minhandle:opacity-100 transition-all text-[8px] font-black text-rose-500 uppercase tracking-[0.3em] translate-y-1 group-hover/minhandle:translate-y-0 whitespace-nowrap bg-black/40 backdrop-blur-sm px-2 py-1 rounded">
+                                                Buka Menu
+                                            </div>
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
 
-                                <button
-                                    onClick={() => setShowSettings(true)}
-                                    onPointerDown={(e) => e.stopPropagation()}
-                                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                                >
-                                    <Settings size={18} />
-                                </button>
+                    </div>
+                )}
+            </div>
 
-                                <button
-                                    onClick={handlePublish}
-                                    onPointerDown={(e) => e.stopPropagation()}
-                                    className="ml-2 px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-bold text-sm transition-all shadow-lg hover:shadow-rose-500/20 flex items-center gap-2"
-                                >
-                                    Publikasikan <ArrowLeft className="rotate-180" size={16} />
-                                </button>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-            )}
-
-            {/* SETTINGS DRAWER */}
+            {/* SETTINGS (PUBLISH & DRAFT METADATA) */}
             <AnimatePresence>
                 {showSettings && (
                     <>
-                        {/* Backdrop */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setShowSettings(false)}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
-                        />
-                        {/* Drawer */}
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowSettings(false)} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]" />
                         <motion.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-[#0a0a0a] border-l border-white/10 z-[70] p-8 shadow-2xl flex flex-col"
+                            className="fixed top-2 bottom-2 right-2 w-full max-w-sm bg-[#0a0a0a] border border-white/10 z-[70] p-6 shadow-2xl overflow-y-auto rounded-3xl flex flex-col"
                         >
                             <div className="flex items-center justify-between mb-8">
-                                <h2 className="text-xl font-serif font-bold">Metadata Publikasi</h2>
-                                <button onClick={() => setShowSettings(false)} className="p-2 bg-white/5 rounded-full hover:bg-white/10"><X size={18} /></button>
+                                <div>
+                                    <h2 className="text-xl font-bold text-white">Draft Details</h2>
+                                    <p className="text-xs text-gray-500 mt-1">Kelola detail karyamu</p>
+                                </div>
+                                <button onClick={() => setShowSettings(false)} className="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+                                    <X size={16} />
+                                </button>
                             </div>
 
-                            <div className="flex-1 overflow-y-auto space-y-6 custom-scrollbar pr-2">
+                            <div className="flex-1 space-y-6">
+                                {/* Thumbnail Upload (Optional) */}
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Judul Karya</label>
-                                    <input
-                                        value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-rose-500/50 transition-colors"
-                                        placeholder="Judul..."
-                                    />
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
+                                        Thumbnail
+                                        <span className="text-gray-700 font-normal normal-case">Optional</span>
+                                    </label>
+                                    <div className="w-full aspect-video bg-white/5 border border-white/10 rounded-2xl overflow-hidden relative group cursor-pointer hover:border-white/20 transition-all">
+                                        {mediaPreview ? (
+                                            <>
+                                                <img src={mediaPreview} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
+                                                    <span className="text-xs font-bold text-white">Ganti Gambar</span>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-600 group-hover:text-gray-400 transition-colors gap-2">
+                                                <ImageIcon size={24} />
+                                                <span className="text-xs font-medium">Upload Cover</span>
+                                            </div>
+                                        )}
+                                        <input type="file" accept="image/*" onChange={handleFileSelect} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                    </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Deskripsi</label>
-                                    <textarea
-                                        value={description}
-                                        onChange={(e) => setDescription(e.target.value)}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-rose-500/50 transition-colors h-32 resize-none leading-relaxed"
-                                        placeholder="Ceritakan tentang karya ini..."
-                                    />
-                                </div>
+                                <MetaField label="Judul" value={title} onChange={setTitle} required />
+                                <MetaField label="Deskripsi" value={description} onChange={setDescription} isTextArea placeholder="Ceritakan sedikit tentang karyamu..." />
 
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Pilih Divisi</label>
-                                    <div className="grid grid-cols-1 gap-2">
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
+                                        Divisi
+                                        <span className="text-rose-500 font-bold lowercase">Wajib</span>
+                                    </label>
+                                    <div className="grid grid-cols-2 gap-2">
                                         {DIVISIONS.map(div => (
                                             <button
                                                 key={div.id}
                                                 onClick={() => setDivision(div.id as any)}
-                                                className={`px-4 py-3 rounded-xl text-xs font-bold text-left transition-all border ${division === div.id ? 'bg-rose-500 border-rose-500 text-white' : 'bg-white/5 border-white/5 text-gray-400 hover:border-white/10'}`}
+                                                className={`px-3 py-3 rounded-xl text-[10px] font-bold text-left transition-all border ${division === div.id
+                                                    ? 'bg-white text-black border-white'
+                                                    : 'bg-white/5 border-white/5 text-gray-500 hover:bg-white/10 hover:text-white'
+                                                    }`}
                                             >
                                                 {div.name}
                                             </button>
@@ -691,27 +664,63 @@ export const Studio = () => {
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Tags</label>
-                                    <input
-                                        value={tags.join(', ')}
-                                        onChange={(e) => setTags(e.target.value.split(',').map(t => t.trim()))}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-rose-500/50 transition-colors"
-                                        placeholder="Contoh: Tutorial, React, Seni..."
-                                    />
-                                </div>
+                                <MetaField label="Tags" value={tags.join(', ')} onChange={(val) => setTags(val.split(',').map(t => t.trim()))} placeholder="design, art, code..." />
                             </div>
 
-                            <button
-                                onClick={handlePublish}
-                                className="w-full py-4 mt-4 bg-white text-black rounded-2xl font-bold uppercase tracking-widest hover:bg-gray-200 transition-all"
-                            >
-                                Publikasikan Sekarang
-                            </button>
+                            <div className="pt-6 mt-6 border-t border-white/5">
+                                <button
+                                    onClick={handlePublish}
+                                    disabled={isPublishing}
+                                    className="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs transition-all shadow-lg shadow-rose-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                >
+                                    {isPublishing ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save size={16} />}
+                                    {isPublishing ? 'Publishing...' : 'Publish Project'}
+                                </button>
+                            </div>
                         </motion.div>
                     </>
+                )}
+            </AnimatePresence>
+
+            {/* PUBLISHING PROGRESS OVERLAY */}
+            <AnimatePresence>
+                {isPublishing && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-10 text-center">
+                        <div className="relative mb-8">
+                            <div className="w-24 h-24 rounded-full border-4 border-white/10 border-t-rose-500 animate-spin" />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="text-xs font-mono font-bold">{publishProgress.percent}%</span>
+                            </div>
+                        </div>
+                        <h2 className="text-2xl font-bold text-white mb-2">{publishProgress.message}</h2>
+                        <p className="text-gray-500 text-sm">Mohon tunggu sebentar...</p>
+                    </motion.div>
                 )}
             </AnimatePresence>
         </div>
     );
 };
+
+const MetaField = ({ label, value, onChange, isTextArea = false, placeholder = "", required = false }: any) => (
+    <div className="space-y-2">
+        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
+            {label}
+            {required && <span className="text-rose-500 font-bold lowercase">Wajib</span>}
+        </label>
+        {isTextArea ? (
+            <textarea
+                value={value}
+                onChange={e => onChange(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 focus:bg-white/10 transition-all h-24 resize-none text-sm leading-relaxed text-gray-300 focus:text-white"
+                placeholder={placeholder}
+            />
+        ) : (
+            <input
+                value={value}
+                onChange={e => onChange(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 focus:bg-white/10 transition-all text-sm text-gray-300 focus:text-white"
+                placeholder={placeholder}
+            />
+        )}
+    </div>
+);

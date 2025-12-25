@@ -56,10 +56,10 @@ export const KaryaCard: React.FC<KaryaCardProps> = ({ art, index, onClick, rende
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 260, damping: 20, delay: (index % 10) * 0.05 }}
-            className="break-inside-avoid group relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden cursor-pointer bg-[#111] mb-4 md:mb-6 shadow-xl hover:shadow-2xl hover:shadow-rose-500/10 transition-all border border-white/5"
+            className="break-inside-avoid group relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden cursor-pointer bg-[#111] shadow-xl hover:shadow-2xl hover:shadow-rose-500/10 transition-all border border-white/5"
         >
-            {/* Main Content Area */}
-            <div className={`relative w-full ${art.type === 'text' || art.type === 'code' ? 'aspect-[3/4]' : ''}`}>
+            {/* Main Content Area - Standardized Aspect Ratio for Grid Stability */}
+            <div className="relative w-full aspect-[4/5] md:aspect-[3/4]">
                 <div className="w-full h-full overflow-hidden">
                     {renderContent(art)}
                 </div>

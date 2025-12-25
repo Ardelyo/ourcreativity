@@ -1,6 +1,6 @@
 
 export type Medium = 'visual' | 'narasi' | 'kode' | 'sinema';
-export type WorkType = 'image' | 'video' | 'text' | 'code' | 'slide' | 'embed' | 'document' | 'meme';
+export type WorkType = 'image' | 'video' | 'text' | 'code' | 'embed' | 'document' | 'meme';
 export type DivisionId = 'graphics' | 'video' | 'writing' | 'coding' | 'meme';
 
 export interface SlideContent {

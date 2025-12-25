@@ -10,15 +10,18 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthProvider';
 import { supabase } from '../lib/supabase';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 // Sub-components
 import { EditorLayout } from '../components/CreationStudio/ControlCenter/EditorLayout';
+import { MobileEditorLayout } from '../components/CreationStudio/ControlCenter/MobileEditorLayout';
 import { CodeFile } from '../components/CreationStudio/ControlCenter/types';
 
 import { TextEditor } from '../components/CreationStudio/editors/TextEditor';
 import { SlideBuilder } from '../components/CreationStudio/carousel/SlideBuilder';
 import { WebsiteEmbed } from '../components/CreationStudio/embed/WebsiteEmbed';
 import { DocumentUploader } from '../components/CreationStudio/editors/DocumentUploader';
+import { MediumSelector } from '../components/CreationStudio/MediumSelector';
 import { IframeSandbox } from '../components/CreationStudio/sandbox/IframeSandbox'; // Legacy Keep for Preview if needed
 import { PyodideSandbox } from '../components/CreationStudio/sandbox/PyodideSandbox';
 import { InteractiveSandbox } from '../components/CreationStudio/ControlCenter/InteractiveSandbox'; // Legacy Keep for Preview if needed
@@ -99,6 +102,7 @@ function draw() {
 export const Studio = () => {
     const navigate = useNavigate();
     const { user, profile, loading: authLoading } = useAuth();
+    const isMobile = useIsMobile(); // Hook for responsive logic
 
     // --- STATE: MODE & CONTENT ---
     const [mode, setMode] = useState<WorkType>('text'); // text, image, video, slide, code, embed
@@ -370,7 +374,7 @@ export const Studio = () => {
         switch (mode) {
             case 'text':
                 return (
-                    <div className="w-full h-full max-w-4xl mx-auto pt-20 md:pt-24 pb-32 px-6 md:px-12 overflow-y-auto">
+                    <div className="w-full h-full max-w-4xl mx-auto pt-16 md:pt-24 pb-32 px-4 md:px-12 overflow-y-auto">
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
@@ -425,7 +429,7 @@ export const Studio = () => {
 
             case 'slide':
                 return (
-                    <div className="w-full h-full flex flex-col pt-20 md:pt-24 pb-32">
+                    <div className="w-full h-full flex flex-col pt-16 md:pt-24 pb-32">
                         <div className="max-w-6xl mx-auto w-full px-4 md:px-8 mb-4 md:mb-8">
                             <input
                                 value={title}
@@ -442,8 +446,8 @@ export const Studio = () => {
 
             case 'embed':
                 return (
-                    <div className="w-full h-full flex flex-col items-center pt-32 px-8">
-                        <div className="w-full max-w-3xl space-y-8">
+                    <div className="w-full h-full flex flex-col items-center pt-24 px-4 md:px-8">
+                        <div className="w-full max-w-3xl space-y-4 md:space-y-8">
                             <input
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
@@ -485,8 +489,16 @@ export const Studio = () => {
                                 className="bg-transparent text-sm font-bold text-gray-400 placeholder:text-gray-700 outline-none w-full focus:text-white transition-colors"
                             />
                         </div>
-                        {/* Pass state to EditorLayout */}
-                        <EditorLayout files={codeFiles} setFiles={setCodeFiles} />
+                        {/* Pass state to EditorLayout or MobileEditorLayout */}
+                        {isMobile ? (
+                            <MobileEditorLayout
+                                files={codeFiles}
+                                setFiles={setCodeFiles}
+                                triggerRun={triggerRun} // Pass trigger run
+                            />
+                        ) : (
+                            <EditorLayout files={codeFiles} setFiles={setCodeFiles} />
+                        )}
                     </div>
                 );
         }
@@ -539,7 +551,12 @@ export const Studio = () => {
             {/* FLOATING CONTROL BAR (ZEN DOCK) - MINIMIZABLE ONLY */}
             <div
                 className={`fixed z-50 flex flex-col items-center justify-center transition-all duration-500 ${isPreview ? 'translate-y-[200%] opacity-0' : 'translate-y-0 opacity-100'}`}
-                style={{ bottom: '2rem', left: '50%', transform: `translate(-50%, ${isPreview ? '200%' : '0'})` }}
+                style={{
+                    bottom: isMobile ? '1.5rem' : '2rem',
+                    left: '50%',
+                    transform: `translate(-50%, ${isPreview ? '200%' : '0'})`,
+                    width: isMobile ? '90%' : 'auto' // Wider on mobile
+                }}
             >
                 {/* Collapse Toggle */}
                 <button
@@ -560,40 +577,23 @@ export const Studio = () => {
                         >
 
                             {/* Mode Switcher */}
-                            <div className="flex p-1 bg-black/50 rounded-3xl border border-white/5 mr-2">
-                                {[
-                                    { id: 'text', icon: Type, label: 'Tulis' },
-                                    { id: 'image', icon: ImageIcon, label: 'Visual' },
-                                    { id: 'slide', icon: Layers, label: 'Slide' },
-                                    { id: 'code', icon: Code, label: 'Kode' },
-                                    { id: 'embed', icon: Globe, label: 'Embed' },
-                                ].map(m => {
-                                    const Icon = m.icon;
-                                    const isActive = mode === m.id;
-                                    return (
-                                        <button
-                                            key={m.id}
-                                            onClick={() => setMode(m.id as any)}
-                                            onPointerDown={(e) => e.stopPropagation()} // Prevent drag when clicking button
-                                            className={`relative px-4 py-2 rounded-2xl flex items-center gap-2 transition-all overflow-hidden ${isActive ? 'text-black' : 'text-gray-400 hover:text-white'}`}
-                                        >
-                                            {isActive && <motion.div layoutId="dock-active" className="absolute inset-0 bg-white rounded-2xl z-0" />}
-                                            <span className="relative z-10 flex items-center gap-2">
-                                                <Icon size={16} />
-                                                {isActive && <span className="text-xs font-bold">{m.label}</span>}
-                                            </span>
-                                        </button>
-                                    )
-                                })}
+                            <div className="mr-2">
+                                <MediumSelector activeType={mode} onChange={(newMode) => setMode(newMode)} />
                             </div>
 
                             <div className="w-px h-8 bg-white/10 mx-2" />
 
                             <button
-                                onClick={() => setIsPreview(true)}
+                                onClick={() => {
+                                    if (mode === 'code' && isMobile) {
+                                        setTriggerRun(n => n + 1);
+                                    } else {
+                                        setIsPreview(true);
+                                    }
+                                }}
                                 onPointerDown={(e) => e.stopPropagation()}
                                 className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all tooltip"
-                                title="Preview Fullscreen"
+                                title="Run Code / Preview"
                             >
                                 {mode === 'code' ? <Play size={18} /> : <Maximize2 size={18} />}
                             </button>

@@ -1,43 +1,70 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Image as ImageIcon, Type, Code, Video, ArrowRight } from 'lucide-react';
-import { Medium } from './types';
+import { Type, Image as ImageIcon, Video, Code, Grid, FileCode } from 'lucide-react';
+import { WorkType } from './types';
 
 interface MediumSelectorProps {
-    onSelect: (medium: Medium) => void;
+    activeType: WorkType;
+    onChange: (type: WorkType) => void;
 }
 
-export const MediumSelector: React.FC<MediumSelectorProps> = ({ onSelect }) => {
-    const mediums = [
-        { id: 'visual', label: 'Visual', icon: ImageIcon, desc: 'Image, Carousel, Showcase', color: 'from-purple-500 to-indigo-500' },
-        { id: 'narasi', label: 'Narasi', icon: Type, desc: 'Story, Article, Document', color: 'from-rose-500 to-orange-500' },
-        { id: 'kode', label: 'Kode', icon: Code, desc: 'Playground, Snippet, HTML/JS', color: 'from-emerald-500 to-teal-500' },
-        { id: 'sinema', label: 'Sinema', icon: Video, desc: 'Video, Animation, Embed', color: 'from-blue-500 to-cyan-500' },
+export const MediumSelector: React.FC<MediumSelectorProps> = ({ activeType, onChange }) => {
+    const types: { id: WorkType, label: string, icon: any }[] = [
+        { id: 'text', label: 'Tulisan', icon: Type },
+        { id: 'image', label: 'Gambar', icon: ImageIcon },
+        { id: 'video', label: 'Video', icon: Video },
+        { id: 'slide', label: 'Slide', icon: Grid },
+        // { id: 'embed', label: 'Embed', icon: FileCode },
+        { id: 'code', label: 'Kode', icon: Code },
     ];
 
     return (
-        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-4 h-full content-center">
-            {mediums.map((m) => (
-                <motion.button
-                    key={m.id}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => onSelect(m.id as Medium)}
-                    className="group relative overflow-hidden rounded-2xl p-6 text-left border border-white/5 hover:border-white/20 transition-all bg-[#0a0a0a]"
-                >
-                    <div className={`absolute inset-0 bg-gradient-to-br ${m.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
-                    <div className="relative z-10 flex items-start justify-between">
-                        <div>
-                            <div className={`w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500`}>
-                                <m.icon className="text-white" size={24} />
-                            </div>
-                            <h3 className="text-2xl font-bold text-white mb-1">{m.label}</h3>
-                            <p className="text-gray-400 text-sm">{m.desc}</p>
-                        </div>
-                        <ArrowRight className="text-white/20 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                    </div>
-                </motion.button>
-            ))}
+        <div className="w-full">
+            {/* Mobile: 2x3 Grid */}
+            <div className="md:hidden grid grid-cols-3 gap-2 mb-6">
+                {types.map((type) => (
+                    <button
+                        key={type.id}
+                        onClick={() => onChange(type.id)}
+                        className={`
+                            flex flex-col items-center justify-center p-4 rounded-xl border transition-all active:scale-95
+                            ${activeType === type.id
+                                ? 'bg-white text-black border-white shadow-lg shadow-white/10'
+                                : 'bg-white/5 text-gray-400 border-white/5 hover:bg-white/10'
+                            }
+                        `}
+                    >
+                        <type.icon size={24} className="mb-2" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider">{type.label}</span>
+                    </button>
+                ))}
+            </div>
+
+            {/* Desktop: Horizontal Pills */}
+            <div className="hidden md:flex bg-[#111] p-1 rounded-full border border-white/10 inline-flex mb-8">
+                {types.map((type) => (
+                    <button
+                        key={type.id}
+                        onClick={() => onChange(type.id)}
+                        className={`
+                            relative px-6 py-2 rounded-full text-sm font-medium transition-all
+                            ${activeType === type.id ? 'text-black' : 'text-gray-400 hover:text-white'}
+                        `}
+                    >
+                        {activeType === type.id && (
+                            <motion.div
+                                layoutId="activeMedium"
+                                className="absolute inset-0 bg-white rounded-full"
+                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                            />
+                        )}
+                        <span className="relative z-10 flex items-center gap-2">
+                            <type.icon size={16} />
+                            {type.label}
+                        </span>
+                    </button>
+                ))}
+            </div>
         </div>
     );
 };

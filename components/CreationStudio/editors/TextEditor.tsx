@@ -109,7 +109,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({
 const ToolbarButton = ({ onClick, isActive, icon }: { onClick: () => void, isActive: boolean, icon: React.ReactNode }) => (
     <button
         onClick={onClick}
-        className={`p-2 rounded hover:bg-white/10 transition-colors ${isActive ? 'bg-white/20 text-white' : 'text-gray-400'
+        className={`p-3 md:p-2 rounded hover:bg-white/10 transition-colors ${isActive ? 'bg-white/20 text-white' : 'text-gray-400'
             }`}
     >
         {icon}

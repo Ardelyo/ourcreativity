@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2, ArrowLeft, ArrowRight, ArrowDown, Send, MessageCircle } from 'lucide-react';
+import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2, ArrowLeft, ArrowRight, ArrowDown, Send, MessageCircle, MoreVertical } from 'lucide-react';
+import { KaryaCard } from '../components/KaryaCard';
+import { ImmersiveDetailView } from '../components/Karya/ImmersiveDetailView';
+import { useIsMobile } from '../hooks/useIsMobile';
 import { Link, useNavigate } from 'react-router-dom'; // Changed import
 import { FetchErrorState } from '../components/FetchErrorState';
 import { useAuth } from '../components/AuthProvider';
@@ -196,6 +199,7 @@ ${cssFile?.content ? `<style>${cssFile.content}</style>` : ''}
 export const Karya = () => {
   const navigate = useNavigate();
   const { user, profile, loading: authLoading } = useAuth();
+  const isMobile = useIsMobile();
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
@@ -516,73 +520,24 @@ export const Karya = () => {
       ) : artworks.length > 0 ? (
         <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 md:gap-6 space-y-4 md:space-y-6">
           {artworks.map((art, index) => (
-            <motion.div
+            <KaryaCard
               key={art.id}
-              layoutId={`card-${art.id}`}
-              onClick={() => { setSelectedId(art.id); setShowSourceCode(false); }} // Reset view mode
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                type: "spring",
-                stiffness: 260,
-                damping: 20,
-                delay: (index % 10) * 0.05
-              }}
-              className="break-inside-avoid group relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden cursor-pointer bg-[#111] mb-4 md:mb-6 shadow-xl hover:shadow-2xl hover:shadow-rose-500/10 transition-all duration-500 border border-white/5 active:scale-[0.98]"
-            >
-              {/* Konten Kartu (Gambar/Teks/Kode) */}
-              <div className={`relative w-full ${art.type === 'text' || art.type === 'code' ? 'aspect-[3/4]' : ''}`}>
-                <div className="w-full h-full overflow-hidden">
-                  {renderCardContent(art)}
-                </div>
-
-                {/* Hamparan Hover Premium - Pinterest Inspired */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-4 md:p-6 translate-y-2 group-hover:translate-y-0">
-                  {/* ... same hover meta ... */}
-                  <div className="flex justify-between items-center mb-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <h3 className="text-white font-bold text-sm md:text-lg leading-tight line-clamp-2">{art.title}</h3>
-                    <div className="flex gap-2">
-                      <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 text-white text-[10px] font-bold">
-                        <Heart size={10} className="fill-rose-500 text-rose-500" />
-                        {art.likes?.[0]?.count || 0}
-                      </div>
-                      <div className="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full border border-white/10 text-white text-[10px] font-bold">
-                        <MessageCircle size={10} className="text-blue-400" />
-                        {art.comments?.[0]?.count || 0}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
-                    <Link
-                      to={`/profile/${art.author}`}
-                      className="flex items-center gap-2 hover:opacity-80 transition-opacity bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-gray-700 overflow-hidden ring-1 ring-white/20">
-                        <img src={`https://ui-avatars.com/api/?name=${art.author}&background=random`} alt="Avatar" className="w-full h-full object-cover" />
-                      </div>
-                      <p className="text-[10px] md:text-xs text-white font-medium">{art.author}</p>
-                    </Link>
-
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#999] bg-black/40 px-2 py-1 rounded-lg border border-white/5">
-                      {art.division}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+              art={art}
+              index={index}
+              onClick={() => { setSelectedId(art.id); setShowSourceCode(false); }}
+              renderContent={renderCardContent}
+            />
           ))}
         </div>
       ) : null}
 
-      {/* ...Load More & Empty State... */}
+      {/* Load More & Empty State */}
       {hasMore && artworks.length > 0 && (
         <div className="flex justify-center mt-12 pb-12">
           <button
             onClick={handleLoadMore}
             disabled={loading}
-            className="px-10 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold hover:bg-white hover:text-black transition-all flex items-center gap-2 group active:scale-95 disabled:opacity-50"
+            className="px-10 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold hover:bg-white hover:text-black transition-all flex items-center gap-2 group active:scale-[0.98] disabled:opacity-50"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
@@ -614,266 +569,297 @@ export const Karya = () => {
       {/* Tombol Aksi Mengambang (Seluler) */}
       <Link
         to="/studio"
-        className="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-white text-black rounded-full shadow-2xl flex items-center justify-center z-40 hover:scale-110 transition-transform active:scale-95"
+        className="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-white text-black rounded-full shadow-2xl flex items-center justify-center z-40 hover:scale-110 transition-transform active:scale-[0.98]"
       >
         <Plus size={28} />
       </Link>
-
       {/* Modal Detail */}
       <AnimatePresence>
         {selectedId && selectedArtwork && (
-          <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:px-4 md:pt-20 md:pb-10 pointer-events-none">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedId(null)}
-              className="absolute inset-0 bg-black/90 backdrop-blur-xl pointer-events-auto"
+          isMobile ? (
+            <ImmersiveDetailView
+              key="mobile-immersive-view"
+              art={selectedArtwork}
+              onClose={() => setSelectedId(null)}
+              renderContent={(art) => (
+                <div className="w-full h-full flex items-center justify-center bg-black">
+                  {renderCardContent(art)}
+                </div>
+              )}
             />
-
-            <motion.div
-              layoutId={`card-${selectedId}`}
-              className="relative w-full max-w-6xl bg-[#111] rounded-t-[2rem] md:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-[90vh] md:max-h-[85vh] pointer-events-auto border border-white/10"
-              transition={{ type: "spring", stiffness: 200, damping: 25 }}
-            >
-              {/* Close Button - Safe Position for Mobile */}
-              <button
+          ) : (
+            <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:px-4 md:pt-20 md:pb-10 pointer-events-none">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 onClick={() => setSelectedId(null)}
-                className="absolute top-3 right-3 md:top-4 md:right-4 z-50 p-2 bg-black/70 hover:bg-white text-white hover:text-black rounded-full transition-colors backdrop-blur-md border border-white/20"
+                className="absolute inset-0 bg-black/90 backdrop-blur-xl pointer-events-auto"
+              />
+
+              <motion.div
+                layoutId={`card-${selectedId}`}
+                id={`modal-card-${selectedId}`}
+                className="relative w-full max-w-6xl bg-[#111] rounded-t-[2rem] md:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-[90vh] md:max-h-[85vh] pointer-events-auto border border-white/10"
+                transition={{ type: "spring", stiffness: 200, damping: 25 }}
               >
-                <X size={20} />
-              </button>
-
-              {/* Bagian Media */}
-              <div className="w-full h-[40vh] md:h-auto md:w-3/5 bg-black flex items-center justify-center relative overflow-hidden group flex-shrink-0">
-                <motion.div layoutId={`content-${selectedId}`} className="w-full h-full flex items-center justify-center">
-
-                  {/* ...Slide Logic... */}
-                  {selectedArtwork.type === 'slide' && (
-                    <div className="relative w-full h-full flex items-center justify-center group/carousel">
-                      <div
-                        ref={carouselRef}
-                        onScroll={handleCarouselScroll}
-                        className="w-full h-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar bg-black"
-                      >
-                        {(selectedArtwork.slides || []).map((slide: any, i: number) => (
-                          <div key={slide.id || i} className="min-w-full h-full snap-center flex items-center justify-center relative">
-                            <img src={slide.content} className="max-w-full max-h-full object-contain" alt={`Slide ${i + 1}`} />
-                          </div>
-                        ))}
-                      </div>
-                      {/* Arrows & Dots logic ... */}
-                      {/* Navigation Arrows */}
-                      {selectedArtwork.slides && selectedArtwork.slides.length > 1 && (
-                        <>
-                          {activeSlide > 0 && (
-                            <button
-                              onClick={(e) => { e.stopPropagation(); scrollToSlide(activeSlide - 1); }}
-                              className="absolute left-4 p-2 bg-black/50 hover:bg-white text-white hover:text-black rounded-full transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover/carousel:opacity-100"
-                            >
-                              <ArrowLeft size={20} />
-                            </button>
-                          )}
-                          {activeSlide < selectedArtwork.slides.length - 1 && (
-                            <button
-                              onClick={(e) => { e.stopPropagation(); scrollToSlide(activeSlide + 1); }}
-                              className="absolute right-4 p-2 bg-black/50 hover:bg-white text-white hover:text-black rounded-full transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover/carousel:opacity-100"
-                            >
-                              <ArrowRight size={20} />
-                            </button>
-                          )}
-                          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 px-3 py-1.5 bg-black/20 backdrop-blur-md rounded-full border border-white/5">
-                            {selectedArtwork.slides.map((_: any, i: number) => (
-                              <button
-                                key={i}
-                                onClick={() => scrollToSlide(i)}
-                                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeSlide === i ? 'bg-white w-3' : 'bg-white/30'
-                                  }`}
-                              />
-                            ))}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  )}
-
-                  {selectedArtwork.type === 'image' && (
-                    <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-contain" />
-                  )}
-                  {selectedArtwork.type === 'video' && (
-                    <div className="relative w-full h-full">
-                      {/* Video Player or Image Preview */}
-                      {/* For now keeping original logic unless improved */}
-                      <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-cover opacity-50" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Play size={64} className="text-white fill-current" />
-                      </div>
-                    </div>
-                  )}
-                  {selectedArtwork.type === 'text' && (
-                    <div className="w-full h-full bg-[#f0f0f0] text-black p-12 md:p-20 overflow-y-auto font-serif text-lg leading-loose whitespace-pre-wrap">
-                      {selectedArtwork.content}
-                    </div>
-                  )}
-                  {selectedArtwork.type === 'code' && (
-                    <div className="w-full h-full bg-[#0d1117] relative flex flex-col">
-                      {/* Toggle View Button - Mobile Friendly */}
-                      <div className="absolute top-2 right-2 md:top-4 md:right-4 z-50">
-                        <button
-                          onClick={() => setShowSourceCode(!showSourceCode)}
-                          className="bg-black/80 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full text-[10px] md:text-xs font-bold border border-white/20 backdrop-blur-md hover:bg-white hover:text-black transition-colors"
-                        >
-                          {showSourceCode ? '▶ HASIL' : '</> KODE'}
-                        </button>
-                      </div>
-
-                      {showSourceCode ? (
-                        <CodeViewer content={selectedArtwork.content} />
-                      ) : (
-                        <iframe
-                          src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(selectedArtwork.content, selectedArtwork.code_language || 'html'))}`}
-                          sandbox="allow-scripts allow-same-origin"
-                          className="w-full h-full border-0 bg-white"
-                          title="Code Preview"
-                        />
-                      )}
-                    </div>
-                  )}
-                </motion.div>
-              </div>
-
-              {/* Bagian Detail - Flex-1 to fill remaining space, scrollable */}
-              <div className="flex-1 md:w-2/5 p-4 md:p-8 lg:p-12 overflow-y-auto custom-scrollbar bg-[#111] border-t md:border-t-0 md:border-l border-white/10">
-                <div className="flex items-center justify-between mb-8">
-                  <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 ${selectedArtwork.division === 'coding' ? 'bg-green-500/10 text-green-400' :
-                    selectedArtwork.division === 'video' ? 'bg-orange-500/10 text-orange-400' :
-                      selectedArtwork.division === 'meme' ? 'bg-yellow-500/10 text-yellow-400' :
-                        selectedArtwork.division === 'writing' ? 'bg-white/10 text-white' :
-                          'bg-purple-500/10 text-purple-400'
-                    }`}>
-                    {selectedArtwork.division}
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"><Share2 size={20} /></button>
-                    <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"><Download size={20} /></button>
-                  </div>
-                </div>
-
-                <h2 className="text-4xl font-serif text-white mb-4">{selectedArtwork.title}</h2>
-                <p className="text-gray-400 leading-relaxed mb-8">{selectedArtwork.description}</p>
-
-                <Link to={`/profile/${selectedArtwork.author}`} className="flex items-center gap-4 mb-8 p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
-                  <div className="w-12 h-12 rounded-full bg-gray-700 overflow-hidden">
-                    <img src={`https://ui-avatars.com/api/?name=${selectedArtwork.author}&background=random`} alt="Avatar" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-bold">{selectedArtwork.author}</h4>
-                    <p className="text-gray-500 text-xs">{selectedArtwork.role}</p>
-                  </div>
-                  <button className="ml-auto bg-white text-black px-4 py-2 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors">
-                    Lihat
-                  </button>
-                </Link>
-
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {selectedArtwork.tags?.map(tag => (
-                    <span key={tag} className="px-3 py-1 rounded-full border border-white/10 text-xs text-gray-400 hover:text-white hover:border-white transition-colors cursor-pointer">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Social Actions (Like) */}
-                <div className="flex gap-4 mb-8">
+                {/* Close Button - Safe Position for Mobile */}
+                <div className="absolute top-3 right-3 md:top-4 md:right-4 z-50 flex gap-2">
                   <button
-                    onClick={handleToggleLike}
-                    className={`flex-1 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 ${isLiked ? 'bg-rose-600 text-white shadow-lg shadow-rose-900/50 border border-rose-500' : 'bg-white/5 text-white hover:bg-white/10 border border-white/10'}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Toggle Fullscreen logic
+                      const card = document.getElementById(`modal-card-${selectedId}`);
+                      if (!document.fullscreenElement) {
+                        card?.requestFullscreen().catch(err => console.log(err));
+                      } else {
+                        document.exitFullscreen();
+                      }
+                    }}
+                    className="p-2 bg-black/70 hover:bg-white text-white hover:text-black rounded-full transition-colors backdrop-blur-md border border-white/20 hidden md:flex"
+                    title="Toggle Fullscreen"
                   >
-                    <Heart size={20} className={isLiked ? 'fill-current' : ''} />
-                    {likesCount > 0 ? `${likesCount} Apresiasi` : 'Apresiasi Karya'}
+                    <Maximize2 size={20} />
                   </button>
-                  <button className="px-6 py-3 bg-white/5 text-white rounded-xl font-bold hover:bg-white/10 border border-white/10 transition-all flex items-center gap-2">
-                    <Share2 size={20} />
+                  <button
+                    onClick={() => setSelectedId(null)}
+                    className="p-2 bg-black/70 hover:bg-white text-white hover:text-black rounded-full transition-colors backdrop-blur-md border border-white/20"
+                  >
+                    <X size={20} />
                   </button>
                 </div>
 
-                {/* Comments Section */}
-                <div className="border-t border-white/10 pt-8">
-                  <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                    <MessageCircle size={20} className="text-gray-400" />
-                    Diskusi ({comments.length})
-                  </h3>
+                {/* Bagian Media */}
+                <div className="w-full h-[40vh] md:h-auto md:w-3/5 bg-black flex items-center justify-center relative overflow-hidden group flex-shrink-0">
+                  <motion.div layoutId={`content-${selectedId}`} className="w-full h-full flex items-center justify-center">
 
-                  {/* Comment Input */}
-                  {user ? (
-                    <form onSubmit={handleSubmitComment} className="flex gap-4 mb-8">
-                      <div className="w-10 h-10 rounded-full bg-gray-700 overflow-hidden shrink-0">
-                        <img
-                          src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${user.email}`}
-                          alt="Me"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 relative">
-                        <input
-                          type="text"
-                          value={newComment}
-                          onChange={(e) => setNewComment(e.target.value)}
-                          placeholder="Tulis pendapatmu..."
-                          className="w-full bg-white/5 border border-white/10 rounded-full py-3 pl-6 pr-12 text-white placeholder:text-gray-500 focus:outline-none focus:border-rose-500/50 focus:bg-white/10 transition-all"
-                          disabled={isSubmittingComment}
-                        />
-                        <button
-                          type="submit"
-                          disabled={!newComment.trim() || isSubmittingComment}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-rose-600 rounded-full text-white hover:bg-rose-500 disabled:opacity-50 disabled:hover:bg-rose-600 transition-colors"
+                    {/* ...Slide Logic... */}
+                    {selectedArtwork.type === 'slide' && (
+                      <div className="relative w-full h-full flex items-center justify-center group/carousel">
+                        <div
+                          ref={carouselRef}
+                          onScroll={handleCarouselScroll}
+                          className="w-full h-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar bg-black"
                         >
-                          <Send size={16} />
-                        </button>
-                      </div>
-                    </form>
-                  ) : (
-                    <div className="bg-white/5 rounded-2xl p-6 text-center mb-8 border border-white/5 border-dashed">
-                      <p className="text-gray-400 text-sm mb-3">Login untuk bergabung dalam diskusi</p>
-                      <Link to="/auth" className="inline-block px-6 py-2 bg-white text-black rounded-full font-bold text-sm hover:bg-gray-200 transition-colors">
-                        Masuk Sekarang
-                      </Link>
-                    </div>
-                  )}
-
-                  {/* Comments List */}
-                  <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                    {comments.length > 0 ? comments.map(comment => (
-                      <div key={comment.id} className="flex gap-4">
-                        <Link to={`/profile/${comment.profiles?.user_id || '#'}`} className="shrink-0">
-                          <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden ring-1 ring-white/10">
-                            <img
-                              src={comment.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${comment.profiles?.username || 'User'}`}
-                              alt="Avatar"
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        </Link>
-                        <div className="flex-1 space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-white font-bold text-sm">{comment.profiles?.username || 'Pengguna'}</span>
-                            <span className="text-xs text-gray-500">{new Date(comment.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
-                          </div>
-                          <p className="text-gray-400 text-sm leading-relaxed">{comment.content}</p>
+                          {(selectedArtwork.slides || []).map((slide: any, i: number) => (
+                            <div key={slide.id || i} className="min-w-full h-full snap-center flex items-center justify-center relative">
+                              <img src={slide.content} className="max-w-full max-h-full object-contain" alt={`Slide ${i + 1}`} />
+                            </div>
+                          ))}
                         </div>
-                      </div>
-                    )) : (
-                      <div className="text-center py-8 text-gray-600">
-                        <p className="text-sm">Belum ada komentar.</p>
+                        {/* Arrows & Dots logic ... */}
+                        {/* Navigation Arrows */}
+                        {selectedArtwork.slides && selectedArtwork.slides.length > 1 && (
+                          <>
+                            {activeSlide > 0 && (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); scrollToSlide(activeSlide - 1); }}
+                                className="absolute left-4 p-2 bg-black/50 hover:bg-white text-white hover:text-black rounded-full transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover/carousel:opacity-100"
+                              >
+                                <ArrowLeft size={20} />
+                              </button>
+                            )}
+                            {activeSlide < selectedArtwork.slides.length - 1 && (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); scrollToSlide(activeSlide + 1); }}
+                                className="absolute right-4 p-2 bg-black/50 hover:bg-white text-white hover:text-black rounded-full transition-all backdrop-blur-md border border-white/10 opacity-0 group-hover/carousel:opacity-100"
+                              >
+                                <ArrowRight size={20} />
+                              </button>
+                            )}
+                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 px-3 py-1.5 bg-black/20 backdrop-blur-md rounded-full border border-white/5">
+                              {selectedArtwork.slides.map((_: any, i: number) => (
+                                <button
+                                  key={i}
+                                  onClick={() => scrollToSlide(i)}
+                                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeSlide === i ? 'bg-white w-3' : 'bg-white/30'
+                                    }`}
+                                />
+                              ))}
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
+
+                    {selectedArtwork.type === 'image' && (
+                      <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-contain" />
+                    )}
+                    {selectedArtwork.type === 'video' && (
+                      <div className="relative w-full h-full">
+                        {/* Video Player or Image Preview */}
+                        {/* For now keeping original logic unless improved */}
+                        <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-cover opacity-50" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Play size={64} className="text-white fill-current" />
+                        </div>
+                      </div>
+                    )}
+                    {selectedArtwork.type === 'text' && (
+                      <div className="w-full h-full bg-[#f0f0f0] text-black p-12 md:p-20 overflow-y-auto font-serif text-lg leading-loose whitespace-pre-wrap">
+                        {selectedArtwork.content}
+                      </div>
+                    )}
+                    {selectedArtwork.type === 'code' && (
+                      <div className="w-full h-full bg-[#0d1117] relative flex flex-col">
+                        {/* Toggle View Button - Mobile Friendly */}
+                        <div className="absolute top-2 right-2 md:top-4 md:right-4 z-50">
+                          <button
+                            onClick={() => setShowSourceCode(!showSourceCode)}
+                            className="bg-black/80 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full text-[10px] md:text-xs font-bold border border-white/20 backdrop-blur-md hover:bg-white hover:text-black transition-colors"
+                          >
+                            {showSourceCode ? '▶ HASIL' : '</> KODE'}
+                          </button>
+                        </div>
+
+                        {showSourceCode ? (
+                          <CodeViewer content={selectedArtwork.content} />
+                        ) : (
+                          <iframe
+                            src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(selectedArtwork.content, selectedArtwork.code_language || 'html'))}`}
+                            sandbox="allow-scripts allow-same-origin"
+                            className="w-full h-full border-0 bg-white"
+                            title="Code Preview"
+                          />
+                        )}
+                      </div>
+                    )}
+                  </motion.div>
+                </div>
+
+                {/* Bagian Detail - Flex-1 to fill remaining space, scrollable */}
+                <div className="flex-1 md:w-2/5 p-4 md:p-8 lg:p-12 overflow-y-auto custom-scrollbar bg-[#111] border-t md:border-t-0 md:border-l border-white/10">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 ${selectedArtwork.division === 'coding' ? 'bg-green-500/10 text-green-400' :
+                      selectedArtwork.division === 'video' ? 'bg-orange-500/10 text-orange-400' :
+                        selectedArtwork.division === 'meme' ? 'bg-yellow-500/10 text-yellow-400' :
+                          selectedArtwork.division === 'writing' ? 'bg-white/10 text-white' :
+                            'bg-purple-500/10 text-purple-400'
+                      }`}>
+                      {selectedArtwork.division}
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"><Share2 size={20} /></button>
+                      <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"><Download size={20} /></button>
+                    </div>
+                  </div>
+
+                  <h2 className="text-4xl font-serif text-white mb-4">{selectedArtwork.title}</h2>
+                  <p className="text-gray-400 leading-relaxed mb-8">{selectedArtwork.description}</p>
+
+                  <Link to={`/profile/${selectedArtwork.author}`} className="flex items-center gap-4 mb-8 p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
+                    <div className="w-12 h-12 rounded-full bg-gray-700 overflow-hidden">
+                      <img src={`https://ui-avatars.com/api/?name=${selectedArtwork.author}&background=random`} alt="Avatar" />
+                    </div>
+                    <div>
+                      <h4 className="text-white font-bold">{selectedArtwork.author}</h4>
+                      <p className="text-gray-500 text-xs">{selectedArtwork.role}</p>
+                    </div>
+                    <button className="ml-auto bg-white text-black px-4 py-2 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors">
+                      Lihat
+                    </button>
+                  </Link>
+
+                  <div className="flex flex-wrap gap-2 mb-8">
+                    {selectedArtwork.tags?.map(tag => (
+                      <span key={tag} className="px-3 py-1 rounded-full border border-white/10 text-xs text-gray-400 hover:text-white hover:border-white transition-colors cursor-pointer">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Social Actions (Like) */}
+                  <div className="flex gap-4 mb-8">
+                    <button
+                      onClick={handleToggleLike}
+                      className={`flex-1 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 ${isLiked ? 'bg-rose-600 text-white shadow-lg shadow-rose-900/50 border border-rose-500' : 'bg-white/5 text-white hover:bg-white/10 border border-white/10'}`}
+                    >
+                      <Heart size={20} className={isLiked ? 'fill-current' : ''} />
+                      {likesCount > 0 ? `${likesCount} Apresiasi` : 'Apresiasi Karya'}
+                    </button>
+                    <button className="px-6 py-3 bg-white/5 text-white rounded-xl font-bold hover:bg-white/10 border border-white/10 transition-all flex items-center gap-2">
+                      <Share2 size={20} />
+                    </button>
+                  </div>
+
+                  {/* Comments Section */}
+                  <div className="border-t border-white/10 pt-8">
+                    <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                      <MessageCircle size={20} className="text-gray-400" />
+                      Diskusi ({comments.length})
+                    </h3>
+
+                    {/* Comment Input */}
+                    {user ? (
+                      <form onSubmit={handleSubmitComment} className="flex gap-4 mb-8">
+                        <div className="w-10 h-10 rounded-full bg-gray-700 overflow-hidden shrink-0">
+                          <img
+                            src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${user.email}`}
+                            alt="Me"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 relative">
+                          <input
+                            type="text"
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            placeholder="Tulis pendapatmu..."
+                            className="w-full bg-white/5 border border-white/10 rounded-full py-3 pl-6 pr-12 text-white placeholder:text-gray-500 focus:outline-none focus:border-rose-500/50 focus:bg-white/10 transition-all"
+                            disabled={isSubmittingComment}
+                          />
+                          <button
+                            type="submit"
+                            disabled={!newComment.trim() || isSubmittingComment}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-rose-600 rounded-full text-white hover:bg-rose-500 disabled:opacity-50 disabled:hover:bg-rose-600 transition-colors"
+                          >
+                            <Send size={16} />
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <div className="bg-white/5 rounded-2xl p-6 text-center mb-8 border border-white/5 border-dashed">
+                        <p className="text-gray-400 text-sm mb-3">Login untuk bergabung dalam diskusi</p>
+                        <Link to="/auth" className="inline-block px-6 py-2 bg-white text-black rounded-full font-bold text-sm hover:bg-gray-200 transition-colors">
+                          Masuk Sekarang
+                        </Link>
+                      </div>
+                    )}
+
+                    {/* Comments List */}
+                    <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                      {comments.length > 0 ? comments.map(comment => (
+                        <div key={comment.id} className="flex gap-4">
+                          <Link to={`/profile/${comment.profiles?.user_id || '#'}`} className="shrink-0">
+                            <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden ring-1 ring-white/10">
+                              <img
+                                src={comment.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${comment.profiles?.username || 'User'}`}
+                                alt="Avatar"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </Link>
+                          <div className="flex-1 space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-white font-bold text-sm">{comment.profiles?.username || 'Pengguna'}</span>
+                              <span className="text-xs text-gray-500">{new Date(comment.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
+                            </div>
+                            <p className="text-gray-400 text-sm leading-relaxed">{comment.content}</p>
+                          </div>
+                        </div>
+                      )) : (
+                        <div className="text-center py-8 text-gray-600">
+                          <p className="text-sm">Belum ada komentar.</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          </div>
+              </motion.div>
+            </div>
+          )
         )}
-      </AnimatePresence>
-    </div>
+      </AnimatePresence >
+    </div >
   );
 };

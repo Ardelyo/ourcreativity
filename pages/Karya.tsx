@@ -8,7 +8,86 @@ import { useAuth } from '../components/AuthProvider';
 import { supabase } from '../lib/supabase';
 
 // Helper to generate live code preview HTML
-const generateCodePreview = (code: string, language: string = 'html'): string => {
+// Helper Component for Code Viewing
+const CodeViewer = ({ content }: { content: any }) => {
+  const [activeFileId, setActiveFileId] = useState<string | null>(null);
+
+  const files = React.useMemo(() => {
+    try {
+      if (typeof content === 'string') {
+        // Try parsing if string
+        if (content.trim().startsWith('[')) {
+          return JSON.parse(content);
+        }
+      }
+      if (Array.isArray(content)) {
+        return content;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }, [content]);
+
+  // Set initial active file when files load
+  useEffect(() => {
+    if (files && files.length > 0) {
+      setActiveFileId(files[0].id);
+    }
+  }, [files]);
+
+  const activeFile = files?.find((f: any) => f.id === activeFileId) || files?.[0];
+
+  if (!files || !Array.isArray(files)) {
+    // Fallback logic for legacy/simple content
+    const displayContent = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
+    return (
+      <div className="flex-1 overflow-auto p-3 md:p-6 bg-[#0d1117]">
+        <pre className="font-mono text-[10px] md:text-xs text-green-400 leading-relaxed whitespace-pre-wrap break-words">
+          {displayContent}
+        </pre>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-full flex flex-col overflow-hidden">
+      {/* Tab Bar - Scrollable on Mobile */}
+      <div className="flex-shrink-0 bg-[#161b22] border-b border-white/10 flex overflow-x-auto no-scrollbar">
+        {files.map((file: any) => (
+          <button
+            key={file.id}
+            onClick={() => setActiveFileId(file.id)}
+            className={`px-3 md:px-4 py-2 md:py-3 text-[10px] md:text-xs font-mono whitespace-nowrap border-b-2 transition-colors ${file.id === activeFileId
+              ? 'border-blue-500 text-white bg-[#0d1117]'
+              : 'border-transparent text-gray-500 hover:text-gray-300'
+              }`}
+          >
+            <span className={`mr-1.5 ${file.name?.endsWith('.html') ? 'text-orange-400' :
+              file.name?.endsWith('.css') ? 'text-blue-400' :
+                file.name?.endsWith('.js') ? 'text-yellow-400' : 'text-gray-400'
+              }`}>●</span>
+            {file.name || 'file'}
+          </button>
+        ))}
+      </div>
+
+      {/* Code Content - Responsive */}
+      <div className="flex-1 overflow-auto p-3 md:p-6 bg-[#0d1117]">
+        <pre className="font-mono text-[10px] md:text-xs leading-relaxed">
+          <code className={`${activeFile?.language === 'html' ? 'text-orange-300' :
+            activeFile?.language === 'css' ? 'text-blue-300' :
+              activeFile?.language === 'javascript' ? 'text-yellow-300' : 'text-green-300'
+            }`}>
+            {activeFile?.content || '// No content'}
+          </code>
+        </pre>
+      </div>
+    </div>
+  );
+};
+
+const generateCodePreview = (content: string, language: string = 'html'): string => {
   const baseStyles = `
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
@@ -20,8 +99,78 @@ const generateCodePreview = (code: string, language: string = 'html'): string =>
       align-items: center;
       justify-content: center;
     }
-    canvas { display: block; }
+    canvas { display: block; margin: auto; }
   `;
+
+  // Handle new multi-file JSON format
+  if (language === 'json_multifile') {
+    try {
+      const files = JSON.parse(content);
+
+      // Find files by type
+      const htmlFile = files.find((f: any) => f.name?.endsWith('.html'));
+      const cssFile = files.find((f: any) => f.name?.endsWith('.css'));
+      const mainJsFile = files.find((f: any) => f.isMain && f.name?.endsWith('.js'));
+      const otherJsFile = files.find((f: any) => f.name?.endsWith('.js') && !f.isMain);
+
+      // SCENARIO A: Has HTML file - use it as base
+      if (htmlFile?.content) {
+        let html = htmlFile.content;
+        if (cssFile?.content) {
+          html = html.replace('</head>', `<style>${cssFile.content}</style></head>`);
+        }
+        if (otherJsFile?.content) {
+          html = html.replace('</body>', `<script>${otherJsFile.content}</script></body>`);
+        }
+        return html;
+      }
+
+      // SCENARIO B: No HTML, but has main JS file (likely p5.js or vanilla JS)
+      if (mainJsFile?.content) {
+        const jsCode = mainJsFile.content;
+        const isP5 = jsCode.includes('createCanvas') || jsCode.includes('setup()') || jsCode.includes('draw()');
+
+        if (isP5) {
+          // p5.js project - wrap with p5 CDN
+          return `<!DOCTYPE html>
+<html><head>
+<style>${baseStyles}</style>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+${cssFile?.content ? `<style>${cssFile.content}</style>` : ''}
+</head>
+<body>
+<script>${jsCode}</script>
+</body></html>`;
+        } else {
+          // Vanilla JS
+          return `<!DOCTYPE html>
+<html><head>
+<style>${baseStyles}</style>
+${cssFile?.content ? `<style>${cssFile.content}</style>` : ''}
+</head>
+<body>
+<div id="app"></div>
+<script>try{${jsCode}}catch(e){document.body.innerHTML='<pre style="color:red">'+e.message+'</pre>'}</script>
+</body></html>`;
+        }
+      }
+
+      // SCENARIO C: Fallback - show error
+      return `<!DOCTYPE html><html><body style="background:#0a0a0a;color:#ff6b6b;padding:20px;font-family:monospace;">
+        <p>⚠️ Tidak dapat merender pratinjau</p>
+        <p style="color:#888;font-size:12px;">Format file tidak dikenali</p>
+      </body></html>`;
+
+    } catch (e) {
+      console.error('Error parsing multi-file code:', e);
+      return `<!DOCTYPE html><html><body style="background:#0a0a0a;color:#ff6b6b;padding:20px;font-family:monospace;">
+        <p>⚠️ Error parsing code</p>
+      </body></html>`;
+    }
+  }
+
+  // Fallback for old string format
+  const code = content || '';
 
   switch (language) {
     case 'p5js':
@@ -91,10 +240,11 @@ export const Karya = () => {
           tags, 
           slides, 
           created_at,
+          code_language,
+          content,
           likes:likes(count),
           comments:comments(count)
-        `)
-        .order('created_at', { ascending: false });
+        `);
 
       if (currentFilter !== 'all') {
         query = query.eq('division', currentFilter);
@@ -283,16 +433,18 @@ export const Karya = () => {
         );
       case 'code':
         return (
-          <div className="w-full h-full bg-[#0d1117] p-6 font-mono text-xs text-gray-300 relative overflow-hidden group-hover:bg-[#161b22] transition-colors">
-            <div className="absolute top-0 left-0 right-0 h-8 bg-[#0d1117] border-b border-white/10 flex items-center px-4 gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
+          <div className="w-full h-full bg-[#0d1117] relative group overflow-hidden">
+            {/* Preview Iframe for Card - Data URI for better compatibility */}
+            <iframe
+              src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(art.content, art.code_language || 'html'))}`}
+              sandbox="allow-scripts allow-same-origin"
+              className="w-[200%] h-[200%] border-0 transform scale-50 origin-top-left pointer-events-none bg-white" // Force white bg for iframe content
+              title="Code Preview"
+            />
+            <div className="absolute inset-0 bg-transparent hover:bg-black/10 transition-colors" />
+            <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[10px] font-mono text-green-400 border border-green-500/20">
+              CODE
             </div>
-            <pre className="mt-8 overflow-hidden opacity-80">
-              <code>{art.content}</code>
-            </pre>
-            <Code className="absolute bottom-4 right-4 text-green-500/50" size={24} />
           </div>
         );
       case 'video':
@@ -314,10 +466,13 @@ export const Karya = () => {
     }
   };
 
+  // State for Code View Toggle in Modal
+  const [showSourceCode, setShowSourceCode] = useState(false);
+
   return (
     <div className="min-h-screen pt-32 pb-20 px-4 max-w-[1600px] mx-auto relative">
 
-      {/* Header & Kontrol */}
+      {/* Header & Kontrol - SAME */}
       <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
         <div>
           <h1 className="text-5xl md:text-7xl font-serif text-white mb-4">Galeri Karya</h1>
@@ -347,7 +502,7 @@ export const Karya = () => {
         </div>
       </div>
 
-      {/* Grid Masonry Modern - Pinterest Style */}
+      {/* Grid Masonry Modern - Pinterest Style - SAME */}
       {error ? (
         <FetchErrorState message={error} onRetry={fetchWorks} />
       ) : loading && artworks.length === 0 ? (
@@ -364,7 +519,7 @@ export const Karya = () => {
             <motion.div
               key={art.id}
               layoutId={`card-${art.id}`}
-              onClick={() => setSelectedId(art.id)}
+              onClick={() => { setSelectedId(art.id); setShowSourceCode(false); }} // Reset view mode
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{
@@ -383,7 +538,7 @@ export const Karya = () => {
 
                 {/* Hamparan Hover Premium - Pinterest Inspired */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-4 md:p-6 translate-y-2 group-hover:translate-y-0">
-
+                  {/* ... same hover meta ... */}
                   <div className="flex justify-between items-center mb-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                     <h3 className="text-white font-bold text-sm md:text-lg leading-tight line-clamp-2">{art.title}</h3>
                     <div className="flex gap-2">
@@ -421,6 +576,7 @@ export const Karya = () => {
         </div>
       ) : null}
 
+      {/* ...Load More & Empty State... */}
       {hasMore && artworks.length > 0 && (
         <div className="flex justify-center mt-12 pb-12">
           <button
@@ -466,7 +622,7 @@ export const Karya = () => {
       {/* Modal Detail */}
       <AnimatePresence>
         {selectedId && selectedArtwork && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 pt-20 pb-10 pointer-events-none">
+          <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:px-4 md:pt-20 md:pb-10 pointer-events-none">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -477,22 +633,24 @@ export const Karya = () => {
 
             <motion.div
               layoutId={`card-${selectedId}`}
-              className="relative w-full max-w-6xl bg-[#111] rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[85vh] pointer-events-auto border border-white/10"
+              className="relative w-full max-w-6xl bg-[#111] rounded-t-[2rem] md:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-[90vh] md:max-h-[85vh] pointer-events-auto border border-white/10"
               transition={{ type: "spring", stiffness: 200, damping: 25 }}
             >
+              {/* Close Button - Safe Position for Mobile */}
               <button
                 onClick={() => setSelectedId(null)}
-                className="absolute top-4 right-4 z-50 p-2 bg-black/50 hover:bg-white text-white hover:text-black rounded-full transition-colors backdrop-blur-md"
+                className="absolute top-3 right-3 md:top-4 md:right-4 z-50 p-2 bg-black/70 hover:bg-white text-white hover:text-black rounded-full transition-colors backdrop-blur-md border border-white/20"
               >
-                <X size={24} />
+                <X size={20} />
               </button>
 
               {/* Bagian Media */}
-              <div className="w-full md:w-3/5 bg-black flex items-center justify-center relative overflow-hidden">
+              <div className="w-full h-[40vh] md:h-auto md:w-3/5 bg-black flex items-center justify-center relative overflow-hidden group flex-shrink-0">
                 <motion.div layoutId={`content-${selectedId}`} className="w-full h-full flex items-center justify-center">
+
+                  {/* ...Slide Logic... */}
                   {selectedArtwork.type === 'slide' && (
                     <div className="relative w-full h-full flex items-center justify-center group/carousel">
-                      {/* Carousel Container */}
                       <div
                         ref={carouselRef}
                         onScroll={handleCarouselScroll}
@@ -504,7 +662,7 @@ export const Karya = () => {
                           </div>
                         ))}
                       </div>
-
+                      {/* Arrows & Dots logic ... */}
                       {/* Navigation Arrows */}
                       {selectedArtwork.slides && selectedArtwork.slides.length > 1 && (
                         <>
@@ -524,8 +682,6 @@ export const Karya = () => {
                               <ArrowRight size={20} />
                             </button>
                           )}
-
-                          {/* Dots Container */}
                           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 px-3 py-1.5 bg-black/20 backdrop-blur-md rounded-full border border-white/5">
                             {selectedArtwork.slides.map((_: any, i: number) => (
                               <button
@@ -540,11 +696,14 @@ export const Karya = () => {
                       )}
                     </div>
                   )}
+
                   {selectedArtwork.type === 'image' && (
                     <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-contain" />
                   )}
                   {selectedArtwork.type === 'video' && (
                     <div className="relative w-full h-full">
+                      {/* Video Player or Image Preview */}
+                      {/* For now keeping original logic unless improved */}
                       <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-cover opacity-50" />
                       <div className="absolute inset-0 flex items-center justify-center">
                         <Play size={64} className="text-white fill-current" />
@@ -557,20 +716,34 @@ export const Karya = () => {
                     </div>
                   )}
                   {selectedArtwork.type === 'code' && (
-                    <div className="w-full h-full bg-black relative">
-                      <iframe
-                        srcDoc={generateCodePreview(selectedArtwork.content, selectedArtwork.code_language || 'html')}
-                        sandbox="allow-scripts"
-                        className="w-full h-full border-0"
-                        title="Code Preview"
-                      />
+                    <div className="w-full h-full bg-[#0d1117] relative flex flex-col">
+                      {/* Toggle View Button - Mobile Friendly */}
+                      <div className="absolute top-2 right-2 md:top-4 md:right-4 z-50">
+                        <button
+                          onClick={() => setShowSourceCode(!showSourceCode)}
+                          className="bg-black/80 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-full text-[10px] md:text-xs font-bold border border-white/20 backdrop-blur-md hover:bg-white hover:text-black transition-colors"
+                        >
+                          {showSourceCode ? '▶ HASIL' : '</> KODE'}
+                        </button>
+                      </div>
+
+                      {showSourceCode ? (
+                        <CodeViewer content={selectedArtwork.content} />
+                      ) : (
+                        <iframe
+                          src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(selectedArtwork.content, selectedArtwork.code_language || 'html'))}`}
+                          sandbox="allow-scripts allow-same-origin"
+                          className="w-full h-full border-0 bg-white"
+                          title="Code Preview"
+                        />
+                      )}
                     </div>
                   )}
                 </motion.div>
               </div>
 
-              {/* Bagian Detail */}
-              <div className="w-full md:w-2/5 p-8 md:p-12 overflow-y-auto custom-scrollbar bg-[#111] border-l border-white/10">
+              {/* Bagian Detail - Flex-1 to fill remaining space, scrollable */}
+              <div className="flex-1 md:w-2/5 p-4 md:p-8 lg:p-12 overflow-y-auto custom-scrollbar bg-[#111] border-t md:border-t-0 md:border-l border-white/10">
                 <div className="flex items-center justify-between mb-8">
                   <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 ${selectedArtwork.division === 'coding' ? 'bg-green-500/10 text-green-400' :
                     selectedArtwork.division === 'video' ? 'bg-orange-500/10 text-orange-400' :

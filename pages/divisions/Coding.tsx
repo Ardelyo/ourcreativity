@@ -53,7 +53,7 @@ export const Coding = () => {
             </nav>
 
             {/* SEKSI 1: HERO */}
-            <section className="h-screen flex flex-col items-center justify-center relative px-6">
+            <section className="min-h-dvh flex flex-col items-center justify-center relative px-6 py-20">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#020202]/50 to-[#020202] pointer-events-none z-0"></div>
 
                 <motion.div
@@ -72,7 +72,7 @@ export const Coding = () => {
                         <img src="/logo-oc-coding.jpg" alt="OC Coding Logo" className="w-24 h-24 md:w-32 md:h-32 mx-auto relative z-10 rounded-full object-cover border-2 border-green-500/50" />
                     </motion.div>
 
-                    <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white mb-6 font-mono">
+                    <h1 className="text-4xl md:text-8xl font-bold tracking-tighter text-white mb-6 font-mono">
                         <GlitchText text="O.C. CODING" />
                     </h1>
 
@@ -102,13 +102,13 @@ export const Coding = () => {
             </section>
 
             {/* SEKSI 2: ABOUT / PHILOSOPHY */}
-            <section className="py-24 px-6 md:px-20 relative bg-[#030303] border-t border-white/5">
-                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <section className="py-16 md:py-24 px-6 md:px-20 relative bg-[#030303] border-t border-white/5">
+                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 font-mono">
+                        <h2 className="text-2xl md:text-4xl font-bold text-white mb-6 font-mono">
                             <span className="text-green-500">const</span> mission = <span className="text-yellow-500">"INNOVATE"</span>;
                         </h2>
-                        <div className="space-y-6 text-gray-400 leading-relaxed font-light">
+                        <div className="space-y-6 text-gray-400 leading-relaxed font-light text-sm md:text-base">
                             <p>
                                 Di O.C. Coding, kami tidak sekadar menulis kode; kami merancang solusi.
                                 Dari pengembangan web full-stack hingga eksperimen AI, kami menyediakan
@@ -121,7 +121,7 @@ export const Coding = () => {
                             </p>
                             <ul className="grid grid-cols-2 gap-4 pt-4 mt-6 border-t border-white/5">
                                 {skillAreas.map((item, i) => (
-                                    <li key={i} className="flex items-center gap-2 font-mono text-sm">
+                                    <li key={i} className="flex items-center gap-2 font-mono text-xs md:text-sm">
                                         <span className={`w-1.5 h-1.5 rounded-full bg-current ${item.color}`}></span>
                                         {item.label}
                                     </li>
@@ -131,7 +131,7 @@ export const Coding = () => {
                     </div>
                     <div className="relative">
                         <div className="absolute -inset-4 bg-green-500/5 blur-2xl rounded-lg"></div>
-                        <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-6 font-mono text-xs md:text-sm text-gray-400 shadow-2xl relative z-10">
+                        <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-6 font-mono text-xs md:text-sm text-gray-400 shadow-2xl relative z-10 overflow-x-auto">
                             <div className="flex gap-2 mb-4 border-b border-white/5 pb-4">
                                 <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
                                 <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>

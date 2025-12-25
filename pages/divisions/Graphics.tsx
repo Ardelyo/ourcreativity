@@ -82,7 +82,7 @@ export const Graphics = () => {
             </nav>
 
             {/* Bagian Hero */}
-            < header className="relative min-h-screen flex flex-col pt-32 border-x border-white/5 max-w-[1600px] mx-auto" >
+            <header className="relative min-h-screen flex flex-col pt-24 md:pt-32 border-x border-white/5 max-w-[1600px] mx-auto">
                 <div className="flex-1 flex flex-col justify-center px-6 md:px-12 relative">
                     {/* Garis Grid Dekoratif */}
                     <div className="absolute inset-0 grid grid-cols-6 pointer-events-none opacity-20">
@@ -105,24 +105,24 @@ export const Graphics = () => {
                             <img src="/logo-oc-desain.jpg" alt="OC Design Logo" className="w-12 h-12 rounded-full border border-purple-500/50 object-cover" />
                         </div>
 
-                        <h1 className="text-[10vw] leading-[0.85] font-black uppercase tracking-tighter mix-blend-difference mb-8">
+                        <h1 className="text-5xl md:text-[10vw] leading-[0.9] md:leading-[0.85] font-black uppercase tracking-tighter mix-blend-difference mb-8">
                             Komunitas <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-purple-400 to-white">Paling Liar</span>
                         </h1>
 
-                        <div className="mt-8 flex flex-col md:flex-row gap-12 items-start md:items-end justify-between">
+                        <div className="mt-8 flex flex-col md:flex-row gap-8 md:gap-12 items-start md:items-end justify-between">
                             <div className="max-w-2xl">
                                 <p className="text-xl md:text-3xl text-white font-bold leading-relaxed mb-4">
                                     Divisi favorit dan paling aktif di OurCreativity.
                                 </p>
-                                <p className="text-lg text-gray-400 font-mono border-l-4 border-purple-500 pl-4">
+                                <p className="text-base md:text-lg text-gray-400 font-mono border-l-4 border-purple-500 pl-4">
                                     Rumah bagi <span className="text-purple-400">700+ desainer</span> yang siap menggebrak industri kreatif. Bukan sekadar grup chat, ini adalah pergerakan.
                                 </p>
                             </div>
 
                             <div className="flex gap-4">
-                                <div className="w-32 h-32 border border-purple-500/30 rounded-full flex items-center justify-center animate-spin-slow bg-purple-500/5 backdrop-blur-sm">
-                                    <Crosshair className="text-purple-500" size={40} />
+                                <div className="w-24 h-24 md:w-32 md:h-32 border border-purple-500/30 rounded-full flex items-center justify-center animate-spin-slow bg-purple-500/5 backdrop-blur-sm">
+                                    <Crosshair className="text-purple-500 w-8 h-8 md:w-10 md:h-10" />
                                 </div>
                             </div>
                         </div>
@@ -130,22 +130,22 @@ export const Graphics = () => {
                 </div>
 
                 <Marquee text="KOLABORASI TANPA BATAS • KARYA TANPA HENTI •" />
-            </header >
+            </header>
 
             {/* Bagian Statistik / Manifesto */}
-            < section className="border-x border-white/5 max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10 bg-[#0a0a0a]" >
+            <section className="border-x border-white/5 max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10 bg-[#0a0a0a]">
                 {
                     stats.map((stat, i) => (
-                        <div key={i} className="p-12 flex flex-col items-center text-center group hover:bg-purple-900/10 transition-colors">
-                            {i === 0 && <Users className="w-16 h-16 text-purple-500 mb-6 group-hover:scale-110 transition-transform" />}
-                            {i === 1 && <Trophy className="w-16 h-16 text-purple-500 mb-6 group-hover:scale-110 transition-transform" />}
-                            {i === 2 && <Zap className="w-16 h-16 text-purple-500 mb-6 group-hover:scale-110 transition-transform" />}
-                            <h3 className="text-5xl font-black text-white mb-2">{stat.value}</h3>
-                            <p className="font-mono text-purple-400 uppercase">{stat.label}</p>
+                        <div key={i} className="p-8 md:p-12 flex flex-col items-center text-center group hover:bg-purple-900/10 transition-colors">
+                            {i === 0 && <Users className="w-12 h-12 md:w-16 md:h-16 text-purple-500 mb-6 group-hover:scale-110 transition-transform" />}
+                            {i === 1 && <Trophy className="w-12 h-12 md:w-16 md:h-16 text-purple-500 mb-6 group-hover:scale-110 transition-transform" />}
+                            {i === 2 && <Zap className="w-12 h-12 md:w-16 md:h-16 text-purple-500 mb-6 group-hover:scale-110 transition-transform" />}
+                            <h3 className="text-4xl md:text-5xl font-black text-white mb-2">{stat.value}</h3>
+                            <p className="font-mono text-purple-400 uppercase text-sm md:text-base">{stat.label}</p>
                         </div>
                     ))
                 }
-            </section >
+            </section>
 
             {/* Galeri Kolase Tersebar */}
             < section className="py-32 border-x border-white/5 max-w-[1600px] mx-auto px-6 overflow-hidden relative" >

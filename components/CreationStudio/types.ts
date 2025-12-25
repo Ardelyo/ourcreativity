@@ -7,6 +7,7 @@ export interface SlideContent {
     id: string;
     type: 'image' | 'text' | 'code' | 'video' | 'embed';
     content: string;
+    file?: File; // For client-side compression support
     metadata?: {
         language?: string;
         embedUrl?: string;

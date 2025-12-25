@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { SlideContent } from '../types';
+import { compressImage } from '../../../lib/image-utils';
 
 interface VisualBuilderProps {
     slides: SlideContent[];
@@ -96,6 +97,7 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({ slides, onChange, 
     // --- LOGIC: REGULAR UPLOAD ---
     const onDrop = async (acceptedFiles: File[]) => {
         const newSlides = await Promise.all(acceptedFiles.map(async (file, index) => {
+            const compressedFile = await compressImage(file);
             return new Promise<SlideContent>((resolve) => {
                 const reader = new FileReader();
                 reader.onload = () => {
@@ -107,10 +109,11 @@ export const VisualBuilder: React.FC<VisualBuilderProps> = ({ slides, onChange, 
                         id: `slide-${Date.now()}-${Math.random()}-${index}`,
                         type: 'image',
                         content,
+                        file: compressedFile, // Store compressed file
                         order: slides.length + index
                     });
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(compressedFile);
             });
         }));
         onChange([...slides, ...newSlides]);

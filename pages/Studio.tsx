@@ -27,9 +27,11 @@ import { PyodideSandbox } from '@/components/CreationStudio/sandbox/PyodideSandb
 import { InteractiveSandbox } from '@/components/CreationStudio/ControlCenter/InteractiveSandbox';
 import { StudioHeader } from '@/components/CreationStudio/StudioHeader';
 import { PreviewCarousel } from '@/components/CreationStudio/PreviewCarousel';
-
+import { compressImage, validateVideoSize } from '@/lib/image-utils';
 // Types
-import { CreationData, WorkType, DivisionId } from '../components/CreationStudio/types';
+import { CreationData, WorkType, DivisionId } from '@/components/CreationStudio/types';
+
+type Division = 'graphics' | 'tech' | 'music' | 'writing' | 'meme' | 'video';
 
 const DIVISIONS = [
     { id: 'graphics', name: 'Divisi Grafis' },
@@ -263,12 +265,31 @@ export const Studio = () => {
     }, [saveDraftsToStorage]);
 
     // --- UPLOAD HANDLERS ---
-    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // --- UPLOAD HANDLERS ---
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        const previewUrl = URL.createObjectURL(file);
-        setMediaFile(file);
-        setMediaPreview(previewUrl);
+
+        if (file.type.startsWith('video/')) {
+            if (!validateVideoSize(file)) {
+                e.target.value = ''; // Reset input
+                return;
+            }
+            setMediaFile(file);
+            setMediaPreview(URL.createObjectURL(file));
+        } else {
+            // Image (Thumbnail) Compression
+            try {
+                const compressedFile = await compressImage(file);
+                setMediaFile(compressedFile);
+                setMediaPreview(URL.createObjectURL(compressedFile));
+            } catch (err) {
+                console.error("Thumbnail compression failed", err);
+                // Fallback to original
+                setMediaFile(file);
+                setMediaPreview(URL.createObjectURL(file));
+            }
+        }
     };
 
     const uploadToSupabase = async (file: File | Blob, path?: string) => {
@@ -442,7 +463,7 @@ export const Studio = () => {
                                 />
                                 <Upload size={64} className="mb-6 opacity-20" />
                                 <h3 className="text-2xl font-bold mb-2">Upload Video</h3>
-                                <p className="text-sm opacity-40">Klik atau seret file ke sini</p>
+                                <p className="text-sm opacity-40">Maks. 50MB (Lebih baik pakai Slide/Embed)</p>
                             </div>
                         )}
                     </div>

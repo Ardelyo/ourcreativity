@@ -16,12 +16,31 @@ This release marks a transformative redesign of OurCreativity with the implement
 
 #### Added
 
+- **Creation Studio v2** — All-in-one multi-mode editor:
+  - Text editor dengan Tiptap rich formatting
+  - Code IDE dengan Monaco editor (multi-file support)
+  - Visual builder dengan drag-and-drop slides
+  - Video upload dengan 50MB validation
+  - Website embed mode (YouTube/Vimeo/external sites)
+  - Document upload support
+- **Storage Optimization System** — Client-side WebP compression (90%+ reduction)
+  - browser-image-compression integration
+  - Automatic WebP conversion (<800KB target)
+  - Video size validation (50MB limit)
+  - Smart draft auto-save (debounced, change-detected)
+- **Mobile UX Overhaul** — Complete reorganization:
+  - Global safe-area handling (notch/home bar)
+  - Keyboard-aware UI (toolbar positioning)
+  - Touch-optimized controls (min 44×44px)
+  - Contextual action dock per mode
 - **Luminous Design System** — New design language with deep dark backgrounds, glowing accents, and atmospheric lighting
+- **Glassmorphism UI** — Premium glass effects pada cards, modals, navigation
 - **Hero Section Redesign** — Aurora-inspired gradient backgrounds with smooth mesh animations
-- **Bento Grid Navigation** — Modern modular grid-based navigation with glassmorphism effects
 - **Enhanced Animations** — Framer Motion choreography for fluid transitions and interactions
 - **Improved Typography** — Refined hierarchy using Inter and Playfair Display with optimal readability
-- **Dynamic Lighting** — Ambient light effects that guide user focus and create visual depth
+- **Dynamic Island Navigation** — Smooth, contextual navigation yang beradaptasi dengan status
+- **Draft Management** — Smart auto-save dengan mode-specific drafts
+- **Error Boundaries** — User-friendly error handling dengan retry functionality
 - **Responsive Excellence** — Optimized layouts for desktop, tablet, and mobile devices
 
 #### Changed

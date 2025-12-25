@@ -4,6 +4,10 @@ Selamat datang di dokumentasi resmi OurCreativity. Semua dokumentasi kini tersed
 
 ## Daftar Isi
 
+### 🚀 Baru di v5.0
+*   **[Master Update v5.0](MASTER_UPDATE_V5.md)**  
+    Ringkasan fitur paling revolusioner di versi 5.0 (Creation Studio, Zen Design, Optimasi Storage).
+
 ### 📚 Dokumentasi Utama
 
 *   **[Arsitektur Sistem](ARSITEKTUR.md)**  

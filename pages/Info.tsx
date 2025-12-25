@@ -108,6 +108,28 @@ export const Info = () => {
               </div>
             </div>
           </motion.div>
+
+          {/* Kotak Surat Link */}
+          <Link to="/kotak-surat">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="bg-[#0a0a0a] border border-white/10 rounded-[2rem] p-8 relative overflow-hidden group hover:border-rose-500/50 transition-all cursor-pointer"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-[50px] group-hover:bg-blue-500/20 transition-all"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-serif text-white mb-1">Kotak Surat</h3>
+                  <p className="text-sm text-gray-500">Kirim pesan anonim atau saran</p>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                  <Mail size={20} className="text-blue-400" />
+                </div>
+              </div>
+            </motion.div>
+          </Link>
         </div>
       </div>
 

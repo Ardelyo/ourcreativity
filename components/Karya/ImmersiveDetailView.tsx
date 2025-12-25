@@ -100,11 +100,11 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                         <div className="flex items-center gap-6 mt-4">
                             <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-rose-500 transition-colors">
                                 <div className="p-2 bg-white/5 rounded-full"><Heart size={20} /></div>
-                                <span className="text-xs">{art.likes || 0}</span>
+                                <span className="text-xs">{typeof art.likes === 'object' ? (art.likes?.[0]?.count || 0) : (art.likes || 0)}</span>
                             </button>
                             <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-blue-500 transition-colors">
                                 <div className="p-2 bg-white/5 rounded-full"><MessageCircle size={20} /></div>
-                                <span className="text-xs">{art.comments || 0}</span>
+                                <span className="text-xs">{typeof art.comments === 'object' ? (art.comments?.[0]?.count || 0) : (art.comments || 0)}</span>
                             </button>
                             <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-green-500 transition-colors">
                                 <div className="p-2 bg-white/5 rounded-full"><Share2 size={20} /></div>

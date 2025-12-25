@@ -15,6 +15,7 @@ import { useIsMobile } from '../hooks/useIsMobile';
 // Sub-components
 import { EditorLayout } from '../components/CreationStudio/ControlCenter/EditorLayout';
 import { MobileEditorLayout } from '../components/CreationStudio/ControlCenter/MobileEditorLayout';
+import { MobileActionDock } from '../components/CreationStudio/ControlCenter/MobileActionDock';
 import { CodeFile } from '../components/CreationStudio/ControlCenter/types';
 
 import { TextEditor } from '../components/CreationStudio/editors/TextEditor';
@@ -548,76 +549,86 @@ export const Studio = () => {
                 {renderCanvas()}
             </div>
 
-            {/* FLOATING CONTROL BAR (ZEN DOCK) - MINIMIZABLE ONLY */}
-            <div
-                className={`fixed z-50 flex flex-col items-center justify-center transition-all duration-500 ${isPreview ? 'translate-y-[200%] opacity-0' : 'translate-y-0 opacity-100'}`}
-                style={{
-                    bottom: isMobile ? '1.5rem' : '2rem',
-                    left: '50%',
-                    transform: `translate(-50%, ${isPreview ? '200%' : '0'})`,
-                    width: isMobile ? '90%' : 'auto' // Wider on mobile
-                }}
-            >
-                {/* Collapse Toggle */}
-                <button
-                    onClick={() => setDockMinimized(!dockMinimized)}
-                    className="mb-2 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-gray-400 backdrop-blur-md border border-white/5 transition-colors"
+            {/* FLOATING CONTROL BAR (ZEN DOCK) */}
+            {isMobile ? (
+                /* MOBILE: Clean Minimal Dock */
+                <MobileActionDock
+                    mode={mode}
+                    onModeChange={(newMode) => setMode(newMode)}
+                    onPublish={handlePublish}
+                    onSettings={() => setShowSettings(true)}
+                    onPreview={() => {
+                        if (mode === 'code') {
+                            setTriggerRun(n => n + 1);
+                        } else {
+                            setIsPreview(true);
+                        }
+                    }}
+                    isCodeMode={mode === 'code'}
+                />
+            ) : (
+                /* DESKTOP: Full Feature Dock */
+                <div
+                    className={`fixed z-50 flex flex-col items-center justify-center transition-all duration-500 ${isPreview ? 'translate-y-[200%] opacity-0' : 'translate-y-0 opacity-100'}`}
+                    style={{
+                        bottom: '2rem',
+                        left: '50%',
+                        transform: `translate(-50%, ${isPreview ? '200%' : '0'})`
+                    }}
                 >
-                    {dockMinimized ? <ChevronRight className="-rotate-90" size={14} /> : <ChevronRight className="rotate-90" size={14} />}
-                </button>
+                    {/* Collapse Toggle */}
+                    <button
+                        onClick={() => setDockMinimized(!dockMinimized)}
+                        className="mb-2 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-gray-400 backdrop-blur-md border border-white/5 transition-colors"
+                    >
+                        {dockMinimized ? <ChevronRight className="-rotate-90" size={14} /> : <ChevronRight className="rotate-90" size={14} />}
+                    </button>
 
-                {/* Main Dock */}
-                <AnimatePresence>
-                    {!dockMinimized && (
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 10 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 10 }}
-                            className="bg-[#111]/80 backdrop-blur-xl border border-white/10 p-2 rounded-[2rem] shadow-2xl flex items-center gap-2 group hover:bg-[#111] transition-colors"
-                        >
-
-                            {/* Mode Switcher */}
-                            <div className="mr-2">
-                                <MediumSelector activeType={mode} onChange={(newMode) => setMode(newMode)} />
-                            </div>
-
-                            <div className="w-px h-8 bg-white/10 mx-2" />
-
-                            <button
-                                onClick={() => {
-                                    if (mode === 'code' && isMobile) {
-                                        setTriggerRun(n => n + 1);
-                                    } else {
-                                        setIsPreview(true);
-                                    }
-                                }}
-                                onPointerDown={(e) => e.stopPropagation()}
-                                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all tooltip"
-                                title="Run Code / Preview"
+                    {/* Main Dock */}
+                    <AnimatePresence>
+                        {!dockMinimized && (
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0, y: 10 }}
+                                animate={{ scale: 1, opacity: 1, y: 0 }}
+                                exit={{ scale: 0.9, opacity: 0, y: 10 }}
+                                className="bg-[#111]/80 backdrop-blur-xl border border-white/10 p-2 rounded-[2rem] shadow-2xl flex items-center gap-2 group hover:bg-[#111] transition-colors"
                             >
-                                {mode === 'code' ? <Play size={18} /> : <Maximize2 size={18} />}
-                            </button>
+                                {/* Mode Switcher */}
+                                <div className="mr-2">
+                                    <MediumSelector activeType={mode} onChange={(newMode) => setMode(newMode)} />
+                                </div>
 
-                            <button
-                                onClick={() => setShowSettings(true)}
-                                onPointerDown={(e) => e.stopPropagation()}
-                                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all"
-                            >
-                                <Settings size={18} />
-                            </button>
+                                <div className="w-px h-8 bg-white/10 mx-2" />
 
-                            <button
-                                onClick={handlePublish}
-                                onPointerDown={(e) => e.stopPropagation()}
-                                className="ml-2 px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-bold text-sm transition-all shadow-lg hover:shadow-rose-500/20 flex items-center gap-2"
-                            >
-                                Publikasikan <ArrowLeft className="rotate-180" size={16} />
-                            </button>
+                                <button
+                                    onClick={() => setIsPreview(true)}
+                                    onPointerDown={(e) => e.stopPropagation()}
+                                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all tooltip"
+                                    title="Preview"
+                                >
+                                    {mode === 'code' ? <Play size={18} /> : <Maximize2 size={18} />}
+                                </button>
 
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
+                                <button
+                                    onClick={() => setShowSettings(true)}
+                                    onPointerDown={(e) => e.stopPropagation()}
+                                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all"
+                                >
+                                    <Settings size={18} />
+                                </button>
+
+                                <button
+                                    onClick={handlePublish}
+                                    onPointerDown={(e) => e.stopPropagation()}
+                                    className="ml-2 px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-bold text-sm transition-all shadow-lg hover:shadow-rose-500/20 flex items-center gap-2"
+                                >
+                                    Publikasikan <ArrowLeft className="rotate-180" size={16} />
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            )}
 
             {/* SETTINGS DRAWER */}
             <AnimatePresence>

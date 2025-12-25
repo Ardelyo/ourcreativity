@@ -46,7 +46,7 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                    if needed, but usually we want interaction. 
                    For 'Immersive', content is king.
                */}
-                <div className="w-full h-full relative">
+                <div className="w-full h-full relative" style={{ touchAction: 'none', overscrollBehavior: 'contain' }}>
                     {renderContent(art)}
                 </div>
 

@@ -719,6 +719,7 @@ export const Karya = () => {
                             src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(selectedArtwork.content, selectedArtwork.code_language || 'html'))}`}
                             sandbox="allow-scripts allow-same-origin"
                             className="w-full h-full border-0 bg-white"
+                            style={{ touchAction: 'none' }}
                             title="Code Preview"
                           />
                         )}

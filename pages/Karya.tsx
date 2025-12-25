@@ -254,6 +254,9 @@ export const Karya = () => {
       if (error) throw error;
       return data;
     },
+    refetchOnMount: true,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Sync artworks state with React Query results (for pagination append)

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { motion, PanInfo, useAnimation } from 'framer-motion';
 import { ChevronUp, Heart, MessageCircle, Share2, X, Maximize2, User } from 'lucide-react';
-import { Artwork } from '../../types'; // Adjust path if needed
-import { WebsiteEmbed } from '../CreationStudio/embed/WebsiteEmbed';
 
 interface ImmersiveDetailViewProps {
     art: any; // Using any for now to match Artwork type flexibility, ideally strictly typed
@@ -14,7 +12,7 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
     const controls = useAnimation();
     const [isExpanded, setIsExpanded] = useState(false);
 
-    const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const handleDragEnd = (event: any, info: PanInfo) => {
         if (info.offset.y < -100) {
             // Dragged up enough
             setIsExpanded(true);

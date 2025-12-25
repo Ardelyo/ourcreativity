@@ -858,7 +858,7 @@ export const Karya = () => {
               </motion.div>
             </div>
           )
-        }
+        )}
       </AnimatePresence >
     </div >
   );

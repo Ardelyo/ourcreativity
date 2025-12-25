@@ -128,7 +128,6 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                             transition={{ duration: 0.2 }}
                             className="h-full flex flex-col"
                         >
-                        >
                             {/* File Name Banner Removed (Integrated above) */}
 
                             <div className="flex-1 relative">

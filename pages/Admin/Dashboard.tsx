@@ -1,22 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Users, FileText, Megaphone, Activity, Loader2 } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
 
 export const Dashboard = () => {
-    const [loading, setLoading] = useState(true);
-    const [stats, setStats] = useState([
-        { label: 'Total Pengguna', value: '-', change: '...', icon: Users, color: 'text-rose-500', bg: 'bg-rose-500/10' },
-        { label: 'Member Tertunda', value: '-', change: '...', icon: FileText, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-        { label: 'Pengumuman Aktif', value: '-', change: '...', icon: Megaphone, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
-        { label: 'Total Karya', value: '-', change: '...', icon: Activity, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    ]);
-    const [recentActivity, setRecentActivity] = useState<any[]>([]);
+    const queryClient = useQueryClient();
 
-    const fetchData = async () => {
-        setLoading(true);
-        try {
-            // Fetch Counts in parallel
+    const { data, isLoading: loading, error, refetch } = useQuery({
+        queryKey: ['admin-stats'],
+        queryFn: async () => {
             const [
                 { count: totalUsers },
                 { count: pendingUsers },
@@ -33,31 +26,29 @@ export const Dashboard = () => {
                 supabase.from('profiles').select('username, updated_at').order('updated_at', { ascending: false }).limit(5)
             ]);
 
-            // Map stats
-            setStats([
+            const stats = [
                 { label: 'Total Pengguna', value: (totalUsers || 0).toString(), change: '+100%', icon: Users, color: 'text-rose-500', bg: 'bg-rose-500/10' },
                 { label: 'Member Tertunda', value: (pendingUsers || 0).toString(), change: pendingUsers ? 'Perlu Tindakan' : 'Bersih', icon: FileText, color: 'text-amber-500', bg: 'bg-amber-500/10' },
                 { label: 'Pengumuman Aktif', value: (activeAnnouncements || 0).toString(), change: 'Live', icon: Megaphone, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
                 { label: 'Total Karya', value: (totalWorks || 0).toString(), change: 'Stabil', icon: Activity, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-            ]);
+            ];
 
-            // Combine and sort activity
             const activities = [
                 ...(latestWorks || []).map(w => ({ user: w.author, action: `Mengunggah karya: ${w.title}`, time: new Date(w.created_at) })),
                 ...(latestUsers || []).map(u => ({ user: u.username, action: 'Memperbarui profil / Bergabung', time: new Date(u.updated_at) }))
             ].sort((a, b) => b.time.getTime() - a.time.getTime()).slice(0, 5);
 
-            setRecentActivity(activities);
-        } catch (error) {
-            console.error('Error fetching dashboard data:', error);
-        } finally {
-            setLoading(false);
+            return { stats, activities };
         }
-    };
+    });
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+    const stats = data?.stats || [
+        { label: 'Total Pengguna', value: '-', change: '...', icon: Users, color: 'text-rose-500', bg: 'bg-rose-500/10' },
+        { label: 'Member Tertunda', value: '-', change: '...', icon: FileText, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+        { label: 'Pengumuman Aktif', value: '-', change: '...', icon: Megaphone, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
+        { label: 'Total Karya', value: '-', change: '...', icon: Activity, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    ];
+    const recentActivity = data?.activities || [];
 
     const formatTime = (date: Date) => {
         const now = new Date();
@@ -114,7 +105,7 @@ export const Dashboard = () => {
                 >
                     <div className="flex justify-between items-center mb-8">
                         <h2 className="text-2xl font-black tracking-tight">Aktivitas Terbaru</h2>
-                        <button onClick={fetchData} className="text-xs font-bold text-rose-500 uppercase tracking-widest hover:text-white transition-colors">Segarkan</button>
+                        <button onClick={() => refetch()} className="text-xs font-bold text-rose-500 uppercase tracking-widest hover:text-white transition-colors">Segarkan</button>
                     </div>
                     <div className="space-y-2">
                         {loading ? (

@@ -54,7 +54,7 @@ const AnimatedRoutes = () => {
 
   return (
     <AnimatePresence mode="wait">
-      <div key={location.pathname} className="w-full">
+      <div className="w-full">
         <ErrorBoundary>
           <Suspense fallback={<Loading />}>
             <Routes location={location}>

@@ -7,35 +7,34 @@ import {
     MapPin, Link as LinkIcon, MessageSquare
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useQuery } from '@tanstack/react-query';
 import { FetchErrorState } from '../components/FetchErrorState';
 
 export const Profile = () => {
     const { username } = useParams<{ username: string }>();
-    const [profile, setProfile] = useState<any>(null);
-    const [works, setWorks] = useState<any[]>([]);
-    const [likedWorks, setLikedWorks] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState<'karya' | 'tentang' | 'likes'>('karya');
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
-    const fetchData = async () => {
-        if (!username) return;
-        setLoading(true);
-        setError(null);
-
-        try {
-            // Fetch Profile
-            const { data: profileData, error: profileError } = await supabase
+    // Query for Profile Data
+    const { data: profile, isLoading: profileLoading, error: profileError } = useQuery({
+        queryKey: ['profile', username],
+        queryFn: async () => {
+            if (!username) throw new Error('Username is required');
+            const { data, error } = await supabase
                 .from('profiles')
                 .select('id, username, avatar_url, bio, website, role, is_approved, updated_at, created_at')
                 .eq('username', username)
                 .single();
+            if (error) throw error;
+            return data;
+        },
+        enabled: !!username,
+    });
 
-            if (profileError) throw profileError;
-            setProfile(profileData);
-
-            // Fetch works for this profile
-            const { data: worksData, error: worksError } = await supabase
+    // Query for User's Works
+    const { data: works = [], isLoading: worksLoading } = useQuery({
+        queryKey: ['profile-works', profile?.id],
+        queryFn: async () => {
+            const { data, error } = await supabase
                 .from('works')
                 .select(`
                     id, 
@@ -48,14 +47,19 @@ export const Profile = () => {
                     likes:likes(count),
                     comments:comments(count)
                 `)
-                .eq('author_id', profileData.id)
+                .eq('author_id', profile.id)
                 .order('created_at', { ascending: false });
+            if (error) throw error;
+            return data || [];
+        },
+        enabled: !!profile?.id,
+    });
 
-            if (worksError) throw worksError;
-            setWorks(worksData || []);
-
-            // Fetch liked works
-            const { data: likesData, error: likesError } = await supabase
+    // Query for Liked Works
+    const { data: likedWorks = [], isLoading: likesLoading } = useQuery({
+        queryKey: ['profile-likes', profile?.id],
+        queryFn: async () => {
+            const { data, error } = await supabase
                 .from('likes')
                 .select(`
                     work:works (
@@ -71,42 +75,16 @@ export const Profile = () => {
                         author:profiles(username, avatar_url)
                     )
                 `)
-                .eq('user_id', profileData.id)
+                .eq('user_id', profile.id)
                 .order('created_at', { ascending: false });
+            if (error) throw error;
+            return data?.map((item: any) => item.work).filter(Boolean) || [];
+        },
+        enabled: !!profile?.id,
+    });
 
-            if (likesError) throw likesError;
-            // Flatten the structure
-            const flattenedLikedWorks = likesData?.map((item: any) => item.work).filter(Boolean) || [];
-            setLikedWorks(flattenedLikedWorks);
-
-        } catch (err: any) {
-            console.error('Error fetching profile data:', err);
-            setError(err.message === 'JSON object requested, multiple (or no) rows returned'
-                ? 'Pengguna tidak ditemukan.'
-                : 'Terjadi kesalahan saat memuat profil.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchData();
-
-        // Subscribe to Realtime Updates for this profile
-        const profileSubscription = supabase
-            .channel(`profile-${username}`)
-            .on('postgres_changes',
-                { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `username=eq.${username}` },
-                (payload) => {
-                    setProfile(payload.new);
-                }
-            )
-            .subscribe();
-
-        return () => {
-            supabase.removeChannel(profileSubscription);
-        };
-    }, [username]);
+    const loading = profileLoading || (activeTab === 'karya' && worksLoading) || (activeTab === 'likes' && likesLoading);
+    const error = profileError;
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
@@ -120,7 +98,7 @@ export const Profile = () => {
 
     if (error || !profile) return (
         <div className="min-h-screen bg-[#030303] pt-32 px-4">
-            <FetchErrorState message={error || 'Profil tidak ditemukan'} onRetry={fetchData} />
+            <FetchErrorState message={error ? (error as any).message : 'Profil tidak ditemukan'} onRetry={() => { }} />
             <div className="flex justify-center mt-8">
                 <Link to="/karya" className="text-rose-500 flex items-center gap-2 hover:underline">
                     <ArrowLeft size={18} /> Kembali ke Galeri
@@ -275,8 +253,8 @@ export const Profile = () => {
                                     <div className="text-gray-500">Status</div>
                                     <div className="font-medium">
                                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border ${profile.is_approved
-                                                ? 'bg-green-500/10 text-green-500 border-green-500/20'
-                                                : 'bg-gray-500/10 text-gray-500 border-gray-500/20'
+                                            ? 'bg-green-500/10 text-green-500 border-green-500/20'
+                                            : 'bg-gray-500/10 text-gray-500 border-gray-500/20'
                                             }`}>
                                             <span className={`w-1.5 h-1.5 rounded-full ${profile.is_approved ? 'bg-green-500' : 'bg-gray-500'}`} />
                                             {profile.is_approved ? 'Verified' : 'Member'}

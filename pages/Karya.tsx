@@ -4,7 +4,8 @@ import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, 
 import { KaryaCard } from '../components/KaryaCard';
 import { ImmersiveDetailView } from '../components/Karya/ImmersiveDetailView';
 import { useIsMobile } from '../hooks/useIsMobile';
-import { Link, useNavigate } from 'react-router-dom'; // Changed import
+import { Link, useNavigate } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { FetchErrorState } from '../components/FetchErrorState';
 import { useAuth } from '../components/AuthProvider';
 
@@ -204,12 +205,10 @@ export const Karya = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const carouselRef = React.useRef<HTMLDivElement>(null);
-  const [artworks, setArtworks] = useState<any[]>([]);
   const [filter, setFilter] = useState('all');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const [page, setPage] = useState(0);
+  const [artworks, setArtworks] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const ITEMS_PER_PAGE = 6;
 
@@ -220,15 +219,11 @@ export const Karya = () => {
   const [newComment, setNewComment] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
-  const fetchWorks = async (pageNum = 0, currentFilter = filter) => {
-    // Kalo auth masih inisialisasi, jangan ambil data dulu biar gak kosong (karena aturan RLS)
-    if (authLoading) return;
-
-    try {
-      if (pageNum === 0) setLoading(true);
-      setError(null);
-
-      const from = pageNum * ITEMS_PER_PAGE;
+  // React Query for Works
+  const { data: worksData, isLoading: worksLoading, error: worksError, isFetching: worksFetching } = useQuery({
+    queryKey: ['works', filter, page],
+    queryFn: async () => {
+      const from = page * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
 
       let query = supabase
@@ -250,93 +245,78 @@ export const Karya = () => {
           comments:comments(count)
         `);
 
-      if (currentFilter !== 'all') {
-        query = query.eq('division', currentFilter);
+      if (filter !== 'all') {
+        query = query.eq('division', filter);
       }
 
       const { data, error } = await query.range(from, to);
-
       if (error) throw error;
+      return data;
+    },
+    enabled: !authLoading,
+  });
 
-      if (data) {
-        if (pageNum === 0) {
-          setArtworks(data);
-        } else {
-          setArtworks(prev => [...prev, ...data]);
-        }
-        setHasMore(data.length === ITEMS_PER_PAGE);
+  // Sync artworks state with React Query results (for pagination append)
+  useEffect(() => {
+    if (worksData) {
+      if (page === 0) {
+        setArtworks(worksData);
+      } else {
+        setArtworks(prev => {
+          // Prevent duplicates
+          const newIds = new Set(worksData.map(w => w.id));
+          return [...prev.filter(w => !newIds.has(w.id)), ...worksData];
+        });
       }
-    } catch (error: any) {
-      console.error('Error fetching works:', error);
-      setError(error.message || 'Gagal memuat karya dari database. Silakan coba lagi nanti.');
-    } finally {
-      if (pageNum === 0) setLoading(false);
+      setHasMore(worksData.length === ITEMS_PER_PAGE);
     }
-  };
+  }, [worksData, page]);
 
   useEffect(() => {
-    if (!authLoading) {
-      setPage(0);
-      fetchWorks(0, filter);
-    }
-  }, [filter, authLoading]);
+    setPage(0);
+  }, [filter]);
 
   const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchWorks(nextPage, filter);
+    setPage(prev => prev + 1);
   };
+
+  const { data: socialData, isLoading: socialLoading } = useQuery({
+    queryKey: ['work-social', selectedId],
+    queryFn: async () => {
+      if (!selectedId) return null;
+
+      const [
+        { count: likesCount },
+        { data: userLike },
+        { data: comments }
+      ] = await Promise.all([
+        supabase.from('likes').select('*', { count: 'exact', head: true }).eq('work_id', selectedId),
+        user ? supabase.from('likes').select('id').eq('work_id', selectedId).eq('user_id', user.id).single() : Promise.resolve({ data: null }),
+        supabase.from('comments').select('id, content, created_at, user_id, profiles:user_id (username, avatar_url, role)').eq('work_id', selectedId).order('created_at', { ascending: false })
+      ]);
+
+      return {
+        likesCount: likesCount || 0,
+        isLiked: !!userLike?.data,
+        comments: comments || []
+      };
+    },
+    enabled: !!selectedId,
+  });
+
+  // Sync social states with query result (for initial load)
+  useEffect(() => {
+    if (socialData) {
+      setLikesCount(socialData.likesCount);
+      setIsLiked(socialData.isLiked);
+      setComments(socialData.comments);
+    }
+  }, [socialData]);
 
   // Reset slide aktif pas ganti karya
   useEffect(() => {
     setActiveSlide(0);
-    if (selectedId) {
-      fetchSocialData(selectedId);
-    }
   }, [selectedId]);
-
-  const fetchSocialData = async (workId: string) => {
-    try {
-      // 1. Ambil Jumlah Like
-      const { count: likesData, error: likesError } = await supabase
-        .from('likes')
-        .select('*', { count: 'exact', head: true })
-        .eq('work_id', workId);
-
-      if (!likesError) setLikesCount(likesData || 0);
-
-      // 2. Cek apakah user udah like
-      if (user) {
-        const { data: userLike } = await supabase
-          .from('likes')
-          .select('id')
-          .eq('work_id', workId)
-          .eq('user_id', user.id)
-          .single();
-        setIsLiked(!!userLike);
-      } else {
-        setIsLiked(false);
-      }
-
-      // 3. Ambil Komentar
-      const { data: commentsData, error: commentsError } = await supabase
-        .from('comments')
-        .select(`
-          id,
-          content,
-          created_at,
-          user_id,
-          profiles:user_id (username, avatar_url, role)
-        `)
-        .eq('work_id', workId)
-        .order('created_at', { ascending: false });
-
-      if (!commentsError) setComments(commentsData || []);
-
-    } catch (error) {
-      console.error('Error fetching social data:', error);
-    }
-  };
 
   const handleToggleLike = async () => {
     if (!user || !selectedId) {
@@ -518,9 +498,9 @@ export const Karya = () => {
       </div>
 
       {/* Grid Masonry Modern - Pinterest Style - SAMA (Gak berubah) */}
-      {error ? (
-        <FetchErrorState message={error} onRetry={fetchWorks} />
-      ) : loading && artworks.length === 0 ? (
+      {worksError ? (
+        <FetchErrorState message={(worksError as any).message || 'Gagal memuat karya'} onRetry={() => setPage(0)} />
+      ) : worksLoading && artworks.length === 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="bg-white/[0.03] rounded-[2rem] overflow-hidden h-[400px] animate-pulse border border-white/5 shadow-lg">
@@ -548,10 +528,10 @@ export const Karya = () => {
         <div className="flex justify-center mt-12 pb-12">
           <button
             onClick={handleLoadMore}
-            disabled={loading}
+            disabled={worksFetching}
             className="px-10 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold hover:bg-white hover:text-black transition-all flex items-center gap-2 group active:scale-[0.98] disabled:opacity-50"
           >
-            {loading ? (
+            {worksFetching ? (
               <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
             ) : (
               <>Muat Lebih Banyak <ArrowDown size={18} className="group-hover:translate-y-1 transition-transform" /></>
@@ -560,7 +540,7 @@ export const Karya = () => {
         </div>
       )}
 
-      {artworks.length === 0 && !loading && (
+      {artworks.length === 0 && !worksLoading && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-24 h-24 bg-gray-900 rounded-full flex items-center justify-center mb-6">
             <ImageIcon size={40} className="text-gray-600" />

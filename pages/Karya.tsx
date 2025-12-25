@@ -254,7 +254,6 @@ export const Karya = () => {
       if (error) throw error;
       return data;
     },
-    enabled: !authLoading,
   });
 
   // Sync artworks state with React Query results (for pagination append)

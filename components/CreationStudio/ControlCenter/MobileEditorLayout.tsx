@@ -83,7 +83,7 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                             onClick={() => setActiveTab('preview')}
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all ${activeTab === 'preview' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-200'}`}
                         >
-                            <Eye size={12} /> Live
+                            <Eye size={12} /> Pratinjau
                         </button>
                     </div>
 
@@ -107,8 +107,8 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                 {/* File Information (Only in Editor Mode) */}
                 {activeTab === 'editor' && (
                     <div className="px-4 py-1.5 bg-[#050505] text-[10px] font-mono text-gray-500 flex justify-center items-center gap-2 border-b border-white/5">
-                        <span className="opacity-50">EDITING:</span>
-                        <span className="text-gray-300 font-bold">{activeFile?.name || 'No file selected'}</span>
+                        <span className="opacity-50">MENGEDIT:</span>
+                        <span className="text-gray-300 font-bold">{activeFile?.name || 'Tidak ada file'}</span>
                         <span className={`px-1.5 py-0.5 rounded text-[8px] uppercase font-bold ${activeFile?.language === 'html' ? 'bg-orange-500/10 text-orange-400' : activeFile?.language === 'css' ? 'bg-blue-500/10 text-blue-400' : 'bg-yellow-500/10 text-yellow-400'}`}>
                             {activeFile?.language}
                         </span>
@@ -176,7 +176,7 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                         className="absolute bottom-0 left-0 right-0 h-1/2 bg-[#0d1117] border-t border-white/10 z-30 shadow-2xl flex flex-col"
                     >
                         <div className="flex items-center justify-between px-4 py-2 bg-[#161b22] border-b border-white/10">
-                            <span className="text-xs font-bold text-gray-400 flex items-center gap-2"><Terminal size={12} /> Console</span>
+                            <span className="text-xs font-bold text-gray-400 flex items-center gap-2"><Terminal size={12} /> Konsol</span>
                             <button onClick={() => setShowConsole(false)} className="text-gray-500 hover:text-white"><X size={14} /></button>
                         </div>
                         <div className="flex-1 overflow-hidden">
@@ -205,7 +205,7 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
                             className="absolute top-0 bottom-0 left-0 w-3/4 max-w-[300px] bg-[#0d1117] border-r border-white/10 z-50 shadow-2xl flex flex-col"
                         >
                             <div className="flex items-center justify-between px-4 py-4 bg-[#161b22] border-b border-white/10">
-                                <span className="text-sm font-bold text-white flex items-center gap-2"><Folder size={16} /> Project Files</span>
+                                <span className="text-sm font-bold text-white flex items-center gap-2"><Folder size={16} /> File Proyek</span>
                                 <button onClick={() => setShowFiles(false)} className="text-gray-500 hover:text-white"><X size={16} /></button>
                             </div>
                             <div className="flex-1">

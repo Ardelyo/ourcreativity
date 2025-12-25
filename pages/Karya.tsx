@@ -429,9 +429,12 @@ export const Karya = () => {
     switch (art.type) {
       case 'text':
         return (
-          <div className="w-full h-full bg-[#f0f0f0] text-black p-8 flex flex-col justify-center items-center text-center font-serif relative overflow-hidden group-hover:bg-white transition-colors">
+          <div className="w-full h-full bg-[#f0f0f0] text-black p-8 flex flex-col justify-center items-center font-serif relative overflow-hidden group-hover:bg-white transition-colors">
             <AlignLeft className="absolute top-4 left-4 text-gray-300" size={24} />
-            <p className="text-lg italic leading-relaxed line-clamp-6">"{art.content}"</p>
+            <div
+              className="prose prose-sm prose-invert text-black line-clamp-6 pointer-events-none"
+              dangerouslySetInnerHTML={{ __html: art.content }}
+            />
             <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#f0f0f0] to-transparent group-hover:from-white transition-colors"></div>
           </div>
         );
@@ -518,23 +521,24 @@ export const Karya = () => {
       {error ? (
         <FetchErrorState message={error} onRetry={fetchWorks} />
       ) : loading && artworks.length === 0 ? (
-        <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 md:gap-6 space-y-4 md:space-y-6">
-          {[...Array(10)].map((_, i) => (
-            <div key={i} className="break-inside-avoid bg-white/[0.03] rounded-3xl overflow-hidden mb-4 md:mb-6 h-64 animate-pulse border border-white/5 shadow-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="bg-white/[0.03] rounded-[2rem] overflow-hidden h-[400px] animate-pulse border border-white/5 shadow-lg">
               <div className="h-full w-full bg-gradient-to-br from-white/5 to-transparent"></div>
             </div>
           ))}
         </div>
       ) : artworks.length > 0 ? (
-        <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 md:gap-6 space-y-4 md:space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {artworks.map((art, index) => (
-            <KaryaCard
-              key={art.id}
-              art={art}
-              index={index}
-              onClick={() => { setSelectedId(art.id); setShowSourceCode(false); }}
-              renderContent={renderCardContent}
-            />
+            <div key={art.id} className="h-full">
+              <KaryaCard
+                art={art}
+                index={index}
+                onClick={() => { setSelectedId(art.id); setShowSourceCode(false); }}
+                renderContent={renderCardContent}
+              />
+            </div>
           ))}
         </div>
       ) : null}
@@ -730,8 +734,11 @@ export const Karya = () => {
                       </div>
                     )}
                     {selectedArtwork.type === 'text' && (
-                      <div className="w-full h-full bg-[#f0f0f0] text-black p-12 md:p-20 overflow-y-auto font-serif text-lg leading-loose whitespace-pre-wrap">
-                        {selectedArtwork.content}
+                      <div className="w-full h-full bg-[#f0f0f0] text-black p-12 md:p-20 overflow-y-auto">
+                        <div
+                          className="prose prose-lg prose-p:text-black prose-headings:text-black prose-strong:text-black prose-em:text-black max-w-none font-serif leading-loose"
+                          dangerouslySetInnerHTML={{ __html: selectedArtwork.content }}
+                        />
                       </div>
                     )}
                     {selectedArtwork.type === 'code' && (

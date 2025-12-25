@@ -6,16 +6,19 @@ interface InteractiveSandboxProps {
     files: CodeFile[];
     triggerRun: number;
     onConsole: (msg: ConsoleMessage) => void;
+    isPaused?: boolean;
 }
 
-export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, triggerRun, onConsole }) => {
+export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, triggerRun, onConsole, isPaused = false }) => {
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const [key, setKey] = useState(0); // Force re-render iframe
 
     useEffect(() => {
-        // Force refresh iframe on run trigger
-        setKey(prev => prev + 1);
-    }, [triggerRun]);
+        // Force refresh iframe on run trigger, unless paused
+        if (!isPaused) {
+            setKey(prev => prev + 1);
+        }
+    }, [triggerRun, isPaused]);
 
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Type, Image as ImageIcon, Video, Code, Grid, FileCode } from 'lucide-react';
+import { Type, Image as ImageIcon, Video, Code, Grid, FileCode, FileText } from 'lucide-react';
 import { WorkType } from './types';
 
 interface MediumSelectorProps {
@@ -13,7 +13,7 @@ export const MediumSelector: React.FC<MediumSelectorProps> = ({ activeType, onCh
         { id: 'text', label: 'Tulisan', icon: Type },
         { id: 'image', label: 'Gambar', icon: ImageIcon },
         { id: 'video', label: 'Video', icon: Video },
-        { id: 'slide', label: 'Slide', icon: Grid },
+        { id: 'document', label: 'Dokumen', icon: FileText },
         // { id: 'embed', label: 'Embed', icon: FileCode },
         { id: 'code', label: 'Kode', icon: Code },
     ];

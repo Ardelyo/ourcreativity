@@ -75,6 +75,7 @@ Versi 5.0 (**Revolution Edition**) menandai transformasi total dari antarmuka pe
 - ✅ Performa tinggi dengan optimisasi modern
 - ✅ Struktur navigasi berbasis *Bento Grid* yang intuitif
 - ✅ Nuansa atmosferik dan pencahayaan dinamis
+- 🆕 **Master Update v5.0** — [Lihat Detail Perubahan Besar](docs/MASTER_UPDATE_V5.md)
 - 🆕 **BrowserRouter** dengan URL yang persisten dan shareable
 - 🆕 **Error Boundary** untuk penanganan error yang user-friendly
 - 🆕 **Fetch Error States** dengan retry functionality
@@ -97,8 +98,9 @@ Antarmuka yang hidup dengan kedalaman visual, efek glassmorphism, dan pencahayaa
 | **😂 Meme** | Pusat budaya internet yang dinamis dan penuh humor |
 
 ### 📱 Pengalaman Pengguna Premium
-- **Navigasi Bento Grid** — Menu navigasi yang modular dan visual
 - **Animasi Fluid** — Transisi halaman menggunakan Framer Motion
+- **Creation Studio v2** — Editor multi-fungsi (Slide, Code, Text, Video)
+- **Dynamic Island** — Navigasi adaptif dan cair
 - **Responsif Total** — Optimal di desktop, tablet, dan mobile
 
 <br/>
@@ -220,6 +222,7 @@ Dokumentasi teknis lengkap tersedia dalam **Bahasa Indonesia**:
 | Dokumen | Deskripsi |
 |---------|-----------|
 | 🚀 [Panduan Setup](docs/SETUP.md) | **MULAI DARI SINI** - Install & konfigurasi |
+| ✨ [**Master Update v5.0**](docs/MASTER_UPDATE_V5.md) | **BARU!** - Ringkasan fitur revolusioner v5.0 |
 | 🗄️ [Database](docs/DATABASE.md) | Schema & query Supabase |
 | 🏗️ [Arsitektur Sistem](docs/ARSITEKTUR.md) | Struktur kode dan keputusan teknis |
 | 🛣️ [**Routing**](docs/ROUTING.md) | **BARU!** - Panduan lengkap sistem routing |

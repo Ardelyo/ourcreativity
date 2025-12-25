@@ -211,21 +211,23 @@ export const Studio = () => {
         }
     };
 
-    // --- EFFECT: AUTO-SAVE ---
+    // --- EFFECT: AUTO-SAVE (OPTIMIZED) ---
     const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const lastSaveDataRef = useRef<string>('');
+
     const saveDraftsToStorage = useCallback(() => {
         if (!currentDraftId) return;
 
         // Smart Save: Only save if title is changed or content is not empty
         const isDefaultTitle = title === 'Karya Tanpa Judul' || !title.trim();
-        const hasContent = content.trim().length > 0 || slides.length > 0 || embedUrl.trim().length > 0;
+        const hasContent = content.trim().length > 0 || slides.length > 0 || embedUrl.trim().length > 0 || codeFiles.length > 3;
 
         if (isDefaultTitle && !hasContent) {
             console.log("Skipping auto-draft: empty draft");
             return;
         }
 
-        setDraftStatus('saving');
+        // Check if data actually changed
         const currentData = {
             id: currentDraftId,
             title, mode, content, description, embedUrl, codeLanguage, slides, tags, division, codeFiles,
@@ -233,6 +235,15 @@ export const Studio = () => {
             lastSaved: new Date().toISOString()
         };
 
+        const currentDataStr = JSON.stringify({ title, mode, content, description, embedUrl, slides, codeFiles });
+        if (currentDataStr === lastSaveDataRef.current) {
+            console.log("Skipping auto-draft: no changes detected");
+            return;
+        }
+
+        lastSaveDataRef.current = currentDataStr;
+
+        setDraftStatus('saving');
         const updatedDrafts = drafts.filter(d => d.id !== currentDraftId);
         updatedDrafts.unshift(currentData); // Put current at top
 
@@ -240,12 +251,13 @@ export const Studio = () => {
         localStorage.setItem('oc_studio_v2_drafts', JSON.stringify(updatedDrafts));
 
         setTimeout(() => setDraftStatus('saved'), 500);
-        setTimeout(() => setDraftStatus('idle'), 2000);
+        setTimeout(() => setDraftStatus('idle'), 2500);
     }, [currentDraftId, title, mode, content, description, embedUrl, codeLanguage, slides, tags, division, codeFiles, mediaPreview, drafts]);
 
     useEffect(() => {
         if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-        saveTimeoutRef.current = setTimeout(saveDraftsToStorage, 2000);
+        // Increased debounce to 5 seconds to reduce save frequency
+        saveTimeoutRef.current = setTimeout(saveDraftsToStorage, 5000);
         return () => { if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current); };
     }, [saveDraftsToStorage]);
 

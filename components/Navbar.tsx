@@ -3,6 +3,7 @@ import { Menu, X, Asterisk, ArrowRight, User as UserIcon, LogOut, Settings, Chev
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
+import { motionConfig } from '../lib/motion';
 
 export const Navbar = () => {
     const { user, profile, signOut } = useAuth();
@@ -49,13 +50,8 @@ export const Navbar = () => {
     // Tentukan kalo perlu tampil menu lengkap (Desktop)
     const showFullMenu = !isScrolled || isHovered;
 
-    // Konfigurasi transisi animasi - pegas cair ala ala Apple
-    const springTransition = {
-        type: "spring",
-        stiffness: 350,
-        damping: 30,
-        mass: 1
-    };
+    // Konfigurasi transisi animasi - standar dari design system
+    const springTransition = motionConfig.springs.smooth;
 
     const containerVariants = {
         collapsed: {
@@ -130,7 +126,7 @@ export const Navbar = () => {
                                         initial={{ opacity: 0, x: -10, filter: "blur(5px)" }}
                                         animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                                         exit={{ opacity: 0, x: -10, filter: "blur(5px)" }}
-                                        transition={{ duration: 0.3, ease: "easeOut" }}
+                                        transition={{ duration: motionConfig.durations.fast, ease: "easeOut" }}
                                         className="font-serif font-bold text-lg tracking-tight text-white whitespace-nowrap"
                                     >
                                         Our Creativity.
@@ -145,8 +141,8 @@ export const Navbar = () => {
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.15 } }}
-                                    transition={{ duration: 0.25 }}
+                                    exit={{ opacity: 0, scale: 0.9, transition: { duration: motionConfig.durations.fast } }}
+                                    transition={{ duration: motionConfig.durations.fast }}
                                     className="hidden md:flex items-center gap-1"
                                 >
                                     {navLinks.map((link) => (
@@ -163,7 +159,7 @@ export const Navbar = () => {
                                                 <motion.div
                                                     layoutId="navPill"
                                                     className="absolute inset-0 bg-white/10 rounded-full -z-0"
-                                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                                    transition={motionConfig.springs.smooth}
                                                 />
                                             )}
                                             {!isActive(link.href) && (
@@ -183,8 +179,8 @@ export const Navbar = () => {
                                         key="desktop-auth"
                                         initial={{ opacity: 0, x: 10, scale: 0.9 }}
                                         animate={{ opacity: 1, x: 0, scale: 1 }}
-                                        exit={{ opacity: 0, x: 10, scale: 0.9, transition: { duration: 0.15 } }}
-                                        transition={{ duration: 0.25 }}
+                                        exit={{ opacity: 0, x: 10, scale: 0.9, transition: { duration: motionConfig.durations.fast } }}
+                                        transition={{ duration: motionConfig.durations.fast }}
                                         className="hidden sm:flex items-center gap-2"
                                     >
                                         {user && profile ? (
@@ -208,7 +204,7 @@ export const Navbar = () => {
                                                 >
                                                     <motion.div
                                                         animate={{ rotate: isProfileOpen ? 180 : 0 }}
-                                                        transition={{ duration: 0.2 }}
+                                                        transition={{ duration: motionConfig.durations.fast }}
                                                     >
                                                         <ChevronRight size={14} className="text-white rotate-90" />
                                                     </motion.div>
@@ -233,7 +229,7 @@ export const Navbar = () => {
                                     initial={{ opacity: 0, scale: 0 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0 }}
-                                    transition={{ duration: 0.2 }}
+                                    transition={{ duration: motionConfig.durations.fast }}
                                     className="flex gap-2 items-center"
                                 >
                                     {user && (
@@ -253,7 +249,7 @@ export const Navbar = () => {
                                     animate={{
                                         rotate: isMobileMenuOpen ? 90 : 0,
                                     }}
-                                    transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
+                                    transition={motionConfig.springs.smooth}
                                 >
                                     {isMobileMenuOpen ? <X size={20} strokeWidth={2.5} /> : <Menu size={20} strokeWidth={2.5} />}
                                 </motion.div>
@@ -358,7 +354,7 @@ export const Navbar = () => {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2 }}
+                                transition={{ duration: motionConfig.durations.fast }}
                                 className="flex flex-col md:hidden overflow-hidden relative z-10 h-full"
                             >
                                 <div className="h-px bg-white/5 w-full mb-2" />
@@ -369,7 +365,7 @@ export const Navbar = () => {
                                             key={link.name}
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
-                                            transition={{ delay: i * 0.04 + 0.1 }}
+                                            transition={{ delay: i * motionConfig.stagger.fast + 0.1 }}
                                         >
                                             <Link
                                                 to={link.href}
@@ -393,7 +389,7 @@ export const Navbar = () => {
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                                    transition={{ delay: 0.2, ...motionConfig.springs.smooth }}
                                     className="mt-4 pt-4 border-t border-white/5"
                                 >
                                     {user && profile ? (

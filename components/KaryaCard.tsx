@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Heart, MessageCircle, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { motionConfig } from '../lib/motion';
 
 // Helper buat bikin URL pratinjau kode
 const generatePreviewUrl = (content: any, language: string) => {
@@ -53,9 +54,9 @@ export const KaryaCard: React.FC<KaryaCardProps> = ({ art, index, onClick, rende
             onClick={onClick}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            whileHover={{ y: -5, transition: { duration: motionConfig.durations.fast } }}
             whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20, delay: (index % 10) * 0.05 }}
+            transition={{ ...motionConfig.springs.smooth, delay: (index % 10) * motionConfig.stagger.fast }}
             className="break-inside-avoid group relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden cursor-pointer bg-[#111] shadow-xl hover:shadow-2xl hover:shadow-rose-500/10 transition-all border border-white/5"
         >
             {/* Area Konten Utama - Aspek Rasio Standar biar Gridnya gak berantakan */}

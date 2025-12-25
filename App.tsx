@@ -26,6 +26,10 @@ const Settings = React.lazy(() => import('./pages/Settings').then(module => ({ d
 const Profile = React.lazy(() => import('./pages/Profile').then(module => ({ default: module.Profile })));
 const V5Launch = React.lazy(() => import('./pages/V5Launch').then(module => ({ default: module.V5Launch })));
 
+
+
+import { MotionPage } from './components/MotionPage';
+
 // Komponen Admin
 import { AdminGuard } from './components/AdminGuard';
 import { AdminLayout } from './components/AdminLayout';
@@ -54,27 +58,27 @@ const AnimatedRoutes = () => {
 
   return (
     <AnimatePresence mode="wait">
-      <div key={location.pathname} className="w-full">
+      <div className="w-full">
         <ErrorBoundary>
           <Suspense fallback={<Loading />}>
             <Routes location={location}>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/karya" element={<Karya />} />
-              <Route path="/tim" element={<Tim />} />
-              <Route path="/info" element={<Info />} />
-              <Route path="/story" element={<Story />} />
-              <Route path="/announcement" element={<Announcement />} />
-              <Route path="/division/graphics" element={<Graphics />} />
-              <Route path="/division/video" element={<VideoPage />} />
-              <Route path="/division/writing" element={<Writing />} />
-              <Route path="/division/meme" element={<Meme />} />
-              <Route path="/division/coding" element={<Coding />} />
-              <Route path="/studio" element={<Studio />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/profile/:username" element={<Profile />} />
-              <Route path="/v5-launch" element={<V5Launch />} />
+              <Route path="/" element={<MotionPage><Home /></MotionPage>} />
+              <Route path="/login" element={<MotionPage><Login /></MotionPage>} />
+              <Route path="/register" element={<MotionPage><Register /></MotionPage>} />
+              <Route path="/karya" element={<MotionPage><Karya /></MotionPage>} />
+              <Route path="/tim" element={<MotionPage><Tim /></MotionPage>} />
+              <Route path="/info" element={<MotionPage><Info /></MotionPage>} />
+              <Route path="/story" element={<MotionPage><Story /></MotionPage>} />
+              <Route path="/announcement" element={<MotionPage><Announcement /></MotionPage>} />
+              <Route path="/division/graphics" element={<MotionPage><Graphics /></MotionPage>} />
+              <Route path="/division/video" element={<MotionPage><VideoPage /></MotionPage>} />
+              <Route path="/division/writing" element={<MotionPage><Writing /></MotionPage>} />
+              <Route path="/division/meme" element={<MotionPage><Meme /></MotionPage>} />
+              <Route path="/division/coding" element={<MotionPage><Coding /></MotionPage>} />
+              <Route path="/studio" element={<MotionPage><Studio /></MotionPage>} />
+              <Route path="/settings" element={<MotionPage><Settings /></MotionPage>} />
+              <Route path="/profile/:username" element={<MotionPage><Profile /></MotionPage>} />
+              <Route path="/v5-launch" element={<MotionPage><V5Launch /></MotionPage>} />
 
               {/* Rute Admin */}
               <Route path="/admin" element={

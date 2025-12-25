@@ -576,9 +576,12 @@ export const Studio = () => {
                 {isMobile ? (
                     !isTyping && <MobileActionDock mode={mode} onModeChange={switchMode} onPublish={handlePublish} onSettings={() => setShowSettings(true)} onPreview={() => mode === 'code' ? setTriggerRun(n => n + 1) : setIsPreview(true)} />
                 ) : (
-                    <div className="fixed bottom-0 left-0 right-0 h-16 z-50 flex items-center justify-center group/footer pointer-events-none">
+                    <div className="fixed bottom-0 left-0 right-0 h-20 z-50 flex items-end justify-center group/footer pointer-events-none">
+                        {/* Invisibile trigger zone to catch hover because the wrapper is pointer-events-none */}
+                        <div className="absolute inset-0 pointer-events-auto" />
+
                         {/* THE DOCK */}
-                        <div className={`flex flex-col items-center transition-all duration-500 pointer-events-auto ${isPreview || (mode === 'code' && !dockMinimized) ? 'translate-y-32 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100' : 'translate-y-[-16px] opacity-100'}`}>
+                        <div className={`flex flex-col items-center transition-all duration-500 pointer-events-auto ${isPreview || mode === 'code' ? 'translate-y-32 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100' : 'translate-y-[-16px] opacity-100'}`}>
                             <AnimatePresence mode="wait">
                                 {!dockMinimized ? (
                                     <motion.div

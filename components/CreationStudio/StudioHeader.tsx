@@ -39,23 +39,25 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
             <motion.div
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="fixed top-0 left-0 right-0 z-40 px-3 py-2 bg-black/60 backdrop-blur-xl border-b border-white/5 safe-top"
+                className="fixed top-0 left-0 right-0 z-40 px-3 py-2 bg-black/60 backdrop-blur-xl border-b border-white/5 pt-safe"
             >
                 <div className="flex items-center justify-between">
                     {/* Left: Back & Drafts */}
                     <div className="flex items-center gap-2">
-                        <button
+                        <motion.button
+                            whileTap={{ scale: 0.9 }}
                             onClick={onBack}
                             className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 text-gray-400 active:bg-white/10 transition-colors"
                         >
-                            <ArrowLeft size={18} />
-                        </button>
-                        <button
+                            <ArrowLeft size={18} strokeWidth={1.5} />
+                        </motion.button>
+                        <motion.button
+                            whileTap={{ scale: 0.9 }}
                             onClick={onToggleDrafts}
                             className={`w-9 h-9 flex items-center justify-center rounded-full transition-colors ${showDrafts ? 'bg-rose-500 text-white' : 'bg-white/5 text-gray-400'}`}
                         >
-                            <Layout size={16} />
-                        </button>
+                            <Layout size={16} strokeWidth={1.5} />
+                        </motion.button>
                     </div>
 
                     {/* Center: Title (Truncated) */}
@@ -69,7 +71,7 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
                                 {draftStatus === 'saving' ? (
                                     <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
                                 ) : (
-                                    <Check size={10} className="text-emerald-500" />
+                                    <Check size={10} className="text-emerald-500" strokeWidth={3} />
                                 )}
                             </motion.div>
                         )}
@@ -79,10 +81,11 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
                     </div>
 
                     {/* Right: Publish Only (Other actions in MobileActionDock) */}
-                    <button
+                    <motion.button
+                        whileTap={{ scale: 0.95 }}
                         onClick={onPublish}
                         disabled={isPublishing}
-                        className="h-8 px-4 bg-white text-black rounded-full font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5 active:scale-95 transition-transform disabled:opacity-50"
+                        className="h-8 px-4 bg-white text-black rounded-full font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-transform disabled:opacity-50"
                     >
                         {isPublishing ? (
                             <div className="w-2.5 h-2.5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
@@ -90,7 +93,7 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
                             <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
                         )}
                         Kirim
-                    </button>
+                    </motion.button>
                 </div>
             </motion.div>
         );
@@ -175,7 +178,7 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
                             className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all"
                             title="Pratinjau"
                         >
-                            <Eye size={16} />
+                            <Eye size={16} strokeWidth={1.5} />
                         </button>
                         <div className="w-px h-4 bg-white/10 mx-1" />
                         <button
@@ -183,7 +186,7 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
                             className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all"
                             title="Pengaturan"
                         >
-                            <Settings size={16} />
+                            <Settings size={16} strokeWidth={1.5} />
                         </button>
                     </div>
 

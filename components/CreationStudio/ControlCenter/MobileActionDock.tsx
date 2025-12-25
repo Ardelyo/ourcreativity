@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Type, Image as ImageIcon, Video, Code, Laugh, FileText, Settings, Send, X, ChevronUp, Play, Maximize2, Eye, Globe } from 'lucide-react';
+import { Type, Image as ImageIcon, Video, Code, FileText, Settings, Send, X, Play, Eye, Globe, Component } from 'lucide-react';
 import { WorkType } from '../types';
 
 interface MobileActionDockProps {
@@ -12,14 +12,14 @@ interface MobileActionDockProps {
     isCodeMode?: boolean;
 }
 
-const modeConfig: { id: WorkType; label: string; icon: any; color: string; bgColor: string }[] = [
-    { id: 'text', label: 'Tulisan', icon: Type, color: 'text-blue-400', bgColor: 'bg-blue-500/10' },
-    { id: 'image', label: 'Gambar', icon: ImageIcon, color: 'text-purple-400', bgColor: 'bg-purple-500/10' },
-    { id: 'meme', label: 'Meme', icon: Laugh, color: 'text-green-400', bgColor: 'bg-green-500/10' },
-    { id: 'video', label: 'Video', icon: Video, color: 'text-orange-400', bgColor: 'bg-orange-500/10' },
-    { id: 'code', label: 'Kode', icon: Code, color: 'text-yellow-400', bgColor: 'bg-yellow-500/10' },
-    { id: 'document', label: 'Dokumen', icon: FileText, color: 'text-pink-400', bgColor: 'bg-pink-500/10' },
-    { id: 'embed', label: 'Embed', icon: Globe, color: 'text-cyan-400', bgColor: 'bg-cyan-500/10' },
+// Consistent "Zen" Branding: Monochrome/Minimalist
+const modeConfig: { id: WorkType; label: string; icon: any }[] = [
+    { id: 'text', label: 'Tulisan', icon: Type },
+    { id: 'image', label: 'Gambar', icon: ImageIcon },
+    { id: 'video', label: 'Video', icon: Video },
+    { id: 'code', label: 'Kode', icon: Code },
+    { id: 'document', label: 'Dokumen', icon: FileText },
+    { id: 'embed', label: 'Embed', icon: Globe },
 ];
 
 export const MobileActionDock: React.FC<MobileActionDockProps> = ({
@@ -37,36 +37,42 @@ export const MobileActionDock: React.FC<MobileActionDockProps> = ({
     return (
         <>
             {/* MINIMAL FLOATING DOCK */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 pb-safe flex items-center justify-center gap-2 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+            <div className="fixed bottom-0 left-0 right-0 z-50 pb-safe flex items-center justify-center gap-4 p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
                 {/* Mode Selector Button */}
                 <motion.button
                     whileTap={{ scale: 0.92 }}
                     onClick={() => setShowModeSelector(true)}
-                    className={`
-                        w-12 h-12 rounded-2xl bg-[#1a1a1a]/90 backdrop-blur-xl border border-white/10
-                        flex items-center justify-center shadow-xl shadow-black/50
-                        ${currentMode.color} active:bg-[#222] transition-colors
-                    `}
+                    className="w-14 h-14 rounded-full bg-white text-black flex items-center justify-center shadow-lg shadow-white/10 active:scale-90 transition-all font-bold"
                 >
-                    <CurrentIcon size={22} />
+                    <CurrentIcon size={24} />
                 </motion.button>
 
-                {/* Preview/Run Button (Context-aware) */}
+                {/* Preview/Run Button (Pill Shape) */}
                 <motion.button
-                    whileTap={{ scale: 0.92 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={onPreview}
-                    className="w-12 h-12 rounded-2xl bg-[#1a1a1a]/90 backdrop-blur-xl border border-white/10 flex items-center justify-center text-gray-400 active:text-white shadow-xl shadow-black/50 transition-colors"
+                    className="h-14 px-6 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 flex items-center gap-2 text-white font-medium shadow-xl shadow-black/50 active:bg-white/10 transition-all"
                 >
-                    {isCodeMode ? <Play size={20} className="text-green-400" /> : <Eye size={20} />}
+                    {isCodeMode ? (
+                        <>
+                            <Play size={18} className="fill-white" />
+                            <span className="text-xs tracking-wider uppercase">Jalankan</span>
+                        </>
+                    ) : (
+                        <>
+                            <Eye size={18} />
+                            <span className="text-xs tracking-wider uppercase">Pratinjau</span>
+                        </>
+                    )}
                 </motion.button>
 
-                {/* Settings Button */}
+                {/* Settings Button (Small) */}
                 <motion.button
                     whileTap={{ scale: 0.92 }}
                     onClick={onSettings}
-                    className="w-12 h-12 rounded-2xl bg-[#1a1a1a]/90 backdrop-blur-xl border border-white/10 flex items-center justify-center text-gray-400 active:text-white shadow-xl shadow-black/50 transition-colors"
+                    className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 flex items-center justify-center text-gray-400 active:text-white shadow-xl shadow-black/50 transition-colors"
                 >
-                    <Settings size={20} />
+                    <Settings size={22} />
                 </motion.button>
             </div>
 
@@ -80,7 +86,7 @@ export const MobileActionDock: React.FC<MobileActionDockProps> = ({
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setShowModeSelector(false)}
-                            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60]"
+                            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60]"
                         />
 
                         {/* Sheet */}
@@ -89,49 +95,49 @@ export const MobileActionDock: React.FC<MobileActionDockProps> = ({
                             animate={{ y: 0 }}
                             exit={{ y: '100%' }}
                             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-                            className="fixed inset-x-0 bottom-0 z-[70] bg-[#0a0a0a] rounded-t-[2rem] border-t border-white/10 p-5 pb-safe"
+                            className="fixed inset-x-0 bottom-0 z-[70] bg-[#0a0a0a] rounded-t-[2.5rem] border-t border-white/5 p-6 pb-safe"
                         >
                             {/* Handle */}
-                            <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mb-5" />
+                            <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8" />
 
                             {/* Title */}
-                            <h3 className="text-base font-bold text-white mb-5 text-center font-serif">Pilih Jenis Konten</h3>
+                            <div className="flex items-center justify-between mb-8 px-2">
+                                <h3 className="text-xl font-medium text-white font-serif">Pilih Kreativitas</h3>
+                                <button
+                                    onClick={() => setShowModeSelector(false)}
+                                    className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400"
+                                >
+                                    <X size={16} />
+                                </button>
+                            </div>
 
-                            {/* Mode Grid */}
-                            <div className="grid grid-cols-4 gap-2">
+                            {/* Mode Grid - Zen Layout */}
+                            <div className="grid grid-cols-3 gap-4 mb-4">
                                 {modeConfig.map((m) => {
                                     const Icon = m.icon;
                                     const isActive = mode === m.id;
                                     return (
                                         <motion.button
                                             key={m.id}
-                                            whileTap={{ scale: 0.95 }}
+                                            whileTap={{ scale: 0.96 }}
                                             onClick={() => {
                                                 onModeChange(m.id);
                                                 setShowModeSelector(false);
                                             }}
                                             className={`
-                                                flex flex-col items-center justify-center p-3 rounded-xl border transition-all
+                                                flex flex-col items-center justify-center p-5 rounded-2xl border transition-all aspect-square
                                                 ${isActive
-                                                    ? 'bg-white text-black border-white shadow-lg shadow-white/10'
-                                                    : `${m.bgColor} text-gray-400 border-white/5 active:bg-white/10`
+                                                    ? 'bg-white text-black border-white'
+                                                    : 'bg-white/5 text-gray-400 border-transparent active:bg-white/10'
                                                 }
                                             `}
                                         >
-                                            <Icon size={22} className={isActive ? 'text-black' : m.color} />
-                                            <span className="text-[9px] font-bold mt-1.5 uppercase tracking-wider">{m.label}</span>
+                                            <Icon size={26} strokeWidth={1.5} />
+                                            <span className="text-[10px] font-medium mt-3 uppercase tracking-widest">{m.label}</span>
                                         </motion.button>
                                     );
                                 })}
                             </div>
-
-                            {/* Close Button */}
-                            <button
-                                onClick={() => setShowModeSelector(false)}
-                                className="w-full mt-5 py-3 bg-white/5 border border-white/10 rounded-xl text-gray-500 font-bold text-xs uppercase tracking-wider active:bg-white/10 transition-colors"
-                            >
-                                Tutup
-                            </button>
                         </motion.div>
                     </>
                 )}
@@ -139,4 +145,5 @@ export const MobileActionDock: React.FC<MobileActionDockProps> = ({
         </>
     );
 };
+
 

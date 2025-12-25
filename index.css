@@ -42,3 +42,43 @@ body {
   scrollbar-width: none;
   /* Firefox */
 }
+
+/* Safe Area Utilities */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mt-safe {
+    margin-top: env(safe-area-inset-top);
+  }
+
+  .mb-safe {
+    margin-bottom: env(safe-area-inset-bottom);
+  }
+
+  .top-safe {
+    top: env(safe-area-inset-top);
+  }
+
+  .bottom-safe {
+    bottom: env(safe-area-inset-bottom);
+  }
+
+  .h-safe-screen {
+    height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  }
+}
+
+/* Fallback for browsers that don't support env() */
+.pt-safe {
+  padding-top: 0px;
+}
+
+.pb-safe {
+  padding-bottom: 0px;
+}

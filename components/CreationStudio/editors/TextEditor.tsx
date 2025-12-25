@@ -20,13 +20,19 @@ interface TextEditorProps {
     onChange: (html: string) => void;
     placeholder?: string;
     className?: string;
+    isMobile?: boolean; // New prop
+    onFocus?: () => void; // New prop
+    onBlur?: () => void; // New prop
 }
 
 export const TextEditor: React.FC<TextEditorProps> = ({
     content,
     onChange,
     placeholder = "Mulai menulis ceritamu...",
-    className
+    className,
+    isMobile = false,
+    onFocus,
+    onBlur
 }) => {
     const editor = useEditor({
         extensions: [
@@ -68,9 +74,11 @@ export const TextEditor: React.FC<TextEditorProps> = ({
         onUpdate: ({ editor }) => {
             onChange(editor.getHTML());
         },
+        onFocus: () => onFocus?.(),
+        onBlur: () => onBlur?.(),
         editorProps: {
             attributes: {
-                class: 'prose prose-invert prose-lg max-w-none focus:outline-none min-h-[60vh] leading-relaxed',
+                class: `prose prose-invert prose-lg max-w-none focus:outline-none leading-relaxed ${isMobile ? 'min-h-[40vh] px-4' : 'min-h-[60vh]'}`,
             },
         },
     });
@@ -105,145 +113,65 @@ export const TextEditor: React.FC<TextEditorProps> = ({
     const charCount = editor.storage.characterCount?.characters() || 0;
     const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
+    // Common Toolbar Items (Extracted for reuse)
+    const ToolbarItems = () => (
+        <>
+            <ToolbarButton onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} icon={<Undo size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <ToolbarButton onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()} icon={<Redo size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <Divider />
+            <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} icon={<Bold size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} isActive={editor.isActive('italic')} icon={<Italic size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <ToolbarButton onClick={() => editor.chain().focus().toggleUnderline().run()} isActive={editor.isActive('underline')} icon={<UnderlineIcon size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <Divider />
+            <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} isActive={editor.isActive('heading', { level: 1 })} icon={<Heading1 size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} isActive={editor.isActive('heading', { level: 2 })} icon={<Heading2 size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <Divider />
+            <ToolbarButton onClick={() => editor.chain().focus().toggleBulletList().run()} isActive={editor.isActive('bulletList')} icon={<List size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <ToolbarButton onClick={() => editor.chain().focus().toggleOrderedList().run()} isActive={editor.isActive('orderedList')} icon={<ListOrdered size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <ToolbarButton onClick={() => editor.chain().focus().toggleTaskList().run()} isActive={editor.isActive('taskList')} icon={<CheckSquare size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <Divider />
+            <ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} isActive={editor.isActive('blockquote')} icon={<Quote size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <ToolbarButton onClick={() => editor.chain().focus().toggleCodeBlock().run()} isActive={editor.isActive('codeBlock')} icon={<Code size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <Divider />
+            <ToolbarButton onClick={setLink} isActive={editor.isActive('link')} icon={<LinkIcon size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+            <ToolbarButton onClick={addImage} icon={<ImageIcon size={isMobile ? 18 : 16} strokeWidth={1.5} />} />
+        </>
+    );
+
     return (
         <div className={`flex flex-col h-full bg-[#0a0a0a] ${className}`}>
-            {/* ===== FIXED TOP TOOLBAR (IDE Style) ===== */}
-            <div className="flex-shrink-0 bg-[#111] border-b border-white/10 px-4 py-2">
-                <div className="flex items-center justify-between gap-4">
-                    {/* Left: Formatting Tools */}
-                    <div className="flex items-center gap-1 flex-wrap">
-                        {/* Undo/Redo */}
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().undo().run()}
-                            disabled={!editor.can().undo()}
-                            icon={<Undo size={16} />}
-                            tooltip="Urungkan"
-                        />
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().redo().run()}
-                            disabled={!editor.can().redo()}
-                            icon={<Redo size={16} />}
-                            tooltip="Ulangi"
-                        />
 
-                        <Divider />
-
-                        {/* Text Formatting */}
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().toggleBold().run()}
-                            isActive={editor.isActive('bold')}
-                            icon={<Bold size={16} />}
-                            tooltip="Tebal (Ctrl+B)"
-                        />
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().toggleItalic().run()}
-                            isActive={editor.isActive('italic')}
-                            icon={<Italic size={16} />}
-                            tooltip="Miring (Ctrl+I)"
-                        />
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().toggleUnderline().run()}
-                            isActive={editor.isActive('underline')}
-                            icon={<UnderlineIcon size={16} />}
-                            tooltip="Garis Bawah (Ctrl+U)"
-                        />
-
-                        <Divider />
-
-                        {/* Headings */}
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-                            isActive={editor.isActive('heading', { level: 1 })}
-                            icon={<Heading1 size={16} />}
-                            tooltip="Judul Besar"
-                        />
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                            isActive={editor.isActive('heading', { level: 2 })}
-                            icon={<Heading2 size={16} />}
-                            tooltip="Judul Sedang"
-                        />
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                            isActive={editor.isActive('heading', { level: 3 })}
-                            icon={<Heading3 size={16} />}
-                            tooltip="Judul Kecil"
-                        />
-
-                        <Divider />
-
-                        {/* Lists */}
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().toggleBulletList().run()}
-                            isActive={editor.isActive('bulletList')}
-                            icon={<List size={16} />}
-                            tooltip="Daftar Bullet"
-                        />
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                            isActive={editor.isActive('orderedList')}
-                            icon={<ListOrdered size={16} />}
-                            tooltip="Daftar Nomor"
-                        />
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().toggleTaskList().run()}
-                            isActive={editor.isActive('taskList')}
-                            icon={<CheckSquare size={16} />}
-                            tooltip="Daftar Tugas"
-                        />
-
-                        <Divider />
-
-                        {/* Block Elements */}
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().toggleBlockquote().run()}
-                            isActive={editor.isActive('blockquote')}
-                            icon={<Quote size={16} />}
-                            tooltip="Kutipan"
-                        />
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-                            isActive={editor.isActive('codeBlock')}
-                            icon={<Code size={16} />}
-                            tooltip="Blok Kode"
-                        />
-                        <ToolbarButton
-                            onClick={() => editor.chain().focus().setHorizontalRule().run()}
-                            icon={<Minus size={16} />}
-                            tooltip="Garis Pemisah"
-                        />
-
-                        <Divider />
-
-                        {/* Insert */}
-                        <ToolbarButton
-                            onClick={setLink}
-                            isActive={editor.isActive('link')}
-                            icon={<LinkIcon size={16} />}
-                            tooltip="Sisipkan Tautan"
-                        />
-                        <ToolbarButton
-                            onClick={addImage}
-                            icon={<ImageIcon size={16} />}
-                            tooltip="Sisipkan Gambar"
-                        />
-                    </div>
-
-                    {/* Right: Stats */}
-                    <div className="flex items-center gap-4 text-xs text-gray-500 font-mono flex-shrink-0">
-                        <span className="tabular-nums">{wordCount} kata</span>
-                        <span className="tabular-nums">{charCount} huruf</span>
-                        <span className="flex items-center gap-1 tabular-nums">
-                            <Clock size={12} />
-                            ~{readingTime} mnt baca
-                        </span>
+            {/* TOOLBAR */}
+            {isMobile ? (
+                // MOBILE SCROLLABLE TOOLBAR
+                <div className="sticky top-0 z-30 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/10 px-2 py-2 overflow-x-auto no-scrollbar">
+                    <div className="flex items-center gap-1 min-w-max">
+                        <ToolbarItems />
                     </div>
                 </div>
-            </div>
+            ) : (
+                // DESKTOP FIXED TOOLBAR
+                <div className="flex-shrink-0 bg-[#111] border-b border-white/10 px-4 py-2">
+                    <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-1 flex-wrap">
+                            <ToolbarItems />
+                        </div>
+                        {/* Right: Stats */}
+                        <div className="flex items-center gap-4 text-xs text-gray-500 font-mono flex-shrink-0">
+                            <span className="tabular-nums">{wordCount} kata</span>
+                            <span className="tabular-nums">{charCount} huruf</span>
+                            <span className="flex items-center gap-1 tabular-nums">
+                                <Clock size={12} />
+                                ~{readingTime} mnt baca
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* ===== EDITOR CANVAS ===== */}
-            <div className="flex-1 overflow-y-auto">
-                <div className="max-w-4xl mx-auto px-8 py-10">
+            <div className={`flex-1 overflow-y-auto ${isMobile ? 'pb-safe' : ''}`}>
+                <div className={`max-w-4xl mx-auto ${isMobile ? 'px-4 py-6' : 'px-8 py-10'}`}>
                     <EditorContent editor={editor} />
                 </div>
             </div>
@@ -274,12 +202,11 @@ const ToolbarButton = ({
         onClick={onClick}
         disabled={disabled}
         title={tooltip}
-        className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all ${disabled
-                ? 'text-gray-600 cursor-not-allowed'
-                : isActive
-                    ? 'text-white bg-rose-500/20 border border-rose-500/50'
-                    : 'text-gray-400 hover:text-white hover:bg-white/10 border border-transparent'
-            }`}
+        className={`flex items-center justify-center rounded-lg transition-all 
+            ${disabled ? 'text-gray-600 cursor-not-allowed' : isActive ? 'text-white bg-white/20' : 'text-gray-400 hover:text-white hover:bg-white/10'}
+            ${/* Responsive Sizing */ ''}
+            w-9 h-9 md:w-8 md:h-8
+        `}
     >
         {icon}
     </button>

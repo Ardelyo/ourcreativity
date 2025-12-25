@@ -17,15 +17,23 @@ export const Announcement = () => {
     const { data: events = [], isLoading: loading, error: annError } = useQuery({
         queryKey: ['announcements'],
         queryFn: async () => {
+            console.log('[Announcement] Fetching data...');
             const { data, error } = await supabase
                 .from('announcements')
                 .select('id, title, subtitle, description, content, date, type, category, status, color, highlights')
                 .eq('type', 'announcement')
                 .order('date', { ascending: false });
 
-            if (error) throw error;
+            if (error) {
+                console.error('[Announcement] Fetch error:', error);
+                throw error;
+            }
+            console.log('[Announcement] ✅ Data loaded:', data?.length);
             return data;
         },
+        refetchOnMount: true,
+        staleTime: 1000 * 60 * 5, // 5 minutes
+        refetchOnWindowFocus: false,
     });
 
     return (

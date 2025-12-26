@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2, ArrowLeft, ArrowRight, ArrowDown, Send, MessageCircle, MoreVertical } from 'lucide-react';
+import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2, ArrowLeft, ArrowRight, ArrowDown, Send, MessageCircle, MoreVertical, Globe, Layers } from 'lucide-react';
 import { KaryaCard } from '../components/KaryaCard';
 import { ImmersiveDetailView } from '../components/Karya/ImmersiveDetailView';
 import { useIsMobile } from '../hooks/useIsMobile';
@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { FetchErrorState } from '../components/FetchErrorState';
 import { useAuth } from '../components/AuthProvider';
+import { useLoadingStatus } from '../components/LoadingTimeoutProvider';
 
 import { supabase } from '../lib/supabase';
 import { motionConfig } from '../lib/motion';
@@ -201,6 +202,7 @@ ${cssFile?.content ? `<style>${cssFile.content}</style>` : ''}
 export const Karya = () => {
   const navigate = useNavigate();
   const { user, profile, loading: authLoading } = useAuth();
+  const { setIsLoading } = useLoadingStatus();
   const isMobile = useIsMobile();
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -239,11 +241,12 @@ export const Karya = () => {
           division, 
           tags, 
           slides, 
-          created_at,
           code_language,
           content,
+          thumbnail_url,
           likes:likes(count),
-          comments:comments(count)
+          comments:comments(count),
+          author_profile:profiles(username, avatar_url)
         `);
 
       if (filter !== 'all') {
@@ -257,7 +260,13 @@ export const Karya = () => {
     refetchOnMount: true,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
+    enabled: true, // FIX: Explicitly set enabled to true
   });
+
+  useEffect(() => {
+    setIsLoading(worksLoading || worksFetching);
+    return () => setIsLoading(false);
+  }, [worksLoading, worksFetching, setIsLoading]);
 
   // Sync artworks state with React Query results (for pagination append)
   useEffect(() => {
@@ -451,11 +460,11 @@ export const Karya = () => {
           </div>
         );
       case 'video':
-      case 'video':
         return (
-          <div className="relative w-full h-full group/video">
+          <div className="relative w-full h-full group/video bg-black">
             <video
               src={art.image_url}
+              poster={art.thumbnail_url}
               className="w-full h-full object-cover"
               muted
               loop
@@ -470,11 +479,26 @@ export const Karya = () => {
             </div>
           </div>
         );
+
       case 'slide':
-        const slidePreviewUrl = art.image_url || (art.slides?.[0]?.content);
-        return <img src={slidePreviewUrl} alt={art.title} className="w-full h-full object-cover" />;
-      default: // image
-        return <img src={art.image_url || (art.slides?.[0]?.content)} alt={art.title} className="w-full h-full object-cover" />;
+      case 'image':
+      case 'meme':
+        // Jika ada lebih dari satu slide, tampilin pratinjau yang sesuai atau tetap thumbnail
+        const hasSlides = art.slides && art.slides.length > 1;
+        const previewUrl = art.thumbnail_url || art.image_url || (art.slides?.[0]?.content);
+        return (
+          <div className="relative w-full h-full group/image bg-black">
+            <img src={previewUrl} alt={art.title} className="w-full h-full object-cover transition-transform duration-700 group-hover/image:scale-110" />
+            {hasSlides && (
+              <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full text-white text-[10px] font-bold border border-white/10 opacity-0 group-hover/image:opacity-100 transition-opacity">
+                <Layers size={10} className="inline mr-1" />
+                {art.slides.length} SLIDES
+              </div>
+            )}
+          </div>
+        );
+      default:
+        return <img src={art.thumbnail_url || art.image_url || (art.slides?.[0]?.content)} alt={art.title} className="w-full h-full object-cover" />;
     }
   };
 
@@ -671,9 +695,9 @@ export const Karya = () => {
                     onClick={(e) => {
                       e.stopPropagation();
                       // Logika Toggle Fullscreen (Layar Penuh)
-                      const card = document.getElementById(`modal-card-${selectedId}`);
+                      const mediaContainer = document.getElementById(`media-container-${selectedId}`);
                       if (!document.fullscreenElement) {
-                        card?.requestFullscreen().catch(err => console.log(err));
+                        mediaContainer?.requestFullscreen().catch(err => console.log(err));
                       } else {
                         document.exitFullscreen();
                       }
@@ -692,11 +716,14 @@ export const Karya = () => {
                 </div>
 
                 {/* Bagian Media */}
-                <div className="w-full h-[40vh] md:h-auto md:w-3/5 bg-black flex items-center justify-center relative overflow-hidden group flex-shrink-0">
+                <div
+                  id={`media-container-${selectedId}`}
+                  className="w-full h-[40vh] md:h-auto md:w-3/5 bg-black flex items-center justify-center relative overflow-hidden group flex-shrink-0"
+                >
                   <motion.div layoutId={`content-${selectedId}`} className="w-full h-full flex items-center justify-center">
 
                     {/* ...Logika Slide... */}
-                    {selectedArtwork.type === 'slide' && (
+                    {(selectedArtwork.type === 'slide' || (selectedArtwork.slides && selectedArtwork.slides.length > 1)) && (
                       <div className="relative w-full h-full flex items-center justify-center group/carousel">
                         <div
                           ref={carouselRef}
@@ -744,8 +771,8 @@ export const Karya = () => {
                       </div>
                     )}
 
-                    {selectedArtwork.type === 'image' && (
-                      <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-contain" />
+                    {selectedArtwork.type === 'image' && (!selectedArtwork.slides || selectedArtwork.slides.length <= 1) && (
+                      <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-contain" alt={selectedArtwork.title} />
                     )}
                     {selectedArtwork.type === 'video' && (
                       <div className="w-full h-full flex items-center justify-center bg-black">

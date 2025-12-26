@@ -39,11 +39,30 @@ const AdminContent = React.lazy(() => import('./pages/Admin/Content').then(modul
 const AdminAnnouncements = React.lazy(() => import('./pages/Admin/Announcements').then(module => ({ default: module.Announcements })));
 const AdminSettings = React.lazy(() => import('./pages/Admin/Settings').then(module => ({ default: module.Settings })));
 
-const Loading = () => (
-  <div className="flex items-center justify-center min-h-[60vh]">
-    <div className="w-10 h-10 border-4 border-rose-500/30 border-t-rose-500 rounded-full animate-spin"></div>
-  </div>
-);
+import { LoadingTimeoutProvider, useLoadingStatus } from './components/LoadingTimeoutProvider';
+
+// Ini buat ngecek apa ada suspense yang lagi loading secara global
+const GlobalLoadingTracker = () => {
+  const { setIsLoading } = useLoadingStatus();
+
+  useEffect(() => {
+    // Karena kita pake Suspense di AnimatedRoutes, kita bisa deteksi kalo render keputus
+    // Tapi karena Suspense fallback itu pasif, kita pancing lewat mounting 
+    setIsLoading(true);
+    return () => setIsLoading(false);
+  }, [setIsLoading]);
+
+  return null;
+};
+
+const Loading = () => {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+      <GlobalLoadingTracker />
+      <div className="w-10 h-10 border-4 border-rose-500/30 border-t-rose-500 rounded-full animate-spin"></div>
+    </div>
+  );
+};
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -148,10 +167,12 @@ export default function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <Router>
-          <ScrollToTop />
-          <AppContent />
-        </Router>
+        <LoadingTimeoutProvider>
+          <Router>
+            <ScrollToTop />
+            <AppContent />
+          </Router>
+        </LoadingTimeoutProvider>
       </AuthProvider>
     </ErrorBoundary>
   );

@@ -5,18 +5,27 @@ import {
     Shield, Bell, Lock, LogOut, Trash2, Mail,
     CreditCard, Globe, ChevronRight, Upload
 } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../components/AuthProvider';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import { Toast, ToastType } from '../components/Toast';
 
 type TabId = 'profile' | 'account' | 'preferences' | 'security';
 
 export const Settings = () => {
-    const { user, profile, loading, signOut } = useAuth();
+    const { user, profile, loading, signOut, refreshProfile } = useAuth();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = useState<TabId>('profile');
     const [isSaving, setIsSaving] = useState(false);
-    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+    // Toast state
+    const [toast, setToast] = useState<{ isVisible: boolean, message: string, type: ToastType }>({
+        isVisible: false,
+        message: '',
+        type: 'success'
+    });
 
     // Profile State
     const [formData, setFormData] = useState({
@@ -66,37 +75,60 @@ export const Settings = () => {
     const uploadAvatar = async (userId: string): Promise<string | null> => {
         if (!avatarFile) return null;
 
+        // Validation: Max 2MB
+        if (avatarFile.size > 2 * 1024 * 1024) {
+            throw new Error('Ukuran file terlalu besar (Maksimal 2MB)');
+        }
+
+        console.log('DEBUG [uploadAvatar]: Starting...', { userId, file: avatarFile.name, size: avatarFile.size });
+
         try {
             const fileExt = avatarFile.name.split('.').pop();
-            const fileName = `${userId}-${Math.random()}.${fileExt}`;
+            const fileName = `${userId}-${Date.now()}.${fileExt}`;
             const filePath = `${fileName}`;
 
-            const { error: uploadError } = await supabase.storage
-                .from('avatars')
-                .upload(filePath, avatarFile);
+            console.log('DEBUG [uploadAvatar]: Uploading to "avatars" bucket at path:', filePath);
 
-            if (uploadError) throw uploadError;
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('avatars')
+                .upload(filePath, avatarFile, {
+                    cacheControl: '3600',
+                    upsert: false
+                });
+
+            if (uploadError) {
+                console.error('DEBUG [uploadAvatar]: Supabase Upload Error:', uploadError);
+                throw uploadError;
+            }
+
+            console.log('DEBUG [uploadAvatar]: Upload Success:', uploadData);
 
             const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+            console.log('DEBUG [uploadAvatar]: Public URL generated:', data.publicUrl);
             return data.publicUrl;
         } catch (error) {
-            console.error('Error uploading avatar:', error);
+            console.error('DEBUG [uploadAvatar]: Exception caught:', error);
             throw error;
         }
     };
 
     const handleSaveProfile = async () => {
         if (!user) return;
+        console.log('DEBUG [handleSaveProfile]: Started');
         setIsSaving(true);
-        setMessage(null);
+        setToast(prev => ({ ...prev, isVisible: false }));
 
         try {
             let avatarUrl = formData.avatar_url;
 
             if (avatarFile) {
+                console.log('DEBUG [handleSaveProfile]: Avatar file detected, calling uploadAvatar');
                 const uploadedUrl = await uploadAvatar(user.id);
+                console.log('DEBUG [handleSaveProfile]: uploadAvatar returned:', uploadedUrl);
                 if (uploadedUrl) avatarUrl = uploadedUrl;
             }
+
+            console.log('DEBUG [handleSaveProfile]: Updating profiles table...', { avatarUrl, username: formData.username });
 
             const updates = {
                 id: user.id,
@@ -107,35 +139,57 @@ export const Settings = () => {
                 updated_at: new Date().toISOString(),
             };
 
-            const { error } = await supabase
+            const { error: upsertError } = await supabase
                 .from('profiles')
                 .upsert(updates);
 
-            if (error) throw error;
+            if (upsertError) {
+                console.error('DEBUG [handleSaveProfile]: Error upserting profile:', upsertError);
+                throw upsertError;
+            }
+
+            console.log('DEBUG [handleSaveProfile]: Profile updated successfully');
+
+            // Force global state refresh
+            await refreshProfile();
+
+            // Invalidate React Query cache
+            await queryClient.invalidateQueries({ queryKey: ['works'] });
+            await queryClient.invalidateQueries({ queryKey: ['profile'] });
+            await queryClient.invalidateQueries({ queryKey: ['profile-works'] });
+            await queryClient.invalidateQueries({ queryKey: ['profile-likes'] });
 
             // Update local state if successful
             setFormData(prev => ({ ...prev, avatar_url: avatarUrl }));
+            setAvatarPreview(null);
             setAvatarFile(null);
-            setMessage({ type: 'success', text: 'Profil berhasil diperbarui!' });
 
-            // Optional: Reload to force global state update if context doesn't auto-update deeply
-            // window.location.reload(); 
+            setToast({
+                message: 'Profil berhasil diperbarui!',
+                type: 'success',
+                isVisible: true
+            });
 
         } catch (error: any) {
-            console.error('Error updating profile:', error);
-            setMessage({ type: 'error', text: 'Gagal: ' + error.message });
+            console.error('DEBUG [handleSaveProfile]: Caught error in sequence:', error);
+            setToast({
+                message: 'Gagal memperbarui profil: ' + (error.message || 'Error tidak diketahui'),
+                type: 'error',
+                isVisible: true
+            });
         } finally {
+            console.log('DEBUG [handleSaveProfile]: Setting isSaving to false');
             setIsSaving(false);
         }
     };
 
     const handlePasswordChange = async () => {
         if (passwordData.newPassword !== passwordData.confirmPassword) {
-            setMessage({ type: 'error', text: 'Password tidak cocok.' });
+            setToast({ message: 'Password tidak cocok.', type: 'error', isVisible: true });
             return;
         }
         if (passwordData.newPassword.length < 6) {
-            setMessage({ type: 'error', text: 'Password minimal 6 karakter.' });
+            setToast({ message: 'Password minimal 6 karakter.', type: 'error', isVisible: true });
             return;
         }
 
@@ -146,10 +200,10 @@ export const Settings = () => {
             });
 
             if (error) throw error;
-            setMessage({ type: 'success', text: 'Password berhasil diubah!' });
+            setToast({ message: 'Password berhasil diubah!', type: 'success', isVisible: true });
             setPasswordData({ newPassword: '', confirmPassword: '' });
         } catch (error: any) {
-            setMessage({ type: 'error', text: 'Gagal mengubah password: ' + error.message });
+            setToast({ message: 'Gagal mengubah password: ' + error.message, type: 'error', isVisible: true });
         } finally {
             setIsSaving(false);
         }
@@ -197,8 +251,8 @@ export const Settings = () => {
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id as TabId)}
                                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
-                                                ? 'bg-white/10 text-white font-bold shadow-lg'
-                                                : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                                            ? 'bg-white/10 text-white font-bold shadow-lg'
+                                            : 'text-gray-400 hover:bg-white/5 hover:text-white'
                                             }`}
                                     >
                                         <Icon size={18} className={isActive ? 'text-rose-500' : ''} />
@@ -427,23 +481,12 @@ export const Settings = () => {
                             )}
 
                             {/* Global Message Toast */}
-                            <AnimatePresence>
-                                {message && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: 20 }}
-                                        className={`fixed bottom-8 right-8 p-4 rounded-xl shadow-2xl flex items-center gap-3 border ${message.type === 'success'
-                                                ? 'bg-[#0a0a0a] border-green-500 text-green-500'
-                                                : 'bg-[#0a0a0a] border-red-500 text-red-500'
-                                            }`}
-                                    >
-                                        {message.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
-                                        <span className="font-bold">{message.text}</span>
-                                        <button onClick={() => setMessage(null)} className="ml-2 hover:text-white"><LogOut size={16} /></button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                            <Toast
+                                isVisible={toast.isVisible}
+                                message={toast.message}
+                                type={toast.type}
+                                onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
+                            />
                         </motion.div>
                     </div>
                 </div>

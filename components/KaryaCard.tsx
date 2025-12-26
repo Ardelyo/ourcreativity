@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Heart, MessageCircle, Play } from 'lucide-react';
+import { Heart, MessageCircle, Play, Layers } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motionConfig } from '../lib/motion';
 
@@ -76,6 +76,12 @@ export const KaryaCard: React.FC<KaryaCardProps> = ({ art, index, onClick, rende
                         </div>
 
                         <div className="flex gap-2 shrink-0">
+                            {art.slides && art.slides.length > 1 && (
+                                <div className="flex items-center gap-1 bg-white/10 backdrop-blur-md px-2 py-1 rounded-full text-white text-[10px] font-bold">
+                                    <Layers size={10} className="text-white/80" />
+                                    {art.slides.length}
+                                </div>
+                            )}
                             <div className="flex items-center gap-1 bg-white/10 backdrop-blur-md px-2 py-1 rounded-full text-white text-[10px] font-bold">
                                 <Heart size={10} className="fill-rose-500 text-rose-500" />
                                 {art.likes?.[0]?.count || 0}
@@ -86,11 +92,15 @@ export const KaryaCard: React.FC<KaryaCardProps> = ({ art, index, onClick, rende
                     {/* Penulis & Divisi */}
                     <div className="flex items-center justify-between transform md:translate-y-4 md:group-hover:translate-y-0 transition-transform duration-500 delay-75">
                         <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                            <Link to={`/profile/${art.author}`} className="flex items-center gap-2 hover:opacity-80">
+                            <Link to={`/profile/${art.author_profile?.username || art.author}`} className="flex items-center gap-2 hover:opacity-80">
                                 <div className="w-6 h-6 rounded-full bg-gray-700 overflow-hidden ring-1 ring-white/20">
-                                    <img src={`https://ui-avatars.com/api/?name=${art.author}&background=random`} alt="Avatar" className="w-full h-full object-cover" />
+                                    <img
+                                        src={art.author_profile?.avatar_url || (art.author ? `https://ui-avatars.com/api/?name=${art.author}&background=random` : '/default-avatar.png')}
+                                        alt="Avatar"
+                                        className="w-full h-full object-cover"
+                                    />
                                 </div>
-                                <span className="text-[10px] md:text-xs text-white font-medium">{art.author}</span>
+                                <span className="text-[10px] md:text-xs text-white font-medium">{art.author_profile?.username || art.author}</span>
                             </Link>
                         </div>
                         <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">

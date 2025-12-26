@@ -1,11 +1,11 @@
 
 export type Medium = 'visual' | 'narasi' | 'kode' | 'sinema';
-export type WorkType = 'image' | 'video' | 'text' | 'code' | 'embed' | 'document' | 'meme';
+export type WorkType = 'image' | 'video' | 'text' | 'code' | 'meme' | 'slide';
 export type DivisionId = 'graphics' | 'video' | 'writing' | 'coding' | 'meme';
 
 export interface SlideContent {
     id: string;
-    type: 'image' | 'text' | 'code' | 'video' | 'embed';
+    type: 'image' | 'text' | 'video';
     content: string;
     file?: File; // For client-side compression support
     metadata?: {

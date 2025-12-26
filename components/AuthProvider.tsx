@@ -18,6 +18,7 @@ interface AuthContextType {
     profile: Profile | null;
     loading: boolean;
     signOut: () => Promise<void>;
+    refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -69,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             const { data, error } = await supabase
                 .from('profiles')
-                .select('id, username, avatar_url, is_approved, role')
+                .select('id, username, avatar_url, is_approved, role, bio, website')
                 .eq('id', userId)
                 .single();
 
@@ -83,6 +84,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const refreshProfile = async () => {
+        if (user) {
+            await fetchProfile(user.id);
+        }
+    };
+
     const signOut = async () => {
         await supabase.auth.signOut();
         setProfile(null);
@@ -91,8 +98,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ session, user, profile, loading, signOut }}>
-            {children}
+        <AuthContext.Provider value={{ session, user, profile, loading, signOut, refreshProfile }}>
+            {loading ? (
+                <div className="min-h-screen bg-black flex items-center justify-center">
+                    <div className="w-10 h-10 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin"></div>
+                </div>
+            ) : (
+                children
+            )}
         </AuthContext.Provider>
     );
 };

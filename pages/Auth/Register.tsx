@@ -3,9 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Mail, Lock, User as UserIcon, Loader2 } from 'lucide-react';
+import { useLoadingStatus } from '../../components/LoadingTimeoutProvider';
+import { useEffect } from 'react';
 
 export const Register = () => {
     const navigate = useNavigate();
+    const { setIsLoading } = useLoadingStatus();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
@@ -53,6 +56,11 @@ export const Register = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        setIsLoading(loading);
+        return () => setIsLoading(false);
+    }, [loading, setIsLoading]);
 
     return (
         <div className="min-h-screen pt-24 pb-12 flex flex-col items-center justify-center px-4 relative overflow-hidden">

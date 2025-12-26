@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Hero } from '../components/Hero';
-import { BentoGrid } from '../components/BentoGrid';
-import { BottomCTA } from '../components/BottomCTA';
+// Halaman Home - Komponen berat di-lazy load karena di bawah fold
+const BentoGrid = React.lazy(() => import('../components/BentoGrid').then(module => ({ default: module.BentoGrid })));
+const BottomCTA = React.lazy(() => import('../components/BottomCTA').then(module => ({ default: module.BottomCTA })));
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -21,12 +22,14 @@ export const Home = () => {
     >
       <Hero />
 
-      <div className="mt-24 md:mt-32">
-        <BentoGrid />
-      </div>
-      <div className="mt-32 md:mt-48">
-        <BottomCTA />
-      </div>
+      <React.Suspense fallback={<div className="h-96" />}>
+        <div className="mt-24 md:mt-32">
+          <BentoGrid />
+        </div>
+        <div className="mt-32 md:mt-48">
+          <BottomCTA />
+        </div>
+      </React.Suspense>
     </motion.div>
   );
 };

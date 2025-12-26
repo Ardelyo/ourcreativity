@@ -114,9 +114,9 @@ export const Navbar = () => {
                             <Link to="/" className="flex items-center gap-2 group shrink-0 relative z-10" onClick={() => setIsMobileMenuOpen(false)}>
                                 <motion.div
                                     layout="position"
-                                    className={`rounded-full flex items-center justify-center text-white transition-all duration-300 ${showFullMenu || isMobileMenuOpen ? 'w-8 h-8 bg-white/10' : 'w-8 h-8 bg-transparent'}`}
+                                    className={`rounded-full flex items-center justify-center text-white transition-all duration-300 will-change-transform ${showFullMenu || isMobileMenuOpen ? 'w-8 h-8 bg-white/10' : 'w-8 h-8 bg-transparent'}`}
                                 >
-                                    <Asterisk size={showFullMenu || isMobileMenuOpen ? 18 : 20} className={!(showFullMenu || isMobileMenuOpen) ? "animate-spin-slow" : "rotate-0 group-hover:rotate-180 transition-transform duration-500"} />
+                                    <Asterisk size={showFullMenu || isMobileMenuOpen ? 18 : 20} className={`will-change-transform ${!(showFullMenu || isMobileMenuOpen) ? "animate-spin-slow" : "rotate-0 group-hover:rotate-180 transition-transform duration-500"}`} />
                                 </motion.div>
                             </Link>
 

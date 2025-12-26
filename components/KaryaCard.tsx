@@ -107,6 +107,8 @@ export const KaryaCard: React.FC<KaryaCardProps> = ({ art, index, onClick, rende
                                     <img
                                         src={art.author_profile?.avatar_url || (art.author ? `https://ui-avatars.com/api/?name=${art.author}&background=random` : '/default-avatar.png')}
                                         alt="Avatar"
+                                        loading="lazy"
+                                        decoding="async"
                                         className="w-full h-full object-cover"
                                     />
                                 </div>

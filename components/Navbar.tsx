@@ -123,9 +123,9 @@ export const Navbar = () => {
                             <AnimatePresence mode="popLayout">
                                 {(showFullMenu || isMobileMenuOpen) && !isProfileOpen && (
                                     <motion.span
-                                        initial={{ opacity: 0, x: -10, filter: "blur(5px)" }}
-                                        animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                                        exit={{ opacity: 0, x: -10, filter: "blur(5px)" }}
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -10 }}
                                         transition={{ duration: motionConfig.durations.fast, ease: "easeOut" }}
                                         className="font-serif font-bold text-lg tracking-tight text-white whitespace-nowrap"
                                     >

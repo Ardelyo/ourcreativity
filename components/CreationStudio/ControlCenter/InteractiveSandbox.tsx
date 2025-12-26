@@ -35,34 +35,59 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, t
     }, [onConsole]);
 
     const getIframeContent = () => {
+        // Find main file with a fallback to the first file if none marked as isMain
         const mainFile = files.find(f => f.isMain) || files[0];
         if (!mainFile) return '';
+
+        // Helper to escape </script> to prevent breaking out of the container script tag
+        const escapeScript = (str: any) => {
+            if (typeof str !== 'string') return '';
+            return str.replace(/<\/script>/gi, '<\\/script>');
+        };
 
         // masukin script buat nangkep log konsol
         const consoleScript = `
         <script>
             (function(){
-                const oldLog = console.log;
-                const oldError = console.error;
-                const oldWarn = console.warn;
-                const oldInfo = console.info;
+                const originalLog = console.log;
+                const originalWarn = console.warn;
+                const originalError = console.error;
 
-                function send(level, args) {
+                const send = (level, args) => {
                     try {
-                        // ubah argumen jadi string/json yang aman
-                        const safeArgs = args.map(arg => {
-                            try { return JSON.parse(JSON.stringify(arg)); }
-                            catch(e) { return String(arg); }
-                        });
-                        window.parent.postMessage({ type: 'console', level, args: safeArgs }, '*');
-                    } catch(e) {}
-                }
+                        window.parent.postMessage({
+                            type: 'console',
+                            level: level,
+                            args: args.map(arg => {
+                                if (typeof arg === 'object' && arg !== null) {
+                                    try {
+                                        return JSON.stringify(arg);
+                                    } catch (e) {
+                                        return String(arg); // Fallback for circular structures
+                                    }
+                                }
+                                return arg;
+                            })
+                        }, '*');
+                    } catch (e) {
+                        // Handle cases where parent window might not be accessible
+                        // console.error('Failed to post message to parent:', e);
+                    }
+                };
 
-                console.log = (...args) => { oldLog.apply(console, args); send('log', args); };
-                console.error = (...args) => { oldError.apply(console, args); send('error', args); };
-                console.warn = (...args) => { oldWarn.apply(console, args); send('warn', args); };
-                console.info = (...args) => { oldInfo.apply(console, args); send('info', args); };
-                
+                console.log = (...args) => {
+                    send('log', args);
+                    originalLog.apply(console, args);
+                };
+                console.warn = (...args) => {
+                    send('warn', args);
+                    originalWarn.apply(console, args);
+                };
+                console.error = (...args) => {
+                    send('error', args);
+                    originalError.apply(console, args);
+                };
+
                 window.onerror = function(msg, url, line, col, error) {
                      send('error', [msg, 'Line: ' + line]);
                 };
@@ -72,19 +97,22 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, t
 
         if (mainFile.language === 'javascript') {
             // anggep aja mode p5.js buat sekarang kalo filenya cuma satu atau emang p5
+            const jsCode = mainFile.content;
+            const isP5 = jsCode.includes('createCanvas') || jsCode.includes('setup()') || jsCode.includes('draw()');
+
             return `
                 <!DOCTYPE html>
                 <html>
                 <head>
                     <meta charset="utf-8">
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+                    ${isP5 ? '<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>' : ''}
                     ${consoleScript}
                     <style>body { margin: 0; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000; height: 100vh; color: white; }</style>
                 </head>
                 <body>
                     <script>
                         try {
-                            ${mainFile.content}
+                            ${escapeScript(jsCode)}
                         } catch(e) {
                             console.error(e);
                         }
@@ -96,7 +124,7 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, t
 
         if (mainFile.language === 'html') {
             // masukin script konsol ke bagian Head
-            let content = mainFile.content;
+            let content = mainFile.content || '';
             if (content.includes('<head>')) {
                 content = content.replace('<head>', `<head>${consoleScript}`);
             } else {
@@ -108,7 +136,7 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, t
             const jsFiles = files.filter(f => f.language === 'javascript' && f.id !== mainFile.id);
 
             const styles = cssFiles.map(f => `<style>${f.content}</style>`).join('\n');
-            const scripts = jsFiles.map(f => `<script>${f.content}</script>`).join('\n');
+            const scripts = jsFiles.map(f => `<script>${escapeScript(f.content)}</script>`).join('\n');
 
             content = content.replace('</head>', `${styles}</head>`);
             content = content.replace('</body>', `${scripts}</body>`);
@@ -120,7 +148,7 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, t
             return `
                 <!DOCTYPE html>
                 <html>
-                <head><style>body { margin: 0; display: flex; justify-content: center; align-items: center; heights: 100vh; background: #111; }</style></head>
+                <head><style>body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #111; }</style></head>
                 <body>${mainFile.content}</body>
                 </html>
             `;

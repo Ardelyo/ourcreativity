@@ -19,17 +19,19 @@ import { CodeFile } from '@/components/CreationStudio/ControlCenter/types';
 import { DraftManager } from '@/components/CreationStudio/ControlCenter/DraftManager';
 import { TextEditor } from '@/components/CreationStudio/editors/TextEditor';
 import { VisualBuilder } from '@/components/CreationStudio/carousel/VisualBuilder';
-import { WebsiteEmbed } from '@/components/CreationStudio/embed/WebsiteEmbed';
-import { DocumentUploader } from '@/components/CreationStudio/editors/DocumentUploader';
+
 import { MediumSelector } from '@/components/CreationStudio/MediumSelector';
-import { IframeSandbox } from '@/components/CreationStudio/sandbox/IframeSandbox';
-import { PyodideSandbox } from '@/components/CreationStudio/sandbox/PyodideSandbox';
+import { PreviewCarousel } from '@/components/CreationStudio/PreviewCarousel';
+import { useMediaUpload } from '@/hooks/useMediaUpload';
+import { CreationData, WorkType, DivisionId } from '@/components/CreationStudio/types';
+import { useQueryClient } from '@tanstack/react-query';
+import { useLoadingStatus } from '@/components/LoadingTimeoutProvider';
+
+import { toast } from 'react-hot-toast';
 import { InteractiveSandbox } from '@/components/CreationStudio/ControlCenter/InteractiveSandbox';
 import { StudioHeader } from '@/components/CreationStudio/StudioHeader';
-import { PreviewCarousel } from '@/components/CreationStudio/PreviewCarousel';
-import { compressImage, validateVideoSize } from '@/lib/image-utils';
-// tipe data
-import { CreationData, WorkType, DivisionId } from '@/components/CreationStudio/types';
+import { LogEntry } from '@/components/CreationStudio/ControlCenter/LogContainer';
+import { useSystemLog } from '@/components/SystemLogProvider';
 
 type Division = 'graphics' | 'tech' | 'music' | 'writing' | 'meme' | 'video';
 
@@ -88,14 +90,17 @@ export const Studio = () => {
 
     // --- state: mode sama konten ---
     const [mode, setMode] = useState<WorkType>('text');
-    const [title, setTitle] = useState('Karya Tanpa Judul');
+    const [title, setTitle] = useState(''); // Default empty to show placeholder
     const [content, setContent] = useState('');
     const [mediaFile, setMediaFile] = useState<File | null>(null);
     const [mediaPreview, setMediaPreview] = useState<string | null>(null);
     const [slides, setSlides] = useState<any[]>([]);
-    const [embedUrl, setEmbedUrl] = useState('');
-    const [codeLanguage, setCodeLanguage] = useState('javascript');
+    const [codeLanguage, setCodeLanguage] = useState('html');
+    const [carouselSlides, setCarouselSlides] = useState<any[]>([]);
     const [codeFiles, setCodeFiles] = useState<CodeFile[]>(DEFAULT_PROJECT_FILES);
+
+    const queryClient = useQueryClient();
+    const { setIsLoading, reportLoadingComplete } = useLoadingStatus();
 
     // --- state: metadata karya ---
     const [description, setDescription] = useState('');
@@ -109,10 +114,15 @@ export const Studio = () => {
     const [draftStatus, setDraftStatus] = useState<'saved' | 'saving' | 'idle'>('idle');
     const [publishProgress, setPublishProgress] = useState({ percent: 0, message: '' });
 
+    const { uploadMedia, uploadImage, uploading: mediaUploading, progress: mediaProgress } = useMediaUpload();
+
     // --- state: jalanin kode ---
     const [triggerRun, setTriggerRun] = useState(0);
     const [dockMinimized, setDockMinimized] = useState(false);
     const [isTyping, setIsTyping] = useState(false); // state keyboard di mobile
+
+    // --- use global system logs ---
+    const { addLog } = useSystemLog();
 
     // --- effect: load awal ---
     useEffect(() => {
@@ -122,7 +132,7 @@ export const Studio = () => {
         if (savedDrafts) {
             try {
                 const parsed = JSON.parse(savedDrafts);
-                // migrate semua draft 'slide' jadi 'image'
+                // migrate semua draft 'slide' jadi 'image' agar terbuka di VisualBuilder tapi tetap dikenal sebagai slide secara internal
                 const migrated = parsed.map((d: any) => d.mode === 'slide' ? { ...d, mode: 'image' } : d);
                 setDrafts(migrated);
 
@@ -155,11 +165,11 @@ export const Studio = () => {
 
     const applyDraft = (draft: any) => {
         setCurrentDraftId(draft.id);
-        setTitle(draft.title || 'Karya Tanpa Judul');
+        setTitle(draft.title || '');
         setMode(draft.mode || 'text');
         setContent(draft.content || '');
         setDescription(draft.description || '');
-        setEmbedUrl(draft.embedUrl || '');
+
         setCodeLanguage(draft.codeLanguage || 'javascript');
         setSlides(draft.slides || []);
         setTags(draft.tags || []);
@@ -176,7 +186,7 @@ export const Studio = () => {
         const targetMode = specificMode || mode;
         const newDraft = {
             id: newId,
-            title: 'Karya Tanpa Judul',
+            title: '',
             mode: targetMode,
             content: '',
             lastSaved: new Date().toISOString()
@@ -223,7 +233,7 @@ export const Studio = () => {
 
         // smart save: cuma save kalo title berubah atau ada content
         const isDefaultTitle = title === 'Karya Tanpa Judul' || !title.trim();
-        const hasContent = content.trim().length > 0 || slides.length > 0 || embedUrl.trim().length > 0 || codeFiles.length > 3;
+        const hasContent = content.trim().length > 0 || slides.length > 0 || codeFiles.length > 3;
 
         if (isDefaultTitle && !hasContent) {
             console.log("Skipping auto-draft: empty draft");
@@ -233,12 +243,12 @@ export const Studio = () => {
         // cek apa datanya beneran berubah
         const currentData = {
             id: currentDraftId,
-            title, mode, content, description, embedUrl, codeLanguage, slides, tags, division, codeFiles,
+            title, mode, content, description, codeLanguage, slides, tags, division, codeFiles,
             mediaPreview,
             lastSaved: new Date().toISOString()
         };
 
-        const currentDataStr = JSON.stringify({ title, mode, content, description, embedUrl, slides, codeFiles });
+        const currentDataStr = JSON.stringify({ title, mode, content, description, slides, codeFiles });
         if (currentDataStr === lastSaveDataRef.current) {
             console.log("Skipping auto-draft: no changes detected");
             return;
@@ -255,7 +265,7 @@ export const Studio = () => {
 
         setTimeout(() => setDraftStatus('saved'), 500);
         setTimeout(() => setDraftStatus('idle'), 2500);
-    }, [currentDraftId, title, mode, content, description, embedUrl, codeLanguage, slides, tags, division, codeFiles, mediaPreview, drafts]);
+    }, [currentDraftId, title, mode, content, description, codeLanguage, slides, tags, division, codeFiles, mediaPreview, drafts]);
 
     useEffect(() => {
         if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
@@ -272,27 +282,9 @@ export const Studio = () => {
 
         console.log(`[Studio] File selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
 
-        if (file.type.startsWith('video/')) {
-            if (!validateVideoSize(file)) {
-                e.target.value = ''; // reset inputnya
-                return;
-            }
-            setMediaFile(file);
-            setMediaPreview(URL.createObjectURL(file));
-        } else {
-            // kompres gambar (thumbnail)
-            try {
-                console.log(`[Studio] Compressing image...`);
-                const compressedFile = await compressImage(file);
-                setMediaFile(compressedFile);
-                setMediaPreview(URL.createObjectURL(compressedFile));
-            } catch (err) {
-                console.error("[Studio] Thumbnail compression failed", err);
-                // kalo gagal ya pake original aja
-                setMediaFile(file);
-                setMediaPreview(URL.createObjectURL(file));
-            }
-        }
+        // Just set the file, compression will happen during publish
+        setMediaFile(file);
+        setMediaPreview(URL.createObjectURL(file));
     };
 
     const uploadToSupabase = async (file: File | Blob, path?: string, onProgress?: (percent: number) => void) => {
@@ -400,60 +392,53 @@ export const Studio = () => {
 
         try {
             setIsPublishing(true);
+            setIsLoading(true);
             setPublishProgress({ percent: 5, message: 'Menyiapkan publikasi...' });
+            addLog("Memulai proses publikasi karya...", 'info');
 
             // 1. Upload Thumbnail/Media utama
             let finalImageUrl = mediaPreview;
+            let finalThumbnailUrl = null;
 
-            // Priority: Upload mediaFile if exists
-            if (mediaFile) {
-                console.log("[Studio] Uploading primary media file...");
-                setPublishProgress({ percent: 10, message: 'Mengunggah media utama...' });
+            if (mediaFile && (mode === 'image' || mode === 'video' || mode === 'meme')) {
+                console.log("[Studio] Uploading with compression...");
+                setPublishProgress({ percent: 10, message: 'Mengoptimasi & mengunggah media...' });
 
-                // Determine path based on mode
-                let pathStr = undefined;
-                if (mode === 'video') {
-                    const ext = mediaFile.name.split('.').pop();
-                    pathStr = `${user?.id}/videos/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
-                }
-
-                finalImageUrl = await uploadToSupabase(mediaFile, pathStr, (percent) => {
-                    const mappedProgress = 10 + (percent * 0.3); // Map 0-100% upload to 10-40% total
-                    setPublishProgress({
-                        percent: Math.round(mappedProgress),
-                        message: `Mengunggah media utama (${Math.round(percent)}%)...`
-                    });
+                const uploadResult = await uploadMedia(mediaFile, {
+                    bucket: 'works',
+                    folder: mode === 'video' ? 'videos' : 'images',
+                    generateThumbnail: true,
+                    onProgress: (p) => {
+                        setPublishProgress({
+                            percent: 10 + (p * 0.6),
+                            message: p < 60 ? 'Mengompres media...' : `Mengunggah (${p}%)...`
+                        });
+                    }
                 });
-                console.log("[Studio] Primary media uploaded:", finalImageUrl);
+
+                finalImageUrl = uploadResult.url;
+                finalThumbnailUrl = uploadResult.thumbnailUrl;
+                addLog(`Media berhasil diunggah: ${finalImageUrl}`, 'success');
+                console.log("[Studio] Media uploaded:", uploadResult);
             } else if (mode === 'video' && !finalImageUrl) {
-                // Critical safeguard for video mode
                 throw new Error("File video wajib diupload!");
             }
 
             // 2. Upload Slide (kalo mode visual)
             setPublishProgress({ percent: 40, message: 'Memproses slide visual...' });
             let finalSlides = slides;
-            if (mode === 'image' || mode === 'meme') {
+            if (mode === 'image' || mode === 'meme' || mode === 'slide') {
+                addLog(`Memproses ${slides.length} slide visual...`, 'process');
                 finalSlides = await processSlidesForUpload(slides);
+                addLog("Semua slide visual berhasil diunggah.", 'success');
             }
 
-            // 3. Handle PDF upload buat Document mode (kalo content-nya blob URL)
+            // 3. Prepare final content
             let finalContent = mode === 'code' ? JSON.stringify(codeFiles) : content;
-            if (mode === 'document' && content.startsWith('blob:')) {
-                console.log("[Studio] Uploading document blob...");
-                setPublishProgress({ percent: 70, message: 'Mengunggah file dokumen...' });
-                try {
-                    const res = await fetch(content);
-                    const blob = await res.blob();
-                    const docUrl = await uploadToSupabase(blob, `${user?.id}/docs/${Date.now()}.pdf`);
-                    finalContent = docUrl;
-                } catch (e) {
-                    console.error("[Studio] Failed to upload document blob", e);
-                    throw new Error("Gagal mengupload dokumen. Silakan coba lagi.");
-                }
-            }
+
 
             setPublishProgress({ percent: 85, message: 'Menyimpan metadata ke database...' });
+            addLog("Menyimpan metadata ke database...", 'process');
             console.log("[Studio] Preparing payload for database insert");
 
             const payload = {
@@ -462,25 +447,37 @@ export const Studio = () => {
                 image_url: finalImageUrl,
                 author: profile?.username || 'Anonymous',
                 author_id: user?.id,
+                profile_id: user?.id,
                 role: profile?.role || 'Member',
                 division,
                 type: mode,
                 tags,
                 content: finalContent,
-                code_language: mode === 'code' ? 'json_multifile' : codeLanguage,
-                slides: (mode === 'image' || mode === 'meme') ? finalSlides : null,
-                embed_url: embedUrl
+                code_language: mode === 'code' ? codeLanguage : null,
+                slides: (mode === 'image' || mode === 'meme' || mode === 'slide') ? finalSlides : null,
+                thumbnail_url: finalThumbnailUrl,
+                updated_at: new Date().toISOString()
             };
 
             const { error: dbError } = await supabase.from('works').insert([payload]);
             if (dbError) throw dbError;
 
             console.log("[Studio] Publish successful!");
+            addLog("Karya berhasil dipublikasikan ke server!", 'success');
+            toast.success('Karya berhasil dipublikasikan!');
+
+            // Invalidate query biar data update
+            await queryClient.invalidateQueries({ queryKey: ['works'] });
+            await queryClient.refetchQueries({ queryKey: ['works'] });
+
             setPublishProgress({ percent: 100, message: 'Berhasil!' });
             handleDeleteDraft(currentDraftId!); // hapus dari draft abis publish
+            reportLoadingComplete();
             setTimeout(() => navigate('/karya'), 800);
         } catch (err: any) {
             console.error("[Studio] Publish error:", err);
+            addLog(`Error Publikasi: ${err.message || 'Kesalahan Server'}`, 'error');
+            setIsLoading(false);
             alert("Gagal Publikasi: " + (err.message || "Terjadi kesalahan pada server."));
             setIsPublishing(false);
         }
@@ -491,12 +488,12 @@ export const Studio = () => {
         switch (mode) {
             case 'text':
                 return (
-                    <div className={`w-full h-full max-w-4xl mx-auto px-6 md:px-0 overflow-y-auto custom-scrollbar ${isMobile ? 'pt-4 pb-20' : 'pt-24 pb-32'}`}>
+                    <div className={`w-full max-w-4xl mx-auto px-6 md:px-0 ${isMobile ? 'pt-4 pb-20' : 'pt-24 pb-32'}`}>
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Judul Karya Tulis..."
-                            className="text-4xl md:text-5xl font-serif font-bold bg-transparent outline-none w-full mb-8 placeholder:text-white/10"
+                            className="text-4xl md:text-5xl font-serif font-bold bg-transparent outline-none w-full mb-8 placeholder:text-white/10 text-center"
                         />
                         <TextEditor
                             content={content}
@@ -515,19 +512,30 @@ export const Studio = () => {
                     </div>
                 );
             case 'image':
-            case 'meme': // mode visual udah disatuin
+            case 'meme':
+            case 'slide':
                 return (
-                    <div className={`w-full h-full flex flex-col ${isMobile ? 'pt-4 pb-20' : 'pt-24 pb-32'}`}>
-                        <div className="max-w-6xl mx-auto w-full px-4 md:px-8 mb-4 md:mb-8 text-center md:text-left">
-                            <input
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                placeholder="Judul Visual Story..."
-                                className="text-3xl md:text-5xl font-serif font-bold bg-transparent outline-none w-full placeholder:text-gray-700"
-                            />
+                    <div className={`w-full flex flex-col ${isMobile ? 'pt-6 pb-24' : 'pt-24 pb-32'}`}>
+                        <div className="max-w-4xl mx-auto w-full px-6 md:px-0 mb-8 md:mb-16">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="relative group"
+                            >
+                                <input
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    placeholder="Abadikan Momentum..."
+                                    className="text-4xl md:text-6xl font-serif font-bold bg-transparent outline-none w-full placeholder:text-white/5 border-b border-white/5 pb-4 focus:border-rose-500/30 transition-all duration-700 text-center"
+                                />
+                                <div className="absolute bottom-0 left-0 w-0 h-px bg-rose-500 group-focus-within:w-full transition-all duration-1000" />
+                            </motion.div>
+                            <p className="mt-4 text-[10px] font-black tracking-[0.3em] text-gray-600 uppercase text-center">
+                                {slides.length > 1 ? 'Slide Visual' : 'Gambar Tunggal'}
+                            </p>
                         </div>
-                        <div className="flex-1 overflow-hidden px-4 md:px-8">
-                            <VisualBuilder slides={slides} onChange={setSlides} isMobile={isMobile} />
+                        <div className={`w-full ${isMobile ? 'flex-1 min-h-[400px]' : 'h-[750px]'} px-4 md:px-12 transition-all duration-500`}>
+                            <VisualBuilder slides={slides} onChange={setSlides} isMobile={isMobile} addLog={addLog} />
                         </div>
                     </div>
                 );
@@ -535,7 +543,7 @@ export const Studio = () => {
             case 'video':
                 // video masih terpisah sesuai plan (fase 3)
                 return (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-6 md:p-12">
+                    <div className="w-full h-full min-h-[70vh] flex flex-col items-center justify-center p-6 md:p-12">
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
@@ -568,43 +576,12 @@ export const Studio = () => {
                         )}
                     </div>
                 );
-            case 'document':
-                return (
-                    <div className="w-full h-full flex flex-col pt-16 md:pt-24 pb-32">
-                        <div className="max-w-4xl mx-auto w-full px-6 md:px-0 mb-8">
-                            <input
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                placeholder="Judul Dokumen..."
-                                className="text-4xl md:text-5xl font-serif font-bold bg-transparent outline-none w-full placeholder:text-gray-700"
-                            />
-                        </div>
-                        <div className="flex-1 min-h-[60vh] md:min-h-[75vh] overflow-hidden">
-                            <DocumentUploader content={content} onChange={setContent} />
-                        </div>
-                    </div>
-                );
-            case 'embed':
-                return (
-                    <div className="w-full h-full flex flex-col items-center pt-24 px-8">
-                        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Judul Embed..." className="text-4xl font-bold bg-transparent text-center outline-none w-full mb-12" />
-                        <div className="w-full max-w-3xl space-y-8">
-                            <div className="bg-[#111] p-2 rounded-2xl border border-white/10 flex gap-4 items-center px-6 shadow-xl leading-none">
-                                <Globe className="text-gray-500" />
-                                <input value={embedUrl} onChange={(e) => setEmbedUrl(e.target.value)} placeholder="https://..." className="bg-transparent flex-1 py-5 outline-none font-mono" />
-                            </div>
-                            <div className="aspect-video bg-black rounded-[2rem] border border-white/10 overflow-hidden shadow-2xl relative">
-                                {embedUrl ? <WebsiteEmbed url={embedUrl} /> : <div className="absolute inset-0 flex items-center justify-center text-gray-800 font-bold uppercase tracking-widest">Preview Area</div>}
-                            </div>
-                        </div>
-                    </div>
-                );
             default: return null;
         }
     };
 
     if (isPreview) {
-        if (mode === 'image' || mode === 'meme') {
+        if (mode === 'image' || mode === 'meme' || mode === 'slide') {
             return (
                 <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
                     <button
@@ -631,11 +608,13 @@ export const Studio = () => {
                     </button>
                     <h1 className="text-4xl md:text-7xl font-serif font-bold mb-6 leading-[1.1]">{title}</h1>
                     <div className="flex gap-3 mb-12">
-                        <span className="px-4 py-1.5 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/20 text-[10px] font-bold uppercase tracking-widest">{DIVISIONS.find(d => d.id === division)?.name}</span>
+                        <span className="px-6 py-2 rounded-full bg-rose-500/10 text-rose-500 border border-rose-500/20 text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur-md">
+                            {DIVISIONS.find(d => d.id === division)?.name || 'Karya Kreatif'}
+                        </span>
                     </div>
                     <div className="prose prose-invert prose-xl max-w-none">
                         {mode === 'text' && <div dangerouslySetInnerHTML={{ __html: content }} />}
-                        {mode === 'embed' && <WebsiteEmbed url={embedUrl} />}
+
                         {mode === 'video' && mediaPreview && (
                             <video src={mediaPreview} controls className="rounded-3xl w-full" />
                         )}
@@ -669,7 +648,7 @@ export const Studio = () => {
                 )}
             </AnimatePresence>
 
-            <div className="flex-1 flex flex-col relative overflow-hidden bg-black pt-safe pb-safe h-safe-screen">
+            <div className="flex-1 flex flex-col relative bg-black pt-safe pb-safe min-h-screen">
                 {/* header atas */}
                 <StudioHeader
                     title={title}
@@ -689,7 +668,7 @@ export const Studio = () => {
                 />
 
                 {/* konten utama */}
-                <div className={`flex-1 overflow-hidden ${isMobile ? 'pt-[60px] pb-[80px]' : ''}`}>
+                <div className={`flex-1 overflow-y-auto custom-scrollbar ${isMobile ? 'pt-[60px] pb-[80px]' : ''}`}>
                     {renderContent()}
                 </div>
 
@@ -702,7 +681,7 @@ export const Studio = () => {
                         <div className="absolute inset-0 pointer-events-auto" />
 
                         {/* docknya */}
-                        <div className={`flex flex-col items-center transition-all duration-500 pointer-events-auto ${isPreview || mode === 'code' ? 'translate-y-32 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100' : 'translate-y-[-16px] opacity-100'}`}>
+                        <div className={`flex flex-col items-center transition-all duration-500 pointer-events-auto translate-y-24 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100`}>
                             <AnimatePresence mode="wait">
                                 {!dockMinimized ? (
                                     <motion.div
@@ -763,7 +742,7 @@ export const Studio = () => {
                         >
                             <div className="flex items-center justify-between mb-8">
                                 <div>
-                                    <h2 className="text-xl font-bold text-white">Draft Details</h2>
+                                    <h2 className="text-xl font-bold text-white">Detail Draft</h2>
                                     <p className="text-xs text-gray-500 mt-1">Kelola detail karyamu</p>
                                 </div>
                                 <button onClick={() => setShowSettings(false)} className="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
@@ -776,7 +755,7 @@ export const Studio = () => {
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
                                         Thumbnail
-                                        <span className="text-gray-700 font-normal normal-case">Optional</span>
+                                        <span className="text-gray-700 font-normal normal-case">Opsional</span>
                                     </label>
                                     <div className="w-full aspect-video bg-white/5 border border-white/10 rounded-2xl overflow-hidden relative group cursor-pointer hover:border-white/20 transition-all">
                                         {mediaPreview ? (
@@ -830,7 +809,7 @@ export const Studio = () => {
                                     className="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs transition-all shadow-lg shadow-rose-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
                                     {isPublishing ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save size={16} />}
-                                    {isPublishing ? 'Publishing...' : 'Publish Project'}
+                                    {isPublishing ? 'Mempublikasikan...' : 'Publikasikan Proyek'}
                                 </button>
                             </div>
                         </motion.div>

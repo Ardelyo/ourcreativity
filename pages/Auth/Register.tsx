@@ -3,9 +3,14 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Mail, Lock, User as UserIcon, Loader2 } from 'lucide-react';
+import { useLoadingStatus } from '../../components/LoadingTimeoutProvider';
+import { useEffect } from 'react';
+import { useSystemLog } from '../../components/SystemLogProvider';
 
 export const Register = () => {
     const navigate = useNavigate();
+    const { setIsLoading } = useLoadingStatus();
+    const { addLog } = useSystemLog();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
@@ -16,6 +21,7 @@ export const Register = () => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        addLog(`Mendaftarkan akun baru...`, 'process');
 
         if (username.length < 3) {
             setError('Username harus minimal 3 karakter.');
@@ -39,20 +45,28 @@ export const Register = () => {
 
             // Cek apa sesi udah ada (biasanya auto-login ok, kecuali konfirmasi email aktif)
             if (data.session) {
+                addLog(`Akun berhasil didaftarkan! Selamat bergabung.`, 'success');
                 navigate('/');
             } else {
                 // Kalo butuh konfirmasi email, ini mungkin kejadian. 
                 // Asumsi buat MVP ini auto-konfirm atau kita kasih tau usernya aja.
+                addLog(`Pendaftaran berhasil. Silakan verifikasi email Anda.`, 'info');
                 alert('Pendaftaran berhasil! Silakan cek email Anda untuk verifikasi (jika diperlukan) atau coba login.');
                 navigate('/login');
             }
 
         } catch (err: any) {
             setError(err.message || 'Gagal mendaftar. Silakan coba lagi.');
+            addLog(`Gagal mendaftar. Silakan coba lagi.`, 'error');
         } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        setIsLoading(loading);
+        return () => setIsLoading(false);
+    }, [loading, setIsLoading]);
 
     return (
         <div className="min-h-screen pt-24 pb-12 flex flex-col items-center justify-center px-4 relative overflow-hidden">

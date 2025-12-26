@@ -13,8 +13,6 @@ export const MediumSelector: React.FC<MediumSelectorProps> = ({ activeType, onCh
         { id: 'text', label: 'Tulisan', icon: Type },
         { id: 'image', label: 'Gambar', icon: ImageIcon },
         { id: 'video', label: 'Video', icon: Video },
-        { id: 'document', label: 'Dokumen', icon: FileText },
-        // { id: 'embed', label: 'Embed', icon: FileCode },
         { id: 'code', label: 'Kode', icon: Code },
     ];
 

@@ -99,14 +99,16 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
         );
     }
 
-    // --- header desktop ---
     return (
         <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="fixed top-0 left-0 right-0 z-40 p-4 md:p-6 pointer-events-none"
+            className="fixed top-0 left-0 right-0 z-[60] h-20 group/studio-header pointer-events-none"
         >
-            <div className="max-w-7xl mx-auto flex items-center justify-between pointer-events-auto">
+            {/* Invisible Trigger Zone */}
+            <div className="absolute inset-0 pointer-events-auto" />
+
+            <div className="max-w-7xl mx-auto flex items-center justify-between pointer-events-auto transition-all duration-500 -translate-y-24 opacity-0 group-hover/studio-header:translate-y-4 group-hover/studio-header:opacity-100 px-4 md:px-6">
 
                 {/* kiri: navigasi & draf */}
                 <div className="flex items-center gap-3">

@@ -3,9 +3,14 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Mail, Lock, Loader2 } from 'lucide-react';
+import { useLoadingStatus } from '../../components/LoadingTimeoutProvider';
+import { useEffect } from 'react';
+import { useSystemLog } from '../../components/SystemLogProvider';
 
 export const Login = () => {
     const navigate = useNavigate();
+    const { setIsLoading } = useLoadingStatus();
+    const { addLog } = useSystemLog();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -15,6 +20,7 @@ export const Login = () => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        addLog(`Mencoba masuk...`, 'process');
 
         try {
             const { error } = await supabase.auth.signInWithPassword({
@@ -23,13 +29,20 @@ export const Login = () => {
             });
 
             if (error) throw error;
+            addLog(`Berhasil masuk! Selamat datang kembali.`, 'success');
             navigate('/');
         } catch (err: any) {
             setError(err.message || 'Gagal masuk. Periksa email dan password Anda.');
+            addLog(`Gagal masuk. Periksa kembali akun Anda.`, 'error');
         } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        setIsLoading(loading);
+        return () => setIsLoading(false);
+    }, [loading, setIsLoading]);
 
     return (
         <div className="min-h-screen pt-24 pb-12 flex flex-col items-center justify-center px-4 relative overflow-hidden">

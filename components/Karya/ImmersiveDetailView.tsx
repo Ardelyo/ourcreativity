@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, PanInfo, useAnimation } from 'framer-motion';
 import { Heart, MessageCircle, Share2, X, Code, Play } from 'lucide-react';
 
+
+
 interface ImmersiveDetailViewProps {
     art: any;
     onClose: () => void;
@@ -81,6 +83,7 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                         overscrollBehavior: 'contain'
                     }}
                 >
+                    {/* Content Logic */}
                     {renderContent(art, showCode)}
                 </div>
 
@@ -136,8 +139,14 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                     {/* Header */}
                     <div className="mb-6" onClick={isExpanded ? undefined : toggleExpand}>
                         <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-rose-500 to-orange-500 flex items-center justify-center text-sm font-bold">
-                                {art.author?.[0]?.toUpperCase() || 'A'}
+                            <div className="w-10 h-10 rounded-full border border-white/10 overflow-hidden bg-white/5 flex items-center justify-center text-sm font-bold">
+                                {art.author_profile?.avatar_url ? (
+                                    <img src={art.author_profile.avatar_url} alt={art.author} className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="w-full h-full bg-gradient-to-tr from-rose-500 to-orange-500 flex items-center justify-center">
+                                        {art.author?.[0]?.toUpperCase() || 'A'}
+                                    </div>
+                                )}
                             </div>
                             <span className="font-bold text-base text-white">
                                 @{art.author || 'Anonymous'}

@@ -47,6 +47,16 @@ interface KaryaCardProps {
     renderContent: (art: any) => React.ReactNode;
 }
 
+// Map Divisi ke Bahasa Indonesia
+const DIVISION_LABELS: Record<string, string> = {
+    all: 'Semua',
+    graphics: 'Grafis',
+    video: 'Video',
+    writing: 'Tulisan',
+    coding: 'Coding',
+    meme: 'Meme'
+};
+
 export const KaryaCard: React.FC<KaryaCardProps> = ({ art, index, onClick, renderContent }) => {
     return (
         <motion.div
@@ -104,7 +114,7 @@ export const KaryaCard: React.FC<KaryaCardProps> = ({ art, index, onClick, rende
                             </Link>
                         </div>
                         <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">
-                            {art.division}
+                            {DIVISION_LABELS[art.division] || art.division}
                         </span>
                     </div>
                 </div>

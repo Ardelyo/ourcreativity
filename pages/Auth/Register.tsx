@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Mail, Lock, User as UserIcon, Loader2 } from 'lucide-react';
+import { ArrowLeft, Mail, Lock, User as UserIcon, Loader2, Asterisk } from 'lucide-react';
 import { useLoadingStatus } from '../../components/LoadingTimeoutProvider';
 import { useEffect } from 'react';
 import { useSystemLog } from '../../components/SystemLogProvider';
@@ -86,7 +86,8 @@ export const Register = () => {
                 </Link>
 
                 <div className="mb-8 text-center">
-                    <h1 className="text-3xl font-serif font-bold text-white mb-2">Bergabung</h1>
+                    <h2 className="text-2xl font-serif font-bold text-white mb-6">Our Creativity.</h2>
+                    <h1 className="text-3xl font-bold text-white mb-2">Bergabung</h1>
                     <p className="text-gray-400">Dalisasikan imajinasimu bersama kami.</p>
                 </div>
 

@@ -36,6 +36,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const { data: { session } } = await supabase.auth.getSession();
                 setSession(session);
                 setUser(session?.user ?? null);
+
+                // Optimasi: Jangan await fetchProfile di sini kalo bisa jalan parallel
+                // Tapi buat UX login, kita tunggu profil biar redirect bener
                 if (session?.user) {
                     await fetchProfile(session.user.id);
                 }
@@ -50,14 +53,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         // 2. Pantau perubahan auth (login/logout)
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            const previousUser = user;
             setSession(session);
             setUser(session?.user ?? null);
 
-            if (session?.user) {
+            // Cek apakah user berubah beneran biar gak fetch ulang kalo cuma token refresh
+            if (session?.user && session.user.id !== previousUser?.id) {
                 await fetchProfile(session.user.id);
-            } else {
+            } else if (!session?.user) {
                 setProfile(null);
             }
+
+            // Pastikan loading dimatikan setelah auth check selesai
             setLoading(false);
         });
 
@@ -68,6 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const fetchProfile = async (userId: string) => {
         try {
+            // Gunakan query simple dan cepat
             const { data, error } = await supabase
                 .from('profiles')
                 .select('id, username, avatar_url, is_approved, role, bio, website')
@@ -75,7 +83,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 .single();
 
             if (error) {
-                console.error('Error fetching profile:', error);
+                // Ignore specific errors like 'PGRST116' (row not found) which might happen if profile trigger is slow
+                if (error.code !== 'PGRST116') {
+                    console.error('Error fetching profile:', error);
+                }
             } else {
                 setProfile(data);
             }

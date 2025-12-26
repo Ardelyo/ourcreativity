@@ -87,6 +87,8 @@ export const BentoGrid = () => {
                     <img
                         src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=800&auto=format&fit=crop"
                         alt="Art"
+                        loading="lazy"
+                        decoding="async"
                         className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>

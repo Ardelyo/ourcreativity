@@ -494,7 +494,7 @@ id,
         const previewUrl = art.thumbnail_url || art.image_url || (art.slides?.[0]?.content);
         return (
           <div className="relative w-full h-full group/image bg-black">
-            <img src={previewUrl} alt={art.title} className="w-full h-full object-cover transition-transform duration-700 group-hover/image:scale-110" />
+            <img src={previewUrl} alt={art.title} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 group-hover/image:scale-110" />
             {hasSlides && (
               <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md px-2 py-1 rounded-full text-white text-[10px] font-bold border border-white/10 opacity-0 group-hover/image:opacity-100 transition-opacity">
                 <Layers size={10} className="inline mr-1" />
@@ -504,7 +504,7 @@ id,
           </div>
         );
       default:
-        return <img src={art.thumbnail_url || art.image_url || (art.slides?.[0]?.content)} alt={art.title} className="w-full h-full object-cover" />;
+        return <img src={art.thumbnail_url || art.image_url || (art.slides?.[0]?.content)} alt={art.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />;
     }
   };
 

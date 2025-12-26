@@ -30,6 +30,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (import.meta.env.DEV) console.log('AuthProvider: Starting initialization...');
+
+        // Safety timeout: If Supabase takes too long (> 5s), force loading to false so user isn't stuck
+        const safetyTimeout = setTimeout(() => {
+            console.warn('AuthProvider: Initialization timed out. Forcing app to load.');
+            setLoading(false);
+        }, 5000);
+
         // 1. Ambil session awal pas baru masuk
         const getInitialSession = async () => {
             try {
@@ -45,6 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             } catch (err) {
                 console.error('Error getting session:', err);
             } finally {
+                clearTimeout(safetyTimeout);
                 setLoading(false);
             }
         };

@@ -957,3 +957,5 @@ export const Karya = () => {
     </div >
   );
 };
+
+export default Karya;

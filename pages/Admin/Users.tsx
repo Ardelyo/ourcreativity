@@ -4,6 +4,7 @@ import { Search, Filter, MoreVertical, Check, X, Shield, User, Loader2, Trash2 }
 import { supabase } from '../../lib/supabase';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { Pagination } from '../../components/Pagination';
+import { useSystemLog } from '../../components/SystemLogProvider';
 
 export const Users = () => {
     const queryClient = useQueryClient();
@@ -11,6 +12,7 @@ export const Users = () => {
     const [filter, setFilter] = useState('all'); // all, pending, approved, admin
     const [page, setPage] = useState(1);
     const [debouncedSearch, setDebouncedSearch] = useState('');
+    const { addLog } = useSystemLog();
 
     const ITEMS_PER_PAGE = 20;
 
@@ -65,11 +67,13 @@ export const Users = () => {
                 .eq('id', userId);
             if (error) throw error;
         },
-        onSuccess: () => {
+        onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
+            addLog(`Berhasil memperbarui status pengguna.`, 'success');
         },
         onError: (error) => {
             console.error('Action failed:', error);
+            addLog(`Gagal mengubah status pengguna.`, 'error');
             alert('Gagal melakukan aksi.');
         }
     });
@@ -84,10 +88,12 @@ export const Users = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
+            addLog(`Pengguna berhasil dihapus secara permanen.`, 'success');
             alert('Pengguna berhasil dihapus.');
         },
         onError: (error) => {
             console.error('Delete failed:', error);
+            addLog(`Gagal menghapus pengguna.`, 'error');
             alert('Gagal menghapus pengguna.');
         }
     });
@@ -105,6 +111,7 @@ export const Users = () => {
         if (action === 'make_admin') updates = { role: 'admin' };
         if (action === 'remove_admin') updates = { role: 'member' };
 
+        addLog(`Memproses perubahan status (${action})...`, 'process');
         mutation.mutate({ userId, updates });
     };
 

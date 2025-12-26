@@ -14,6 +14,7 @@ import { ImmersiveDetailView } from '../components/Karya/ImmersiveDetailView';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { motionConfig } from '../lib/motion';
 import { useLoadingStatus } from '../components/LoadingTimeoutProvider';
+import { useSystemLog } from '../components/SystemLogProvider';
 
 // Helper for code previews (transplanted from Karya.tsx)
 const CodeViewer = ({ content }: { content: any }) => {
@@ -100,6 +101,7 @@ export const Profile = () => {
     const { setIsLoading } = useLoadingStatus();
     const isMobile = useIsMobile();
     const queryClient = useQueryClient();
+    const { addLog } = useSystemLog();
 
     // State for Modal
     const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -224,8 +226,13 @@ export const Profile = () => {
         setIsLiked(!isLiked);
         setLikesCount(prev => (isLiked ? prev - 1 : prev + 1));
         try {
-            if (prevLiked) await supabase.from('likes').delete().eq('work_id', selectedId).eq('user_id', user.id);
-            else await supabase.from('likes').insert({ work_id: selectedId, user_id: user.id });
+            if (prevLiked) {
+                await supabase.from('likes').delete().eq('work_id', selectedId).eq('user_id', user.id);
+                addLog('Batal menyukai karya.', 'info');
+            } else {
+                await supabase.from('likes').insert({ work_id: selectedId, user_id: user.id });
+                addLog('Menyukai karya!', 'success');
+            }
         } catch (error) {
             setIsLiked(prevLiked);
             setLikesCount(prevCount);
@@ -241,6 +248,9 @@ export const Profile = () => {
             if (error) throw error;
             setComments(prev => [{ ...data, profiles: currentUserProfile }, ...prev]);
             setNewComment('');
+            addLog('Komentar berhasil dikirim.', 'success');
+        } catch (err: any) {
+            addLog(`Gagal mengirim komentar.`, 'error');
         } finally { setIsSubmittingComment(false); }
     };
 
@@ -668,6 +678,7 @@ const EmptyState = ({ message }: { message: string }) => (
 const ProfileActions = ({ profileId }: { profileId: string }) => {
     const { user } = useAuth();
     const queryClient = useQueryClient();
+    const { addLog } = useSystemLog();
     const isOwner = user?.id === profileId;
 
     // Check if following
@@ -691,8 +702,10 @@ const ProfileActions = ({ profileId }: { profileId: string }) => {
             if (!user) throw new Error('Must be logged in');
             if (isFollowing) {
                 await supabase.from('follows').delete().eq('follower_id', user.id).eq('following_id', profileId);
+                addLog('Berhenti mengikuti pengguna.', 'info');
             } else {
                 await supabase.from('follows').insert({ follower_id: user.id, following_id: profileId });
+                addLog('Sekarang mengikuti pengguna!', 'success');
             }
         },
         onMutate: async () => {

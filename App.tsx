@@ -11,7 +11,7 @@ import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
 
 // Halaman yang dimuat secara lazy (biar enteng pas buka awal)
-const Karya = React.lazy(() => import('./pages/Karya').then(module => ({ default: module.Karya })));
+const Karya = React.lazy(() => import('./pages/Karya'));
 const Tim = React.lazy(() => import('./pages/Tim').then(module => ({ default: module.Tim })));
 const Info = React.lazy(() => import('./pages/Info').then(module => ({ default: module.Info })));
 const Story = React.lazy(() => import('./pages/Story').then(module => ({ default: module.Story })));
@@ -40,6 +40,7 @@ const AdminAnnouncements = React.lazy(() => import('./pages/Admin/Announcements'
 const AdminSettings = React.lazy(() => import('./pages/Admin/Settings').then(module => ({ default: module.Settings })));
 
 import { LoadingTimeoutProvider, useLoadingStatus } from './components/LoadingTimeoutProvider';
+import { SystemLogProvider } from './components/SystemLogProvider';
 
 // Ini buat ngecek apa ada suspense yang lagi loading secara global
 const GlobalLoadingTracker = () => {
@@ -169,8 +170,10 @@ export default function App() {
       <AuthProvider>
         <LoadingTimeoutProvider>
           <Router>
-            <ScrollToTop />
-            <AppContent />
+            <SystemLogProvider>
+              <ScrollToTop />
+              <AppContent />
+            </SystemLogProvider>
           </Router>
         </LoadingTimeoutProvider>
       </AuthProvider>

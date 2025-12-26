@@ -14,10 +14,11 @@ interface LogContainerProps {
     isOpen: boolean;
     onToggle: () => void;
     onClear: () => void;
+    onVanish?: () => void;
     isMobile?: boolean;
 }
 
-export const LogContainer: React.FC<LogContainerProps> = ({ logs, isOpen, onToggle, onClear, isMobile }) => {
+export const LogContainer: React.FC<LogContainerProps> = ({ logs, isOpen, onToggle, onClear, onVanish, isMobile }) => {
     const bottomRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -37,8 +38,8 @@ export const LogContainer: React.FC<LogContainerProps> = ({ logs, isOpen, onTogg
 
     return (
         <div className={`fixed z-[100] transition-all duration-500 pointer-events-none ${isMobile
-                ? 'bottom-[90px] left-4 right-4 max-w-none'
-                : 'bottom-24 right-6 w-full max-w-sm'
+            ? 'bottom-[90px] left-4 right-4 max-w-none'
+            : 'bottom-24 right-6 w-full max-w-sm'
             }`}>
             <AnimatePresence>
                 {isOpen && (
@@ -68,6 +69,15 @@ export const LogContainer: React.FC<LogContainerProps> = ({ logs, isOpen, onTogg
                                 >
                                     <X size={14} />
                                 </button>
+                                {onVanish && (
+                                    <button
+                                        onClick={onVanish}
+                                        className="p-1 hover:bg-rose-500/20 rounded-full text-rose-500/50 hover:text-rose-500 transition-all ml-1"
+                                        title="Vanish (Hide completely)"
+                                    >
+                                        <ChevronDown size={14} />
+                                    </button>
+                                )}
                             </div>
                         </div>
 

@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { Pagination } from '../../components/Pagination';
+import { useSystemLog } from '../../components/SystemLogProvider';
 
 export const Content = () => {
     const queryClient = useQueryClient();
@@ -12,6 +13,7 @@ export const Content = () => {
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [filter, setFilter] = useState('all');
     const [page, setPage] = useState(1);
+    const { addLog } = useSystemLog();
 
     const ITEMS_PER_PAGE = 20;
 
@@ -71,15 +73,18 @@ export const Content = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['works'] });
+            addLog(`Karya berhasil dihapus.`, 'success');
         },
         onError: (error) => {
             console.error('Delete failed:', error);
+            addLog(`Gagal menghapus karya.`, 'error');
             alert('Failed to delete work.');
         }
     });
 
     const handleDelete = async (id: string) => {
         if (!window.confirm('Are you sure you want to delete this work? This action cannot be undone.')) return;
+        addLog('Sedang menghapus konten...', 'process');
         mutation.mutate(id);
     };
 

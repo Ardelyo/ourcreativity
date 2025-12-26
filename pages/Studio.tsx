@@ -30,7 +30,8 @@ import { useLoadingStatus } from '@/components/LoadingTimeoutProvider';
 import { toast } from 'react-hot-toast';
 import { InteractiveSandbox } from '@/components/CreationStudio/ControlCenter/InteractiveSandbox';
 import { StudioHeader } from '@/components/CreationStudio/StudioHeader';
-import { LogContainer, LogEntry } from '@/components/CreationStudio/ControlCenter/LogContainer';
+import { LogEntry } from '@/components/CreationStudio/ControlCenter/LogContainer';
+import { useSystemLog } from '@/components/SystemLogProvider';
 
 type Division = 'graphics' | 'tech' | 'music' | 'writing' | 'meme' | 'video';
 
@@ -120,20 +121,8 @@ export const Studio = () => {
     const [dockMinimized, setDockMinimized] = useState(false);
     const [isTyping, setIsTyping] = useState(false); // state keyboard di mobile
 
-    // --- state: system logs (container logs) ---
-    const [systemLogs, setSystemLogs] = useState<LogEntry[]>([]);
-    const [isLogsOpen, setIsLogsOpen] = useState(false);
-
-    const addLog = useCallback((message: string, type: LogEntry['type'] = 'info') => {
-        const newLog: LogEntry = {
-            id: Math.random().toString(36).substring(7),
-            timestamp: Date.now(),
-            type,
-            message
-        };
-        setSystemLogs(prev => [...prev.slice(-49), newLog]); // Keep last 50
-        setIsLogsOpen(true);
-    }, []);
+    // --- use global system logs ---
+    const { addLog } = useSystemLog();
 
     // --- effect: load awal ---
     useEffect(() => {
@@ -843,15 +832,6 @@ export const Studio = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            {/* System Logs Container */}
-            <LogContainer
-                logs={systemLogs}
-                isOpen={isLogsOpen}
-                onToggle={() => setIsLogsOpen(!isLogsOpen)}
-                onClear={() => setSystemLogs([])}
-                isMobile={isMobile}
-            />
         </div>
     );
 };

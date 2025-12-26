@@ -9,10 +9,12 @@ import { supabase } from '../lib/supabase';
 
 import { useAuth } from '../components/AuthProvider';
 import { useLoadingStatus } from '../components/LoadingTimeoutProvider';
+import { useSystemLog } from '../components/SystemLogProvider';
 
 export const Announcement = () => {
     const { loading: authLoading } = useAuth();
     const { setIsLoading } = useLoadingStatus();
+    const { addLog } = useSystemLog();
     const [activeTab, setActiveTab] = useState<'updates' | 'changelog'>('updates'); //updates buat pengumuman, changelog buat riwayat sistem
     const [selectedEvent, setSelectedEvent] = useState<any | null>(null);
 
@@ -20,6 +22,7 @@ export const Announcement = () => {
         queryKey: ['announcements'],
         queryFn: async () => {
             console.log('[Announcement] Fetching data...');
+            addLog('Mengambil data pengumuman...', 'process');
             const { data, error } = await supabase
                 .from('announcements')
                 .select('id, title, subtitle, description, content, date, type, category, status, color, highlights')
@@ -28,9 +31,11 @@ export const Announcement = () => {
 
             if (error) {
                 console.error('[Announcement] Fetch error:', error);
+                addLog(`Gagal memuat pengumuman: ${error.message}`, 'error');
                 throw error;
             }
             console.log('[Announcement] ✅ Data loaded:', data?.length);
+            addLog(`Berhasil memuat ${data?.length || 0} pengumuman.`, 'success');
             return data;
         },
         refetchOnMount: true,

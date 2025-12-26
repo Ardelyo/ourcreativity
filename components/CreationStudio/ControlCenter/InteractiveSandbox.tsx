@@ -49,47 +49,72 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, t
         const consoleScript = `
         <script>
             (function(){
-                const originalLog = console.log;
-                const originalWarn = console.warn;
-                const originalError = console.error;
+                const oldLog = console.log;
+                const oldWarn = console.warn;
+                const oldError = console.error;
+                const oldInfo = console.info;
 
-                const send = (level, args) => {
+                const send = (level, ...args) => {
                     try {
+                        // Convert arguments to safely serializable format
+                        const safeArgs = args.map(arg => {
+                            if (arg === null) return 'null';
+                            if (arg === undefined) return 'undefined';
+                            if (typeof arg === 'function') return '[Function]';
+                            if (typeof arg === 'symbol') return arg.toString();
+                            
+                            if (typeof arg === 'object') {
+                                try {
+                                    // Handle circular references
+                                    const seen = new WeakSet();
+                                    return JSON.stringify(arg, (key, value) => {
+                                        if (typeof value === 'object' && value !== null) {
+                                            if (seen.has(value)) return '[Circular]';
+                                            seen.add(value);
+                                        }
+                                        return value;
+                                    });
+                                } catch (e) {
+                                    return '[Object: ' + (arg.constructor?.name || 'Unknown') + ']';
+                                }
+                            }
+                            return String(arg);
+                        });
+
                         window.parent.postMessage({
                             type: 'console',
                             level: level,
-                            args: args.map(arg => {
-                                if (typeof arg === 'object' && arg !== null) {
-                                    try {
-                                        return JSON.stringify(arg);
-                                    } catch (e) {
-                                        return String(arg); // Fallback for circular structures
-                                    }
-                                }
-                                return arg;
-                            })
+                            args: safeArgs
                         }, '*');
                     } catch (e) {
-                        // Handle cases where parent window might not be accessible
-                        // console.error('Failed to post message to parent:', e);
+                        // Silently fail if postMessage doesn't work
                     }
                 };
 
                 console.log = (...args) => {
-                    send('log', args);
-                    originalLog.apply(console, args);
+                    oldLog.apply(console, args);
+                    send('log', ...args);
                 };
                 console.warn = (...args) => {
-                    send('warn', args);
-                    originalWarn.apply(console, args);
+                    oldWarn.apply(console, args);
+                    send('warn', ...args);
                 };
                 console.error = (...args) => {
-                    send('error', args);
-                    originalError.apply(console, args);
+                    oldError.apply(console, args);
+                    send('error', ...args);
+                };
+                console.info = (...args) => {
+                    oldInfo.apply(console, args);
+                    send('info', ...args);
                 };
 
                 window.onerror = function(msg, url, line, col, error) {
-                     send('error', [msg, 'Line: ' + line]);
+                    send('error', 'Uncaught Error: ' + msg + ' (Line: ' + line + ')');
+                    return false; // Let default handler run too
+                };
+
+                window.onunhandledrejection = function(event) {
+                    send('error', 'Unhandled Promise Rejection: ' + (event.reason || 'Unknown error'));
                 };
             })();
         </script>

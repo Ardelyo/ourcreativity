@@ -1,6 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, X, Download, Heart, Share2, Plus, Play, Code, AlignLeft, Image as ImageIcon, Maximize2, ArrowLeft, ArrowRight, ArrowDown, Send, MessageCircle, MoreVertical, Globe, Layers } from 'lucide-react';
+import {
+  ArrowUpRight, X, Download, Heart, Share2, Plus, Play,
+  Code, AlignLeft, Image as ImageIcon, Maximize2,
+  ArrowLeft, ArrowRight, Send, MessageCircle, Search,
+  SlidersHorizontal, Calendar, TrendingUp, MessageSquare,
+  ChevronDown, Layers
+} from 'lucide-react';
+
+// Map Divisi ke Bahasa Indonesia
+const DIVISION_LABELS: Record<string, string> = {
+  all: 'Semua',
+  graphics: 'Grafis',
+  video: 'Video',
+  writing: 'Tulisan',
+  coding: 'Coding',
+  meme: 'Meme'
+};
 import { KaryaCard } from '../components/KaryaCard';
 import { ImmersiveDetailView } from '../components/Karya/ImmersiveDetailView';
 import { useIsMobile } from '../hooks/useIsMobile';
@@ -64,15 +80,15 @@ const CodeViewer = ({ content }: { content: any }) => {
           <button
             key={file.id}
             onClick={() => setActiveFileId(file.id)}
-            className={`px-3 md:px-4 py-2 md:py-3 text-[10px] md:text-xs font-mono whitespace-nowrap border-b-2 transition-colors ${file.id === activeFileId
+            className={`px - 3 md: px - 4 py - 2 md: py - 3 text - [10px] md: text - xs font - mono whitespace - nowrap border - b - 2 transition - colors ${file.id === activeFileId
               ? 'border-blue-500 text-white bg-[#0d1117]'
               : 'border-transparent text-gray-500 hover:text-gray-300'
-              }`}
+              } `}
           >
-            <span className={`mr-1.5 ${file.name?.endsWith('.html') ? 'text-orange-400' :
+            <span className={`mr - 1.5 ${file.name?.endsWith('.html') ? 'text-orange-400' :
               file.name?.endsWith('.css') ? 'text-blue-400' :
                 file.name?.endsWith('.js') ? 'text-yellow-400' : 'text-gray-400'
-              }`}>●</span>
+              } `}>●</span>
             {file.name || 'file'}
           </button>
         ))}
@@ -84,7 +100,7 @@ const CodeViewer = ({ content }: { content: any }) => {
           <code className={`${activeFile?.language === 'html' ? 'text-orange-300' :
             activeFile?.language === 'css' ? 'text-blue-300' :
               activeFile?.language === 'javascript' ? 'text-yellow-300' : 'text-green-300'
-            }`}>
+            } `}>
             {activeFile?.content || '// No content'}
           </code>
         </pre>
@@ -97,18 +113,18 @@ const generateCodePreview = (content: any, language: string = 'html'): string =>
   if (!content) return '';
 
   const baseStyles = `
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      font-family: system-ui, sans-serif; 
-      background: #0a0a0a; 
-      color: white;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+  font-family: system-ui, sans-serif;
+  background: #0a0a0a;
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
     canvas { display: block; margin: auto; }
-  `;
+`;
 
   // Helper to escape </script> to prevent breaking out of the container script tag
   const escapeScript = (str: any) => {
@@ -152,13 +168,13 @@ const generateCodePreview = (content: any, language: string = 'html'): string =>
 
         if (isP5) {
           return `<!DOCTYPE html><html><head><style>${baseStyles}</style>
-            <script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
-            ${cssFile?.content ? `<style>${cssFile.content}</style>` : ''}
-          </head><body><script>${escapeScript(jsCode)}</script></body></html>`;
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+  ${cssFile?.content ? `<style>${cssFile.content}</style>` : ''}
+</head><body><script>${escapeScript(jsCode)}</script></body></html>`;
         } else {
           return `<!DOCTYPE html><html><head><style>${baseStyles}</style>
-            ${cssFile?.content ? `<style>${cssFile.content}</style>` : ''}
-          </head><body><div id="app"></div><script>try{${escapeScript(jsCode)}}catch(e){document.body.innerHTML='<pre style="color:red">'+e.message+'</pre>'}</script></body></html>`;
+  ${cssFile?.content ? `<style>${cssFile.content}</style>` : ''}
+</head><body><div id="app"></div><script>try{${escapeScript(jsCode)}}catch(e){document.body.innerHTML = '<pre style="color:red">' + e.message + '</pre>'}</script></body></html>`;
         }
       }
 
@@ -181,19 +197,14 @@ const generateCodePreview = (content: any, language: string = 'html'): string =>
     case 'p5js':
     case 'p5':
       return `<!DOCTYPE html><html><head><style>${baseStyles}</style>
-        <script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
-      </head><body><script>${escapeScript(code)}</script></body></html>`;
-
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+</head><body><script>${escapeScript(code)}</script></body></html>`;
+    case 'html':
+      return code; // Harusnya udah valid HTML
     case 'javascript':
     case 'js':
-      return `<!DOCTYPE html><html><head><style>${baseStyles}</style></head>
-        <body><div id="app"></div><script>try{${escapeScript(code)}}catch(e){document.body.innerHTML='<pre style="color:red;white-space:pre-wrap;padding:20px;font-family:monospace;">'+e.message+'</pre>'}</script></body></html>`;
-
-    case 'html':
+      return `<!DOCTYPE html><html><head><style>${baseStyles}</style></head><body><div id="app"></div><script>try{${escapeScript(code)}}catch(e){document.body.innerHTML = '<pre style="color:red">' + e.message + '</pre>'}</script></body></html>`;
     default:
-      if (code.trim().toLowerCase().startsWith('<!doctype') || code.trim().toLowerCase().startsWith('<html')) {
-        return code;
-      }
       return `<!DOCTYPE html><html><head><style>${baseStyles}</style></head><body>${code}</body></html>`;
   }
 };
@@ -209,10 +220,11 @@ export const Karya = () => {
   const carouselRef = React.useRef<HTMLDivElement>(null);
   const [filter, setFilter] = useState('all');
 
-  const [page, setPage] = useState(0);
-  const [artworks, setArtworks] = useState<any[]>([]);
-  const [hasMore, setHasMore] = useState(true);
-  const ITEMS_PER_PAGE = 6;
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'likes' | 'comments'>('newest');
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const ITEMS_PER_PAGE = 16; // 4x4 grid friendly
 
   // State Sosial (Like/Comment)
   const [likesCount, setLikesCount] = useState(0);
@@ -223,43 +235,57 @@ export const Karya = () => {
 
   // React Query for Works
   const { data: worksData, isLoading: worksLoading, error: worksError, isFetching: worksFetching } = useQuery({
-    queryKey: ['works', filter, page],
+    queryKey: ['works', filter, page, sortBy],
     queryFn: async () => {
-      const from = page * ITEMS_PER_PAGE;
+      const from = (page - 1) * ITEMS_PER_PAGE; // 1-based pagination
       const to = from + ITEMS_PER_PAGE - 1;
 
       let query = supabase
         .from('works')
         .select(`
-          id, 
-          title, 
-          description, 
-          image_url, 
-          author, 
-          type, 
-          division, 
-          tags, 
-          slides, 
-          code_language,
-          content,
-          thumbnail_url,
-          likes:likes(count),
-          comments:comments(count),
-          author_profile:profiles(username, avatar_url)
-        `);
+id,
+  title,
+  description,
+  image_url,
+  author,
+  type,
+  division,
+  tags,
+  slides,
+  code_language,
+  content,
+  thumbnail_url,
+  likes: likes(count),
+    comments: comments(count),
+      author_profile: profiles(username, avatar_url, role)
+        `, { count: 'exact' }); // Request total count
+
+      // Apply Sorting
+      if (sortBy === 'newest') {
+        query = query.order('created_at', { ascending: false });
+      } else if (sortBy === 'oldest') {
+        query = query.order('created_at', { ascending: true });
+      } else if (sortBy === 'likes') {
+        // PostgREST doesn't support sorting by related count directly.
+        // In a real app, you'd use a view or a counter cache column.
+        // For now, we'll sort by newest within this fallback.
+        query = query.order('created_at', { ascending: false });
+      } else if (sortBy === 'comments') {
+        query = query.order('created_at', { ascending: false });
+      }
 
       if (filter !== 'all') {
         query = query.eq('division', filter);
       }
 
-      const { data, error } = await query.range(from, to);
+      const { data, error, count } = await query.range(from, to);
       if (error) throw error;
-      return data;
+      return { data, count };
     },
     refetchOnMount: true,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
-    enabled: true, // FIX: Explicitly set enabled to true
+    enabled: true,
   });
 
   useEffect(() => {
@@ -267,34 +293,14 @@ export const Karya = () => {
     return () => setIsLoading(false);
   }, [worksLoading, worksFetching, setIsLoading]);
 
-  // Sync artworks state with React Query results (for pagination append)
+  // Sync total count with React Query result
   useEffect(() => {
     if (worksData) {
-      if (page === 0) {
-        setArtworks(worksData);
-      } else {
-        setArtworks(prev => {
-          // Prevent duplicates
-          const newIds = new Set(worksData.map(w => w.id));
-          return [...prev.filter(w => !newIds.has(w.id)), ...worksData];
-        });
-      }
-      setHasMore(worksData.length === ITEMS_PER_PAGE);
+      setTotalCount(worksData.count || 0);
     }
-  }, [worksData, page]);
+  }, [worksData]);
 
-  // Efek ini dihapus karena setPage(0) dan setArtworks([]) sudah ditangani di onClick tombol filter.
-  // Menjaga useEffect ini di sini bakal bikin data ilang pas navigasi balik (remount).
-  /* 
-  useEffect(() => {
-    setPage(0);
-    setArtworks([]);
-  }, [filter]); 
-  */
 
-  const handleLoadMore = () => {
-    setPage(prev => prev + 1);
-  };
 
   const { data: socialData, isLoading: socialLoading } = useQuery({
     queryKey: ['work-social', selectedId],
@@ -416,9 +422,10 @@ export const Karya = () => {
     });
   };
 
+  const artworks = worksData?.data || [];
   const selectedArtwork = artworks.find(a => a.id === selectedId);
 
-  const filteredArtworks = artworks;
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   // Helper untuk merender konten kartu berdasarkan tipe
   const renderCardContent = (art: any, showCode: boolean = false) => {
@@ -509,92 +516,237 @@ export const Karya = () => {
 
       {/* Header & Kontrol - SAMA (Gak Berubah) */}
       <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-        <div>
-          <h1 className="text-5xl md:text-7xl font-serif text-white mb-4">Galeri Karya</h1>
-          <p className="text-gray-400 text-lg">Kurasi visual terbaik dari komunitas.</p>
+        <div className="flex-1 min-w-0">
+          <h1 className="text-5xl md:text-7xl font-serif text-white mb-4 truncate">Galeri</h1>
+          <p className="text-gray-400 text-lg truncate">Kurasi visual terbaik dari komunitas.</p>
         </div>
 
-        <div className="flex items-center gap-4 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 no-scrollbar">
-          <div className="flex bg-[#111] p-1 rounded-full border border-white/10">
-            {['all', 'graphics', 'video', 'writing', 'coding', 'meme'].map(f => (
-              <button
-                key={f}
-                onClick={() => {
-                  setFilter(f);
-                  setPage(0);
-                  setArtworks([]);
-                }}
-                className={`px-4 py-2 rounded-full text-sm font-bold capitalize transition-all ${filter === f ? 'bg-white text-black' : 'text-gray-400 hover:text-white'
-                  }`}
-              >
-                {f}
-              </button>
-            ))}
+        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+          {/* Scrollable Filters */}
+          <div className="flex items-center gap-4 w-full md:w-auto overflow-x-auto overflow-y-hidden pb-4 md:pb-0 no-scrollbar">
+            <div className="flex flex-nowrap bg-[#111] p-1 rounded-full border border-white/10 relative shrink-0">
+              {[
+                { id: 'all', label: 'Semua' },
+                { id: 'graphics', label: 'Grafis' },
+                { id: 'video', label: 'Video' },
+                { id: 'writing', label: 'Tulisan' },
+                { id: 'coding', label: 'Coding' },
+                { id: 'meme', label: 'Meme' }
+              ].map(f => (
+                <button
+                  key={f.id}
+                  onClick={() => {
+                    setFilter(f.id);
+                    setPage(1);
+                  }}
+                  className={`relative px-4 py-2 rounded-full text-sm font-bold transition-colors whitespace-nowrap z-10 ${filter === f.id ? 'text-black' : 'text-gray-400 hover:text-white'
+                    }`}
+                >
+                  {filter === f.id && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-white rounded-full -z-10"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  {f.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <Link
-            to="/studio"
-            className="hidden md:flex bg-white text-black px-6 py-3 rounded-full font-bold items-center gap-2 hover:bg-gray-200 transition-colors"
-          >
-            <Plus size={20} /> Buat Karya
-          </Link>
+          {/* Fixed Controls (Sort + Create) */}
+          <div className="flex items-center gap-4 w-full md:w-auto shrink-0">
+            {/* Sort Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setShowSortDropdown(!showSortDropdown)}
+                className="flex items-center gap-2 px-6 py-2.5 bg-[#111] border border-white/10 rounded-full text-sm text-white font-bold hover:bg-white/5 transition-all"
+              >
+                <SlidersHorizontal size={16} className="text-gray-500" />
+                <span>
+                  {sortBy === 'newest' ? 'Terbaru' :
+                    sortBy === 'oldest' ? 'Terlama' :
+                      sortBy === 'likes' ? 'Terpopuler' : 'Banyak Diskusi'}
+                </span>
+                <ChevronDown size={14} className={`transition-transform duration-300 ${showSortDropdown ? 'rotate-180' : ''}`} />
+              </button>
+
+              <AnimatePresence>
+                {showSortDropdown && (
+                  <>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      onClick={() => setShowSortDropdown(false)}
+                      className="fixed inset-0 z-40"
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                      className="absolute right-0 mt-2 w-56 bg-[#181818] border border-white/10 rounded-2xl shadow-2xl z-50 p-2 overflow-hidden"
+                    >
+                      {[
+                        { id: 'newest', label: 'Paling Baru', icon: Calendar },
+                        { id: 'oldest', label: 'Paling Lama', icon: Calendar },
+                        { id: 'likes', label: 'Terpopuler', icon: TrendingUp },
+                        { id: 'comments', label: 'Banyak Diskusi', icon: MessageSquare },
+                      ].map((option) => (
+                        <button
+                          key={option.id}
+                          onClick={() => {
+                            setSortBy(option.id as any);
+                            setPage(1);
+                            setShowSortDropdown(false);
+                          }}
+                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${sortBy === option.id ? 'bg-white text-black' : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                            }`}
+                        >
+                          <option.icon size={16} />
+                          {option.label}
+                        </button>
+                      ))}
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <Link
+              to="/studio"
+              className="hidden md:flex bg-white text-black px-6 py-3 rounded-full font-bold items-center gap-2 hover:bg-gray-200 transition-colors"
+            >
+              <Plus size={20} /> Buat Karya
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Grid Masonry Modern - Pinterest Style - SAMA (Gak berubah) */}
       {worksError ? (
-        <FetchErrorState message={(worksError as any).message || 'Gagal memuat karya'} onRetry={() => setPage(0)} />
-      ) : (worksLoading || (worksFetching && artworks.length === 0)) ? (
+        <FetchErrorState message={(worksError as any).message || 'Gagal memuat karya'} onRetry={() => setPage(1)} />
+      ) : (worksLoading || worksFetching) ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {[...Array(8)].map((_, i) => (
+          {[...Array(12)].map((_, i) => (
             <div key={i} className="bg-white/[0.03] rounded-[2rem] overflow-hidden h-[400px] animate-pulse border border-white/5 shadow-lg">
               <div className="h-full w-full bg-gradient-to-br from-white/5 to-transparent"></div>
             </div>
           ))}
         </div>
-      ) : artworks.length > 0 ? (
-        <motion.div
-          variants={motionConfig.variants.staggerContainer}
-          initial="initial"
-          animate="animate"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-        >
-          {artworks.map((art, index) => (
-            <motion.div
-              key={art.id}
-              className="h-full"
-              variants={motionConfig.variants.fadeInUp}
-              transition={{ duration: motionConfig.durations.normal, ease: motionConfig.easings.smooth }}
-            >
-              <KaryaCard
-                art={art}
-                index={index}
-                onClick={() => { setSelectedId(art.id); setShowSourceCode(false); }}
-                renderContent={renderCardContent}
-              />
-            </motion.div>
-          ))}
-        </motion.div>
+      ) : worksData?.data && worksData.data.length > 0 ? (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={filter + sortBy + page}
+            variants={motionConfig.variants.staggerContainer}
+            initial="initial"
+            animate="animate"
+            exit="initial"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          >
+            {worksData.data.map((art, index) => (
+              <motion.div
+                key={art.id}
+                layout
+                className="h-full"
+                variants={motionConfig.variants.fadeInUp}
+                transition={{
+                  duration: motionConfig.durations.normal,
+                  ease: motionConfig.easings.smooth,
+                  layout: { duration: 0.3 }
+                }}
+              >
+                <KaryaCard
+                  art={art}
+                  index={index}
+                  onClick={() => { setSelectedId(art.id); setShowSourceCode(false); }}
+                  renderContent={renderCardContent}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
       ) : null}
 
-      {/* Load More & Empty State */}
-      {hasMore && artworks.length > 0 && (
-        <div className="flex justify-center mt-12 pb-12">
-          <button
-            onClick={handleLoadMore}
-            disabled={worksFetching}
-            className="px-10 py-4 bg-white/5 border border-white/10 text-white rounded-full font-bold hover:bg-white hover:text-black transition-all flex items-center gap-2 group active:scale-[0.98] disabled:opacity-50"
-          >
-            {worksFetching ? (
-              <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-            ) : (
-              <>Muat Lebih Banyak <ArrowDown size={18} className="group-hover:translate-y-1 transition-transform" /></>
-            )}
-          </button>
+      {/* Pagination Controls */}
+      {totalPages > 1 && worksData?.data && worksData.data.length > 0 && (
+        <div className="flex justify-center items-center gap-2 mt-16 pb-16">
+          {(() => {
+            const maxVisiblePages = 7;
+            let pages: (number | string)[] = [];
+
+            if (totalPages <= maxVisiblePages) {
+              // Show all pages if total is small
+              pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+            } else {
+              // Show dynamic pagination with ellipsis
+              if (page <= 4) {
+                pages = [1, 2, 3, 4, 5, '...', totalPages];
+              } else if (page >= totalPages - 3) {
+                pages = [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+              } else {
+                pages = [1, '...', page - 1, page, page + 1, '...', totalPages];
+              }
+            }
+
+            return (
+              <>
+                {/* Previous Button */}
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1 || worksFetching}
+                  className="px-4 py-2 bg-white/5 border border-white/10 text-white rounded-xl font-bold hover:bg-white hover:text-black transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:text-white flex items-center gap-2"
+                >
+                  <ArrowLeft size={16} />
+                  <span className="hidden md:inline">Sebelumnya</span>
+                </button>
+
+                {/* Page Numbers */}
+                <div className="flex gap-2">
+                  {pages.map((pageNum, idx) => {
+                    if (pageNum === '...') {
+                      return (
+                        <span key={`ellipsis - ${idx} `} className="px-3 py-2 text-gray-500">
+                          •••
+                        </span>
+                      );
+                    }
+
+                    const isActive = pageNum === page;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setPage(pageNum as number)}
+                        disabled={worksFetching}
+                        className={`min - w - [44px] px - 3 py - 2 rounded - xl font - bold transition - all ${isActive
+                          ? 'bg-white text-black shadow-lg scale-110'
+                          : 'bg-white/5 text-white hover:bg-white/10 border border-white/10 hover:scale-105'
+                          } disabled: opacity - 50 active: scale - 95`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Next Button */}
+                <button
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages || worksFetching}
+                  className="px-4 py-2 bg-white/5 border border-white/10 text-white rounded-xl font-bold hover:bg-white hover:text-black transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:text-white flex items-center gap-2"
+                >
+                  <span className="hidden md:inline">Selanjutnya</span>
+                  <ArrowRight size={16} />
+                </button>
+              </>
+            );
+          })()}
         </div>
       )}
 
-      {artworks.length === 0 && !worksLoading && !worksFetching && !worksData?.length && (
+      {/* Empty State */}
+      {!worksLoading && !worksFetching && (!worksData?.data || worksData.data.length === 0) && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-24 h-24 bg-gray-900 rounded-full flex items-center justify-center mb-6">
             <ImageIcon size={40} className="text-gray-600" />
@@ -641,7 +793,7 @@ export const Karya = () => {
                     // Tampilin pratinjau interaktif - UKURAN PENUH, TANPA SCALING
                     return (
                       <iframe
-                        src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(art.content, art.code_language || 'html'))}`}
+                        src={`data: text / html; charset = utf - 8, ${encodeURIComponent(generateCodePreview(art.content, art.code_language || 'html'))} `}
                         sandbox="allow-scripts allow-same-origin"
                         className="w-full h-full border-0 bg-white"
                         style={{ touchAction: 'auto' }}
@@ -683,8 +835,8 @@ export const Karya = () => {
               />
 
               <motion.div
-                layoutId={`card-${selectedId}`}
-                id={`modal-card-${selectedId}`}
+                layoutId={`card - ${selectedId} `}
+                id={`modal - card - ${selectedId} `}
                 className="relative w-full max-w-6xl bg-[#111] rounded-t-[2rem] md:rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-[90vh] md:max-h-[85vh] pointer-events-auto border border-white/10"
                 transition={{ type: "spring", stiffness: 200, damping: 25 }}
               >
@@ -694,7 +846,7 @@ export const Karya = () => {
                     onClick={(e) => {
                       e.stopPropagation();
                       // Logika Toggle Fullscreen (Layar Penuh)
-                      const mediaContainer = document.getElementById(`media-container-${selectedId}`);
+                      const mediaContainer = document.getElementById(`media - container - ${selectedId} `);
                       if (!document.fullscreenElement) {
                         mediaContainer?.requestFullscreen().catch(err => console.log(err));
                       } else {
@@ -716,10 +868,10 @@ export const Karya = () => {
 
                 {/* Bagian Media */}
                 <div
-                  id={`media-container-${selectedId}`}
+                  id={`media - container - ${selectedId} `}
                   className="w-full h-[40vh] md:h-auto md:w-3/5 bg-black flex items-center justify-center relative overflow-hidden group flex-shrink-0"
                 >
-                  <motion.div layoutId={`content-${selectedId}`} className="w-full h-full flex items-center justify-center">
+                  <motion.div layoutId={`content - ${selectedId} `} className="w-full h-full flex items-center justify-center">
 
                     {/* ...Logika Slide... */}
                     {(selectedArtwork.type === 'slide' || (selectedArtwork.slides && selectedArtwork.slides.length > 1)) && (
@@ -731,7 +883,7 @@ export const Karya = () => {
                         >
                           {(selectedArtwork.slides || []).map((slide: any, i: number) => (
                             <div key={slide.id || i} className="min-w-full h-full snap-center flex items-center justify-center relative">
-                              <img src={slide.content} className="max-w-full max-h-full object-contain" alt={`Slide ${i + 1}`} />
+                              <img src={slide.content} className="max-w-full max-h-full object-contain" alt={`Slide ${i + 1} `} />
                             </div>
                           ))}
                         </div>
@@ -760,8 +912,8 @@ export const Karya = () => {
                                 <button
                                   key={i}
                                   onClick={() => scrollToSlide(i)}
-                                  className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeSlide === i ? 'bg-white w-3' : 'bg-white/30'
-                                    }`}
+                                  className={`w - 1.5 h - 1.5 rounded - full transition - all duration - 300 ${activeSlide === i ? 'bg-white w-3' : 'bg-white/30'
+                                    } `}
                                 />
                               ))}
                             </div>
@@ -808,7 +960,7 @@ export const Karya = () => {
                           <CodeViewer content={selectedArtwork.content} />
                         ) : (
                           <iframe
-                            src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(selectedArtwork.content, selectedArtwork.code_language || 'html'))}`}
+                            srcDoc={generateCodePreview(selectedArtwork.content, selectedArtwork.code_language || 'html')}
                             sandbox="allow-scripts allow-same-origin"
                             className="w-full h-full border-0 bg-white"
                             style={{ touchAction: 'manipulation' }}
@@ -823,13 +975,13 @@ export const Karya = () => {
                 {/* Bagian Detail - Flex-1 to fill remaining space, scrollable */}
                 <div className="flex-1 md:w-2/5 p-4 md:p-8 lg:p-12 overflow-y-auto custom-scrollbar bg-[#111] border-t md:border-t-0 md:border-l border-white/10">
                   <div className="flex items-center justify-between mb-8">
-                    <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 ${selectedArtwork.division === 'coding' ? 'bg-green-500/10 text-green-400' :
+                    <div className={`px - 3 py - 1 rounded - full text - xs font - bold uppercase tracking - widest border border - white / 10 ${selectedArtwork.division === 'coding' ? 'bg-green-500/10 text-green-400' :
                       selectedArtwork.division === 'video' ? 'bg-orange-500/10 text-orange-400' :
                         selectedArtwork.division === 'meme' ? 'bg-yellow-500/10 text-yellow-400' :
                           selectedArtwork.division === 'writing' ? 'bg-white/10 text-white' :
                             'bg-purple-500/10 text-purple-400'
-                      }`}>
-                      {selectedArtwork.division}
+                      } `}>
+                      {DIVISION_LABELS[selectedArtwork.division] || selectedArtwork.division}
                     </div>
                     <div className="flex gap-2">
                       <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"><Share2 size={20} /></button>
@@ -843,15 +995,15 @@ export const Karya = () => {
                   <Link to={`/profile/${selectedArtwork.author}`} className="flex items-center gap-4 mb-8 p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
                     <div className="w-12 h-12 rounded-full bg-gray-700 overflow-hidden">
                       <img src={`https://ui-avatars.com/api/?name=${selectedArtwork.author}&background=random`} alt="Avatar" />
-                    </div>
+                    </div >
                     <div>
                       <h4 className="text-white font-bold">{selectedArtwork.author}</h4>
-                      <p className="text-gray-500 text-xs">{selectedArtwork.role}</p>
+                      <p className="text-gray-500 text-xs">{(selectedArtwork.author_profile as any)?.role || 'Member'}</p>
                     </div>
                     <button className="ml-auto bg-white text-black px-4 py-2 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors">
                       Lihat
                     </button>
-                  </Link>
+                  </Link >
 
                   <div className="flex flex-wrap gap-2 mb-8">
                     {selectedArtwork.tags?.map(tag => (
@@ -947,9 +1099,9 @@ export const Karya = () => {
                       )}
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            </div>
+                </div >
+              </motion.div >
+            </div >
           )
         )}
       </AnimatePresence >

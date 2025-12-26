@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, PanInfo, useAnimation } from 'framer-motion';
-import { Heart, MessageCircle, Share2, X, Code, Play } from 'lucide-react';
+import { Heart, MessageCircle, Share2, X, Code, Play, Edit3, Trash2 } from 'lucide-react';
 
 
 
@@ -8,9 +8,11 @@ interface ImmersiveDetailViewProps {
     art: any;
     onClose: () => void;
     renderContent: (art: any, showCode?: boolean) => React.ReactNode;
+    onEdit?: () => void;
+    onDelete?: () => void;
 }
 
-export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, onClose, renderContent }) => {
+export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, onClose, renderContent, onEdit, onDelete }) => {
     const controls = useAnimation();
     const [isExpanded, setIsExpanded] = useState(false);
     const [showCode, setShowCode] = useState(false);
@@ -87,6 +89,8 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                     {renderContent(art, showCode)}
                 </div>
 
+
+
                 {/* Top Bar Floating */}
                 <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center bg-gradient-to-b from-black/90 via-black/50 to-transparent z-50">
                     <button
@@ -96,19 +100,43 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                         <X size={24} />
                     </button>
 
-                    {/* Code Toggle Button - ALWAYS visible for code type */}
-                    {art.type === 'code' && (
-                        <button
-                            onClick={() => setShowCode(!showCode)}
-                            className="flex items-center gap-2 px-5 py-3 bg-black/50 backdrop-blur-md rounded-full text-white font-bold text-sm border border-white/30 active:scale-95 transition-transform"
-                        >
-                            {showCode ? (
-                                <><Play size={16} /> Preview</>
-                            ) : (
-                                <><Code size={16} /> Lihat Kode</>
-                            )}
-                        </button>
-                    )}
+                    <div className="flex gap-3">
+                        {/* Edit/Delete Buttons (Mobile) */}
+                        {(onEdit || onDelete) && (
+                            <div className="flex gap-2">
+                                {onEdit && (
+                                    <button
+                                        onClick={onEdit}
+                                        className="p-3 bg-black/50 backdrop-blur-md rounded-full text-white active:scale-95 transition-transform"
+                                    >
+                                        <Edit3 size={20} />
+                                    </button>
+                                )}
+                                {onDelete && (
+                                    <button
+                                        onClick={onDelete}
+                                        className="p-3 bg-rose-500/80 backdrop-blur-md rounded-full text-white active:scale-95 transition-transform"
+                                    >
+                                        <Trash2 size={20} />
+                                    </button>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Code Toggle Button - ALWAYS visible for code type */}
+                        {art.type === 'code' && (
+                            <button
+                                onClick={() => setShowCode(!showCode)}
+                                className="flex items-center gap-2 px-5 py-3 bg-black/50 backdrop-blur-md rounded-full text-white font-bold text-sm border border-white/30 active:scale-95 transition-transform"
+                            >
+                                {showCode ? (
+                                    <><Play size={16} /> Preview</>
+                                ) : (
+                                    <><Code size={16} /> Lihat Kode</>
+                                )}
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -209,6 +237,6 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                     </div>
                 </div>
             </motion.div>
-        </div>
+        </div >
     );
 };

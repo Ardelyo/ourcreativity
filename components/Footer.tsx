@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Instagram, Music2 } from 'lucide-react';
+import { Github, Instagram, Music2, Asterisk } from 'lucide-react';
 
 export const Footer = () => {
   return (

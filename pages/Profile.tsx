@@ -15,6 +15,8 @@ import { useIsMobile } from '../hooks/useIsMobile';
 import { motionConfig } from '../lib/motion';
 import { useLoadingStatus } from '../components/LoadingTimeoutProvider';
 import { useSystemLog } from '../components/SystemLogProvider';
+import { EditWorkModal } from '../components/EditWorkModal';
+import { Trash2 } from 'lucide-react';
 
 // Helper for code previews (transplanted from Karya.tsx)
 const CodeViewer = ({ content }: { content: any }) => {
@@ -87,7 +89,7 @@ const generateCodePreview = (content: string, language: string = 'html'): string
         case 'p5js': case 'p5':
             return `<!DOCTYPE html><html><head><style>${baseStyles}</style><script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script></head><body><script>${code}<\/script></body></html>`;
         case 'javascript': case 'js':
-            return `<!DOCTYPE html><html><head><style>${baseStyles}</style></head><body><div id="app"></div><script>try{${code}}catch(e){document.body.innerHTML='<pre style="color:red">'+e.message+'</pre>' listener}<\/script></body></html>`;
+            return `<!DOCTYPE html><html><head><style>${baseStyles}</style></head><body><div id="app"></div><script>try{${code}}catch(e){document.body.innerHTML='<pre style="color:red">'+e.message+'</pre>'}</script></body></html>`;
         default:
             if (code.trim().toLowerCase().startsWith('<!doctype') || code.trim().toLowerCase().startsWith('<html')) return code;
             return `<!DOCTYPE html><html><head><style>${baseStyles}</style></head><body>${code}</body></html>`;
@@ -116,6 +118,10 @@ export const Profile = () => {
     const [newComment, setNewComment] = useState('');
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
+    // Edit/Delete State
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editingWork, setEditingWork] = useState<any>(null);
+
     // Query for Profile Data
     const { data: profile, isLoading: profileLoading, error: profileError } = useQuery({
         queryKey: ['profile', username],
@@ -143,7 +149,9 @@ export const Profile = () => {
                     title, 
                     description, 
                     image_url, 
+                    thumbnail_url,
                     author,
+                    author_id,
                     type,
                     division, 
                     tags,
@@ -175,7 +183,9 @@ export const Profile = () => {
                         title, 
                         description, 
                         image_url, 
+                        thumbnail_url,
                         author,
+                        author_id,
                         type,
                         division, 
                         tags,
@@ -254,6 +264,30 @@ export const Profile = () => {
         } finally { setIsSubmittingComment(false); }
     };
 
+    const handleDeleteWork = async (workId: string) => {
+        if (!confirm('Apakah anda yakin ingin menghapus karya ini? Tindakan ini tidak dapat dibatalkan.')) return;
+
+        try {
+            const { error: deleteError } = await supabase
+                .from('works')
+                .delete()
+                .eq('id', workId);
+
+            if (deleteError) throw deleteError;
+
+            addLog('Karya berhasil dihapus.', 'success');
+            setSelectedId(null);
+            queryClient.invalidateQueries({ queryKey: ['profile-works', profile?.id] });
+        } catch (err: any) {
+            addLog('Gagal menghapus karya.', 'error');
+        }
+    };
+
+    const handleEditSuccess = () => {
+        addLog('Karya berhasil diperbarui.', 'success');
+        queryClient.invalidateQueries({ queryKey: ['profile-works', profile?.id] });
+    };
+
     const handleCarouselScroll = () => {
         if (!carouselRef.current) return;
         setActiveSlide(Math.round(carouselRef.current.scrollLeft / carouselRef.current.offsetWidth));
@@ -266,7 +300,7 @@ export const Profile = () => {
     const selectedArtwork = (activeTab === 'karya' ? works : likedWorks).find((a: any) => a.id === selectedId);
 
     const renderCardContent = (art: any) => {
-        const thumb = art.image_url || art.slides?.[0]?.content;
+        const thumb = art.thumbnail_url || art.image_url || art.slides?.[0]?.content;
         switch (art.type) {
             case 'text':
                 return (
@@ -328,6 +362,17 @@ export const Profile = () => {
 
     return (
         <div className="min-h-screen bg-[#030303] text-white pt-32 pb-20 font-sans">
+            {/* Edit Modal */}
+            <EditWorkModal
+                isOpen={isEditModalOpen}
+                onClose={() => {
+                    setIsEditModalOpen(false);
+                    setEditingWork(null);
+                }}
+                onSave={handleEditSuccess}
+                work={editingWork}
+            />
+
             {/* Background Glow */}
             <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-[500px] bg-rose-500/5 blur-[120px] rounded-full pointer-events-none -z-10" />
 
@@ -533,6 +578,11 @@ export const Profile = () => {
                             <ImmersiveDetailView
                                 art={selectedArtwork}
                                 onClose={() => setSelectedId(null)}
+                                onEdit={user && (user.id === selectedArtwork.author || user.id === selectedArtwork.author_id) ? () => {
+                                    setEditingWork(selectedArtwork);
+                                    setIsEditModalOpen(true);
+                                } : undefined}
+                                onDelete={user && (user.id === selectedArtwork.author || user.id === selectedArtwork.author_id) ? () => handleDeleteWork(selectedArtwork.id) : undefined}
                                 renderContent={(art, showCode) => {
                                     if (art.type === 'code') {
                                         return showCode ? <CodeViewer content={art.content} /> : <iframe src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(art.content, art.code_language || 'html'))}`} sandbox="allow-scripts allow-same-origin" className="w-full h-full border-0 bg-white" title="Interactive Preview" />;
@@ -547,6 +597,27 @@ export const Profile = () => {
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedId(null)} className="absolute inset-0 bg-black/90 backdrop-blur-xl pointer-events-auto" />
                                 <motion.div layoutId={`card-${selectedId}`} className="relative w-full max-w-6xl bg-[#111] rounded-[2rem] overflow-hidden shadow-2xl flex flex-col md:flex-row h-[85vh] pointer-events-auto border border-white/10">
                                     <div className="absolute top-4 right-4 z-50 flex gap-2">
+                                        {user && (user.id === selectedArtwork.author || user.id === selectedArtwork.author_id) && (
+                                            <>
+                                                <button
+                                                    onClick={() => {
+                                                        setEditingWork(selectedArtwork);
+                                                        setIsEditModalOpen(true);
+                                                    }}
+                                                    className="p-2 bg-black/70 hover:bg-white text-white hover:text-black rounded-full transition-colors backdrop-blur-md border border-white/20"
+                                                    title="Edit Karya"
+                                                >
+                                                    <Edit3 size={20} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteWork(selectedArtwork.id)}
+                                                    className="p-2 bg-black/70 hover:bg-rose-500 text-white hover:text-white rounded-full transition-colors backdrop-blur-md border border-white/20"
+                                                    title="Hapus Karya"
+                                                >
+                                                    <Trash2 size={20} />
+                                                </button>
+                                            </>
+                                        )}
                                         <button onClick={() => setSelectedId(null)} className="p-2 bg-black/70 hover:bg-white text-white hover:text-black rounded-full transition-colors backdrop-blur-md border border-white/20"><X size={20} /></button>
                                     </div>
 

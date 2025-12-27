@@ -4,16 +4,26 @@ import { ConsolePanel } from './ConsolePanel';
 import { CodeEditor } from './CodeEditor';
 import { InteractiveSandbox } from './InteractiveSandbox';
 import { CodeFile, ConsoleMessage, FileType } from './types';
-import { Eye, Code, Terminal, Folder, Plus, X } from 'lucide-react';
+import { Eye, Code, Terminal, Folder, Plus, X, ArrowLeft, Rocket } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface MobileEditorLayoutProps {
     files: CodeFile[];
     setFiles: React.Dispatch<React.SetStateAction<CodeFile[]>>;
     triggerRun?: number;
+    onBack?: () => void;
+    onPublish?: () => void;
+    isPublishing?: boolean;
 }
 
-export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, setFiles, triggerRun = 0 }) => {
+export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({
+    files,
+    setFiles,
+    triggerRun = 0,
+    onBack,
+    onPublish,
+    isPublishing
+}) => {
     // --- state ---
     const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
     const [activeFileId, setActiveFileId] = useState<string>('1');
@@ -66,40 +76,58 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
     return (
         <div className="flex flex-col h-full bg-[#050505] relative overflow-hidden">
 
-            {/* header navigasi atas (gabung & bersih) */}
-            <div className="flex flex-col bg-[#050505] z-20">
-                {/* header visual */}
-                <div className="flex items-center justify-between px-3 py-2 bg-[#0a0a0a]/50 backdrop-blur-md border-b border-white/5">
+            {/* Header Terintegrasi (Nav + Tabs + Tools) */}
+            <div className="flex flex-col bg-[#050505] z-30 shrink-0 border-b border-white/5">
+                <div className="flex items-center justify-between px-2 py-2 bg-[#0a0a0a]">
 
-                    {/* tab simpel */}
+                    {/* Kiri: Back */}
+                    <button
+                        onClick={onBack}
+                        className="p-2 rounded-full text-gray-400 hover:bg-white/10 hover:text-white transition-colors"
+                    >
+                        <ArrowLeft size={18} />
+                    </button>
+
+                    {/* Tengah: Tabs Compact */}
                     <div className="flex bg-[#111] rounded-full p-0.5 border border-white/5">
                         <button
                             onClick={() => setActiveTab('editor')}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all ${activeTab === 'editor' ? 'bg-white text-black shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
+                            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold transition-all ${activeTab === 'editor' ? 'bg-white text-black shadow-sm' : 'text-gray-500'}`}
                         >
                             <Code size={12} /> Kode
                         </button>
                         <button
                             onClick={() => setActiveTab('preview')}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all ${activeTab === 'preview' ? 'bg-white text-black shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
+                            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold transition-all ${activeTab === 'preview' ? 'bg-white text-black shadow-sm' : 'text-gray-500'}`}
                         >
                             <Eye size={12} /> Hasil
                         </button>
                     </div>
 
-                    {/* tool terintegrasi (file & konsol) */}
-                    <div className="flex gap-0.5">
+                    {/* Kanan: Publish & Tools */}
+                    <div className="flex items-center gap-1">
                         <button
                             onClick={() => setShowFiles(true)}
-                            className={`p-2 rounded-full text-gray-500 hover:text-white transition-colors`}
+                            className={`p-2 rounded-full text-gray-400 hover:text-white transition-colors ${!activeFile ? 'text-rose-500 animate-pulse' : ''}`}
                         >
-                            <Folder size={16} />
+                            <Folder size={18} />
                         </button>
                         <button
                             onClick={() => setShowConsole(!showConsole)}
-                            className={`p-2 rounded-full text-gray-500 hover:text-white transition-colors ${consoleLogs.length > 0 ? 'text-rose-500' : ''}`}
+                            className={`p-2 rounded-full text-gray-400 hover:text-white transition-colors ${consoleLogs.length > 0 ? 'text-rose-500' : ''}`}
                         >
-                            <Terminal size={16} />
+                            <Terminal size={18} />
+                        </button>
+                        <button
+                            onClick={onPublish}
+                            disabled={isPublishing}
+                            className={`ml-1 h-7 px-3 bg-white text-black rounded-full font-black text-[9px] uppercase tracking-tighter flex items-center justify-center gap-1.5 transition-all disabled:opacity-50`}
+                        >
+                            {isPublishing ? (
+                                <div className="w-2 h-2 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                            ) : (
+                                <Rocket size={12} className="text-rose-500" />
+                            )}
                         </button>
                     </div>
                 </div>

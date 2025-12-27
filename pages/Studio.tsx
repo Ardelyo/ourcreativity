@@ -83,6 +83,8 @@ export const Studio = () => {
     const { user, profile, loading: authLoading } = useAuth();
     const isMobile = useIsMobile();
 
+    const handleBack = () => navigate('/karya');
+
     // --- state: manage draft-draft ---
     const [drafts, setDrafts] = useState<any[]>([]);
     const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
@@ -507,8 +509,19 @@ export const Studio = () => {
                 );
             case 'code':
                 return (
-                    <div className="w-full h-full relative pt-[4.5rem]">
-                        {isMobile ? <MobileEditorLayout files={codeFiles} setFiles={setCodeFiles} triggerRun={triggerRun} /> : <EditorLayout files={codeFiles} setFiles={setCodeFiles} />}
+                    <div className={`w-full h-full relative ${isMobile ? 'pt-0' : 'pt-[4.5rem]'}`}>
+                        {isMobile ? (
+                            <MobileEditorLayout
+                                files={codeFiles}
+                                setFiles={setCodeFiles}
+                                triggerRun={triggerRun}
+                                onBack={handleBack}
+                                onPublish={handlePublish}
+                                isPublishing={isPublishing}
+                            />
+                        ) : (
+                            <EditorLayout files={codeFiles} setFiles={setCodeFiles} />
+                        )}
                     </div>
                 );
             case 'image':
@@ -649,23 +662,25 @@ export const Studio = () => {
             </AnimatePresence>
 
             <div className="flex-1 flex flex-col relative bg-black pt-safe pb-safe min-h-screen">
-                {/* header atas */}
-                <StudioHeader
-                    title={title}
-                    setTitle={setTitle}
-                    mode={mode}
-                    onModeChange={switchMode}
-                    draftStatus={draftStatus}
-                    draftsCount={drafts.length}
-                    showDrafts={showDrafts}
-                    onToggleDrafts={() => setShowDrafts(!showDrafts)}
-                    onPublish={handlePublish}
-                    isPublishing={isPublishing}
-                    onSettings={() => setShowSettings(true)}
-                    onPreview={() => setIsPreview(true)}
-                    onBack={() => navigate('/karya')}
-                    isMobile={isMobile}
-                />
+                {/* header atas - HIDDEN ON MOBILE CODING MODE */}
+                {!(isMobile && mode === 'code') && (
+                    <StudioHeader
+                        title={title}
+                        setTitle={setTitle}
+                        mode={mode}
+                        onModeChange={switchMode}
+                        draftStatus={draftStatus}
+                        draftsCount={drafts.length}
+                        showDrafts={showDrafts}
+                        onToggleDrafts={() => setShowDrafts(!showDrafts)}
+                        onPublish={handlePublish}
+                        isPublishing={isPublishing}
+                        onSettings={() => setShowSettings(true)}
+                        onPreview={() => setIsPreview(true)}
+                        onBack={handleBack}
+                        isMobile={isMobile}
+                    />
+                )}
 
                 {/* konten utama */}
                 <div className={`flex-1 overflow-y-auto custom-scrollbar ${isMobile ? 'pt-[60px] pb-[80px]' : ''}`}>

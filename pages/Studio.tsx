@@ -32,6 +32,7 @@ import { InteractiveSandbox } from '@/components/CreationStudio/ControlCenter/In
 import { StudioHeader } from '@/components/CreationStudio/StudioHeader';
 import { LogEntry } from '@/components/CreationStudio/ControlCenter/LogContainer';
 import { useSystemLog } from '@/components/SystemLogProvider';
+import { MobileStudio } from '@/components/CreationStudio/Mobile/MobileStudio';
 
 type Division = 'graphics' | 'tech' | 'music' | 'writing' | 'meme' | 'video';
 
@@ -82,6 +83,8 @@ export const Studio = () => {
     const navigate = useNavigate();
     const { user, profile, loading: authLoading } = useAuth();
     const isMobile = useIsMobile();
+
+    const handleBack = () => navigate('/karya');
 
     // --- state: manage draft-draft ---
     const [drafts, setDrafts] = useState<any[]>([]);
@@ -488,12 +491,12 @@ export const Studio = () => {
         switch (mode) {
             case 'text':
                 return (
-                    <div className={`w-full max-w-4xl mx-auto px-6 md:px-0 ${isMobile ? 'pt-4 pb-20' : 'pt-24 pb-32'}`}>
+                    <div className={`w-full max-w-4xl mx-auto ${isMobile ? 'px-2 pt-4 pb-20' : 'px-6 md:px-0 pt-24 pb-32'}`}>
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Judul Karya Tulis..."
-                            className="text-4xl md:text-5xl font-serif font-bold bg-transparent outline-none w-full mb-8 placeholder:text-white/10 text-center"
+                            className={`font-serif font-bold bg-transparent outline-none w-full mb-8 placeholder:text-white/10 ${isMobile ? 'text-3xl text-left px-2' : 'text-4xl md:text-5xl text-center'}`}
                         />
                         <TextEditor
                             content={content}
@@ -507,8 +510,19 @@ export const Studio = () => {
                 );
             case 'code':
                 return (
-                    <div className="w-full h-full relative pt-[4.5rem]">
-                        {isMobile ? <MobileEditorLayout files={codeFiles} setFiles={setCodeFiles} triggerRun={triggerRun} /> : <EditorLayout files={codeFiles} setFiles={setCodeFiles} />}
+                    <div className={`w-full h-full relative ${isMobile ? 'pt-0' : 'pt-[4.5rem]'}`}>
+                        {isMobile ? (
+                            <MobileEditorLayout
+                                files={codeFiles}
+                                setFiles={setCodeFiles}
+                                triggerRun={triggerRun}
+                                onBack={handleBack}
+                                onPublish={handlePublish}
+                                isPublishing={isPublishing}
+                            />
+                        ) : (
+                            <EditorLayout files={codeFiles} setFiles={setCodeFiles} />
+                        )}
                     </div>
                 );
             case 'image':
@@ -633,98 +647,107 @@ export const Studio = () => {
         );
     }
     return (
-        <div className="fixed inset-0 bg-[#050505] text-white font-sans selection:bg-rose-500/30 flex">
-            {/* sidebar manager draft */}
-            <AnimatePresence>
-                {showDrafts && (
-                    <DraftManager
-                        currentDraftId={currentDraftId}
-                        drafts={drafts.filter(d => d.mode === mode)}
-                        onSelect={applyDraft}
-                        onDelete={handleDeleteDraft}
-                        onNew={() => handleNewDraft(mode)}
-                        onClose={() => setShowDrafts(false)}
-                    />
-                )}
-            </AnimatePresence>
-
+        <div className="min-h-screen bg-[#0a0a0a] text-white selection:bg-rose-500/30 selection:text-white flex flex-col relative overflow-hidden">
             <div className="flex-1 flex flex-col relative bg-black pt-safe pb-safe min-h-screen">
-                {/* header atas */}
-                <StudioHeader
-                    title={title}
-                    setTitle={setTitle}
-                    mode={mode}
-                    onModeChange={switchMode}
-                    draftStatus={draftStatus}
-                    draftsCount={drafts.length}
-                    showDrafts={showDrafts}
-                    onToggleDrafts={() => setShowDrafts(!showDrafts)}
-                    onPublish={handlePublish}
-                    isPublishing={isPublishing}
-                    onSettings={() => setShowSettings(true)}
-                    onPreview={() => setIsPreview(true)}
-                    onBack={() => navigate('/karya')}
-                    isMobile={isMobile}
-                />
-
-                {/* konten utama */}
-                <div className={`flex-1 overflow-y-auto custom-scrollbar ${isMobile ? 'pt-[60px] pb-[80px]' : ''}`}>
-                    {renderContent()}
-                </div>
-
-                {/* dock bawah */}
                 {isMobile ? (
-                    !isTyping && <MobileActionDock mode={mode} onModeChange={switchMode} onPublish={handlePublish} onSettings={() => setShowSettings(true)} onPreview={() => mode === 'code' ? setTriggerRun(n => n + 1) : setIsPreview(true)} />
+                    <MobileStudio
+                        mode={mode}
+                        title={title}
+                        setTitle={setTitle}
+                        content={content}
+                        setContent={setContent}
+                        codeFiles={codeFiles}
+                        setCodeFiles={setCodeFiles}
+                        slides={slides}
+                        setSlides={setSlides}
+                        draftStatus={draftStatus}
+                        isPublishing={isPublishing}
+                        onBack={handleBack}
+                        onPublish={handlePublish}
+                        onToggleDrafts={() => setShowDrafts(!showDrafts)}
+                        onSettings={() => setShowSettings(true)}
+                        switchMode={switchMode}
+                        triggerRun={triggerRun}
+                        setTriggerRun={setTriggerRun}
+                        isTyping={isTyping}
+                        setIsTyping={setIsTyping}
+                        addLog={addLog}
+                    />
                 ) : (
-                    <div className="fixed bottom-0 left-0 right-0 h-20 z-50 flex items-end justify-center group/footer pointer-events-none">
-                        {/* zone trigger hover invisible soalnya wrappernya pointer-events-none */}
-                        <div className="absolute inset-0 pointer-events-auto" />
+                    <>
+                        {/* header atas */}
+                        <StudioHeader
+                            title={title}
+                            setTitle={setTitle}
+                            mode={mode}
+                            onModeChange={switchMode}
+                            draftStatus={draftStatus}
+                            draftsCount={drafts.length}
+                            showDrafts={showDrafts}
+                            onToggleDrafts={() => setShowDrafts(!showDrafts)}
+                            onPublish={handlePublish}
+                            isPublishing={isPublishing}
+                            onSettings={() => setShowSettings(true)}
+                            onPreview={() => setIsPreview(true)}
+                            onBack={handleBack}
+                            isMobile={isMobile}
+                        />
 
-                        {/* docknya */}
-                        <div className={`flex flex-col items-center transition-all duration-500 pointer-events-auto translate-y-24 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100`}>
-                            <AnimatePresence mode="wait">
-                                {!dockMinimized ? (
-                                    <motion.div
-                                        key="expanded-dock"
-                                        initial={{ y: 20, opacity: 0, scale: 0.9 }}
-                                        animate={{ y: 0, opacity: 1, scale: 1 }}
-                                        exit={{ y: 20, opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-                                        className="bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 p-2 rounded-full shadow-2xl flex items-center gap-2 ring-1 ring-white/5 relative group/dockinner"
-                                    >
-                                        <button
-                                            onClick={() => setDockMinimized(true)}
-                                            className="absolute -top-12 left-1/2 -translate-x-1/2 p-2 rounded-full bg-black/50 border border-white/5 text-white/50 hover:text-white hover:bg-white/10 backdrop-blur-md transition-all opacity-0 group-hover/dockinner:opacity-100 translate-y-2 group-hover/dockinner:translate-y-0"
-                                            title="Sembunyikan Menu"
-                                        >
-                                            <ChevronDown size={14} />
-                                        </button>
-
-                                        <div className="px-2">
-                                            <MediumSelector activeType={mode} onChange={switchMode} />
-                                        </div>
-                                    </motion.div>
-                                ) : (
-                                    <motion.div
-                                        key="minimized-dock"
-                                        initial={{ y: 20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        exit={{ y: 20, opacity: 0 }}
-                                        className="h-10 flex items-end justify-center pb-2 cursor-pointer"
-                                    >
-                                        <button
-                                            onClick={() => setDockMinimized(false)}
-                                            className="w-16 h-1 rounded-full bg-white/20 hover:bg-rose-500/50 transition-all shadow-lg hover:w-24 group/minhandle relative"
-                                        >
-                                            <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover/minhandle:opacity-100 transition-all text-[8px] font-black text-rose-500 uppercase tracking-[0.3em] translate-y-1 group-hover/minhandle:translate-y-0 whitespace-nowrap bg-black/40 backdrop-blur-sm px-2 py-1 rounded">
-                                                Buka Menu
-                                            </div>
-                                        </button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                        {/* konten utama */}
+                        <div className={`flex-1 overflow-y-auto custom-scrollbar`}>
+                            {renderContent()}
                         </div>
 
-                    </div>
+                        {/* dock bawah */}
+                        <div className="fixed bottom-0 left-0 right-0 h-20 z-50 flex items-end justify-center group/footer pointer-events-none">
+                            {/* zone trigger hover invisible soalnya wrappernya pointer-events-none */}
+                            <div className="absolute inset-0 pointer-events-auto" />
+
+                            {/* docknya */}
+                            <div className={`flex flex-col items-center transition-all duration-500 pointer-events-auto translate-y-24 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100`}>
+                                <AnimatePresence mode="wait">
+                                    {!dockMinimized ? (
+                                        <motion.div
+                                            key="expanded-dock"
+                                            initial={{ y: 20, opacity: 0, scale: 0.9 }}
+                                            animate={{ y: 0, opacity: 1, scale: 1 }}
+                                            exit={{ y: 20, opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                                            className="bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 p-2 rounded-full shadow-2xl flex items-center gap-2 ring-1 ring-white/5 relative group/dockinner"
+                                        >
+                                            <button
+                                                onClick={() => setDockMinimized(true)}
+                                                className="absolute -top-12 left-1/2 -translate-x-1/2 p-2 rounded-full bg-black/50 border border-white/5 text-white/50 hover:text-white hover:bg-white/10 backdrop-blur-md transition-all opacity-0 group-hover/dockinner:opacity-100 translate-y-2 group-hover/dockinner:translate-y-0"
+                                                title="Sembunyikan Menu"
+                                            >
+                                                <ChevronDown size={14} />
+                                            </button>
+
+                                            <div className="px-2">
+                                                <MediumSelector activeType={mode} onChange={switchMode} />
+                                            </div>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="minimized-dock"
+                                            initial={{ y: 20, opacity: 0 }}
+                                            animate={{ y: 0, opacity: 1 }}
+                                            exit={{ y: 20, opacity: 0 }}
+                                            className="h-10 flex items-end justify-center pb-2 cursor-pointer"
+                                        >
+                                            <button
+                                                onClick={() => setDockMinimized(false)}
+                                                className="w-16 h-1 rounded-full bg-white/20 hover:bg-rose-500/50 transition-all shadow-lg hover:w-24 group/minhandle relative"
+                                            >
+                                                <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover/minhandle:opacity-100 transition-all text-[8px] font-black text-rose-500 uppercase tracking-[0.3em] translate-y-1 group-hover/minhandle:translate-y-0 whitespace-nowrap bg-black/40 backdrop-blur-sm px-2 py-1 rounded">
+                                                    Buka Menu
+                                                </div>
+                                            </button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </div>
+                    </>
                 )}
             </div>
 

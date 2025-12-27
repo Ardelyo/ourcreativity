@@ -15,6 +15,13 @@ import {
     Image as ImageIcon, CheckSquare, Clock, AlignLeft, Redo, Undo
 } from 'lucide-react';
 
+// Custom styles for lists because Tiptap's prose sometimes hides them on mobile
+const LIST_STYLES = `
+  .prose ul { list-style-type: disc !important; padding-left: 1.5rem !important; margin-bottom: 1rem !important; }
+  .prose ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin-bottom: 1rem !important; }
+  .prose li { margin-bottom: 0.5rem !important; }
+`;
+
 interface TextEditorProps {
     content: string;
     onChange: (html: string) => void;
@@ -84,7 +91,8 @@ export const TextEditor: React.FC<TextEditorProps> = ({
         onBlur: () => onBlur?.(),
         editorProps: {
             attributes: {
-                class: `prose prose-invert prose-lg max-w-none focus:outline-none leading-relaxed break-words ${isMobile ? 'min-h-[40vh] px-4' : 'min-h-[60vh]'}`,
+                // AGGRESSIVE FIX: usage of break-words and overflow-hidden/auto
+                class: `prose prose-invert ${isMobile ? 'prose-sm' : 'prose-base md:prose-lg'} max-w-none w-full focus:outline-none leading-relaxed break-words break-all text-left ${isMobile ? 'min-h-[50vh] px-0' : 'min-h-[60vh]'}`,
             },
         },
     });
@@ -146,6 +154,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({
 
     return (
         <div className={`flex flex-col h-full bg-[#0a0a0a] ${className}`}>
+            <style>{LIST_STYLES}</style>
 
             {/* toolbar buat ngetik */}
             {isMobile ? (
@@ -177,7 +186,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({
 
             {/* ===== kanvas editornya ===== */}
             <div className={`flex-1 overflow-y-auto overflow-x-hidden ${isMobile ? 'pb-safe' : ''}`}>
-                <div className={`max-w-[100vw] mx-auto ${isMobile ? 'px-4 py-6' : 'px-8 py-10'}`}>
+                <div className={`w-full mx-auto ${isMobile ? 'px-3 py-4' : 'px-8 py-10'}`}>
                     <EditorContent editor={editor} />
                 </div>
             </div>

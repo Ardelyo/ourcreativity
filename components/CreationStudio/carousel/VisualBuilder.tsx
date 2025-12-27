@@ -53,7 +53,7 @@ const SlideCard = ({
             id={slide.id}
             style={{ touchAction: 'none' }}
             whileDrag={{
-                scale: 1.1,
+                scale: 1.05,
                 rotate: 0,
                 zIndex: 9999,
                 cursor: "grabbing",
@@ -61,58 +61,48 @@ const SlideCard = ({
                 boxShadow: "0px 20px 50px rgba(0,0,0,0.5)"
             }}
         >
-
-
-            <div className="w-full relative">
+            <div className="w-full relative px-1 md:px-0">
                 {/* The "Print" Frame */}
-                <div className="aspect-[4/3] bg-[#000] border border-white/10 rounded-sm overflow-hidden shadow-2xl relative">
+                <div className={`aspect-[4/3] bg-[#000] border border-white/10 rounded-xl overflow-hidden shadow-2xl relative ${isMobile ? 'rounded-2xl' : ''}`}>
                     {/* Image */}
                     <img
                         src={slide.content}
                         alt={`Frame ${index + 1}`}
-                        className="w-full h-full object-cover pointer-events-none select-none opacity-90 group-hover/card:opacity-100 transition-opacity duration-500"
+                        className="w-full h-full object-cover pointer-events-none select-none opacity-90 transition-opacity duration-500"
                     />
 
                     {/* Glass Overlay (Reflection) */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-                    {/* Controls Overlay (Floating Dock) */}
-                    <div className={`absolute top-2 right-2 flex flex-col gap-2 transition-all duration-300 ${isHovered || isMobile ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}>
+                    {/* Controls Overlay (Floating Dock) - Optimized for Mobile Touch */}
+                    <div className={`absolute top-2 right-2 flex flex-col gap-3 transition-all duration-300 ${isHovered || isMobile ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}`}>
                         {/* Drag Handle */}
                         <div
-                            className="w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white cursor-grab active:cursor-grabbing hover:bg-rose-500/80 hover:border-rose-500/50 transition-all shadow-lg"
+                            className={`rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white cursor-grab active:cursor-grabbing hover:bg-rose-500/80 hover:border-rose-500/50 transition-all shadow-lg ${isMobile ? 'w-10 h-10' : 'w-8 h-8'}`}
                             onPointerDown={(e) => controls.start(e)}
                         >
-                            <GripVertical size={14} />
+                            <GripVertical size={isMobile ? 18 : 14} />
                         </div>
 
                         {/* Remove */}
                         <button
                             onClick={(e) => { e.stopPropagation(); onRemove(); }}
-                            className="w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-red-500/80 hover:border-red-500/50 transition-all shadow-lg"
+                            className={`rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-red-500/80 hover:border-red-500/50 transition-all shadow-lg ${isMobile ? 'w-10 h-10' : 'w-8 h-8'}`}
                         >
-                            <Trash2 size={14} />
-                        </button>
-
-                        {/* Duplicate */}
-                        <button
-                            onClick={(e) => { e.stopPropagation(); onDuplicate(); }}
-                            className="w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-blue-500/80 hover:border-blue-500/50 transition-all shadow-lg"
-                        >
-                            <Copy size={14} />
+                            <Trash2 size={isMobile ? 16 : 14} />
                         </button>
                     </div>
 
                     {/* Index Number (Watermark Style) */}
-                    <div className="absolute bottom-4 left-4 pointer-events-none mix-blend-difference">
-                        <span className="font-serif text-6xl font-bold text-white/80 leading-none tracking-tighter">
+                    <div className="absolute bottom-2 left-3 pointer-events-none mix-blend-difference">
+                        <span className={`font-serif font-bold text-white/80 leading-none tracking-tighter ${isMobile ? 'text-4xl' : 'text-6xl'}`}>
                             {(index + 1).toString().padStart(2, '0')}
                         </span>
                     </div>
                 </div>
 
                 {/* Reflection / Grounding Shadow */}
-                <div className={`absolute -bottom-4 left-4 right-4 h-4 bg-black/50 blur-xl rounded-[100%] transition-opacity duration-500 ${isHovered || isDragging ? 'opacity-100' : 'opacity-0'}`} />
+                <div className={`absolute -bottom-2 left-4 right-4 h-4 bg-black/50 blur-xl rounded-[100%] transition-opacity duration-500 ${isHovered || isDragging || isMobile ? 'opacity-100' : 'opacity-0'}`} />
             </div>
         </motion.div>
     );
@@ -271,10 +261,10 @@ export const VisualBuilder: React.FC<Props> = ({ slides, onChange, isMobile, add
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[50vh] bg-rose-500/5 blur-[120px] rounded-full pointer-events-none" />
 
             {/* Scrollable Canvas (The Darkroom Grid) */}
-            <div className="relative flex-1 w-full overflow-y-auto overflow-x-hidden p-4 pt-16 md:p-12 md:pt-20 custom-scrollbar">
+            <div className={`relative flex-1 w-full overflow-y-auto overflow-x-hidden p-4 pt-16 md:p-12 md:pt-20 custom-scrollbar ${isMobile ? 'px-3 pb-32' : ''}`}>
                 <div
                     ref={gridRef}
-                    className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-12 pb-24"
+                    className={`grid gap-4 md:gap-12 pb-24 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 lg:grid-cols-3'}`}
                 >
                     <AnimatePresence initial={false}>
                         {slides.map((slide, index) => (
@@ -300,15 +290,15 @@ export const VisualBuilder: React.FC<Props> = ({ slides, onChange, isMobile, add
                         <div className="w-full">
                             <div
                                 {...getRootProps()}
-                                className="w-full aspect-[4/3] rounded-sm border-2 border-dashed border-white/5 hover:border-rose-500/30 hover:bg-rose-500/5 cursor-pointer transition-all duration-700 flex flex-col items-center justify-center group/add"
+                                className="w-full aspect-[4/3] rounded-2xl border-2 border-dashed border-white/5 hover:border-rose-500/30 hover:bg-rose-500/5 cursor-pointer transition-all duration-700 flex flex-col items-center justify-center group/add"
                             >
                                 <input {...getInputProps()} />
                                 <div className="flex flex-col items-center">
-                                    <div className="w-16 h-16 rounded-full border border-dashed border-white/20 flex items-center justify-center text-white/20 group-hover/add:border-rose-500/50 group-hover/add:text-rose-500 group-hover/add:bg-rose-500/10 transition-all duration-500 mb-2">
-                                        <Plus size={24} />
+                                    <div className={`rounded-full border border-dashed border-white/20 flex items-center justify-center text-white/20 group-hover/add:border-rose-500/50 group-hover/add:text-rose-500 group-hover/add:bg-rose-500/10 transition-all duration-500 mb-2 ${isMobile ? 'w-12 h-12' : 'w-16 h-16'}`}>
+                                        <Plus size={isMobile ? 20 : 24} />
                                     </div>
-                                    <span className="font-serif text-white/20 group-hover/add:text-rose-500/80 tracking-widest text-xs uppercase transition-colors duration-500 rotate-90 whitespace-nowrap">
-                                        Tambah Frame
+                                    <span className="font-serif text-white/20 group-hover/add:text-rose-500/80 tracking-widest text-[10px] uppercase transition-colors duration-500 whitespace-nowrap">
+                                        Frame
                                     </span>
                                 </div>
                             </div>
@@ -321,28 +311,26 @@ export const VisualBuilder: React.FC<Props> = ({ slides, onChange, isMobile, add
                     <div {...getRootProps()} className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer group/empty">
                         <input {...getInputProps()} />
                         <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.2 }}
                             className="relative flex flex-col items-center"
                         >
-                            <div className="w-24 h-24 rounded-full bg-gradient-to-b from-white/5 to-transparent border border-white/10 flex items-center justify-center mb-6 group-hover/empty:scale-105 group-hover/empty:border-rose-500/30 transition-all duration-700 shadow-2xl">
-                                <Sparkles className="text-white/20 group-hover/empty:text-rose-500 transition-colors duration-500" size={32} />
+                            <div className="w-20 h-20 md:w-32 md:h-32 rounded-full bg-gradient-to-b from-white/5 to-transparent border border-white/10 flex items-center justify-center mb-6 group-hover/empty:scale-105 group-hover/empty:border-rose-500/30 transition-all duration-700 shadow-2xl">
+                                <Plus size={isMobile ? 32 : 48} className="text-white/20 group-hover/empty:text-rose-500 transition-colors duration-500" />
                             </div>
-                            <h3 className="text-3xl md:text-5xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20 mb-3 text-center">
-                                Mulai Ceritamu
+                            <h3 className="text-2xl md:text-5xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20 mb-2 px-4 text-center">
+                                Visual Narrative
                             </h3>
-                            <div className="flex items-center gap-2 text-white/30 text-xs font-mono uppercase tracking-[0.2em] group-hover/empty:text-rose-500/50 transition-colors">
-                                <span className="w-8 h-px bg-current" />
-                                <span>Tarik & Lepas Media</span>
-                                <span className="w-8 h-px bg-current" />
+                            <div className="flex items-center gap-2 text-white/20 text-[10px] uppercase tracking-[0.2em] group-hover/empty:text-rose-500/50 transition-colors">
+                                <span>Muat Media</span>
                             </div>
                         </motion.div>
                     </div>
                 )}
             </div>
             {/* UNIFIED VISION CONTROL CENTER */}
-            <div className="h-20 shrink-0 flex flex-col items-center justify-center bg-[#0a0a0a] border-t border-white/5 z-20 px-8 relative">
+            <div className={`shrink-0 flex flex-col items-center justify-center bg-[#0a0a0a] border-t border-white/5 z-20 px-8 relative ${isMobile ? 'h-14' : 'h-20'}`}>
                 {/* Processing Progress Line */}
                 {isProcessing && (
                     <div className="absolute top-0 left-0 w-full h-[2px] bg-white/5 overflow-hidden">
@@ -352,13 +340,17 @@ export const VisualBuilder: React.FC<Props> = ({ slides, onChange, isMobile, add
 
                 <div className="flex items-center justify-between w-full max-w-6xl">
                     {/* Status Section */}
-                    <div className="flex items-center gap-6 text-[10px] font-mono tracking-widest text-white/20 uppercase">
+                    <div className="flex items-center gap-3 md:gap-6 text-[10px] font-mono tracking-widest text-white/20 uppercase">
                         <span className="flex items-center gap-2">
                             <span className={`w-1.5 h-1.5 rounded-full ${slides.length >= 10 ? 'bg-red-500' : 'bg-rose-500/50'}`} />
-                            {slides.length}/10 EKSPOSUR
+                            {slides.length}/10 {isMobile ? '' : 'EKSPOSUR'}
                         </span>
-                        <span className="w-px h-3 bg-white/10" />
-                        <span className="truncate">{isProcessing ? processingStatus : 'SISTEM SIAP'}</span>
+                        {!isMobile && <span className="w-px h-3 bg-white/10" />}
+                        {!isMobile ? (
+                            <span className="truncate">{isProcessing ? processingStatus : 'SISTEM SIAP'}</span>
+                        ) : (
+                            isProcessing && <span className="truncate text-[8px]">{processingStatus}</span>
+                        )}
                     </div>
 
                     {/* Quick Actions / Tips */}

@@ -39,60 +39,60 @@ export const StudioHeader: React.FC<StudioHeaderProps> = ({
             <motion.div
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="fixed top-0 left-0 right-0 z-40 px-3 py-2 bg-black/60 backdrop-blur-xl border-b border-white/5 pt-safe"
+                className="fixed top-0 left-0 right-0 z-40 px-3 py-1 bg-black/40 backdrop-blur-xl border-b border-white/5 pt-safe"
             >
-                <div className="flex items-center justify-between">
-                    {/* kiri: balik & draft */}
-                    <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between h-10">
+                    {/* kiri: balik & draft (lebih kecil & simpel) */}
+                    <div className="flex items-center gap-1.5">
                         <motion.button
                             whileTap={{ scale: 0.9 }}
                             onClick={onBack}
-                            className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 text-gray-400 active:bg-white/10 transition-colors"
+                            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-gray-400 active:bg-white/10 transition-colors"
                         >
-                            <ArrowLeft size={18} strokeWidth={1.5} />
+                            <ArrowLeft size={16} strokeWidth={1.5} />
                         </motion.button>
                         <motion.button
                             whileTap={{ scale: 0.9 }}
                             onClick={onToggleDrafts}
-                            className={`w-9 h-9 flex items-center justify-center rounded-full transition-colors ${showDrafts ? 'bg-rose-500 text-white' : 'bg-white/5 text-gray-400'}`}
+                            className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${showDrafts ? 'bg-rose-500 text-white' : 'bg-white/5 text-gray-400'}`}
                         >
-                            <Layout size={16} strokeWidth={1.5} />
+                            <Layout size={14} strokeWidth={1.5} />
                         </motion.button>
                     </div>
 
-                    {/* tengah: judul (dipotong kalo panjang) */}
-                    <div className="flex-1 mx-3 flex items-center justify-center gap-2">
+                    {/* tengah: judul (minimalis) */}
+                    <div className="flex-1 mx-2 flex items-center justify-center gap-1.5 overflow-hidden">
                         {draftStatus !== 'idle' && (
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                className="flex items-center gap-1"
+                                className="flex-shrink-0"
                             >
                                 {draftStatus === 'saving' ? (
-                                    <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
+                                    <div className="w-1 h-1 rounded-full bg-yellow-500 animate-pulse" />
                                 ) : (
-                                    <Check size={10} className="text-emerald-500" strokeWidth={3} />
+                                    <Check size={8} className="text-emerald-500" strokeWidth={4} />
                                 )}
                             </motion.div>
                         )}
-                        <span className="text-xs font-bold text-white truncate max-w-[140px]">
+                        <span className="text-[10px] font-bold text-white/80 truncate opacity-60">
                             {title || 'Tanpa Judul'}
                         </span>
                     </div>
 
-                    {/* kanan: kirim aja (action lain ada di dock) */}
+                    {/* kanan: kirim (lebih clean) */}
                     <motion.button
                         whileTap={{ scale: 0.95 }}
                         onClick={onPublish}
                         disabled={isPublishing}
-                        className="h-8 px-4 bg-white text-black rounded-full font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-transform disabled:opacity-50"
+                        className="h-7 px-3 bg-white text-black rounded-full font-black text-[9px] uppercase tracking-tighter flex items-center gap-1.5 transition-all disabled:opacity-50"
                     >
                         {isPublishing ? (
-                            <div className="w-2.5 h-2.5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                            <div className="w-2 h-2 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                         ) : (
-                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                            <div className="w-1 h-1 rounded-full bg-rose-500 animate-pulse" />
                         )}
-                        Kirim
+                        KIRIM
                     </motion.button>
                 </div>
             </motion.div>

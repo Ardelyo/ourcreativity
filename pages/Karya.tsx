@@ -855,17 +855,15 @@ export const Karya = () => {
               onClose={() => setSelectedId(null)}
               onShare={() => setShowShareModal(true)}
               renderContent={(art, showCode) => {
-                // Buat tipe kode, kita rendernya beda tergantung showCode
+                // 1. KODE: Pratinjau Interaktif atau Source Code
                 if (art.type === 'code') {
                   if (showCode) {
-                    // Tampilin tampilan kode
                     return (
-                      <div className="w-full h-full bg-[#0d1117] overflow-auto">
+                      <div className="w-full h-full bg-[#0d1117] overflow-auto custom-scrollbar">
                         <CodeViewer content={art.content} />
                       </div>
                     );
                   } else {
-                    // Tampilin pratinjau interaktif - UKURAN PENUH, TANPA SCALING
                     return (
                       <iframe
                         srcDoc={generateCodePreview(art.content, art.code_language || 'html')}
@@ -876,14 +874,17 @@ export const Karya = () => {
                       />
                     );
                   }
-                } else if (art.type === 'video') {
-                  // Video Player Full
+                }
+
+                // 2. VIDEO: Full Native Player
+                else if (art.type === 'video') {
                   return (
                     <div className="w-full h-full flex items-center justify-center bg-black">
                       <video
                         src={art.image_url}
                         controls
                         autoPlay
+                        playsInline
                         className="max-w-full max-h-full aspect-video"
                         controlsList="nodownload"
                       />
@@ -891,10 +892,70 @@ export const Karya = () => {
                   );
                 }
 
-                // Buat tipe lain, pake konten kartu standar aja
+                // 3. TEXT: Mode Baca yang Nyaman (Fixed Scroll Issue)
+                else if (art.type === 'text') {
+                  return (
+                    <div className="w-full h-full bg-[#f8f9fa] text-gray-900 overflow-y-auto overscroll-contain">
+                      <div className="max-w-prose mx-auto p-6 md:p-8 pt-24 pb-32">
+                        {/* Header Judul khusus Text Mode biar kerasa kayak artikel */}
+                        <div className="mb-8 border-b border-gray-200 pb-6">
+                          <h1 className="text-3xl font-serif font-bold text-gray-900 mb-2">{art.title}</h1>
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <span className="font-medium">Oleh {art.author}</span>
+                            <span>•</span>
+                            <span>{new Date(art.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                          </div>
+                        </div>
+                        <div
+                          className="prose prose-lg prose-gray max-w-none font-serif leading-loose 
+                          prose-headings:font-bold prose-headings:text-gray-900 
+                          prose-p:text-gray-800 prose-p:leading-8
+                          prose-blockquote:border-l-4 prose-blockquote:border-rose-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:bg-gray-100 prose-blockquote:py-2 prose-blockquote:pr-2 rounded-r-lg
+                          prose-a:text-rose-600 prose-a:no-underline hover:prose-a:underline
+                          prose-img:rounded-xl prose-img:shadow-lg"
+                          dangerouslySetInnerHTML={{ __html: art.content }}
+                        />
+                      </div>
+                    </div>
+                  );
+                }
+
+                // 4. SLIDE / CAROUSEL: Swipeable Gallery (Fixed Swipe Issue)
+                else if (art.type === 'slide' || (art.slides && art.slides.length > 1)) {
+                  return (
+                    <div className="w-full h-full bg-black flex items-center justify-center relative group/mobile-carousel">
+                      <div className="w-full h-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar items-center">
+                        {art.slides.map((slide: any, idx: number) => (
+                          <div key={idx} className="min-w-full h-full flex items-center justify-center snap-center p-0 relative">
+                            <img
+                              src={slide.content}
+                              alt={`Slide ${idx + 1}`}
+                              className="max-w-full max-h-full object-contain"
+                              loading={idx === 0 ? "eager" : "lazy"}
+                            />
+                            {/* Slide Counter Overlay */}
+                            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur text-white text-xs px-3 py-1 rounded-full border border-white/10">
+                              {idx + 1} / {art.slides.length}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Hint Gesture kalau slide pertama */}
+                      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 pointer-events-none opacity-50 text-white text-[10px] animate-pulse">
+                        Geser untuk lihat slide
+                      </div>
+                    </div>
+                  );
+                }
+
+                // 5. DEFAULT: Image / Meme (Single)
                 return (
-                  <div className="w-full h-full flex items-center justify-center bg-black">
-                    {renderCardContent(art, false)}
+                  <div className="w-full h-full flex items-center justify-center bg-black p-0 md:p-4">
+                    <img
+                      src={art.image_url || art.slides?.[0]?.content || art.thumbnail_url}
+                      alt={art.title}
+                      className="max-w-full max-h-full object-contain"
+                    />
                   </div>
                 );
               }}

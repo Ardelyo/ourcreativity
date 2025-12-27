@@ -100,7 +100,14 @@ export const Graphics = () => {
                         <div className="flex items-start justify-between mb-4 border-b border-purple-500/30 pb-4">
                             <div className="flex flex-col">
                                 <span className="font-mono text-purple-400 text-sm">[ DIVISI_01: DESAIN GRAFIS ]</span>
-                                <span className="font-mono text-purple-500/60 text-[10px] mt-1 tracking-widest">IG: @ocdesaingrafis</span>
+                                <a
+                                    href="https://instagram.com/ocdesaingrafis"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="font-mono text-purple-500/60 text-[10px] mt-1 tracking-widest hover:text-purple-400 transition-colors cursor-pointer"
+                                >
+                                    IG: @ocdesaingrafis
+                                </a>
                             </div>
                             <img src="/logo-oc-desain.jpg" alt="OC Design Logo" className="w-12 h-12 rounded-full border border-purple-500/50 object-cover" />
                         </div>

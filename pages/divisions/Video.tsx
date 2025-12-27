@@ -147,9 +147,14 @@ export const VideoPage = () => {
                                     <h1 className="text-3xl md:text-6xl font-black text-white text-center tracking-tighter mb-2">
                                         DIVISI VIDEO
                                     </h1>
-                                    <p className="text-orange-500/80 font-mono text-[10px] tracking-widest uppercase mb-4">
+                                    <a
+                                        href="https://instagram.com/ocvideoediting"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-orange-500/80 font-mono text-[10px] tracking-widest uppercase mb-4 hover:text-orange-500 transition-colors cursor-pointer"
+                                    >
                                         IG: @ocvideoediting
-                                    </p>
+                                    </a>
                                     <p className="text-orange-500 font-mono text-[10px] tracking-[0.5em] uppercase border border-orange-500/30 px-4 py-1 rounded-full">
                                         GULIR UNTUK MEMULAI
                                     </p>

@@ -6,18 +6,15 @@ import { MatrixRain, GlitchText } from '../../components/effects';
 
 // Data proyek
 const projects = [
-    { title: "Proyek: NEBULA", category: "Web App", status: "Deployed", desc: "Platform komunitas next-gen dengan arsitektur mikroservis React & Node.js yang skalabel.", id: "0X4F2A", tech: ["React", "Node.js", "GraphQL"] },
-    { title: "CyberGuard", category: "Keamanan", status: "Aktif", desc: "Scanner kerentanan otomatis untuk jaringan lokal dengan pelaporan realtime.", id: "0X9B7C", tech: ["Python", "Rust", "Kali"] },
-    { title: "AlgoVisualizer", category: "Edukasi", status: "Beta", desc: "Visualisasi algoritma sorting interaktif untuk pembelajaran struktur data.", id: "0X1E3D", tech: ["TypeScript", "Canvas API"] },
-    { title: "Bot: Sentinel", category: "Otomasi", status: "Online", desc: "Bot moderasi Discord dengan kapabilitas AI untuk deteksi spam dan toxicity.", id: "0X5C8F", tech: ["Discord.js", "OpenAI API"] },
+    { title: "ardelyo/ourcreativity", category: "Core Platform", status: "Aktif", desc: "Sistem pusat komunitas kreatif dengan arsitektur modern berorientasi performa.", id: "0XPROD", tech: ["React", "Supabase", "TypeScript"] },
 ];
 
 // Data statistik
 const stats = [
-    { label: "Baris Kode", value: "150K+", icon: Code },
-    { label: "Proyek Aktif", value: "24", icon: Layers },
-    { label: "Kontributor", value: "50+", icon: Globe },
-    { label: "Waktu Aktif", value: "99.9%", icon: Server },
+    { label: "Baris Kode", value: "15 Ribu", icon: Code },
+    { label: "Proyek Aktif", value: "1", icon: Layers },
+    { label: "Members", value: "125", icon: Globe },
+    { label: "Waktu Aktif", value: "78%", icon: Server },
 ];
 
 // Data langkah kolaborasi
@@ -80,9 +77,14 @@ export const Coding = () => {
                         Beradaptasi <span className="text-gray-500">atau</span> Mati.
                     </p>
 
-                    <p className="text-xs font-mono text-green-500/60 mb-8 tracking-widest uppercase">
+                    <a
+                        href="https://instagram.com/oc.edisicoding"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-mono text-green-500/60 mb-8 tracking-widest uppercase hover:text-green-500 transition-colors cursor-pointer"
+                    >
                         Instagram: @oc.edisicoding
-                    </p>
+                    </a>
 
                     <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed text-sm md:text-base">
                         Divisi elit untuk arsitek digital, insinyur perangkat lunak, dan pemecah masalah.
@@ -197,11 +199,8 @@ export const Coding = () => {
                             <h2 className="text-3xl md:text-4xl font-bold text-white mb-2 font-mono">
                                 <span className="text-green-500">git</span> log --oneline
                             </h2>
-                            <p className="text-gray-500 text-sm">Proyek unggulan yang dikembangkan oleh anggota.</p>
+                            <p className="text-gray-500 text-sm">Repositori inti yang dikembangkan oleh tim.</p>
                         </div>
-                        <button className="text-sm font-mono text-green-500 hover:text-white transition-colors flex items-center gap-2 border-b border-green-500/30 pb-1">
-                            LIHAT SEMUA REPOSITORY <ArrowLeft className="rotate-180" size={14} />
-                        </button>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

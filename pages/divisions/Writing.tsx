@@ -91,7 +91,14 @@ export const Writing = () => {
                             >
                                 <span className="w-12 h-[1px] bg-[#1a1a1a]/60"></span>
                                 <span>Selamat Datang di</span>
-                                <span className="text-[#1a1a1a]/40 text-xs">IG: @ocedisikaryatulis</span>
+                                <a
+                                    href="https://instagram.com/ocedisikaryatulis"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[#1a1a1a]/40 text-xs hover:text-[#1a1a1a] transition-colors cursor-pointer"
+                                >
+                                    IG: @ocedisikaryatulis
+                                </a>
                             </motion.div>
                         </div>
 

@@ -1,13 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowLeft, ArrowRight, Check, Upload, Globe, FileText } from 'lucide-react';
+import { X, ArrowLeft, ArrowRight, Check, Upload, Globe, FileText, Video } from 'lucide-react';
 
 import { Medium, CreationData, SlideContent, WorkType } from './types';
 import { MediumSelector } from './MediumSelector';
-import { CodeEditor, TextEditor, DocumentUploader } from './editors';
+import { CodeEditor, TextEditor } from './editors';
 import { IframeSandbox } from './sandbox/IframeSandbox';
 import { PyodideSandbox } from './sandbox/PyodideSandbox';
-import { WebsiteEmbed } from './embed/WebsiteEmbed';
 import { SlideBuilder } from './carousel/SlideBuilder';
 import { supabase } from '../../lib/supabase';
 
@@ -31,7 +30,7 @@ const divisions = [
 export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) => {
     const [step, setStep] = useState<Step>('selection');
     const [medium, setMedium] = useState<Medium | null>(null);
-    const [subMode, setSubMode] = useState<'default' | 'embed' | 'document' | 'slide'>('default');
+    const [subMode, setSubMode] = useState<'default' | 'slide'>('default');
 
     // Form Data State
     const [formData, setFormData] = useState<Partial<CreationData>>({
@@ -42,8 +41,7 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
         tags: [],
         content: '',
         slides: [],
-        code_language: 'javascript',
-        embed_url: ''
+        code_language: 'javascript'
     });
 
     // Execution State
@@ -72,8 +70,8 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
         // Prepare final data based on medium
         let finalType = 'image';
         if (medium === 'kode') finalType = 'code';
-        if (medium === 'narasi') finalType = subMode === 'document' ? 'document' : 'text';
-        if (medium === 'sinema') finalType = subMode === 'embed' ? 'embed' : 'video';
+        if (medium === 'narasi') finalType = 'text';
+        if (medium === 'sinema') finalType = 'video';
         if (medium === 'visual' && (formData.slides && formData.slides.length > 1)) finalType = 'slide';
 
         onPublish({
@@ -175,9 +173,9 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
             } else if (medium === 'kode') {
                 finalType = 'code';
             } else if (medium === 'narasi') {
-                finalType = subMode === 'document' ? 'document' : 'text';
+                finalType = 'text';
             } else if (medium === 'sinema') {
-                finalType = subMode === 'embed' ? 'embed' : 'video';
+                finalType = 'video';
             }
 
             // Fallback for image_url if it's a slide work
@@ -254,27 +252,6 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                                 </div>
                             </div>
 
-                            {/* Sub-mode Toggles inside Editor */}
-                            {step === 'editor' && (
-                                <div className="flex gap-2">
-                                    {medium === 'sinema' && (
-                                        <button
-                                            onClick={() => setSubMode(subMode === 'embed' ? 'default' : 'embed')}
-                                            className={`px-3 py-1 rounded-full text-xs font-bold border transition-all flex items-center gap-1 ${subMode === 'embed' ? 'bg-white text-black border-white' : 'border-white/20 text-gray-400'}`}
-                                        >
-                                            <Globe size={12} /> {subMode === 'embed' ? 'Embedding Mode' : 'Embed Website'}
-                                        </button>
-                                    )}
-                                    {medium === 'narasi' && (
-                                        <button
-                                            onClick={() => setSubMode(subMode === 'document' ? 'default' : 'document')}
-                                            className={`px-3 py-1 rounded-full text-xs font-bold border transition-all flex items-center gap-1 ${subMode === 'document' ? 'bg-white text-black border-white' : 'border-white/20 text-gray-400'}`}
-                                        >
-                                            <FileText size={12} /> {subMode === 'document' ? 'Upload Doc' : 'Upload Document'}
-                                        </button>
-                                    )}
-                                </div>
-                            )}
 
                             <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white">
                                 <X size={20} />
@@ -299,7 +276,6 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                                             };
                                             const m = map[type] || 'visual';
                                             handleMediumSelect(m);
-                                            if (type === 'document') setSubMode('document');
                                         }}
                                     />
                                 </div>
@@ -325,21 +301,11 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
 
                                         {/* --- NARASI EDITOR --- */}
                                         {medium === 'narasi' && (
-                                            subMode === 'document' ? (
-                                                <DocumentUploader
-                                                    content={formData.content || ''}
-                                                    onChange={(html) => {
-                                                        setFormData(prev => ({ ...prev, content: html }));
-                                                        setSubMode('default');
-                                                    }}
-                                                />
-                                            ) : (
-                                                <TextEditor
-                                                    content={formData.content || ''}
-                                                    onChange={(html) => setFormData(prev => ({ ...prev, content: html }))}
-                                                    className="h-full"
-                                                />
-                                            )
+                                            <TextEditor
+                                                content={formData.content || ''}
+                                                onChange={(html) => setFormData(prev => ({ ...prev, content: html }))}
+                                                className="h-full"
+                                            />
                                         )}
 
                                         {/* --- VISUAL (SLIDES/IMAGE) EDITOR --- */}
@@ -393,46 +359,59 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                                             </div>
                                         )}
 
-                                        {/* --- SINEMA / EMBED --- */}
+                                        {/* --- SINEMA / YOUTUBE EMBED --- */}
                                         {medium === 'sinema' && (
-                                            subMode === 'embed' ? (
-                                                <div className="h-full flex flex-col gap-4">
-                                                    <input
-                                                        type="url"
-                                                        placeholder="https://example.com"
-                                                        value={formData.embed_url || ''}
-                                                        onChange={(e) => setFormData(prev => ({ ...prev, embed_url: e.target.value }))}
-                                                        className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-white/30"
-                                                    />
-                                                    <div className="flex-1">
-                                                        <WebsiteEmbed url={formData.embed_url || ''} />
+                                            <div className="h-full flex flex-col gap-6">
+                                                <div className="space-y-2">
+                                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">YouTube Link</label>
+                                                    <div className="relative group">
+                                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                            <Globe size={18} className="text-gray-500 group-focus-within:text-rose-500 transition-colors" />
+                                                        </div>
+                                                        <input
+                                                            type="url"
+                                                            placeholder="https://www.youtube.com/watch?v=..."
+                                                            value={formData.content || ''}
+                                                            onChange={(e) => {
+                                                                const val = e.target.value;
+                                                                setFormData(prev => ({ ...prev, content: val }));
+
+                                                                // Extract YouTube ID for preview if possible
+                                                                if (val.includes('youtube.com') || val.includes('youtu.be')) {
+                                                                    const videoId = val.split('v=')[1]?.split('&')[0] || val.split('/').pop();
+                                                                    if (videoId) {
+                                                                        setFormData(prev => ({ ...prev, image: `https://www.youtube.com/embed/${videoId}` }));
+                                                                    }
+                                                                } else {
+                                                                    setFormData(prev => ({ ...prev, image: '' }));
+                                                                }
+                                                            }}
+                                                            className="w-full bg-[#111] border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white focus:outline-none focus:border-rose-500/50 transition-all text-lg font-medium"
+                                                        />
                                                     </div>
+                                                    <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest pl-1">Mendukung link video, shorts, dan mobile.</p>
                                                 </div>
-                                            ) : (
-                                                <div
-                                                    onClick={() => fileInputRef.current?.click()}
-                                                    className={`h-full rounded-3xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center cursor-pointer hover:border-white/30 hover:bg-white/5 transition-all group relative overflow-hidden`}
-                                                >
-                                                    {formData.image ? (
-                                                        <video src={formData.image} controls className="max-h-full max-w-full" />
+
+                                                <div className="flex-1 rounded-3xl border border-white/5 bg-black/40 overflow-hidden relative group">
+                                                    {formData.content && formData.image?.includes('youtube.com/embed') ? (
+                                                        <iframe
+                                                            src={formData.image}
+                                                            className="w-full h-full"
+                                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                            allowFullScreen
+                                                            title="YouTube Preview"
+                                                        />
                                                     ) : (
-                                                        <div className="text-center">
-                                                            <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500">
-                                                                <Upload className="text-gray-400 group-hover:text-white" size={32} />
+                                                        <div className="w-full h-full flex flex-col items-center justify-center text-center p-8">
+                                                            <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                                                                <Video className="text-gray-600 group-hover:text-gray-400" size={32} />
                                                             </div>
-                                                            <h3 className="text-xl font-bold text-white mb-2">Upload Video</h3>
-                                                            <p className="text-gray-500 text-sm">MP4, WebM or Ogg</p>
+                                                            <h4 className="text-white font-bold mb-2">Pratinjau Video</h4>
+                                                            <p className="text-gray-500 text-sm max-w-xs">Masukkan link YouTube di atas untuk melihat cuplikan karyamu.</p>
                                                         </div>
                                                     )}
-                                                    <input
-                                                        type="file"
-                                                        ref={fileInputRef}
-                                                        onChange={handleImageUpload}
-                                                        accept="video/*"
-                                                        className="hidden"
-                                                    />
                                                 </div>
-                                            )
+                                            </div>
                                         )}
                                     </div>
 

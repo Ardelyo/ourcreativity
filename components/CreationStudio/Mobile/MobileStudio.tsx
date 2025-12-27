@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Rocket, Layout, Settings, Eye, Code, Type, Image as ImageIcon, Video, Smartphone, ChevronRight, ChevronLeft, Upload, X, Check } from 'lucide-react';
+import { ArrowLeft, Rocket, Layout, Settings, Eye, Code, Type, Image as ImageIcon, Video, Smartphone, ChevronRight, ChevronLeft, Upload, X, Check, Globe } from 'lucide-react';
 import { TextEditor } from '../editors/TextEditor';
 import { VisualBuilder } from '../carousel/VisualBuilder';
 import { MobileEditorLayout } from '../ControlCenter/MobileEditorLayout';
@@ -180,18 +180,14 @@ export const MobileStudio: React.FC<MobileStudioProps> = ({
                             />
                         </div>
 
-                        {videoPreview ? (
+                        {videoPreview && videoPreview.includes('youtube.com/embed') ? (
                             <div className="w-full max-w-sm aspect-video bg-[#0a0a0a] rounded-xl overflow-hidden border border-white/5 relative group shadow-2xl shadow-black">
-                                {videoPreview.includes('youtube.com/embed') ? (
-                                    <iframe
-                                        src={videoPreview}
-                                        className="w-full h-full"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                    />
-                                ) : (
-                                    <video src={videoPreview} controls className="w-full h-full object-contain" />
-                                )}
+                                <iframe
+                                    src={videoPreview}
+                                    className="w-full h-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                />
                                 <button
                                     onClick={() => { setVideoPreview(null); setContent(''); }}
                                     className="absolute top-3 right-3 p-2 bg-black/50 backdrop-blur-md rounded-full text-white/70 hover:text-white hover:bg-black/70 transition-all border border-white/5"
@@ -200,51 +196,33 @@ export const MobileStudio: React.FC<MobileStudioProps> = ({
                                 </button>
                             </div>
                         ) : (
-                            <div className="w-full max-w-xs flex flex-col gap-4">
-                                {/* Upload Box */}
-                                <div
-                                    onClick={() => videoInputRef.current?.click()}
-                                    className="w-full h-32 rounded-2xl bg-[#0a0a0a] border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 group cursor-pointer active:scale-95 transition-all hover:bg-[#111] hover:border-white/20"
-                                >
-                                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                                        <Upload size={18} className="text-white/30 group-hover:text-white" />
-                                    </div>
-                                    <div className="space-y-0.5">
-                                        <p className="text-white/70 font-medium text-xs">Upload File</p>
-                                        <p className="text-white/20 text-[9px] uppercase tracking-widest font-bold">Max 50MB</p>
-                                    </div>
-                                    <input
-                                        ref={videoInputRef}
-                                        type="file"
-                                        accept="video/*"
-                                        onChange={handleVideoSelect}
-                                        className="hidden"
-                                    />
+                            <div className="w-full max-w-xs flex flex-col gap-6">
+                                <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-2">
+                                    <Video size={32} className="text-white/20" />
                                 </div>
-
-                                <div className="flex items-center gap-3">
-                                    <div className="h-[1px] flex-1 bg-white/5" />
-                                    <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest">Atau</span>
-                                    <div className="h-[1px] flex-1 bg-white/5" />
-                                </div>
-
-                                {/* Youtube Input */}
-                                <div className="relative">
-                                    <input
-                                        placeholder="Tempel link YouTube..."
-                                        onChange={handleYoutubeInput}
-                                        className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder:text-white/20 outline-none focus:border-rose-500/50 transition-all text-center"
-                                    />
+                                <div className="space-y-4">
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <Globe size={14} className="text-white/20" />
+                                        </div>
+                                        <input
+                                            placeholder="Tempel link YouTube..."
+                                            value={content}
+                                            onChange={handleYoutubeInput}
+                                            className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl pl-10 pr-4 py-4 text-xs text-white placeholder:text-white/20 outline-none focus:border-rose-500/50 transition-all"
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-white/30 font-mono uppercase tracking-widest leading-relaxed">Masukkan tautan untuk pratinjau</p>
                                 </div>
                             </div>
                         )}
 
-                        <div className="mt-8 px-5 py-3 bg-[#0a0a0a] rounded-xl border border-white/5 max-w-xs">
-                            <p className="text-[9px] font-bold text-rose-500 uppercase tracking-widest text-left flex items-center gap-2 mb-1">
+                        <div className="mt-12 px-5 py-4 bg-[#0a0a0a] rounded-2xl border border-white/5 max-w-xs">
+                            <p className="text-[9px] font-bold text-rose-500 uppercase tracking-widest text-left flex items-center gap-2 mb-2">
                                 <span className="w-1 h-1 bg-rose-500 rounded-full" /> Info
                             </p>
-                            <p className="text-white/40 text-[10px] leading-relaxed text-left font-mono">
-                                Mendukung upload file (Max 50MB) atau embed YouTube.
+                            <p className="text-white/40 text-[10px] leading-relaxed text-left font-sans">
+                                Hanya mendukung embed YouTube. Video akan ditampilkan langsung di dalam galeri OurCreativity.
                             </p>
                         </div>
                     </div>
@@ -261,7 +239,7 @@ export const MobileStudio: React.FC<MobileStudioProps> = ({
     return (
         <div className="fixed inset-0 z-50 bg-black flex flex-col overflow-hidden select-none font-sans" >
             {/* Zen Background - Pure Void */}
-            < div className="absolute inset-0 bg-black pointer-events-none" />
+            <div className="absolute inset-0 bg-black pointer-events-none" />
 
             {/* Floating Zen Header */}
             {mode !== 'code' && (

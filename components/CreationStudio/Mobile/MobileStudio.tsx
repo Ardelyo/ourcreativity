@@ -160,9 +160,9 @@ export const MobileStudio: React.FC<MobileStudioProps> = ({
                     >
                         <div className="flex bg-[#111]/80 backdrop-blur-2xl border border-white/10 p-1.5 rounded-full shadow-2xl flex items-center justify-between">
                             <div className="flex items-center gap-1">
-                                <DockButton active={mode === 'text'} onClick={() => switchMode('text')} icon={<Type size={18} />} />
-                                <DockButton active={(mode as any) === 'image' || (mode as any) === 'slide'} onClick={() => switchMode('image')} icon={<ImageIcon size={18} />} />
-                                <DockButton active={mode === 'code'} onClick={() => switchMode('code')} icon={<Code size={18} />} />
+                                <DockButton active={(mode as string) === 'text'} onClick={() => switchMode('text')} icon={<Type size={18} />} />
+                                <DockButton active={(mode as string) === 'image' || (mode as string) === 'slide' || (mode as string) === 'meme'} onClick={() => switchMode('image')} icon={<ImageIcon size={18} />} />
+                                <DockButton active={(mode as string) === 'code'} onClick={() => switchMode('code')} icon={<Code size={18} />} />
                                 <DockButton active={mode === 'video'} onClick={() => switchMode('video')} icon={<Video size={18} />} />
                             </div>
                             <motion.button

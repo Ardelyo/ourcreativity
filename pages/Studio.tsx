@@ -855,29 +855,30 @@ export const Studio = () => {
                     )}
                 </AnimatePresence>
             </div>
-            );
+        </div>
+    );
 };
 
-            const MetaField = ({label, value, onChange, isTextArea = false, placeholder = "", required = false}: any) => (
-            <div className="space-y-2">
-                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
-                    {label}
-                    {required && <span className="text-rose-500 font-bold lowercase">Wajib</span>}
-                </label>
-                {isTextArea ? (
-                    <textarea
-                        value={value}
-                        onChange={e => onChange(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 focus:bg-white/10 transition-all h-24 resize-none text-sm leading-relaxed text-gray-300 focus:text-white"
-                        placeholder={placeholder}
-                    />
-                ) : (
-                    <input
-                        value={value}
-                        onChange={e => onChange(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 focus:bg-white/10 transition-all text-sm text-gray-300 focus:text-white"
-                        placeholder={placeholder}
-                    />
-                )}
-            </div>
-            );
+const MetaField = ({ label, value, onChange, isTextArea = false, placeholder = "", required = false }: any) => (
+    <div className="space-y-2">
+        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
+            {label}
+            {required && <span className="text-rose-500 font-bold lowercase">Wajib</span>}
+        </label>
+        {isTextArea ? (
+            <textarea
+                value={value}
+                onChange={e => onChange(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 focus:bg-white/10 transition-all h-24 resize-none text-sm leading-relaxed text-gray-300 focus:text-white"
+                placeholder={placeholder}
+            />
+        ) : (
+            <input
+                value={value}
+                onChange={e => onChange(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-white/30 focus:bg-white/10 transition-all text-sm text-gray-300 focus:text-white"
+                placeholder={placeholder}
+            />
+        )}
+    </div>
+);

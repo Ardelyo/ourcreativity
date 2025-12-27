@@ -30,33 +30,86 @@ interface MobileStudioProps {
     isTyping: boolean;
     setIsTyping: (val: boolean) => void;
     addLog: (msg: string, type: any) => void;
+    setMediaFile?: (file: File | null) => void;
+    setMediaPreview?: (val: string | null) => void;
 }
+
+const DockButton = ({ active, onClick, icon }: { active: boolean, onClick: () => void, icon: React.ReactNode }) => (
+    <motion.button
+        whileTap={{ scale: 0.9 }}
+        onClick={onClick}
+        className={`w-10 h-10 flex items-center justify-center rounded-full transition-all ${active ? 'bg-white text-black' : 'text-white/40 hover:bg-white/5'}`}
+    >
+        {icon}
+    </motion.button>
+);
 
 export const MobileStudio: React.FC<MobileStudioProps> = ({
     mode, title, setTitle, content, setContent,
     codeFiles, setCodeFiles, slides, setSlides,
     draftStatus, isPublishing, onBack, onPublish,
     onToggleDrafts, onSettings, switchMode,
-    triggerRun, setTriggerRun, isTyping, setIsTyping, addLog
+    triggerRun, setTriggerRun, isTyping, setIsTyping, addLog,
+    setMediaFile, setMediaPreview: setGlobalMediaPreview
 }) => {
-    const [dockMinimized, setDockMinimized] = useState(false);
     const [videoPreview, setVideoPreview] = useState<string | null>(null);
+    const [dockMinimized, setDockMinimized] = useState(false);
     const videoInputRef = useRef<HTMLInputElement>(null);
+
+    // Sync preview with global (Studio.tsx) if provided
+    React.useEffect(() => {
+        if (setGlobalMediaPreview) {
+            setGlobalMediaPreview(videoPreview);
+        }
+    }, [videoPreview, setGlobalMediaPreview]);
+
+    // Initial load handling
+    React.useEffect(() => {
+        if (mode === 'video' && content) {
+            // Check if content is a youtube link or file url
+            if (content.includes('youtube.com') || content.includes('youtu.be')) {
+                const videoId = content.split('v=')[1]?.split('&')[0] || content.split('/').pop();
+                setVideoPreview(`https://www.youtube.com/embed/${videoId}`);
+            } else {
+                setVideoPreview(content);
+            }
+        }
+    }, [mode, content]);
 
     const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Max 100MB
-        if (file.size > 100 * 1024 * 1024) {
-            addLog('Ukuran video terlalu besar. Maksimal 100MB.', 'error');
+        // Max 50MB
+        if (file.size > 50 * 1024 * 1024) {
+            addLog('Ukuran video terlalu besar. Maksimal 50MB.', 'error');
             return;
         }
 
         const url = URL.createObjectURL(file);
         setVideoPreview(url);
-        // setContent(url); // Or however video is stored in content
+        setContent(url);
+
+        if (setMediaFile) setMediaFile(file);
+
         addLog(`Video "${file.name}" terpilih.`, 'success');
+    };
+
+    const handleYoutubeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        if (!val) return;
+
+        // Simple youtube regex or check
+        if (val.includes('youtube.com') || val.includes('youtu.be')) {
+            const videoId = val.split('v=')[1]?.split('&')[0] || val.split('/').pop();
+            if (videoId) {
+                const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                setVideoPreview(embedUrl);
+                setContent(val); // Save original link for compatibility
+                if (setMediaFile) setMediaFile(null);
+                addLog('Tautan YouTube berhasil dimuat.', 'success');
+            }
+        }
     };
 
     const renderModeContent = () => {
@@ -129,33 +182,60 @@ export const MobileStudio: React.FC<MobileStudioProps> = ({
 
                         {videoPreview ? (
                             <div className="w-full max-w-sm aspect-video bg-[#0a0a0a] rounded-xl overflow-hidden border border-white/5 relative group shadow-2xl shadow-black">
-                                <video src={videoPreview} controls className="w-full h-full object-contain" />
+                                {videoPreview.includes('youtube.com/embed') ? (
+                                    <iframe
+                                        src={videoPreview}
+                                        className="w-full h-full"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    />
+                                ) : (
+                                    <video src={videoPreview} controls className="w-full h-full object-contain" />
+                                )}
                                 <button
-                                    onClick={() => setVideoPreview(null)}
+                                    onClick={() => { setVideoPreview(null); setContent(''); }}
                                     className="absolute top-3 right-3 p-2 bg-black/50 backdrop-blur-md rounded-full text-white/70 hover:text-white hover:bg-black/70 transition-all border border-white/5"
                                 >
                                     <X size={14} />
                                 </button>
                             </div>
                         ) : (
-                            <div
-                                onClick={() => videoInputRef.current?.click()}
-                                className="w-64 h-40 rounded-2xl bg-[#0a0a0a] border border-dashed border-white/10 flex flex-col items-center justify-center gap-3 group cursor-pointer active:scale-95 transition-all hover:bg-[#111] hover:border-white/20"
-                            >
-                                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                                    <Upload size={20} className="text-white/30 group-hover:text-white" />
+                            <div className="w-full max-w-xs flex flex-col gap-4">
+                                {/* Upload Box */}
+                                <div
+                                    onClick={() => videoInputRef.current?.click()}
+                                    className="w-full h-32 rounded-2xl bg-[#0a0a0a] border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 group cursor-pointer active:scale-95 transition-all hover:bg-[#111] hover:border-white/20"
+                                >
+                                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                                        <Upload size={18} className="text-white/30 group-hover:text-white" />
+                                    </div>
+                                    <div className="space-y-0.5">
+                                        <p className="text-white/70 font-medium text-xs">Upload File</p>
+                                        <p className="text-white/20 text-[9px] uppercase tracking-widest font-bold">Max 50MB</p>
+                                    </div>
+                                    <input
+                                        ref={videoInputRef}
+                                        type="file"
+                                        accept="video/*"
+                                        onChange={handleVideoSelect}
+                                        className="hidden"
+                                    />
                                 </div>
-                                <div className="space-y-0.5">
-                                    <p className="text-white/70 font-medium text-xs">Upload Video</p>
-                                    <p className="text-white/20 text-[9px] uppercase tracking-widest font-bold">Max 100MB</p>
+
+                                <div className="flex items-center gap-3">
+                                    <div className="h-[1px] flex-1 bg-white/5" />
+                                    <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest">Atau</span>
+                                    <div className="h-[1px] flex-1 bg-white/5" />
                                 </div>
-                                <input
-                                    ref={videoInputRef}
-                                    type="file"
-                                    accept="video/*"
-                                    onChange={handleVideoSelect}
-                                    className="hidden"
-                                />
+
+                                {/* Youtube Input */}
+                                <div className="relative">
+                                    <input
+                                        placeholder="Tempel link YouTube..."
+                                        onChange={handleYoutubeInput}
+                                        className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder:text-white/20 outline-none focus:border-rose-500/50 transition-all text-center"
+                                    />
+                                </div>
                             </div>
                         )}
 
@@ -164,7 +244,7 @@ export const MobileStudio: React.FC<MobileStudioProps> = ({
                                 <span className="w-1 h-1 bg-rose-500 rounded-full" /> Info
                             </p>
                             <p className="text-white/40 text-[10px] leading-relaxed text-left font-mono">
-                                Optimalkan durasi untuk pemutaran seluler yang lancar.
+                                Mendukung upload file (Max 50MB) atau embed YouTube.
                             </p>
                         </div>
                     </div>
@@ -179,9 +259,9 @@ export const MobileStudio: React.FC<MobileStudioProps> = ({
     };
 
     return (
-        <div className="fixed inset-0 z-50 bg-black flex flex-col overflow-hidden select-none font-sans">
+        <div className="fixed inset-0 z-50 bg-black flex flex-col overflow-hidden select-none font-sans" >
             {/* Zen Background - Pure Void */}
-            <div className="absolute inset-0 bg-black pointer-events-none" />
+            < div className="absolute inset-0 bg-black pointer-events-none" />
 
             {/* Floating Zen Header */}
             {mode !== 'code' && (
@@ -258,16 +338,8 @@ export const MobileStudio: React.FC<MobileStudioProps> = ({
                     </div>
                 </motion.div>
             </AnimatePresence>
-        </div>
+        </div >
     );
 };
 
-const DockButton = ({ active, onClick, icon }: { active: boolean, onClick: () => void, icon: React.ReactNode }) => (
-    <motion.button
-        whileTap={{ scale: 0.9 }}
-        onClick={onClick}
-        className={`w-10 h-10 flex items-center justify-center rounded-full transition-all ${active ? 'bg-white text-black' : 'text-white/40 hover:bg-white/5'}`}
-    >
-        {icon}
-    </motion.button>
-);
+

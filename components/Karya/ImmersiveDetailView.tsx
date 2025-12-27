@@ -19,12 +19,13 @@ interface ImmersiveDetailViewProps {
     onCommentSubmit?: (e: React.FormEvent, content: string) => void;
     user?: any;
     isSubmittingComment?: boolean;
+    onShare?: () => void;
 }
 
 export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({
     art, onClose, renderContent, onEdit, onDelete,
     showCode = false, setShowCode,
-    comments = [], onCommentSubmit, user, isSubmittingComment = false
+    comments = [], onCommentSubmit, user, isSubmittingComment = false, onShare
 }) => {
     const controls = useAnimation();
     const [isExpanded, setIsExpanded] = useState(false);
@@ -211,7 +212,7 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({
                                 <span className="text-xs">{typeof art.comments === 'object' ? (art.comments?.[0]?.count || 0) : (art.comments || 0)}</span>
                             </button>
                             <button
-                                onClick={() => setShowShareModal(true)}
+                                onClick={() => onShare ? onShare() : setShowShareModal(true)}
                                 className="flex flex-col items-center gap-1 text-gray-400 active:text-green-500 transition-colors"
                             >
                                 <div className="p-3 bg-white/5 rounded-full"><Share2 size={22} /></div>

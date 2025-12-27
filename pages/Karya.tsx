@@ -19,6 +19,7 @@ const DIVISION_LABELS: Record<string, string> = {
 };
 import { KaryaCard } from '../components/KaryaCard';
 import { ImmersiveDetailView } from '../components/Karya/ImmersiveDetailView';
+import { ShareModal } from '../components/Karya/ShareModal';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -216,6 +217,8 @@ export const Karya = () => {
   const isMobile = useIsMobile();
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [showSourceCode, setShowSourceCode] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const carouselRef = React.useRef<HTMLDivElement>(null);
   const [filter, setFilter] = useState('all');
@@ -557,8 +560,6 @@ export const Karya = () => {
     }
   };
 
-  // State buat Ganti Tampilan Kode di Modal
-  const [showSourceCode, setShowSourceCode] = useState(false);
 
   return (
     <div className="min-h-screen pt-32 pb-20 px-4 max-w-[1600px] mx-auto relative">
@@ -852,6 +853,7 @@ export const Karya = () => {
               }}
 
               onClose={() => setSelectedId(null)}
+              onShare={() => setShowShareModal(true)}
               renderContent={(art, showCode) => {
                 // Buat tipe kode, kita rendernya beda tergantung showCode
                 if (art.type === 'code') {
@@ -1057,8 +1059,12 @@ export const Karya = () => {
                       {DIVISION_LABELS[selectedArtwork.division] || selectedArtwork.division}
                     </div>
                     <div className="flex gap-2">
-                      <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"><Share2 size={20} /></button>
-                      <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"><Download size={20} /></button>
+                      <button
+                        onClick={() => setSelectedId(null)}
+                        className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
+                      >
+                        <X size={20} />
+                      </button>
                     </div>
                   </div>
 
@@ -1095,8 +1101,12 @@ export const Karya = () => {
                       <Heart size={20} className={isLiked ? 'fill-current' : ''} />
                       {likesCount > 0 ? `${likesCount} Apresiasi` : 'Apresiasi Karya'}
                     </button>
-                    <button className="px-6 py-3 bg-white/5 text-white rounded-xl font-bold hover:bg-white/10 border border-white/10 transition-all flex items-center gap-2">
+                    <button
+                      onClick={() => setShowShareModal(true)}
+                      className="px-6 py-3 bg-white/5 text-white rounded-xl font-bold hover:bg-white/10 border border-white/10 transition-all flex items-center gap-2 active:scale-95"
+                    >
                       <Share2 size={20} />
+                      <span>Bagikan</span>
                     </button>
                   </div>
 
@@ -1178,6 +1188,14 @@ export const Karya = () => {
           )
         )}
       </AnimatePresence >
+
+      {/* Share Modal - Global for Desktop/Mobile Detail */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        art={selectedArtwork}
+        user={user}
+      />
     </div >
   );
 };

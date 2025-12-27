@@ -326,23 +326,21 @@ export const VisualBuilder: React.FC<Props> = ({ slides, onChange, isMobile, add
                             transition={{ delay: 0.2 }}
                             className="relative flex flex-col items-center"
                         >
-                            <div className="w-24 h-24 rounded-full bg-gradient-to-b from-white/5 to-transparent border border-white/10 flex items-center justify-center mb-6 group-hover/empty:scale-105 group-hover/empty:border-rose-500/30 transition-all duration-700 shadow-2xl">
-                                <Sparkles className="text-white/20 group-hover/empty:text-rose-500 transition-colors duration-500" size={32} />
+                            <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-gradient-to-b from-white/5 to-transparent border border-white/10 flex items-center justify-center mb-4 md:6 group-hover/empty:scale-105 group-hover/empty:border-rose-500/30 transition-all duration-700 shadow-2xl">
+                                <Sparkles className="text-white/20 group-hover/empty:text-rose-500 transition-colors duration-500" size={isMobile ? 24 : 32} />
                             </div>
-                            <h3 className="text-3xl md:text-5xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20 mb-3 text-center">
+                            <h3 className="text-2xl md:text-5xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20 mb-2 truncate px-4">
                                 Mulai Ceritamu
                             </h3>
-                            <div className="flex items-center gap-2 text-white/30 text-xs font-mono uppercase tracking-[0.2em] group-hover/empty:text-rose-500/50 transition-colors">
-                                <span className="w-8 h-px bg-current" />
-                                <span>Tarik & Lepas Media</span>
-                                <span className="w-8 h-px bg-current" />
+                            <div className="flex items-center gap-2 text-white/20 text-[10px] uppercase tracking-[0.2em] group-hover/empty:text-rose-500/50 transition-colors">
+                                <span>Pilih Gambar</span>
                             </div>
                         </motion.div>
                     </div>
                 )}
             </div>
             {/* UNIFIED VISION CONTROL CENTER */}
-            <div className="h-20 shrink-0 flex flex-col items-center justify-center bg-[#0a0a0a] border-t border-white/5 z-20 px-8 relative">
+            <div className={`shrink-0 flex flex-col items-center justify-center bg-[#0a0a0a] border-t border-white/5 z-20 px-8 relative ${isMobile ? 'h-14' : 'h-20'}`}>
                 {/* Processing Progress Line */}
                 {isProcessing && (
                     <div className="absolute top-0 left-0 w-full h-[2px] bg-white/5 overflow-hidden">
@@ -352,13 +350,17 @@ export const VisualBuilder: React.FC<Props> = ({ slides, onChange, isMobile, add
 
                 <div className="flex items-center justify-between w-full max-w-6xl">
                     {/* Status Section */}
-                    <div className="flex items-center gap-6 text-[10px] font-mono tracking-widest text-white/20 uppercase">
+                    <div className="flex items-center gap-3 md:gap-6 text-[10px] font-mono tracking-widest text-white/20 uppercase">
                         <span className="flex items-center gap-2">
                             <span className={`w-1.5 h-1.5 rounded-full ${slides.length >= 10 ? 'bg-red-500' : 'bg-rose-500/50'}`} />
-                            {slides.length}/10 EKSPOSUR
+                            {slides.length}/10 {isMobile ? '' : 'EKSPOSUR'}
                         </span>
-                        <span className="w-px h-3 bg-white/10" />
-                        <span className="truncate">{isProcessing ? processingStatus : 'SISTEM SIAP'}</span>
+                        {!isMobile && <span className="w-px h-3 bg-white/10" />}
+                        {!isMobile ? (
+                            <span className="truncate">{isProcessing ? processingStatus : 'SISTEM SIAP'}</span>
+                        ) : (
+                            isProcessing && <span className="truncate text-[8px]">{processingStatus}</span>
+                        )}
                     </div>
 
                     {/* Quick Actions / Tips */}

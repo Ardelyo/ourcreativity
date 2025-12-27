@@ -488,12 +488,12 @@ export const Studio = () => {
         switch (mode) {
             case 'text':
                 return (
-                    <div className={`w-full max-w-4xl mx-auto px-6 md:px-0 ${isMobile ? 'pt-4 pb-20' : 'pt-24 pb-32'}`}>
+                    <div className={`w-full max-w-4xl mx-auto ${isMobile ? 'px-2 pt-4 pb-20' : 'px-6 md:px-0 pt-24 pb-32'}`}>
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Judul Karya Tulis..."
-                            className="text-4xl md:text-5xl font-serif font-bold bg-transparent outline-none w-full mb-8 placeholder:text-white/10 text-center"
+                            className={`font-serif font-bold bg-transparent outline-none w-full mb-8 placeholder:text-white/10 ${isMobile ? 'text-3xl text-left px-2' : 'text-4xl md:text-5xl text-center'}`}
                         />
                         <TextEditor
                             content={content}

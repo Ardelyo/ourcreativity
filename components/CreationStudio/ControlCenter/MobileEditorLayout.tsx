@@ -69,47 +69,49 @@ export const MobileEditorLayout: React.FC<MobileEditorLayoutProps> = ({ files, s
             {/* header navigasi atas (gabung & bersih) */}
             <div className="flex flex-col bg-[#050505] z-20">
                 {/* header visual */}
-                <div className="flex items-center justify-between px-4 py-3 bg-[#0a0a0a]/50 backdrop-blur-md border-b border-white/5">
+                <div className="flex items-center justify-between px-3 py-2 bg-[#0a0a0a]/50 backdrop-blur-md border-b border-white/5">
 
                     {/* tab simpel */}
                     <div className="flex bg-[#111] rounded-full p-0.5 border border-white/5">
                         <button
                             onClick={() => setActiveTab('editor')}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all ${activeTab === 'editor' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-200'}`}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all ${activeTab === 'editor' ? 'bg-white text-black shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
                         >
-                            <Code size={12} /> Editor
+                            <Code size={12} /> Kode
                         </button>
                         <button
                             onClick={() => setActiveTab('preview')}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold transition-all ${activeTab === 'preview' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-200'}`}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-tighter transition-all ${activeTab === 'preview' ? 'bg-white text-black shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}
                         >
-                            <Eye size={12} /> Pratinjau
+                            <Eye size={12} /> Hasil
                         </button>
                     </div>
 
                     {/* tool terintegrasi (file & konsol) */}
-                    <div className="flex gap-1">
+                    <div className="flex gap-0.5">
                         <button
                             onClick={() => setShowFiles(true)}
-                            className={`p-2 rounded-full text-gray-400 hover:bg-white/10 transition-colors ${!activeFile ? 'animate-pulse text-rose-500' : ''}`}
+                            className={`p-2 rounded-full text-gray-500 hover:text-white transition-colors`}
                         >
-                            <Folder size={18} />
+                            <Folder size={16} />
                         </button>
                         <button
                             onClick={() => setShowConsole(!showConsole)}
-                            className={`p-2 rounded-full text-gray-400 hover:bg-white/10 transition-colors ${consoleLogs.length > 0 ? 'text-yellow-400' : ''}`}
+                            className={`p-2 rounded-full text-gray-500 hover:text-white transition-colors ${consoleLogs.length > 0 ? 'text-rose-500' : ''}`}
                         >
-                            <Terminal size={18} />
+                            <Terminal size={16} />
                         </button>
                     </div>
                 </div>
 
                 {/* info file (cuma pas mode editor) */}
                 {activeTab === 'editor' && (
-                    <div className="px-4 py-1.5 bg-[#050505] text-[10px] font-mono text-gray-500 flex justify-center items-center gap-2 border-b border-white/5">
-                        <span className="opacity-50">MENGEDIT:</span>
-                        <span className="text-gray-300 font-bold">{activeFile?.name || 'Tidak ada file'}</span>
-                        <span className={`px-1.5 py-0.5 rounded text-[8px] uppercase font-bold ${activeFile?.language === 'html' ? 'bg-orange-500/10 text-orange-400' : activeFile?.language === 'css' ? 'bg-blue-500/10 text-blue-400' : 'bg-yellow-500/10 text-yellow-400'}`}>
+                    <div className="px-3 py-1 bg-[#050505] text-[9px] font-mono text-gray-600 flex justify-between items-center border-b border-white/5">
+                        <div className="flex items-center gap-2">
+                            <span className="opacity-40 uppercase tracking-widest">EDIT:</span>
+                            <span className="text-gray-400 font-bold">{activeFile?.name || '---'}</span>
+                        </div>
+                        <span className={`px-1 rounded-[2px] text-[7px] uppercase font-black ${activeFile?.language === 'html' ? 'bg-orange-500/10 text-orange-400' : activeFile?.language === 'css' ? 'bg-blue-500/10 text-blue-400' : 'bg-yellow-500/10 text-yellow-400'}`}>
                             {activeFile?.language}
                         </span>
                     </div>

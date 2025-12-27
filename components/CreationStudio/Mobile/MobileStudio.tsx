@@ -96,6 +96,16 @@ export const MobileStudio: React.FC<MobileStudioProps> = ({
                         </div>
                     </div>
                 );
+            case 'video':
+                return (
+                    <div className="flex-1 flex flex-col items-center justify-center bg-[#050505] p-8 text-center">
+                        <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 animate-pulse">
+                            <Video size={32} className="text-white/20" />
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-2">Editor Video Mobile</h3>
+                        <p className="text-white/40 text-sm max-w-[200px]">Fitur ini sedang dalam pengembangan untuk pengalaman mobile terbaik.</p>
+                    </div>
+                );
             default:
                 return (
                     <div className="flex-1 flex items-center justify-center text-white/20 font-mono text-xs tracking-widest">
@@ -149,29 +159,31 @@ export const MobileStudio: React.FC<MobileStudioProps> = ({
                 {renderModeContent()}
             </div>
 
-            {/* Mobile Dock (Hidden when typing or in Code Mode) */}
+            {/* Mobile Dock (Manual Toggle, Slide from Right) */}
             <AnimatePresence>
-                {(!isTyping && mode !== 'code') && (
+                {mode !== 'code' && (
                     <motion.div
-                        initial={{ y: 100 }}
-                        animate={{ y: 0 }}
-                        exit={{ y: 100 }}
-                        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-[400px]"
+                        initial={{ x: '100%', opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: '100%', opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        className="fixed bottom-6 right-4 z-50"
                     >
-                        <div className="flex bg-[#111]/80 backdrop-blur-2xl border border-white/10 p-1.5 rounded-full shadow-2xl flex items-center justify-between">
-                            <div className="flex items-center gap-1">
-                                <DockButton active={(mode as string) === 'text'} onClick={() => switchMode('text')} icon={<Type size={18} />} />
-                                <DockButton active={(mode as string) === 'image' || (mode as string) === 'slide' || (mode as string) === 'meme'} onClick={() => switchMode('image')} icon={<ImageIcon size={18} />} />
-                                <DockButton active={(mode as string) === 'code'} onClick={() => switchMode('code')} icon={<Code size={18} />} />
-                                <DockButton active={mode === 'video'} onClick={() => switchMode('video')} icon={<Video size={18} />} />
-                            </div>
+                        <div className="flex bg-[#111]/90 backdrop-blur-2xl border border-white/10 p-1.5 rounded-full shadow-2xl flex-col gap-2 items-center">
                             <motion.button
                                 whileTap={{ scale: 0.9 }}
                                 onClick={onSettings}
-                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-white/50"
+                                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-white/50 mb-1"
                             >
                                 <Settings size={18} />
                             </motion.button>
+
+                            <div className="w-8 h-[1px] bg-white/10" />
+
+                            <DockButton active={(mode as string) === 'text'} onClick={() => switchMode('text')} icon={<Type size={18} />} />
+                            <DockButton active={(mode as string) === 'image' || (mode as string) === 'slide' || (mode as string) === 'meme'} onClick={() => switchMode('image')} icon={<ImageIcon size={18} />} />
+                            <DockButton active={(mode as string) === 'code'} onClick={() => switchMode('code')} icon={<Code size={18} />} />
+                            <DockButton active={mode === 'video'} onClick={() => switchMode('video')} icon={<Video size={18} />} />
                         </div>
                     </motion.div>
                 )}

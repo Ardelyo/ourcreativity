@@ -10,12 +10,16 @@ interface ImmersiveDetailViewProps {
     renderContent: (art: any, showCode?: boolean) => React.ReactNode;
     onEdit?: () => void;
     onDelete?: () => void;
+    showCode?: boolean;
+    setShowCode?: (show: boolean) => void;
 }
 
-export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, onClose, renderContent, onEdit, onDelete }) => {
+export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({
+    art, onClose, renderContent, onEdit, onDelete,
+    showCode = false, setShowCode
+}) => {
     const controls = useAnimation();
     const [isExpanded, setIsExpanded] = useState(false);
-    const [showCode, setShowCode] = useState(false);
 
     // CRITICAL: Lock body scroll when this component mounts
     useEffect(() => {
@@ -126,7 +130,7 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                         {/* Code Toggle Button - ALWAYS visible for code type */}
                         {art.type === 'code' && (
                             <button
-                                onClick={() => setShowCode(!showCode)}
+                                onClick={() => setShowCode?.(!showCode)}
                                 className="flex items-center gap-2 px-5 py-3 bg-black/50 backdrop-blur-md rounded-full text-white font-bold text-sm border border-white/30 active:scale-95 transition-transform"
                             >
                                 {showCode ? (

@@ -792,6 +792,8 @@ export const Karya = () => {
             <ImmersiveDetailView
               key="mobile-immersive-view"
               art={selectedArtwork}
+              showCode={showSourceCode}
+              setShowCode={setShowSourceCode}
               onClose={() => setSelectedId(null)}
               renderContent={(art, showCode) => {
                 // Buat tipe kode, kita rendernya beda tergantung showCode
@@ -807,7 +809,7 @@ export const Karya = () => {
                     // Tampilin pratinjau interaktif - UKURAN PENUH, TANPA SCALING
                     return (
                       <iframe
-                        src={`data: text / html; charset = utf - 8, ${encodeURIComponent(generateCodePreview(art.content, art.code_language || 'html'))} `}
+                        srcDoc={generateCodePreview(art.content, art.code_language || 'html')}
                         sandbox="allow-scripts allow-same-origin"
                         className="w-full h-full border-0 bg-white"
                         style={{ touchAction: 'auto' }}

@@ -142,31 +142,36 @@ export const Profile = () => {
     const { data: works = [], isLoading: worksLoading } = useQuery({
         queryKey: ['profile-works', profile?.id],
         queryFn: async () => {
-            const { data, error } = await supabase
+            // Step 1: Fetch works core data
+            const { data: worksData, error: worksError } = await supabase
                 .from('works')
-                .select(`
-                    id, 
-                    title, 
-                    description, 
-                    image_url, 
-                    thumbnail_url,
-                    author,
-                    author_id,
-                    type,
-                    division, 
-                    tags,
-                    slides, 
-                    content,
-                    code_language,
-                    created_at,
-                    likes:likes(count),
-                    comments:comments(count),
-                    author_profile:profiles(username, avatar_url)
-                `)
+                .select('id, title, description, image_url, thumbnail_url, author, author_id, type, division, tags, slides, content, code_language, created_at')
                 .eq('author_id', profile.id)
                 .order('created_at', { ascending: false });
-            if (error) throw error;
-            return data || [];
+
+            if (worksError) throw worksError;
+            if (!worksData || worksData.length === 0) return [];
+
+            // Step 2: Parallel fetch for counts
+            const workIds = worksData.map(w => w.id);
+            const [likesRes, commentsRes] = await Promise.all([
+                supabase.from('likes').select('work_id').in('work_id', workIds),
+                supabase.from('comments').select('work_id').in('work_id', workIds)
+            ]);
+
+            // Step 3: Map and combine
+            const likesCountMap = new Map();
+            likesRes.data?.forEach(l => likesCountMap.set(l.work_id, (likesCountMap.get(l.work_id) || 0) + 1));
+
+            const commentsCountMap = new Map();
+            commentsRes.data?.forEach(c => commentsCountMap.set(c.work_id, (commentsCountMap.get(c.work_id) || 0) + 1));
+
+            return worksData.map(w => ({
+                ...w,
+                likes: [{ count: likesCountMap.get(w.id) || 0 }],
+                comments: [{ count: commentsCountMap.get(w.id) || 0 }],
+                author_profile: { username: profile.username, avatar_url: profile.avatar_url }
+            }));
         },
         enabled: !!profile?.id,
     });
@@ -175,33 +180,47 @@ export const Profile = () => {
     const { data: likedWorks = [], isLoading: likesLoading } = useQuery({
         queryKey: ['profile-likes', profile?.id],
         queryFn: async () => {
-            const { data, error } = await supabase
+            const { data: initialLikes, error: likesError } = await supabase
                 .from('likes')
                 .select(`
                     work:works (
-                        id, 
-                        title, 
-                        description, 
-                        image_url, 
-                        thumbnail_url,
-                        author,
-                        author_id,
-                        type,
-                        division, 
-                        tags,
-                        slides, 
-                        content,
-                        code_language,
-                        created_at,
-                        likes:likes(count),
-                        comments:comments(count),
-                        author_profile:profiles(username, avatar_url)
+                        id, title, description, image_url, thumbnail_url,
+                        author, author_id, type, division, tags, slides, 
+                        content, code_language, created_at
                     )
                 `)
                 .eq('user_id', profile.id)
                 .order('created_at', { ascending: false });
-            if (error) throw error;
-            return data?.map((item: any) => item.work).filter(Boolean) || [];
+
+            if (likesError) throw likesError;
+            const validWorks = initialLikes?.map((item: any) => item.work).filter(Boolean) || [];
+            if (validWorks.length === 0) return [];
+
+            const workIds = validWorks.map((w: any) => w.id);
+            const authorIds = [...new Set(validWorks.filter((w: any) => w.author_id).map((w: any) => w.author_id))];
+
+            const [likesRes, commentsRes, profilesRes] = await Promise.all([
+                supabase.from('likes').select('work_id').in('work_id', workIds),
+                supabase.from('comments').select('work_id').in('work_id', workIds),
+                authorIds.length > 0
+                    ? supabase.from('profiles').select('id, username, avatar_url').in('id', authorIds)
+                    : Promise.resolve({ data: [] })
+            ]);
+
+            const likesCountMap = new Map();
+            likesRes.data?.forEach(l => likesCountMap.set(l.work_id, (likesCountMap.get(l.work_id) || 0) + 1));
+
+            const commentsCountMap = new Map();
+            commentsRes.data?.forEach(c => commentsCountMap.set(c.work_id, (commentsCountMap.get(c.work_id) || 0) + 1));
+
+            const profileMap = new Map(profilesRes.data?.map(p => [p.id, p]) as [string, any][]);
+
+            return validWorks.map((w: any) => ({
+                ...w,
+                likes: [{ count: likesCountMap.get(w.id) || 0 }],
+                comments: [{ count: commentsCountMap.get(w.id) || 0 }],
+                author_profile: profileMap.get(w.author_id)
+            }));
         },
         enabled: !!profile?.id,
     });

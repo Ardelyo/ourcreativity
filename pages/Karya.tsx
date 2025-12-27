@@ -237,40 +237,25 @@ export const Karya = () => {
   const { data: worksData, isLoading: worksLoading, error: worksError, isFetching: worksFetching } = useQuery({
     queryKey: ['works', filter, page, sortBy],
     queryFn: async () => {
-      const from = (page - 1) * ITEMS_PER_PAGE; // 1-based pagination
+      const from = (page - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
 
+      // Step 1: Fetch works WITHOUT nested relationships to avoid N+1 problem
       let query = supabase
         .from('works')
         .select(`
-id,
-  title,
-  description,
-  image_url,
-  author,
-  type,
-  division,
-  tags,
-  slides,
-  code_language,
-  content,
-  thumbnail_url,
-  likes: likes(count),
-    comments: comments(count),
-      author_profile: profiles(username, avatar_url, role)
-        `, { count: 'exact' }); // Request total count
+          id, title, description, image_url, author_id, author,
+          type, division, tags, slides, code_language, content, 
+          thumbnail_url, created_at
+        `, { count: 'exact' });
 
       // Apply Sorting
       if (sortBy === 'newest') {
         query = query.order('created_at', { ascending: false });
       } else if (sortBy === 'oldest') {
         query = query.order('created_at', { ascending: true });
-      } else if (sortBy === 'likes') {
-        // PostgREST doesn't support sorting by related count directly.
-        // In a real app, you'd use a view or a counter cache column.
-        // For now, we'll sort by newest within this fallback.
-        query = query.order('created_at', { ascending: false });
-      } else if (sortBy === 'comments') {
+      } else {
+        // Fallback or other sorts
         query = query.order('created_at', { ascending: false });
       }
 
@@ -278,11 +263,40 @@ id,
         query = query.eq('division', filter);
       }
 
-      const { data, error, count } = await query.range(from, to);
+      const { data: works, error, count } = await query.range(from, to);
       if (error) throw error;
-      return { data, count };
+      if (!works || works.length === 0) return { data: [], count: 0 };
+
+      // Step 2: Fetch counts and profile info in parallel for the retrieved works
+      const workIds = works.map(w => w.id);
+      const authorIds = [...new Set(works.filter(w => w.author_id).map(w => w.author_id))];
+
+      const [likesRes, commentsRes, profilesRes] = await Promise.all([
+        supabase.from('likes').select('work_id').in('work_id', workIds),
+        supabase.from('comments').select('work_id').in('work_id', workIds),
+        authorIds.length > 0
+          ? supabase.from('profiles').select('id, username, avatar_url, role').in('id', authorIds)
+          : Promise.resolve({ data: [] })
+      ]);
+
+      // Step 3: Combine data
+      const likesMap = new Map();
+      likesRes.data?.forEach(l => likesMap.set(l.work_id, (likesMap.get(l.work_id) || 0) + 1));
+
+      const commentsMap = new Map();
+      commentsRes.data?.forEach(c => commentsMap.set(c.work_id, (commentsMap.get(c.work_id) || 0) + 1));
+
+      const profileMap = new Map(profilesRes.data?.map(p => [p.id, p]) as [string, any][]);
+
+      const enrichedWorks = works.map(w => ({
+        ...w,
+        likes: { count: likesMap.get(w.id) || 0 },
+        comments: { count: commentsMap.get(w.id) || 0 },
+        author_profile: profileMap.get(w.author_id)
+      }));
+
+      return { data: enrichedWorks, count };
     },
-    refetchOnMount: true,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
     enabled: true,

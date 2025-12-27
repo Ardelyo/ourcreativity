@@ -4,7 +4,7 @@ import {
     Maximize2, Settings,
     Image as ImageIcon, Globe,
     Save, Upload, ChevronDown, X,
-    Trash2, Layers
+    Trash2, Layers, Video
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthProvider';
@@ -392,7 +392,14 @@ export const Studio = () => {
 
         // Safety check for missing file scenarios (e.g. Broken draft state)
         // EXCEPTION: YouTube link in content is allowed
-        const isYoutubeStart = content && (content.includes('youtube.com') || content.includes('youtu.be'));
+        let isYoutubeStart = false;
+        if (content) {
+            isYoutubeStart = content.includes('youtube.com/watch') ||
+                content.includes('youtu.be/') ||
+                content.includes('youtube.com/shorts/') ||
+                content.includes('youtube.com/embed/');
+        }
+
         if ((mode === 'video' || mode === 'image') && !mediaFile && !isYoutubeStart && mediaPreview && mediaPreview.startsWith('blob:')) {
             alert("File video/gambar tidak ditemukan! Kemungkinan Anda me-refresh halaman sehingga referensi file hilang. Silakan pilih ulang file media Anda.");
             // Reset state to force re-selection
@@ -434,7 +441,10 @@ export const Studio = () => {
                 console.log("[Studio] Media uploaded:", uploadResult);
             } else if (mode === 'video' && !finalImageUrl) {
                 // Check if content is youtube link
-                if (content && (content.includes('youtube.com') || content.includes('youtu.be'))) {
+                let isYoutube = false;
+                if (content && (content.includes('youtube.com') || content.includes('youtu.be'))) isYoutube = true;
+
+                if (isYoutube) {
                     console.log("[Studio] Using YouTube embed for video.");
                     // valid, no upload needed
                 } else {
@@ -525,7 +535,7 @@ export const Studio = () => {
                 );
             case 'code':
                 return (
-                    <div className={`w-full h-full relative ${isMobile ? 'pt-0' : 'pt-[4.5rem]'}`}>
+                    <div className="w-full h-full relative pt-20 pb-2 flex flex-col">
                         {isMobile ? (
                             <MobileEditorLayout
                                 files={codeFiles}
@@ -536,7 +546,9 @@ export const Studio = () => {
                                 isPublishing={isPublishing}
                             />
                         ) : (
-                            <EditorLayout files={codeFiles} setFiles={setCodeFiles} />
+                            <div className="flex-1 overflow-hidden rounded-xl border border-white/10 mx-6 mb-24 bg-[#050505]">
+                                <EditorLayout files={codeFiles} setFiles={setCodeFiles} />
+                            </div>
                         )}
                     </div>
                 );
@@ -570,39 +582,76 @@ export const Studio = () => {
                 );
 
             case 'video':
-                // video masih terpisah sesuai plan (fase 3)
                 return (
                     <div className="w-full h-full min-h-[70vh] flex flex-col items-center justify-center p-6 md:p-12">
-                        <input
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Judul Video..."
-                            className="text-2xl md:text-4xl font-bold bg-transparent text-center outline-none w-full max-w-2xl mb-8 md:mb-12 placeholder:text-gray-700"
-                        />
-                        {/* logika upload video masih sama dulu sampe fase 3 */}
-                        {mediaPreview ? (
-                            <div className="relative group w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl border border-white/10">
-                                <video src={mediaPreview} controls className="w-full h-full object-contain" />
-                                <button
-                                    onClick={() => { setMediaPreview(null); setMediaFile(null); }}
-                                    className="absolute top-4 right-4 bg-black/50 hover:bg-red-500 text-white p-2 rounded-full backdrop-blur-md transition-colors"
-                                >
-                                    <Trash2 size={16} />
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="w-full max-w-xl h-64 md:h-96 border-4 border-dashed border-white/10 rounded-[3rem] flex flex-col items-center justify-center text-gray-500 hover:border-white/20 hover:bg-white/5 transition-all cursor-pointer relative">
+                        <div className="w-full max-w-2xl space-y-8">
+                            <div className="text-center space-y-4">
                                 <input
-                                    type="file"
-                                    accept="video/*"
-                                    onChange={handleFileSelect}
-                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    placeholder="Judul Video..."
+                                    className="text-4xl md:text-5xl font-serif font-bold bg-transparent text-center outline-none w-full placeholder:text-white/5 border-b border-white/5 pb-4 focus:border-rose-500/30 transition-all duration-700"
                                 />
-                                <Upload size={64} className="mb-6 opacity-20" />
-                                <h3 className="text-2xl font-bold mb-2">Upload Video</h3>
-                                <p className="text-sm opacity-40">Maks. 50MB (Lebih baik pakai Slide/Embed)</p>
+                                <p className="text-[10px] font-black tracking-[0.3em] text-gray-600 uppercase">Bagikan Karya Sinema</p>
                             </div>
-                        )}
+
+                            <div className="space-y-4">
+                                <div className="relative group">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <Globe size={18} className="text-gray-500 group-focus-within:text-rose-500 transition-colors" />
+                                    </div>
+                                    <input
+                                        type="url"
+                                        placeholder="https://www.youtube.com/watch?v=..."
+                                        value={content}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            setContent(val);
+
+                                            // Extract YouTube ID for preview
+                                            let videoId = '';
+                                            if (val.includes('youtube.com/watch')) {
+                                                videoId = val.split('v=')[1]?.split('&')[0];
+                                            } else if (val.includes('youtu.be/')) {
+                                                videoId = val.split('/').pop()?.split('?')[0] || '';
+                                            } else if (val.includes('youtube.com/shorts/')) {
+                                                videoId = val.split('shorts/')[1]?.split('?')[0];
+                                            } else if (val.includes('youtube.com/embed/')) {
+                                                videoId = val.split('embed/')[1]?.split('?')[0];
+                                            }
+
+                                            if (videoId) {
+                                                setMediaPreview(`https://www.youtube.com/embed/${videoId}`);
+                                            } else {
+                                                setMediaPreview(null);
+                                            }
+                                        }}
+                                        className="w-full bg-[#111] border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white focus:outline-none focus:border-rose-500/50 transition-all text-lg font-medium"
+                                    />
+                                </div>
+                                <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest pl-1">Mendukung link video, shorts, dan mobile.</p>
+                            </div>
+
+                            <div className="aspect-video w-full rounded-3xl border border-white/5 bg-black/40 overflow-hidden relative group shadow-2xl">
+                                {content && mediaPreview?.includes('youtube.com/embed') ? (
+                                    <iframe
+                                        src={mediaPreview}
+                                        className="w-full h-full"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        title="YouTube Preview"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex flex-col items-center justify-center text-center p-8">
+                                        <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                                            <Video className="text-gray-600 group-hover:text-gray-400" size={32} />
+                                        </div>
+                                        <h4 className="text-white font-bold mb-2">Pratinjau Video</h4>
+                                        <p className="text-gray-500 text-sm max-w-xs">Masukkan link YouTube di atas untuk melihat cuplikan karyamu.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 );
             default: return null;
@@ -662,8 +711,8 @@ export const Studio = () => {
         );
     }
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white selection:bg-rose-500/30 selection:text-white flex flex-col relative overflow-hidden">
-            <div className="flex-1 flex flex-col relative bg-black pt-safe pb-safe min-h-screen">
+        <div className="h-screen bg-[#0a0a0a] text-white selection:bg-rose-500/30 selection:text-white flex flex-col relative overflow-hidden">
+            <div className="flex-1 flex flex-col relative bg-black pt-safe pb-safe h-full overflow-hidden">
                 {isMobile ? (
                     <MobileStudio
                         mode={mode}
@@ -711,7 +760,7 @@ export const Studio = () => {
                         />
 
                         {/* konten utama */}
-                        <div className={`flex-1 overflow-y-auto custom-scrollbar`}>
+                        <div className={`flex-1 ${mode === 'code' ? 'overflow-hidden' : 'overflow-y-auto custom-scrollbar'} relative`}>
                             {renderContent()}
                         </div>
 

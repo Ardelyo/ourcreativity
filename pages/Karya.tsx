@@ -852,6 +852,11 @@ export const Karya = () => {
               showCode={showSourceCode}
               setShowCode={setShowSourceCode}
 
+              // Social Props (FIXED: Pass these explicitly for Mobile)
+              onLike={handleToggleLike}
+              isLiked={isLiked}
+              likesCount={likesCount}
+
               // Comment Props
               comments={comments}
               user={user}

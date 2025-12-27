@@ -94,7 +94,7 @@ export const KaryaCard: React.FC<KaryaCardProps> = ({ art, index, onClick, rende
                             )}
                             <div className="flex items-center gap-1.5 bg-rose-500/10 backdrop-blur-xl px-2.5 py-1 rounded-full text-rose-400 text-[10px] md:text-xs font-bold ring-1 ring-rose-500/20">
                                 <Heart size={12} className="fill-rose-500 text-rose-500" />
-                                {art.likes?.[0]?.count || 0}
+                                {art.likes?.count || 0}
                             </div>
                         </div>
                     </div>

@@ -25,7 +25,7 @@ const Studio = React.lazy(() => import('./pages/Studio').then(module => ({ defau
 const Settings = React.lazy(() => import('./pages/Settings').then(module => ({ default: module.Settings })));
 const Profile = React.lazy(() => import('./pages/Profile').then(module => ({ default: module.Profile })));
 const V5Launch = React.lazy(() => import('./pages/V5Launch').then(module => ({ default: module.V5Launch })));
-
+const Gate = React.lazy(() => import('./pages/Gate').then(module => ({ default: module.default })));
 
 
 import { MotionPage } from './components/MotionPage';
@@ -106,6 +106,7 @@ const AnimatedRoutes = () => {
               <Route path="/settings" element={<MotionPage><Settings /></MotionPage>} />
               <Route path="/profile/:username" element={<MotionPage><Profile /></MotionPage>} />
               <Route path="/v5-launch" element={<MotionPage><V5Launch /></MotionPage>} />
+              <Route path="/gate" element={<MotionPage><Gate /></MotionPage>} />
 
               {/* Rute Admin */}
               <Route path="/admin" element={

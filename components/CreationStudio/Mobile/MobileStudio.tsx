@@ -66,9 +66,18 @@ export const MobileStudio: React.FC<MobileStudioProps> = ({
     // Initial load handling
     React.useEffect(() => {
         if (mode === 'video' && content) {
-            // Check if content is a youtube link or file url
-            if (content.includes('youtube.com') || content.includes('youtu.be')) {
-                const videoId = content.split('v=')[1]?.split('&')[0] || content.split('/').pop();
+            let videoId = '';
+            if (content.includes('youtube.com/watch')) {
+                videoId = content.split('v=')[1]?.split('&')[0];
+            } else if (content.includes('youtu.be/')) {
+                videoId = content.split('/').pop()?.split('?')[0] || '';
+            } else if (content.includes('youtube.com/shorts/')) {
+                videoId = content.split('shorts/')[1]?.split('?')[0];
+            } else if (content.includes('youtube.com/embed/')) {
+                videoId = content.split('embed/')[1]?.split('?')[0];
+            }
+
+            if (videoId) {
                 setVideoPreview(`https://www.youtube.com/embed/${videoId}`);
             } else {
                 setVideoPreview(content);
@@ -97,18 +106,30 @@ export const MobileStudio: React.FC<MobileStudioProps> = ({
 
     const handleYoutubeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
-        if (!val) return;
+        setContent(val);
+        if (!val) {
+            setVideoPreview(null);
+            return;
+        }
 
-        // Simple youtube regex or check
-        if (val.includes('youtube.com') || val.includes('youtu.be')) {
-            const videoId = val.split('v=')[1]?.split('&')[0] || val.split('/').pop();
-            if (videoId) {
-                const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-                setVideoPreview(embedUrl);
-                setContent(val); // Save original link for compatibility
-                if (setMediaFile) setMediaFile(null);
-                addLog('Tautan YouTube berhasil dimuat.', 'success');
-            }
+        let videoId = '';
+        if (val.includes('youtube.com/watch')) {
+            videoId = val.split('v=')[1]?.split('&')[0];
+        } else if (val.includes('youtu.be/')) {
+            videoId = val.split('/').pop()?.split('?')[0] || '';
+        } else if (val.includes('youtube.com/shorts/')) {
+            videoId = val.split('shorts/')[1]?.split('?')[0];
+        } else if (val.includes('youtube.com/embed/')) {
+            videoId = val.split('embed/')[1]?.split('?')[0];
+        }
+
+        if (videoId) {
+            const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+            setVideoPreview(embedUrl);
+            if (setMediaFile) setMediaFile(null);
+            addLog('Tautan YouTube berhasil dimuat.', 'success');
+        } else {
+            setVideoPreview(null);
         }
     };
 

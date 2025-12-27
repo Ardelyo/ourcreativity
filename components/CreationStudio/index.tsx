@@ -259,7 +259,7 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                         </div>
 
                         {/* Content Area */}
-                        <div className="flex-1 overflow-hidden relative flex">
+                        <div className="flex-1 overflow-y-auto relative flex">
                             {/* Step 1: Selection */}
                             {step === 'selection' && (
                                 <div className="w-full h-full overflow-y-auto">
@@ -377,11 +377,20 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
                                                                 setFormData(prev => ({ ...prev, content: val }));
 
                                                                 // Extract YouTube ID for preview if possible
-                                                                if (val.includes('youtube.com') || val.includes('youtu.be')) {
-                                                                    const videoId = val.split('v=')[1]?.split('&')[0] || val.split('/').pop();
-                                                                    if (videoId) {
-                                                                        setFormData(prev => ({ ...prev, image: `https://www.youtube.com/embed/${videoId}` }));
-                                                                    }
+                                                                // Supports: watch?v=ID, youtu.be/ID, youtube.com/embed/ID, youtube.com/shorts/ID
+                                                                let videoId = '';
+                                                                if (val.includes('youtube.com/watch')) {
+                                                                    videoId = val.split('v=')[1]?.split('&')[0];
+                                                                } else if (val.includes('youtu.be/')) {
+                                                                    videoId = val.split('/').pop()?.split('?')[0] || '';
+                                                                } else if (val.includes('youtube.com/shorts/')) {
+                                                                    videoId = val.split('shorts/')[1]?.split('?')[0];
+                                                                } else if (val.includes('youtube.com/embed/')) {
+                                                                    videoId = val.split('embed/')[1]?.split('?')[0];
+                                                                }
+
+                                                                if (videoId) {
+                                                                    setFormData(prev => ({ ...prev, image: `https://www.youtube.com/embed/${videoId}` }));
                                                                 } else {
                                                                     setFormData(prev => ({ ...prev, image: '' }));
                                                                 }

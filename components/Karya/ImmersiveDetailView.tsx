@@ -20,12 +20,17 @@ interface ImmersiveDetailViewProps {
     user?: any;
     isSubmittingComment?: boolean;
     onShare?: () => void;
+    // Social Props
+    onLike?: () => void;
+    isLiked?: boolean;
+    likesCount?: number;
 }
 
 export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({
     art, onClose, renderContent, onEdit, onDelete,
     showCode = false, setShowCode,
-    comments = [], onCommentSubmit, user, isSubmittingComment = false, onShare
+    comments = [], onCommentSubmit, user, isSubmittingComment = false, onShare,
+    onLike, isLiked = false, likesCount = 0
 }) => {
     const controls = useAnimation();
     const [isExpanded, setIsExpanded] = useState(false);
@@ -203,9 +208,21 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({
 
                         {/* Stats Row */}
                         <div className="flex items-center gap-6 mt-4">
-                            <button className="flex flex-col items-center gap-1 text-gray-400 active:text-rose-500 transition-colors">
-                                <div className="p-3 bg-white/5 rounded-full"><Heart size={22} /></div>
-                                <span className="text-xs">{typeof art.likes === 'object' ? (art.likes?.[0]?.count || 0) : (art.likes || 0)}</span>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onLike?.();
+                                }}
+                                className={`flex flex-col items-center gap-1 transition-colors ${isLiked ? 'text-rose-500' : 'text-gray-400'}`}
+                            >
+                                <div className={`p-3 rounded-full ${isLiked ? 'bg-rose-500/20' : 'bg-white/5'}`}>
+                                    <Heart size={22} className={isLiked ? 'fill-current' : ''} />
+                                </div>
+                                <span className="text-xs">
+                                    {likesCount > 0 ? likesCount : (
+                                        typeof art.likes === 'object' ? (art.likes?.[0]?.count || 0) : (art.likes || 0)
+                                    )}
+                                </span>
                             </button>
                             <button className="flex flex-col items-center gap-1 text-gray-400 active:text-blue-500 transition-colors">
                                 <div className="p-3 bg-white/5 rounded-full"><MessageCircle size={22} /></div>
@@ -256,6 +273,7 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({
                                 {user ? (
                                     <form
                                         onSubmit={(e) => {
+                                            e.preventDefault();
                                             if (onCommentSubmit) {
                                                 onCommentSubmit(e, newComment);
                                                 setNewComment('');

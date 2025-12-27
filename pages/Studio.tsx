@@ -646,215 +646,215 @@ export const Studio = () => {
             </div>
         );
     }
-    if (isMobile) {
-        return (
-            <MobileStudio
-                mode={mode}
-                title={title}
-                setTitle={setTitle}
-                content={content}
-                setContent={setContent}
-                codeFiles={codeFiles}
-                setCodeFiles={setCodeFiles}
-                slides={slides}
-                setSlides={setSlides}
-                draftStatus={draftStatus}
-                isPublishing={isPublishing}
-                onBack={handleBack}
-                onPublish={handlePublish}
-                onToggleDrafts={() => setShowDrafts(!showDrafts)}
-                onSettings={() => setShowSettings(true)}
-                switchMode={switchMode}
-                triggerRun={triggerRun}
-                setTriggerRun={setTriggerRun}
-                isTyping={isTyping}
-                setIsTyping={setIsTyping}
-                addLog={addLog}
-            />
-        );
-    }
-
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white selection:bg-rose-500/30 selection:text-white flex flex-col relative overflow-hidden">
             <div className="flex-1 flex flex-col relative bg-black pt-safe pb-safe min-h-screen">
-                {/* header atas */}
-                <StudioHeader
-                    title={title}
-                    setTitle={setTitle}
-                    mode={mode}
-                    onModeChange={switchMode}
-                    draftStatus={draftStatus}
-                    draftsCount={drafts.length}
-                    showDrafts={showDrafts}
-                    onToggleDrafts={() => setShowDrafts(!showDrafts)}
-                    onPublish={handlePublish}
-                    isPublishing={isPublishing}
-                    onSettings={() => setShowSettings(true)}
-                    onPreview={() => setIsPreview(true)}
-                    onBack={handleBack}
-                    isMobile={isMobile}
-                />
+                {isMobile ? (
+                    <MobileStudio
+                        mode={mode}
+                        title={title}
+                        setTitle={setTitle}
+                        content={content}
+                        setContent={setContent}
+                        codeFiles={codeFiles}
+                        setCodeFiles={setCodeFiles}
+                        slides={slides}
+                        setSlides={setSlides}
+                        draftStatus={draftStatus}
+                        isPublishing={isPublishing}
+                        onBack={handleBack}
+                        onPublish={handlePublish}
+                        onToggleDrafts={() => setShowDrafts(!showDrafts)}
+                        onSettings={() => setShowSettings(true)}
+                        switchMode={switchMode}
+                        triggerRun={triggerRun}
+                        setTriggerRun={setTriggerRun}
+                        isTyping={isTyping}
+                        setIsTyping={setIsTyping}
+                        addLog={addLog}
+                    />
+                ) : (
+                    <>
+                        {/* header atas */}
+                        <StudioHeader
+                            title={title}
+                            setTitle={setTitle}
+                            mode={mode}
+                            onModeChange={switchMode}
+                            draftStatus={draftStatus}
+                            draftsCount={drafts.length}
+                            showDrafts={showDrafts}
+                            onToggleDrafts={() => setShowDrafts(!showDrafts)}
+                            onPublish={handlePublish}
+                            isPublishing={isPublishing}
+                            onSettings={() => setShowSettings(true)}
+                            onPreview={() => setIsPreview(true)}
+                            onBack={handleBack}
+                            isMobile={isMobile}
+                        />
 
-                {/* konten utama */}
-                <div className={`flex-1 overflow-y-auto custom-scrollbar`}>
-                    {renderContent()}
-                </div>
+                        {/* konten utama */}
+                        <div className={`flex-1 overflow-y-auto custom-scrollbar`}>
+                            {renderContent()}
+                        </div>
 
-                {/* dock bawah */}
-                <div className="fixed bottom-0 left-0 right-0 h-20 z-50 flex items-end justify-center group/footer pointer-events-none">
-                    {/* zone trigger hover invisible soalnya wrappernya pointer-events-none */}
-                    <div className="absolute inset-0 pointer-events-auto" />
+                        {/* dock bawah */}
+                        <div className="fixed bottom-0 left-0 right-0 h-20 z-50 flex items-end justify-center group/footer pointer-events-none">
+                            {/* zone trigger hover invisible soalnya wrappernya pointer-events-none */}
+                            <div className="absolute inset-0 pointer-events-auto" />
 
-                    {/* docknya */}
-                    <div className={`flex flex-col items-center transition-all duration-500 pointer-events-auto translate-y-24 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100`}>
-                        <AnimatePresence mode="wait">
-                            {!dockMinimized ? (
-                                <motion.div
-                                    key="expanded-dock"
-                                    initial={{ y: 20, opacity: 0, scale: 0.9 }}
-                                    animate={{ y: 0, opacity: 1, scale: 1 }}
-                                    exit={{ y: 20, opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-                                    className="bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 p-2 rounded-full shadow-2xl flex items-center gap-2 ring-1 ring-white/5 relative group/dockinner"
-                                >
-                                    <button
-                                        onClick={() => setDockMinimized(true)}
-                                        className="absolute -top-12 left-1/2 -translate-x-1/2 p-2 rounded-full bg-black/50 border border-white/5 text-white/50 hover:text-white hover:bg-white/10 backdrop-blur-md transition-all opacity-0 group-hover/dockinner:opacity-100 translate-y-2 group-hover/dockinner:translate-y-0"
-                                        title="Sembunyikan Menu"
-                                    >
-                                        <ChevronDown size={14} />
-                                    </button>
+                            {/* docknya */}
+                            <div className={`flex flex-col items-center transition-all duration-500 pointer-events-auto translate-y-24 opacity-0 group-hover/footer:translate-y-[-16px] group-hover/footer:opacity-100`}>
+                                <AnimatePresence mode="wait">
+                                    {!dockMinimized ? (
+                                        <motion.div
+                                            key="expanded-dock"
+                                            initial={{ y: 20, opacity: 0, scale: 0.9 }}
+                                            animate={{ y: 0, opacity: 1, scale: 1 }}
+                                            exit={{ y: 20, opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                                            className="bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/10 p-2 rounded-full shadow-2xl flex items-center gap-2 ring-1 ring-white/5 relative group/dockinner"
+                                        >
+                                            <button
+                                                onClick={() => setDockMinimized(true)}
+                                                className="absolute -top-12 left-1/2 -translate-x-1/2 p-2 rounded-full bg-black/50 border border-white/5 text-white/50 hover:text-white hover:bg-white/10 backdrop-blur-md transition-all opacity-0 group-hover/dockinner:opacity-100 translate-y-2 group-hover/dockinner:translate-y-0"
+                                                title="Sembunyikan Menu"
+                                            >
+                                                <ChevronDown size={14} />
+                                            </button>
 
-                                    <div className="px-2">
-                                        <MediumSelector activeType={mode} onChange={switchMode} />
-                                    </div>
-                                </motion.div>
-                            ) : (
-                                <motion.div
-                                    key="minimized-dock"
-                                    initial={{ y: 20, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    exit={{ y: 20, opacity: 0 }}
-                                    className="h-10 flex items-end justify-center pb-2 cursor-pointer"
-                                >
-                                    <button
-                                        onClick={() => setDockMinimized(false)}
-                                        className="w-16 h-1 rounded-full bg-white/20 hover:bg-rose-500/50 transition-all shadow-lg hover:w-24 group/minhandle relative"
-                                    >
-                                        <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover/minhandle:opacity-100 transition-all text-[8px] font-black text-rose-500 uppercase tracking-[0.3em] translate-y-1 group-hover/minhandle:translate-y-0 whitespace-nowrap bg-black/40 backdrop-blur-sm px-2 py-1 rounded">
-                                            Buka Menu
-                                        </div>
-                                    </button>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-                </div>
-
-                {/* settings (publish & metadata draft) */}
-                <AnimatePresence>
-                    {showSettings && (
-                        <>
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowSettings(false)} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]" />
-                            <motion.div
-                                initial={{ x: '100%' }}
-                                animate={{ x: 0 }}
-                                exit={{ x: '100%' }}
-                                transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                                className="fixed top-2 bottom-2 right-2 w-full max-w-sm bg-[#0a0a0a] border border-white/10 z-[70] p-6 shadow-2xl overflow-y-auto rounded-3xl flex flex-col"
-                            >
-                                <div className="flex items-center justify-between mb-8">
-                                    <div>
-                                        <h2 className="text-xl font-bold text-white">Detail Draft</h2>
-                                        <p className="text-xs text-gray-500 mt-1">Kelola detail karyamu</p>
-                                    </div>
-                                    <button onClick={() => setShowSettings(false)} className="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
-                                        <X size={16} />
-                                    </button>
-                                </div>
-
-                                <div className="flex-1 space-y-6">
-                                    {/* thumbnail upload (opsional) */}
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
-                                            Thumbnail
-                                            <span className="text-gray-700 font-normal normal-case">Opsional</span>
-                                        </label>
-                                        <div className="w-full aspect-video bg-white/5 border border-white/10 rounded-2xl overflow-hidden relative group cursor-pointer hover:border-white/20 transition-all">
-                                            {mediaPreview ? (
-                                                <>
-                                                    <img src={mediaPreview} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
-                                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
-                                                        <span className="text-xs font-bold text-white">Ganti Gambar</span>
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-600 group-hover:text-gray-400 transition-colors gap-2">
-                                                    <ImageIcon size={24} />
-                                                    <span className="text-xs font-medium">Upload Cover</span>
+                                            <div className="px-2">
+                                                <MediumSelector activeType={mode} onChange={switchMode} />
+                                            </div>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="minimized-dock"
+                                            initial={{ y: 20, opacity: 0 }}
+                                            animate={{ y: 0, opacity: 1 }}
+                                            exit={{ y: 20, opacity: 0 }}
+                                            className="h-10 flex items-end justify-center pb-2 cursor-pointer"
+                                        >
+                                            <button
+                                                onClick={() => setDockMinimized(false)}
+                                                className="w-16 h-1 rounded-full bg-white/20 hover:bg-rose-500/50 transition-all shadow-lg hover:w-24 group/minhandle relative"
+                                            >
+                                                <div className="absolute -top-7 left-1/2 -translate-x-1/2 opacity-0 group-hover/minhandle:opacity-100 transition-all text-[8px] font-black text-rose-500 uppercase tracking-[0.3em] translate-y-1 group-hover/minhandle:translate-y-0 whitespace-nowrap bg-black/40 backdrop-blur-sm px-2 py-1 rounded">
+                                                    Buka Menu
                                                 </div>
-                                            )}
-                                            <input type="file" accept="image/*" onChange={handleFileSelect} className="absolute inset-0 opacity-0 cursor-pointer" />
-                                        </div>
-                                    </div>
-
-                                    <MetaField label="Judul" value={title} onChange={setTitle} required />
-                                    <MetaField label="Deskripsi" value={description} onChange={setDescription} isTextArea placeholder="Ceritakan sedikit tentang karyamu..." />
-
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
-                                            Divisi
-                                            <span className="text-rose-500 font-bold lowercase">Wajib</span>
-                                        </label>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {DIVISIONS.map(div => (
-                                                <button
-                                                    key={div.id}
-                                                    onClick={() => setDivision(div.id as any)}
-                                                    className={`px-3 py-3 rounded-xl text-[10px] font-bold text-left transition-all border ${division === div.id
-                                                        ? 'bg-white text-black border-white'
-                                                        : 'bg-white/5 border-white/5 text-gray-500 hover:bg-white/10 hover:text-white'
-                                                        }`}
-                                                >
-                                                    {div.name}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <MetaField label="Tags" value={tags.join(', ')} onChange={(val) => setTags(val.split(',').map(t => t.trim()))} placeholder="design, art, code..." />
-                                </div>
-
-                                <div className="pt-6 mt-6 border-t border-white/5">
-                                    <button
-                                        onClick={handlePublish}
-                                        disabled={isPublishing}
-                                        className="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs transition-all shadow-lg shadow-rose-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                                    >
-                                        {isPublishing ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save size={16} />}
-                                        {isPublishing ? 'Mempublikasikan...' : 'Publikasikan Proyek'}
-                                    </button>
-                                </div>
-                            </motion.div>
-                        </>
-                    )}
-                </AnimatePresence>
-
-                {/* PUBLISHING PROGRESS OVERLAY */}
-                <AnimatePresence>
-                    {isPublishing && (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-10 text-center">
-                            <div className="relative mb-8">
-                                <div className="w-24 h-24 rounded-full border-4 border-white/10 border-t-rose-500 animate-spin" />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className="text-xs font-mono font-bold">{publishProgress.percent}%</span>
-                                </div>
+                                            </button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
-                            <h2 className="text-2xl font-bold text-white mb-2">{publishProgress.message}</h2>
-                            <p className="text-gray-500 text-sm">Mohon tunggu sebentar...</p>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                        </div>
+                    </>
+                )}
             </div>
+
+            {/* settings (publish & metadata draft) */}
+            <AnimatePresence>
+                {showSettings && (
+                    <>
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowSettings(false)} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]" />
+                        <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                            className="fixed top-2 bottom-2 right-2 w-full max-w-sm bg-[#0a0a0a] border border-white/10 z-[70] p-6 shadow-2xl overflow-y-auto rounded-3xl flex flex-col"
+                        >
+                            <div className="flex items-center justify-between mb-8">
+                                <div>
+                                    <h2 className="text-xl font-bold text-white">Detail Draft</h2>
+                                    <p className="text-xs text-gray-500 mt-1">Kelola detail karyamu</p>
+                                </div>
+                                <button onClick={() => setShowSettings(false)} className="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
+                                    <X size={16} />
+                                </button>
+                            </div>
+
+                            <div className="flex-1 space-y-6">
+                                {/* thumbnail upload (opsional) */}
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
+                                        Thumbnail
+                                        <span className="text-gray-700 font-normal normal-case">Opsional</span>
+                                    </label>
+                                    <div className="w-full aspect-video bg-white/5 border border-white/10 rounded-2xl overflow-hidden relative group cursor-pointer hover:border-white/20 transition-all">
+                                        {mediaPreview ? (
+                                            <>
+                                                <img src={mediaPreview} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
+                                                    <span className="text-xs font-bold text-white">Ganti Gambar</span>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-600 group-hover:text-gray-400 transition-colors gap-2">
+                                                <ImageIcon size={24} />
+                                                <span className="text-xs font-medium">Upload Cover</span>
+                                            </div>
+                                        )}
+                                        <input type="file" accept="image/*" onChange={handleFileSelect} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                    </div>
+                                </div>
+
+                                <MetaField label="Judul" value={title} onChange={setTitle} required />
+                                <MetaField label="Deskripsi" value={description} onChange={setDescription} isTextArea placeholder="Ceritakan sedikit tentang karyamu..." />
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
+                                        Divisi
+                                        <span className="text-rose-500 font-bold lowercase">Wajib</span>
+                                    </label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {DIVISIONS.map(div => (
+                                            <button
+                                                key={div.id}
+                                                onClick={() => setDivision(div.id as any)}
+                                                className={`px-3 py-3 rounded-xl text-[10px] font-bold text-left transition-all border ${division === div.id
+                                                    ? 'bg-white text-black border-white'
+                                                    : 'bg-white/5 border-white/5 text-gray-500 hover:bg-white/10 hover:text-white'
+                                                    }`}
+                                            >
+                                                {div.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <MetaField label="Tags" value={tags.join(', ')} onChange={(val) => setTags(val.split(',').map(t => t.trim()))} placeholder="design, art, code..." />
+                            </div>
+
+                            <div className="pt-6 mt-6 border-t border-white/5">
+                                <button
+                                    onClick={handlePublish}
+                                    disabled={isPublishing}
+                                    className="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold uppercase tracking-widest text-xs transition-all shadow-lg shadow-rose-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                >
+                                    {isPublishing ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save size={16} />}
+                                    {isPublishing ? 'Mempublikasikan...' : 'Publikasikan Proyek'}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+
+            {/* PUBLISHING PROGRESS OVERLAY */}
+            <AnimatePresence>
+                {isPublishing && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-10 text-center">
+                        <div className="relative mb-8">
+                            <div className="w-24 h-24 rounded-full border-4 border-white/10 border-t-rose-500 animate-spin" />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="text-xs font-mono font-bold">{publishProgress.percent}%</span>
+                            </div>
+                        </div>
+                        <h2 className="text-2xl font-bold text-white mb-2">{publishProgress.message}</h2>
+                        <p className="text-gray-500 text-sm">Mohon tunggu sebentar...</p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

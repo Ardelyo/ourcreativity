@@ -18,8 +18,6 @@ const modeConfig: { id: WorkType; label: string; icon: any }[] = [
     { id: 'image', label: 'Gambar', icon: ImageIcon },
     { id: 'video', label: 'Video', icon: Video },
     { id: 'code', label: 'Kode', icon: Code },
-    { id: 'document', label: 'Dokumen', icon: FileText },
-    { id: 'embed', label: 'Embed', icon: Globe },
 ];
 
 export const MobileActionDock: React.FC<MobileActionDockProps> = ({

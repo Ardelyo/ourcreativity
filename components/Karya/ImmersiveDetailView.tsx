@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, PanInfo, useAnimation } from 'framer-motion';
-import { Heart, MessageCircle, Share2, X, Code, Play, Edit3, Trash2 } from 'lucide-react';
+import { Heart, MessageCircle, Share2, X, Code, Play, Edit3, Trash2, Send } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ShareModal } from './ShareModal';
 
 
 
@@ -10,12 +12,27 @@ interface ImmersiveDetailViewProps {
     renderContent: (art: any, showCode?: boolean) => React.ReactNode;
     onEdit?: () => void;
     onDelete?: () => void;
+    showCode?: boolean;
+    setShowCode?: (show: boolean) => void;
+    // Comment Props
+    comments?: any[];
+    onCommentSubmit?: (e: React.FormEvent, content: string) => void;
+    user?: any;
+    isSubmittingComment?: boolean;
+    onShare?: () => void;
 }
 
-export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, onClose, renderContent, onEdit, onDelete }) => {
+export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({
+    art, onClose, renderContent, onEdit, onDelete,
+    showCode = false, setShowCode,
+    comments = [], onCommentSubmit, user, isSubmittingComment = false, onShare
+}) => {
     const controls = useAnimation();
     const [isExpanded, setIsExpanded] = useState(false);
-    const [showCode, setShowCode] = useState(false);
+    const [showShareModal, setShowShareModal] = useState(false);
+
+    // Local state for new comment input
+    const [newComment, setNewComment] = useState('');
 
     // CRITICAL: Lock body scroll when this component mounts
     useEffect(() => {
@@ -126,7 +143,7 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                         {/* Code Toggle Button - ALWAYS visible for code type */}
                         {art.type === 'code' && (
                             <button
-                                onClick={() => setShowCode(!showCode)}
+                                onClick={() => setShowCode?.(!showCode)}
                                 className="flex items-center gap-2 px-5 py-3 bg-black/50 backdrop-blur-md rounded-full text-white font-bold text-sm border border-white/30 active:scale-95 transition-transform"
                             >
                                 {showCode ? (
@@ -194,7 +211,10 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                                 <div className="p-3 bg-white/5 rounded-full"><MessageCircle size={22} /></div>
                                 <span className="text-xs">{typeof art.comments === 'object' ? (art.comments?.[0]?.count || 0) : (art.comments || 0)}</span>
                             </button>
-                            <button className="flex flex-col items-center gap-1 text-gray-400 active:text-green-500 transition-colors">
+                            <button
+                                onClick={() => onShare ? onShare() : setShowShareModal(true)}
+                                className="flex flex-col items-center gap-1 text-gray-400 active:text-green-500 transition-colors"
+                            >
                                 <div className="p-3 bg-white/5 rounded-full"><Share2 size={22} /></div>
                                 <span className="text-xs">Share</span>
                             </button>
@@ -225,18 +245,88 @@ export const ImmersiveDetailView: React.FC<ImmersiveDetailViewProps> = ({ art, o
                         <div className="h-px bg-white/10" />
 
                         {/* Comments Section */}
-                        <div>
-                            <h3 className="font-bold text-sm mb-4 text-gray-400 uppercase tracking-wider">Komentar</h3>
-                            <div className="text-center py-10 text-gray-600 italic text-sm bg-white/5 rounded-2xl border border-white/5">
-                                Feature komentar akan segera hadir.
+                        {/* Comments Section */}
+                        <div className="pb-10">
+                            <h3 className="font-bold text-sm mb-4 text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                                <MessageCircle size={16} /> Komentar ({comments.length})
+                            </h3>
+
+                            {/* Input Form */}
+                            <div className="mb-6">
+                                {user ? (
+                                    <form
+                                        onSubmit={(e) => {
+                                            if (onCommentSubmit) {
+                                                onCommentSubmit(e, newComment);
+                                                setNewComment('');
+                                            }
+                                        }}
+                                        className="relative"
+                                    >
+                                        <input
+                                            type="text"
+                                            value={newComment}
+                                            onChange={(e) => setNewComment(e.target.value)}
+                                            placeholder="Tulis komentar..."
+                                            className="w-full bg-white/5 border border-white/10 rounded-full py-3 pl-4 pr-12 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-rose-500/50"
+                                            disabled={isSubmittingComment}
+                                        />
+                                        <button
+                                            type="submit"
+                                            disabled={!newComment.trim() || isSubmittingComment}
+                                            className="absolute right-1 top-1/2 -translate-y-1/2 p-2 bg-rose-600 rounded-full text-white disabled:opacity-50"
+                                        >
+                                            <Send size={14} />
+                                        </button>
+                                    </form>
+                                ) : (
+                                    <Link to="/auth" className="block w-full text-center py-3 bg-white/5 rounded-xl border border-white/10 text-xs text-gray-400 hover:bg-white/10 transition-colors">
+                                        Login untuk berkomentar
+                                    </Link>
+                                )}
+                            </div>
+
+                            {/* Comments List */}
+                            <div className="space-y-4">
+                                {comments.length > 0 ? (
+                                    comments.map((comment: any) => (
+                                        <div key={comment.id} className="flex gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-gray-800 shrink-0 overflow-hidden">
+                                                <img
+                                                    src={comment.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${comment.profiles?.username || 'User'}`}
+                                                    alt="Avatar"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-0.5">
+                                                    <span className="text-white text-xs font-bold">{comment.profiles?.username || 'User'}</span>
+                                                    <span className="text-[10px] text-gray-500">{new Date(comment.created_at).toLocaleDateString()}</span>
+                                                </div>
+                                                <p className="text-gray-300 text-sm leading-snug">{comment.content}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-8 text-gray-600 text-sm">
+                                        Belum ada komentar.
+                                    </div>
+                                )}
                             </div>
                         </div>
-
-                        {/* Safe area padding */}
-                        <div className="h-16" />
                     </div>
+
+                    {/* Safe area padding */}
+                    <div className="h-16" />
                 </div>
             </motion.div>
-        </div >
+
+            <ShareModal
+                isOpen={showShareModal}
+                onClose={() => setShowShareModal(false)}
+                art={art}
+                user={user}
+            />
+        </div>
     );
 };

@@ -18,10 +18,10 @@ export const Dashboard = () => {
                 { data: latestWorks },
                 { data: latestUsers }
             ] = await Promise.all([
-                supabase.from('profiles').select('*', { count: 'exact', head: true }),
-                supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('is_approved', false),
-                supabase.from('announcements').select('*', { count: 'exact', head: true }).eq('is_active', true),
-                supabase.from('works').select('*', { count: 'exact', head: true }),
+                supabase.from('profiles').select('id', { count: 'exact', head: true }),
+                supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('is_approved', false),
+                supabase.from('announcements').select('id', { count: 'exact', head: true }).eq('is_active', true),
+                supabase.from('works').select('id', { count: 'exact', head: true }),
                 supabase.from('works').select('title, author, created_at').order('created_at', { ascending: false }).limit(5),
                 supabase.from('profiles').select('username, updated_at').order('updated_at', { ascending: false }).limit(5)
             ]);

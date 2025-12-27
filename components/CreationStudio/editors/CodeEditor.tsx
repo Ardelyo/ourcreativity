@@ -37,7 +37,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
     const lineNumbers = Array.from({ length: Math.max(lineCount, 10) }, (_, i) => i + 1);
 
     return (
-        <div className="flex flex-col h-full border border-white/10 rounded-xl overflow-hidden bg-[#0a0a0a]">
+        <div className="flex flex-col h-full border border-white/10 rounded-xl overflow-hidden bg-[#0a0a0a] mb-24 md:mb-0">
             {/* Toolbar */}
             <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 bg-[#0f0f0f] shrink-0">
                 <div className="flex items-center gap-4">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Reorder } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
 import { Plus, X, GripVertical, Image as ImageIcon, Type, Code } from 'lucide-react';
 import { SlideContent } from '../types';
@@ -64,54 +65,57 @@ export const SlideBuilder: React.FC<SlideBuilderProps> = ({ slides, onChange }) 
         <div className="h-full flex flex-col">
             {/* Slide List */}
             <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
-                {slides.map((slide, index) => (
-                    <div key={slide.id} className="group relative flex items-center bg-[#1a1a1a] rounded-xl p-2 border border-white/5 hover:border-white/20 transition-all">
-                        <div className="px-3 md:px-2 text-gray-600 cursor-move py-2">
-                            <GripVertical size={20} />
-                        </div>
+                <Reorder.Group axis="y" values={slides} onReorder={onChange} className="space-y-2">
+                    {slides.map((slide, index) => (
+                        <Reorder.Item key={slide.id} value={slide} className="relative">
+                            <div className="group relative flex items-center bg-[#1a1a1a] rounded-xl p-2 border border-white/5 hover:border-white/20 transition-all">
+                                <div className="px-3 md:px-2 text-gray-600 cursor-move py-2" onPointerDown={(e) => e.stopPropagation()}>
+                                    <GripVertical size={20} />
+                                </div>
 
-                        <div className="w-16 h-16 bg-black rounded-lg overflow-hidden flex-shrink-0 border border-white/5">
-                            {slide.type === 'image' && slide.content && (
-                                <img src={slide.content} alt="" className="w-full h-full object-cover" />
-                            )}
-                            {(!slide.content) && <div className="w-full h-full animate-pulse bg-white/5" />}
-                        </div>
+                                <div className="w-16 h-16 bg-black rounded-lg overflow-hidden flex-shrink-0 border border-white/5">
+                                    {slide.type === 'image' && slide.content && (
+                                        <img src={slide.content} alt="" className="w-full h-full object-cover" />
+                                    )}
+                                    {(!slide.content) && <div className="w-full h-full animate-pulse bg-white/5" />}
+                                </div>
 
-                        <div className="flex-1 ml-4">
-                            <div className="flex items-center justify-between mb-1">
-                                <span className="text-xs font-bold text-gray-400">Slide {index + 1}</span>
-                                <select
-                                    className="bg-[#0f0f0f] border border-white/10 text-xs rounded px-1 py-0.5"
-                                    value={slide.type}
-                                    onChange={(e) => {
-                                        const newType = e.target.value as any;
-                                        onChange(slides.map(s => s.id === slide.id ? { ...s, type: newType } : s));
-                                    }}
+                                <div className="flex-1 ml-4">
+                                    <div className="flex items-center justify-between mb-1">
+                                        <span className="text-xs font-bold text-gray-400">Slide {index + 1}</span>
+                                        <select
+                                            className="bg-[#0f0f0f] border border-white/10 text-xs rounded px-1 py-0.5"
+                                            value={slide.type}
+                                            onChange={(e) => {
+                                                const newType = e.target.value as any;
+                                                onChange(slides.map(s => s.id === slide.id ? { ...s, type: newType } : s));
+                                            }}
+                                        >
+                                            <option value="image">Image</option>
+                                            <option value="text">Text (Caption)</option>
+                                            <option value="code">Code Snippet</option>
+                                        </select>
+                                    </div>
+
+                                    <input
+                                        type="text"
+                                        placeholder="Caption..."
+                                        className="w-full bg-transparent text-sm border-b border-white/5 focus:border-white/20 focus:outline-none py-1"
+                                        value={slide.metadata?.caption || ''}
+                                        onChange={(e) => onChange(slides.map(s => s.id === slide.id ? { ...s, metadata: { ...s.metadata, caption: e.target.value } } : s))}
+                                    />
+                                </div>
+
+                                <button
+                                    onClick={() => removeSlide(slide.id)}
+                                    className="p-3 md:p-2 text-gray-500 hover:text-red-400 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                                 >
-                                    <option value="image">Image</option>
-                                    <option value="text">Text (Caption)</option>
-                                    <option value="code">Code Snippet</option>
-                                </select>
+                                    <X size={20} />
+                                </button>
                             </div>
-
-                            {/* Simple caption input for now */}
-                            <input
-                                type="text"
-                                placeholder="Caption..."
-                                className="w-full bg-transparent text-sm border-b border-white/5 focus:border-white/20 focus:outline-none py-1"
-                                value={slide.metadata?.caption || ''}
-                                onChange={(e) => onChange(slides.map(s => s.id === slide.id ? { ...s, metadata: { ...s.metadata, caption: e.target.value } } : s))}
-                            />
-                        </div>
-
-                        <button
-                            onClick={() => removeSlide(slide.id)}
-                            className="p-3 md:p-2 text-gray-500 hover:text-red-400 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
-                        >
-                            <X size={20} />
-                        </button>
-                    </div>
-                ))}
+                        </Reorder.Item>
+                    ))}
+                </Reorder.Group>
 
                 {slides.length < 10 && (
                     <div

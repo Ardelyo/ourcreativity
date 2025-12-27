@@ -53,10 +53,12 @@ const SlideCard = ({
             id={slide.id}
             style={{ touchAction: 'none' }}
             whileDrag={{
-                scale: 1.05,
-                rotate: 1,
-                zIndex: 100,
-                filter: "brightness(1.1)"
+                scale: 1.1,
+                rotate: 0,
+                zIndex: 9999,
+                cursor: "grabbing",
+                filter: "brightness(1.1)",
+                boxShadow: "0px 20px 50px rgba(0,0,0,0.5)"
             }}
         >
 
@@ -269,10 +271,10 @@ export const VisualBuilder: React.FC<Props> = ({ slides, onChange, isMobile, add
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[50vh] bg-rose-500/5 blur-[120px] rounded-full pointer-events-none" />
 
             {/* Scrollable Canvas (The Darkroom Grid) */}
-            <div className="relative flex-1 w-full overflow-y-auto overflow-x-hidden p-8 pt-16 md:p-12 md:pt-20 custom-scrollbar">
+            <div className="relative flex-1 w-full overflow-y-auto overflow-x-hidden p-4 pt-16 md:p-12 md:pt-20 custom-scrollbar">
                 <div
                     ref={gridRef}
-                    className="grid grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12"
+                    className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-12 pb-24"
                 >
                     <AnimatePresence initial={false}>
                         {slides.map((slide, index) => (

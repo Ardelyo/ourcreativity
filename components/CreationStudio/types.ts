@@ -32,8 +32,6 @@ export interface CreationData {
     // New API fields based on schema
     slides?: SlideContent[];
     code_language?: string;
-    embed_url?: string;
-    document_source?: string;
     _pendingFile?: File; // Internal use for uploads
 }
 

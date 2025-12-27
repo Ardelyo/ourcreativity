@@ -19,6 +19,7 @@ const DIVISION_LABELS: Record<string, string> = {
 };
 import { KaryaCard } from '../components/KaryaCard';
 import { ImmersiveDetailView } from '../components/Karya/ImmersiveDetailView';
+import { ShareModal } from '../components/Karya/ShareModal';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -80,12 +81,12 @@ const CodeViewer = ({ content }: { content: any }) => {
           <button
             key={file.id}
             onClick={() => setActiveFileId(file.id)}
-            className={`px - 3 md: px - 4 py - 2 md: py - 3 text - [10px] md: text - xs font - mono whitespace - nowrap border - b - 2 transition - colors ${file.id === activeFileId
+            className={`px-3 md:px-4 py-2 md:py-3 text-[10px] md:text-xs font-mono whitespace-nowrap border-b-2 transition-colors ${file.id === activeFileId
               ? 'border-blue-500 text-white bg-[#0d1117]'
               : 'border-transparent text-gray-500 hover:text-gray-300'
               } `}
           >
-            <span className={`mr - 1.5 ${file.name?.endsWith('.html') ? 'text-orange-400' :
+            <span className={`mr-1.5 ${file.name?.endsWith('.html') ? 'text-orange-400' :
               file.name?.endsWith('.css') ? 'text-blue-400' :
                 file.name?.endsWith('.js') ? 'text-yellow-400' : 'text-gray-400'
               } `}>●</span>
@@ -216,6 +217,8 @@ export const Karya = () => {
   const isMobile = useIsMobile();
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [showSourceCode, setShowSourceCode] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const carouselRef = React.useRef<HTMLDivElement>(null);
   const [filter, setFilter] = useState('all');
@@ -237,40 +240,25 @@ export const Karya = () => {
   const { data: worksData, isLoading: worksLoading, error: worksError, isFetching: worksFetching } = useQuery({
     queryKey: ['works', filter, page, sortBy],
     queryFn: async () => {
-      const from = (page - 1) * ITEMS_PER_PAGE; // 1-based pagination
+      const from = (page - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
 
+      // Step 1: Fetch works WITHOUT nested relationships to avoid N+1 problem
       let query = supabase
         .from('works')
         .select(`
-id,
-  title,
-  description,
-  image_url,
-  author,
-  type,
-  division,
-  tags,
-  slides,
-  code_language,
-  content,
-  thumbnail_url,
-  likes: likes(count),
-    comments: comments(count),
-      author_profile: profiles(username, avatar_url, role)
-        `, { count: 'exact' }); // Request total count
+          id, title, description, image_url, author_id, author,
+          type, division, tags, slides, code_language, content, 
+          thumbnail_url, created_at
+        `, { count: 'exact' });
 
       // Apply Sorting
       if (sortBy === 'newest') {
         query = query.order('created_at', { ascending: false });
       } else if (sortBy === 'oldest') {
         query = query.order('created_at', { ascending: true });
-      } else if (sortBy === 'likes') {
-        // PostgREST doesn't support sorting by related count directly.
-        // In a real app, you'd use a view or a counter cache column.
-        // For now, we'll sort by newest within this fallback.
-        query = query.order('created_at', { ascending: false });
-      } else if (sortBy === 'comments') {
+      } else {
+        // Fallback or other sorts
         query = query.order('created_at', { ascending: false });
       }
 
@@ -278,11 +266,40 @@ id,
         query = query.eq('division', filter);
       }
 
-      const { data, error, count } = await query.range(from, to);
+      const { data: works, error, count } = await query.range(from, to);
       if (error) throw error;
-      return { data, count };
+      if (!works || works.length === 0) return { data: [], count: 0 };
+
+      // Step 2: Fetch counts and profile info in parallel for the retrieved works
+      const workIds = works.map(w => w.id);
+      const authorIds = [...new Set(works.filter(w => w.author_id).map(w => w.author_id))];
+
+      const [likesRes, commentsRes, profilesRes] = await Promise.all([
+        supabase.from('likes').select('work_id').in('work_id', workIds),
+        supabase.from('comments').select('work_id').in('work_id', workIds),
+        authorIds.length > 0
+          ? supabase.from('profiles').select('id, username, avatar_url, role').in('id', authorIds)
+          : Promise.resolve({ data: [] })
+      ]);
+
+      // Step 3: Combine data
+      const likesMap = new Map();
+      likesRes.data?.forEach(l => likesMap.set(l.work_id, (likesMap.get(l.work_id) || 0) + 1));
+
+      const commentsMap = new Map();
+      commentsRes.data?.forEach(c => commentsMap.set(c.work_id, (commentsMap.get(c.work_id) || 0) + 1));
+
+      const profileMap = new Map(profilesRes.data?.map(p => [p.id, p]) as [string, any][]);
+
+      const enrichedWorks = works.map(w => ({
+        ...w,
+        likes: { count: likesMap.get(w.id) || 0 },
+        comments: { count: commentsMap.get(w.id) || 0 },
+        author_profile: profileMap.get(w.author_id)
+      }));
+
+      return { data: enrichedWorks, count };
     },
-    refetchOnMount: true,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
     enabled: true,
@@ -365,6 +382,41 @@ id,
       setIsLiked(previousIsLiked);
       setLikesCount(previousLikesCount);
       console.error('Error toggling like:', error);
+    }
+  };
+
+  // Helper dedicated for Mobile / Direct calls
+  const handleDirectSubmit = async (content: string) => {
+    if (!user || !selectedId || !content.trim()) return;
+
+    setIsSubmittingComment(true);
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .insert({
+          work_id: selectedId,
+          user_id: user.id,
+          content: content.trim()
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        // Kita butuh data profil buat tampilan, biasanya ambil ulang atau simulasi aja:
+        const newCommentObj = {
+          ...data,
+          profiles: profile
+        };
+        setComments(prev => [newCommentObj, ...prev]);
+        setNewComment(''); // Clear desktop input too if shared
+      }
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+      alert('Gagal mengirim komentar.');
+    } finally {
+      setIsSubmittingComment(false);
     }
   };
 
@@ -454,7 +506,7 @@ id,
           <div className="w-full h-full bg-[#0d1117] relative group overflow-hidden">
             {/* Iframe Pratinjau buat Kartu - Pake Data URI biar lebih kompatibel */}
             <iframe
-              src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(art.content, art.code_language || 'html'))}`}
+              srcDoc={generateCodePreview(art.content, art.code_language || 'html')}
               sandbox="allow-scripts allow-same-origin"
               className="w-[200%] h-[200%] border-0 transform scale-50 origin-top-left pointer-events-none bg-white" // Paksa background putih buat konten iframe
               title="Code Preview"
@@ -508,8 +560,6 @@ id,
     }
   };
 
-  // State buat Ganti Tampilan Kode di Modal
-  const [showSourceCode, setShowSourceCode] = useState(false);
 
   return (
     <div className="min-h-screen pt-32 pb-20 px-4 max-w-[1600px] mx-auto relative">
@@ -540,7 +590,7 @@ id,
                     setPage(1);
                   }}
                   className={`relative px-4 py-2 rounded-full text-sm font-bold transition-colors whitespace-nowrap z-10 ${filter === f.id ? 'text-black' : 'text-gray-400 hover:text-white'
-                    }`}
+                    } `}
                 >
                   {filter === f.id && (
                     <motion.div
@@ -569,7 +619,7 @@ id,
                     sortBy === 'oldest' ? 'Terlama' :
                       sortBy === 'likes' ? 'Terpopuler' : 'Banyak Diskusi'}
                 </span>
-                <ChevronDown size={14} className={`transition-transform duration-300 ${showSortDropdown ? 'rotate-180' : ''}`} />
+                <ChevronDown size={14} className={`transition - transform duration - 300 ${showSortDropdown ? 'rotate-180' : ''} `} />
               </button>
 
               <AnimatePresence>
@@ -601,8 +651,8 @@ id,
                             setPage(1);
                             setShowSortDropdown(false);
                           }}
-                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${sortBy === option.id ? 'bg-white text-black' : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                            }`}
+                          className={`w - full flex items - center gap - 3 px - 4 py - 3 rounded - xl text - sm font - bold transition - all ${sortBy === option.id ? 'bg-white text-black' : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                            } `}
                         >
                           <option.icon size={16} />
                           {option.label}
@@ -778,7 +828,32 @@ id,
             <ImmersiveDetailView
               key="mobile-immersive-view"
               art={selectedArtwork}
+              showCode={showSourceCode}
+              setShowCode={setShowSourceCode}
+
+              // Comment Props
+              comments={comments}
+              user={user}
+              isSubmittingComment={isSubmittingComment}
+              onCommentSubmit={(e, content) => {
+                setNewComment(content);
+                // We need to call a wrapper because handleSubmitComment expects a FormEvent 
+                // and uses the state directly. 
+                // Since we lifted the submit logic but the state is still local to this component instance (or parent),
+                // we can reuse handleSubmitComment IF we update the state first.
+                // HOWEVER, `handleSubmitComment` uses `newComment` from state.
+                // A better way is to refactor handleSubmitComment or just update state and call it.
+                // But event handling is tricky with state updates in the same tick.
+                // Let's refactor the handleSubmitComment slightly or just fake the event.
+
+                // NOTE: Since `setNewComment` is async, we might need a separate effect or
+                // a direct submit function that accepts content.
+                // Let's create a direct submit helper.
+                handleDirectSubmit(content);
+              }}
+
               onClose={() => setSelectedId(null)}
+              onShare={() => setShowShareModal(true)}
               renderContent={(art, showCode) => {
                 // Buat tipe kode, kita rendernya beda tergantung showCode
                 if (art.type === 'code') {
@@ -793,7 +868,7 @@ id,
                     // Tampilin pratinjau interaktif - UKURAN PENUH, TANPA SCALING
                     return (
                       <iframe
-                        src={`data: text / html; charset = utf - 8, ${encodeURIComponent(generateCodePreview(art.content, art.code_language || 'html'))} `}
+                        srcDoc={generateCodePreview(art.content, art.code_language || 'html')}
                         sandbox="allow-scripts allow-same-origin"
                         className="w-full h-full border-0 bg-white"
                         style={{ touchAction: 'auto' }}
@@ -975,17 +1050,21 @@ id,
                 {/* Bagian Detail - Flex-1 to fill remaining space, scrollable */}
                 <div className="flex-1 md:w-2/5 p-4 md:p-8 lg:p-12 overflow-y-auto custom-scrollbar bg-[#111] border-t md:border-t-0 md:border-l border-white/10">
                   <div className="flex items-center justify-between mb-8">
-                    <div className={`px - 3 py - 1 rounded - full text - xs font - bold uppercase tracking - widest border border - white / 10 ${selectedArtwork.division === 'coding' ? 'bg-green-500/10 text-green-400' :
+                    <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 ${selectedArtwork.division === 'coding' ? 'bg-green-500/10 text-green-400' :
                       selectedArtwork.division === 'video' ? 'bg-orange-500/10 text-orange-400' :
                         selectedArtwork.division === 'meme' ? 'bg-yellow-500/10 text-yellow-400' :
                           selectedArtwork.division === 'writing' ? 'bg-white/10 text-white' :
                             'bg-purple-500/10 text-purple-400'
-                      } `}>
+                      }`}>
                       {DIVISION_LABELS[selectedArtwork.division] || selectedArtwork.division}
                     </div>
                     <div className="flex gap-2">
-                      <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"><Share2 size={20} /></button>
-                      <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"><Download size={20} /></button>
+                      <button
+                        onClick={() => setSelectedId(null)}
+                        className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
+                      >
+                        <X size={20} />
+                      </button>
                     </div>
                   </div>
 
@@ -1003,7 +1082,7 @@ id,
                     <button className="ml-auto bg-white text-black px-4 py-2 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors">
                       Lihat
                     </button>
-                  </Link >
+                  </Link>
 
                   <div className="flex flex-wrap gap-2 mb-8">
                     {selectedArtwork.tags?.map(tag => (
@@ -1022,8 +1101,12 @@ id,
                       <Heart size={20} className={isLiked ? 'fill-current' : ''} />
                       {likesCount > 0 ? `${likesCount} Apresiasi` : 'Apresiasi Karya'}
                     </button>
-                    <button className="px-6 py-3 bg-white/5 text-white rounded-xl font-bold hover:bg-white/10 border border-white/10 transition-all flex items-center gap-2">
+                    <button
+                      onClick={() => setShowShareModal(true)}
+                      className="px-6 py-3 bg-white/5 text-white rounded-xl font-bold hover:bg-white/10 border border-white/10 transition-all flex items-center gap-2 active:scale-95"
+                    >
                       <Share2 size={20} />
+                      <span>Bagikan</span>
                     </button>
                   </div>
 
@@ -1105,6 +1188,14 @@ id,
           )
         )}
       </AnimatePresence >
+
+      {/* Share Modal - Global for Desktop/Mobile Detail */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        art={selectedArtwork}
+        user={user}
+      />
     </div >
   );
 };

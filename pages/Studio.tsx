@@ -283,6 +283,12 @@ export const Studio = () => {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        // Max 50MB Check
+        if (file.size > 50 * 1024 * 1024) {
+            alert("Ukuran file terlalu besar. Maksimal 50MB.");
+            return;
+        }
+
         console.log(`[Studio] File selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
 
         // Just set the file, compression will happen during publish
@@ -385,8 +391,10 @@ export const Studio = () => {
         }
 
         // Safety check for missing file scenarios (e.g. Broken draft state)
-        if ((mode === 'video' || mode === 'image') && !mediaFile && mediaPreview && mediaPreview.startsWith('blob:')) {
-            alert("File media tidak ditemukan! Kemungkinan Anda me-refresh halaman sehingga referensi file hilang. Silakan pilih ulang file media Anda.");
+        // EXCEPTION: YouTube link in content is allowed
+        const isYoutubeStart = content && (content.includes('youtube.com') || content.includes('youtu.be'));
+        if ((mode === 'video' || mode === 'image') && !mediaFile && !isYoutubeStart && mediaPreview && mediaPreview.startsWith('blob:')) {
+            alert("File video/gambar tidak ditemukan! Kemungkinan Anda me-refresh halaman sehingga referensi file hilang. Silakan pilih ulang file media Anda.");
             // Reset state to force re-selection
             setMediaFile(null);
             setMediaPreview(null);
@@ -423,8 +431,15 @@ export const Studio = () => {
                 finalThumbnailUrl = uploadResult.thumbnailUrl;
                 addLog(`Media berhasil diunggah: ${finalImageUrl}`, 'success');
                 console.log("[Studio] Media uploaded:", uploadResult);
+                console.log("[Studio] Media uploaded:", uploadResult);
             } else if (mode === 'video' && !finalImageUrl) {
-                throw new Error("File video wajib diupload!");
+                // Check if content is youtube link
+                if (content && (content.includes('youtube.com') || content.includes('youtu.be'))) {
+                    console.log("[Studio] Using YouTube embed for video.");
+                    // valid, no upload needed
+                } else {
+                    throw new Error("File video atau link YouTube wajib diisi!");
+                }
             }
 
             // 2. Upload Slide (kalo mode visual)
@@ -672,6 +687,8 @@ export const Studio = () => {
                         isTyping={isTyping}
                         setIsTyping={setIsTyping}
                         addLog={addLog}
+                        setMediaFile={setMediaFile}
+                        setMediaPreview={setMediaPreview}
                     />
                 ) : (
                     <>

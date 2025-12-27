@@ -518,10 +518,31 @@ export const Karya = () => {
           </div>
         );
       case 'video':
+        const videoSrc = art.image_url || art.content;
+        const isYoutube = videoSrc && (videoSrc.includes('youtube.com') || videoSrc.includes('youtu.be'));
+
+        if (isYoutube) {
+          const videoId = videoSrc.split('v=')[1]?.split('&')[0] || videoSrc.split('/').pop();
+          return (
+            <div className="relative w-full h-full group/video bg-black">
+              <iframe
+                src={`https://www.youtube.com/embed/${videoId}?autoplay=0&mute=1&controls=0&showinfo=0&rel=0`}
+                className="w-full h-full pointer-events-none"
+                title={art.title}
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover/video:bg-transparent transition-colors pointer-events-none">
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 group-hover/video:scale-110 transition-transform">
+                  <Play className="text-white fill-current ml-1" size={24} />
+                </div>
+              </div>
+            </div>
+          );
+        }
+
         return (
           <div className="relative w-full h-full group/video bg-black">
             <video
-              src={art.image_url}
+              src={art.image_url || art.content}
               poster={art.thumbnail_url}
               className="w-full h-full object-cover"
               muted
@@ -876,12 +897,30 @@ export const Karya = () => {
                   }
                 }
 
-                // 2. VIDEO: Full Native Player
+                // 2. VIDEO: Full Native Player or YouTube
                 else if (art.type === 'video') {
+                  const videoSrc = art.image_url || art.content;
+                  const isYoutube = videoSrc && (videoSrc.includes('youtube.com') || videoSrc.includes('youtu.be'));
+
+                  if (isYoutube) {
+                    const videoId = videoSrc.split('v=')[1]?.split('&')[0] || videoSrc.split('/').pop();
+                    return (
+                      <div className="w-full h-full flex items-center justify-center bg-black">
+                        <iframe
+                          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=1&showinfo=0&rel=0`}
+                          className="w-full h-full aspect-video"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          title={art.title}
+                        />
+                      </div>
+                    );
+                  }
+
                   return (
                     <div className="w-full h-full flex items-center justify-center bg-black">
                       <video
-                        src={art.image_url}
+                        src={art.image_url || art.content}
                         controls
                         autoPlay
                         playsInline
@@ -1061,17 +1100,37 @@ export const Karya = () => {
                     {selectedArtwork.type === 'image' && (!selectedArtwork.slides || selectedArtwork.slides.length <= 1) && (
                       <img src={selectedArtwork.image_url || selectedArtwork.slides?.[0]?.content} className="w-full h-full object-contain" alt={selectedArtwork.title} />
                     )}
-                    {selectedArtwork.type === 'video' && (
-                      <div className="w-full h-full flex items-center justify-center bg-black">
-                        <video
-                          src={selectedArtwork.image_url}
-                          controls
-                          autoPlay
-                          className="max-w-full max-h-full aspect-video"
-                          controlsList="nodownload"
-                        />
-                      </div>
-                    )}
+                    {selectedArtwork.type === 'video' && (() => {
+                      const videoSrc = selectedArtwork.image_url || selectedArtwork.content;
+                      const isYoutube = videoSrc && (videoSrc.includes('youtube.com') || videoSrc.includes('youtu.be'));
+
+                      if (isYoutube) {
+                        const videoId = videoSrc.split('v=')[1]?.split('&')[0] || videoSrc.split('/').pop();
+                        return (
+                          <div className="w-full h-full flex items-center justify-center bg-black">
+                            <iframe
+                              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=1&showinfo=0&rel=0`}
+                              className="w-full h-full aspect-video"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              title={selectedArtwork.title}
+                            />
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div className="w-full h-full flex items-center justify-center bg-black">
+                          <video
+                            src={selectedArtwork.image_url || selectedArtwork.content}
+                            controls
+                            autoPlay
+                            className="max-w-full max-h-full aspect-video"
+                            controlsList="nodownload"
+                          />
+                        </div>
+                      );
+                    })()}
                     {selectedArtwork.type === 'text' && (
                       <div className="w-full h-full bg-[#f0f0f0] text-black p-12 md:p-20 overflow-y-auto">
                         <div

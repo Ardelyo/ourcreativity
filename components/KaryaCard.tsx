@@ -70,8 +70,8 @@ export const KaryaCard: React.FC<KaryaCardProps> = ({ art, index, onClick, rende
             className="break-inside-avoid group relative rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden cursor-pointer bg-[#0a0a0a] shadow-2xl hover:shadow-rose-500/20 transition-all border border-white/5"
         >
             {/* Area Konten Utama - Aspek Rasio Standar biar Gridnya gak berantakan */}
-            <div className="relative w-full aspect-[4/5] md:aspect-[3/4]">
-                <div className="w-full h-full overflow-hidden">
+            <div className="relative w-full aspect-[4/5] md:aspect-[3/4] overflow-hidden bg-neutral-900">
+                <div className="w-full h-full overflow-hidden will-change-transform">
                     {renderContent(art)}
                 </div>
 

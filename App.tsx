@@ -5,10 +5,12 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { AuthProvider } from './components/AuthProvider';
-// Halaman yang dimuat secara eager
+// Halaman yang dimuat secara eager (Cuma Home buat LCP)
 import { Home } from './pages/Home';
-import { Login } from './pages/Auth/Login';
-import { Register } from './pages/Auth/Register';
+
+// Halaman yang dimuat secara lazy (biar enteng pas buka awal)
+const Login = React.lazy(() => import('./pages/Auth/Login').then(module => ({ default: module.Login })));
+const Register = React.lazy(() => import('./pages/Auth/Register').then(module => ({ default: module.Register })));
 
 // Halaman yang dimuat secara lazy (biar enteng pas buka awal)
 const Karya = React.lazy(() => import('./pages/Karya'));

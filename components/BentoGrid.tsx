@@ -89,6 +89,9 @@ export const BentoGrid = () => {
                         alt="Art"
                         loading="lazy"
                         decoding="async"
+                        width="800"
+                        height="600"
+                        style={{ aspectRatio: '800 / 600' }}
                         className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>

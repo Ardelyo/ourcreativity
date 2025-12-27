@@ -21,6 +21,10 @@ export default defineConfig(({ mode }) => {
       }
     },
     build: {
+      // Chunk size warning at 250KB (Core Web Vitals optimization)
+      chunkSizeWarningLimit: 250,
+      // Use esbuild (Vite default) with console/debugger removal
+      minify: 'esbuild',
       rollupOptions: {
         output: {
           manualChunks: {

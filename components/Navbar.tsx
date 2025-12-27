@@ -106,7 +106,7 @@ export const Navbar = () => {
                     transition={springTransition as any}
                     onHoverStart={() => setIsHovered(true)}
                     onHoverEnd={() => setIsHovered(false)}
-                    className="bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden relative"
+                    className="bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden relative will-change-transform"
                 >
                     <div className={`flex items-center justify-between w-full relative z-20 ${showFullMenu && !isMobileMenuOpen && !isProfileOpen ? 'gap-12' : 'gap-3'} ${(isMobile && (isProfileOpen || isMobileMenuOpen)) ? 'mb-4' : 'h-full'}`}>
                         {/* Pembungkus Logo & Judul */}
@@ -127,7 +127,7 @@ export const Navbar = () => {
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: -10 }}
                                         transition={{ duration: motionConfig.durations.fast, ease: "easeOut" }}
-                                        className="font-serif font-bold text-lg tracking-tight text-white whitespace-nowrap"
+                                        className="font-serif font-bold text-lg tracking-tight text-white whitespace-nowrap will-change-transform"
                                     >
                                         Our Creativity.
                                     </motion.span>

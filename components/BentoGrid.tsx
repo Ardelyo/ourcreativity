@@ -10,11 +10,14 @@ interface CardProps {
 }
 
 // Efek Noise Modern - Biar tekstur gak flat
+// Inlined SVG data URI to eliminate external fetch (LCP optimization)
+const NOISE_SVG_DATA_URI = `data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E`;
+
 const Noise = () => (
     <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none z-0 mix-blend-overlay"
         style={{
-            backgroundImage: `url("https://grainy-gradients.vercel.app/noise.svg")`,
+            backgroundImage: `url("${NOISE_SVG_DATA_URI}")`,
             backgroundRepeat: 'repeat',
             backgroundSize: '100px 100px'
         }}
@@ -89,6 +92,9 @@ export const BentoGrid = () => {
                         alt="Art"
                         loading="lazy"
                         decoding="async"
+                        width="800"
+                        height="600"
+                        style={{ aspectRatio: '800 / 600' }}
                         className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>

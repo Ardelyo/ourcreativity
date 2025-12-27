@@ -80,12 +80,12 @@ const CodeViewer = ({ content }: { content: any }) => {
           <button
             key={file.id}
             onClick={() => setActiveFileId(file.id)}
-            className={`px - 3 md: px - 4 py - 2 md: py - 3 text - [10px] md: text - xs font - mono whitespace - nowrap border - b - 2 transition - colors ${file.id === activeFileId
+            className={`px-3 md:px-4 py-2 md:py-3 text-[10px] md:text-xs font-mono whitespace-nowrap border-b-2 transition-colors ${file.id === activeFileId
               ? 'border-blue-500 text-white bg-[#0d1117]'
               : 'border-transparent text-gray-500 hover:text-gray-300'
               } `}
           >
-            <span className={`mr - 1.5 ${file.name?.endsWith('.html') ? 'text-orange-400' :
+            <span className={`mr-1.5 ${file.name?.endsWith('.html') ? 'text-orange-400' :
               file.name?.endsWith('.css') ? 'text-blue-400' :
                 file.name?.endsWith('.js') ? 'text-yellow-400' : 'text-gray-400'
               } `}>●</span>
@@ -382,6 +382,41 @@ export const Karya = () => {
     }
   };
 
+  // Helper dedicated for Mobile / Direct calls
+  const handleDirectSubmit = async (content: string) => {
+    if (!user || !selectedId || !content.trim()) return;
+
+    setIsSubmittingComment(true);
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .insert({
+          work_id: selectedId,
+          user_id: user.id,
+          content: content.trim()
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        // Kita butuh data profil buat tampilan, biasanya ambil ulang atau simulasi aja:
+        const newCommentObj = {
+          ...data,
+          profiles: profile
+        };
+        setComments(prev => [newCommentObj, ...prev]);
+        setNewComment(''); // Clear desktop input too if shared
+      }
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+      alert('Gagal mengirim komentar.');
+    } finally {
+      setIsSubmittingComment(false);
+    }
+  };
+
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !selectedId || !newComment.trim()) return;
@@ -468,7 +503,7 @@ export const Karya = () => {
           <div className="w-full h-full bg-[#0d1117] relative group overflow-hidden">
             {/* Iframe Pratinjau buat Kartu - Pake Data URI biar lebih kompatibel */}
             <iframe
-              src={`data:text/html;charset=utf-8,${encodeURIComponent(generateCodePreview(art.content, art.code_language || 'html'))}`}
+              srcDoc={generateCodePreview(art.content, art.code_language || 'html')}
               sandbox="allow-scripts allow-same-origin"
               className="w-[200%] h-[200%] border-0 transform scale-50 origin-top-left pointer-events-none bg-white" // Paksa background putih buat konten iframe
               title="Code Preview"
@@ -554,7 +589,7 @@ export const Karya = () => {
                     setPage(1);
                   }}
                   className={`relative px-4 py-2 rounded-full text-sm font-bold transition-colors whitespace-nowrap z-10 ${filter === f.id ? 'text-black' : 'text-gray-400 hover:text-white'
-                    }`}
+                    } `}
                 >
                   {filter === f.id && (
                     <motion.div
@@ -583,7 +618,7 @@ export const Karya = () => {
                     sortBy === 'oldest' ? 'Terlama' :
                       sortBy === 'likes' ? 'Terpopuler' : 'Banyak Diskusi'}
                 </span>
-                <ChevronDown size={14} className={`transition-transform duration-300 ${showSortDropdown ? 'rotate-180' : ''}`} />
+                <ChevronDown size={14} className={`transition - transform duration - 300 ${showSortDropdown ? 'rotate-180' : ''} `} />
               </button>
 
               <AnimatePresence>
@@ -615,8 +650,8 @@ export const Karya = () => {
                             setPage(1);
                             setShowSortDropdown(false);
                           }}
-                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${sortBy === option.id ? 'bg-white text-black' : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                            }`}
+                          className={`w - full flex items - center gap - 3 px - 4 py - 3 rounded - xl text - sm font - bold transition - all ${sortBy === option.id ? 'bg-white text-black' : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                            } `}
                         >
                           <option.icon size={16} />
                           {option.label}
@@ -794,6 +829,28 @@ export const Karya = () => {
               art={selectedArtwork}
               showCode={showSourceCode}
               setShowCode={setShowSourceCode}
+
+              // Comment Props
+              comments={comments}
+              user={user}
+              isSubmittingComment={isSubmittingComment}
+              onCommentSubmit={(e, content) => {
+                setNewComment(content);
+                // We need to call a wrapper because handleSubmitComment expects a FormEvent 
+                // and uses the state directly. 
+                // Since we lifted the submit logic but the state is still local to this component instance (or parent),
+                // we can reuse handleSubmitComment IF we update the state first.
+                // HOWEVER, `handleSubmitComment` uses `newComment` from state.
+                // A better way is to refactor handleSubmitComment or just update state and call it.
+                // But event handling is tricky with state updates in the same tick.
+                // Let's refactor the handleSubmitComment slightly or just fake the event.
+
+                // NOTE: Since `setNewComment` is async, we might need a separate effect or
+                // a direct submit function that accepts content.
+                // Let's create a direct submit helper.
+                handleDirectSubmit(content);
+              }}
+
               onClose={() => setSelectedId(null)}
               renderContent={(art, showCode) => {
                 // Buat tipe kode, kita rendernya beda tergantung showCode
@@ -991,12 +1048,12 @@ export const Karya = () => {
                 {/* Bagian Detail - Flex-1 to fill remaining space, scrollable */}
                 <div className="flex-1 md:w-2/5 p-4 md:p-8 lg:p-12 overflow-y-auto custom-scrollbar bg-[#111] border-t md:border-t-0 md:border-l border-white/10">
                   <div className="flex items-center justify-between mb-8">
-                    <div className={`px - 3 py - 1 rounded - full text - xs font - bold uppercase tracking - widest border border - white / 10 ${selectedArtwork.division === 'coding' ? 'bg-green-500/10 text-green-400' :
+                    <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 ${selectedArtwork.division === 'coding' ? 'bg-green-500/10 text-green-400' :
                       selectedArtwork.division === 'video' ? 'bg-orange-500/10 text-orange-400' :
                         selectedArtwork.division === 'meme' ? 'bg-yellow-500/10 text-yellow-400' :
                           selectedArtwork.division === 'writing' ? 'bg-white/10 text-white' :
                             'bg-purple-500/10 text-purple-400'
-                      } `}>
+                      }`}>
                       {DIVISION_LABELS[selectedArtwork.division] || selectedArtwork.division}
                     </div>
                     <div className="flex gap-2">
@@ -1019,7 +1076,7 @@ export const Karya = () => {
                     <button className="ml-auto bg-white text-black px-4 py-2 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors">
                       Lihat
                     </button>
-                  </Link >
+                  </Link>
 
                   <div className="flex flex-wrap gap-2 mb-8">
                     {selectedArtwork.tags?.map(tag => (

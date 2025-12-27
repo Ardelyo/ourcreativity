@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { LogContainer, LogEntry } from './CreationStudio/ControlCenter/LogContainer';
+import { type LogEntry } from './CreationStudio/ControlCenter/LogContainer';
 import { useLocation } from 'react-router-dom';
 
 interface SystemLogContextType {
@@ -55,16 +55,6 @@ export const SystemLogProvider: React.FC<{ children: ReactNode }> = ({ children 
             setIsVisible
         }}>
             {children}
-            {isVisible && logs.length > 0 && (
-                <LogContainer
-                    logs={logs}
-                    isOpen={isOpen}
-                    onToggle={() => setIsOpen(!isOpen)}
-                    onClear={clearLogs}
-                    isMobile={isMobile}
-                    onVanish={handleVanish}
-                />
-            )}
         </SystemLogContext.Provider>
     );
 };

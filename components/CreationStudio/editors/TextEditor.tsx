@@ -91,7 +91,8 @@ export const TextEditor: React.FC<TextEditorProps> = ({
         onBlur: () => onBlur?.(),
         editorProps: {
             attributes: {
-                class: `prose prose-invert prose-base md:prose-lg max-w-none focus:outline-none leading-relaxed break-words text-left ${isMobile ? 'min-h-[40vh] px-1' : 'min-h-[60vh]'}`,
+                // AGGRESSIVE FIX: usage of break-words and overflow-hidden/auto
+                class: `prose prose-invert ${isMobile ? 'prose-sm' : 'prose-base md:prose-lg'} max-w-none w-full focus:outline-none leading-relaxed break-words break-all text-left ${isMobile ? 'min-h-[50vh] px-0' : 'min-h-[60vh]'}`,
             },
         },
     });
@@ -185,7 +186,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({
 
             {/* ===== kanvas editornya ===== */}
             <div className={`flex-1 overflow-y-auto overflow-x-hidden ${isMobile ? 'pb-safe' : ''}`}>
-                <div className={`w-full mx-auto ${isMobile ? 'px-4 py-6' : 'px-8 py-10'}`}>
+                <div className={`w-full mx-auto ${isMobile ? 'px-3 py-4' : 'px-8 py-10'}`}>
                     <EditorContent editor={editor} />
                 </div>
             </div>

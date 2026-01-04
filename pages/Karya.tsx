@@ -357,6 +357,16 @@ export const Karya = () => {
     setActiveSlide(0);
   }, [selectedId]);
 
+  // CRITICAL: Clear social states when switching posts to prevent showing wrong comments/likes
+  useEffect(() => {
+    // Reset to empty states when selectedId changes
+    setLikesCount(0);
+    setIsLiked(false);
+    setComments([]);
+    setNewComment('');
+    setIsSubmittingComment(false);
+  }, [selectedId]);
+
   const handleToggleLike = async () => {
     if (!user || !selectedId) {
       alert('Silakan login untuk menyukai karya ini.');

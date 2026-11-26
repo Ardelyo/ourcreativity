@@ -138,7 +138,7 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
     const handlePublishInternal = async () => {
         try {
             setIsPublishing(true);
-            let finalData = { ...formData };
+            const finalData = { ...formData };
 
             // Upload main image/video if exists
             if (formData._pendingFile) {

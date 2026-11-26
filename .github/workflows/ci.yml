@@ -17,8 +17,25 @@ jobs:
       - run: npm ci
       - name: Typecheck
         run: npx tsc --noEmit
+      - name: Lint (gagal hanya untuk error; warning adalah utang yang dilacak)
+        run: npm run lint
       - name: Build
         run: npm run build
         env:
           VITE_SUPABASE_URL: https://example.supabase.co
           VITE_SUPABASE_ANON_KEY: ci-placeholder
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Pasang Playwright (Chromium)
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
+      - name: Uji asap keamanan (XSS dan sandbox iframe)
+        run: python tools/xss_smoke.py .
+        env:
+          PW_CHANNEL: ''
+      - name: Uji asap UI (favicon, robots, share, Tim)
+        run: python tools/smoke_ui.py .
+        env:
+          PW_CHANNEL: ''

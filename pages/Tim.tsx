@@ -140,7 +140,7 @@ export const Tim = () => {
 
       // 2. Ambil Masalah (Issues) buat cari pelapor bug
       const issuesRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?state=all&per_page=100`);
-      let reportersMap: Record<string, ReporterData> = {};
+      const reportersMap: Record<string, ReporterData> = {};
 
       if (issuesRes.ok) {
         const issuesData: GitHubIssue[] = await issuesRes.json();

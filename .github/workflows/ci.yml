@@ -19,6 +19,8 @@ jobs:
         run: npx tsc --noEmit
       - name: Lint (gagal hanya untuk error; warning adalah utang yang dilacak)
         run: npm run lint
+      - name: Uji unit (pratinjau kode)
+        run: npm test
       - name: Build
         run: npm run build
         env:

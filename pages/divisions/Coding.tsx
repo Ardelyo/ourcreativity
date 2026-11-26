@@ -16,7 +16,7 @@ const stats = [
     { label: "Repositories", value: "2+", icon: Code },
     { label: "Commits", value: "500+", icon: Layers },
     { label: "Members", value: "125", icon: Globe },
-    { label: "Uptime", value: "99.9%", icon: Server },
+    { label: "Lisensi", value: "MIT", icon: Server },
 ];
 
 // Data langkah kolaborasi

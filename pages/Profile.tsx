@@ -19,86 +19,8 @@ import { EditWorkModal } from '../components/EditWorkModal';
 import { Trash2 } from 'lucide-react';
 import { safeHttpUrl } from '../lib/safe-url';
 import { sanitizeHtml } from '../lib/sanitize';
-
-// Helper for code previews (transplanted from Karya.tsx)
-const CodeViewer = ({ content }: { content: any }) => {
-    const [activeFileId, setActiveFileId] = useState<string | null>(null);
-    const files = React.useMemo(() => {
-        try {
-            if (typeof content === 'string') {
-                if (content.trim().startsWith('[')) return JSON.parse(content);
-            }
-            if (Array.isArray(content)) return content;
-            return null;
-        } catch (e) { return null; }
-    }, [content]);
-
-    useEffect(() => {
-        if (files && files.length > 0) setActiveFileId(files[0].id);
-    }, [files]);
-
-    const activeFile = files?.find((f: any) => f.id === activeFileId) || files?.[0];
-
-    if (!files || !Array.isArray(files)) {
-        const displayContent = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
-        return (
-            <div className="flex-1 overflow-auto p-3 md:p-6 bg-[#0d1117]">
-                <pre className="font-mono text-[10px] md:text-xs text-green-400 leading-relaxed whitespace-pre-wrap break-words">
-                    {displayContent}
-                </pre>
-            </div>
-        );
-    }
-
-    return (
-        <div className="w-full h-full flex flex-col overflow-hidden">
-            <div className="flex-shrink-0 bg-[#161b22] border-b border-white/10 flex overflow-x-auto no-scrollbar">
-                {files.map((file: any) => (
-                    <button
-                        key={file.id}
-                        onClick={() => setActiveFileId(file.id)}
-                        className={`px-3 md:px-4 py-2 md:py-3 text-[10px] md:text-xs font-mono whitespace-nowrap border-b-2 transition-colors ${file.id === activeFileId
-                            ? 'border-blue-500 text-white bg-[#0d1117]'
-                            : 'border-transparent text-gray-500 hover:text-gray-300'
-                            }`}
-                    >
-                        <span className={`mr-1.5 ${file.name?.endsWith('.html') ? 'text-orange-400' :
-                            file.name?.endsWith('.css') ? 'text-blue-400' :
-                                file.name?.endsWith('.js') ? 'text-yellow-400' : 'text-gray-400'
-                            }`}>●</span>
-                        {file.name || 'file'}
-                    </button>
-                ))}
-            </div>
-            <div className="flex-1 overflow-auto p-3 md:p-6 bg-[#0d1117]">
-                <pre className="font-mono text-[10px] md:text-xs leading-relaxed">
-                    <code className={`${activeFile?.language === 'html' ? 'text-orange-300' :
-                        activeFile?.language === 'css' ? 'text-blue-300' :
-                            activeFile?.language === 'javascript' ? 'text-yellow-300' : 'text-green-300'
-                        }`}>
-                        {activeFile?.content || '// No content'}
-                    </code>
-                </pre>
-            </div>
-        </div>
-    );
-};
-
-const escapeScript = (str: string) => str.replace(/<\/script>/gi, '<\\/script>');
-
-const generateCodePreview = (content: string, language: string = 'html'): string => {
-    const baseStyles = `* { margin:0; padding:0; box-sizing:border-box; } body { font-family:system-ui, sans-serif; background:#0a0a0a; color:white; min-height:100vh; display:flex; align-items:center; justify-content:center; } canvas { display:block; margin:auto; }`;
-    const code = escapeScript(content || '');
-    switch (language) {
-        case 'p5js': case 'p5':
-            return `<!DOCTYPE html><html><head><style>${baseStyles}</style><script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script></head><body><script>${code}</script></body></html>`;
-        case 'javascript': case 'js':
-            return `<!DOCTYPE html><html><head><style>${baseStyles}</style></head><body><div id="app"></div><script>try{${code}}catch(e){document.body.innerHTML='<pre style="color:red">'+e.message+'</pre>'}</script></body></html>`;
-        default:
-            if (code.trim().toLowerCase().startsWith('<!doctype') || code.trim().toLowerCase().startsWith('<html')) return code;
-            return `<!DOCTYPE html><html><head><style>${baseStyles}</style></head><body>${code}</body></html>`;
-    }
-};
+import { CodeViewer } from '../components/Karya/CodeViewer';
+import { generateCodePreview } from '../lib/codePreview';
 
 export const Profile = () => {
     const { username } = useParams<{ username: string }>();

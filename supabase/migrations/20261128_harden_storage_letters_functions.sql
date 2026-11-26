@@ -37,9 +37,12 @@ CREATE POLICY works_upload_authenticated ON storage.objects
   FOR INSERT TO authenticated
   WITH CHECK (
     bucket_id = 'works'
-    AND ((storage.foldername(name))[1] = auth.uid()::text
+    AND ((storage.foldername(name))[1] IN (auth.uid()::text, 'images', 'videos')
          OR array_length(storage.foldername(name), 1) IS NULL)
   );
+-- Catatan: useMediaUpload (Studio) menulis ke images/, images/thumbnails/, videos/, videos/thumbnails/.
+-- Versi pertama migrasi ini hanya mengizinkan <user_id>/ dan root sehingga memblokir publikasi gambar/video;
+-- diperbaiki lewat fix_works_upload_policy_studio_folders_20261128b.
 
 CREATE POLICY avatars_upload_own ON storage.objects
   FOR INSERT TO authenticated

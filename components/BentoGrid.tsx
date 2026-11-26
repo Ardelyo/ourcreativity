@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles, Users, BookOpen, Info, FileText, ArrowUpRight, Megaphone, Star, ChevronRight, Hash, Download, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { MEMBER_COUNT_LABEL } from '../lib/community';
 
 interface CardProps {
     children?: React.ReactNode;
@@ -108,15 +109,10 @@ export const BentoGrid = () => {
                 <Link to="/tim" className="block w-full">
                     <div className="flex items-center justify-between mb-2">
                         <Users size={20} className="text-gray-500" />
-                        <div className="flex -space-x-2">
-                            {[1, 2, 3].map(i => (
-                                <div key={i} className="w-6 h-6 rounded-full border border-black bg-gray-800" style={{ backgroundImage: `url(https://i.pravatar.cc/100?img=${i + 10})`, backgroundSize: 'cover' }}></div>
-                            ))}
-                        </div>
                     </div>
                     <div className="mt-4">
-                        <div className="text-4xl font-sans font-bold text-white group-hover:text-rose-400 transition-colors">3.2k+</div>
-                        <p className="text-xs text-gray-500 font-mono mt-1">TOTAL ANGGOTA AKTIF</p>
+                        <div className="text-4xl font-sans font-bold text-white group-hover:text-rose-400 transition-colors">{MEMBER_COUNT_LABEL}</div>
+                        <p className="text-xs text-gray-500 font-mono mt-1">ANGGOTA KOMUNITAS</p>
                     </div>
                 </Link>
             </Card>

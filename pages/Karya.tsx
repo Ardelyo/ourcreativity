@@ -337,12 +337,23 @@ export const Karya = () => {
 
       return {
         likesCount: likesCount || 0,
-        isLiked: !!userLike?.data,
+        isLiked: !!userLike,
         comments: comments || []
       };
     },
     enabled: !!selectedId,
   });
+
+  // Kosongkan state sosial saat ganti karya supaya like/komentar karya lain tidak bocor.
+  // HARUS dideklarasikan SEBELUM effect sinkronisasi di bawah: effect jalan sesuai urutan,
+  // jadi data cache dari React Query tidak tertimpa kosong saat membuka ulang karya.
+  useEffect(() => {
+    setLikesCount(0);
+    setIsLiked(false);
+    setComments([]);
+    setNewComment('');
+    setIsSubmittingComment(false);
+  }, [selectedId]);
 
   // Sync social states with query result (for initial load)
   useEffect(() => {

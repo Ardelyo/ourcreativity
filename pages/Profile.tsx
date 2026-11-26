@@ -244,6 +244,16 @@ export const Profile = () => {
         enabled: !!selectedId,
     });
 
+    // Kosongkan state sosial saat ganti karya. HARUS sebelum effect sinkronisasi di bawah
+    // (urutan effect = urutan deklarasi), agar data cache tidak tertimpa kosong.
+    useEffect(() => {
+        setLikesCount(0);
+        setIsLiked(false);
+        setComments([]);
+        setNewComment('');
+        setIsSubmittingComment(false);
+    }, [selectedId]);
+
     useEffect(() => {
         if (socialData) {
             setLikesCount(socialData.likesCount);

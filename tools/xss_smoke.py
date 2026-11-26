@@ -7,7 +7,7 @@
 
 Pakai: python xss_smoke.py <path_ke_base>
 """
-import http.server, json, socketserver, sys, threading
+import os, http.server, json, socketserver, sys, threading
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -47,7 +47,7 @@ threading.Thread(target=srv.serve_forever, daemon=True).start()
 
 failures = []
 with sync_playwright() as p:
-    b = p.chromium.launch(channel="msedge", headless=True)
+    b = p.chromium.launch(channel=(os.environ.get("PW_CHANNEL", "msedge") or None), headless=True)
     pg = b.new_context().new_page()
     pg.goto(f"http://127.0.0.1:{port}/")
     pg.add_script_tag(content=purify)

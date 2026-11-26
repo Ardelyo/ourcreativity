@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /settings
+Disallow: /studio
+
+Sitemap: https://ourcreativity.vercel.app/sitemap.xml

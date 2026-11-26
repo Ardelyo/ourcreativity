@@ -529,7 +529,7 @@ export const Karya = () => {
             </div>
           </div>
         );
-      case 'video':
+      case 'video': {
         const videoSrc = art.image_url || art.content;
         const isYoutube = videoSrc && (videoSrc.includes('youtube.com') || videoSrc.includes('youtu.be'));
 
@@ -570,10 +570,11 @@ export const Karya = () => {
             </div>
           </div>
         );
+      }
 
       case 'slide':
       case 'image':
-      case 'meme':
+      case 'meme': {
         // Jika ada lebih dari satu slide, tampilin pratinjau yang sesuai atau tetap thumbnail
         const hasSlides = art.slides && art.slides.length > 1;
         const previewUrl = art.thumbnail_url || art.image_url || (art.slides?.[0]?.content);
@@ -588,6 +589,7 @@ export const Karya = () => {
             )}
           </div>
         );
+      }
       default:
         return <img src={art.thumbnail_url || art.image_url || (art.slides?.[0]?.content)} alt={art.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />;
     }
@@ -757,7 +759,7 @@ export const Karya = () => {
         <div className="flex justify-center items-center gap-2 mt-16 pb-16">
           {(() => {
             const maxVisiblePages = 7;
-            let pages: (number | string)[] = [];
+            let pages: (number | string)[];
 
             if (totalPages <= maxVisiblePages) {
               // Show all pages if total is small

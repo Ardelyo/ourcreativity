@@ -239,7 +239,7 @@ const VisionSection = () => {
             <div className="space-y-6 vision-text">
               {[
                 "Menghubungkan anak muda berbakat melalui media sosial untuk bergabung dalam komunitas.",
-                "Menyedikan platform diskusi dan kolaborasi agar anggota dapat berbagi ilmu.",
+                "Menyediakan platform diskusi dan kolaborasi agar anggota dapat berbagi ilmu.",
                 "Mempublikasikan setiap karya anggota melalui media sosial agar mendapatkan apresiasi luas.",
                 "Menyelenggarakan program gratis (diskusi, event, proyek kolaboratif) untuk pengembangan diri.",
                 "Mendorong anggota menguasai berbagai bidang kreatif demi karya yang inovatif & bernilai."

@@ -16,7 +16,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, art, us
 
     if (!isOpen) return null;
 
-    const shareUrl = `${window.location.origin}/karya/${art.id}`; // Assuming this route exists or similar
+    const shareUrl = `${window.location.origin}/karya?id=${art.id}`;
 
     const handleCopyLink = () => {
         navigator.clipboard.writeText(shareUrl);

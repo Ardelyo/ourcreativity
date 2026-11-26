@@ -312,7 +312,7 @@ export const Studio = () => {
         const { error, data } = await supabase.storage.from(bucketName).upload(fileName, file, {
             contentType: file.type || 'image/jpeg',
             upsert: true,
-            // @ts-ignore - Supabase v2 support onUploadProgress
+            // @ts-expect-error - Supabase v2 support onUploadProgress (tidak ada di tipe resmi)
             onUploadProgress: (progress) => {
                 const percent = (progress.loaded / progress.total) * 100;
                 console.log(`[Studio] Upload progress: ${percent.toFixed(2)}%`);
@@ -463,7 +463,7 @@ export const Studio = () => {
             }
 
             // 3. Prepare final content
-            let finalContent = mode === 'code' ? JSON.stringify(codeFiles) : content;
+            const finalContent = mode === 'code' ? JSON.stringify(codeFiles) : content;
 
 
             setPublishProgress({ percent: 85, message: 'Menyimpan metadata ke database...' });

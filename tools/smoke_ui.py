@@ -112,6 +112,25 @@ with sync_playwright() as p:
     valid = json.dumps({"contributors": [{"login": "Ardelyo", "avatar_url": "", "html_url": "", "contributions": 5,
                         "totalAdditions": 0, "totalDeletions": 0, "bio": "x", "socials": {}}],
                         "reporters": [], "timestamp": 1})
+    # 5. Sapu seluruh route: tidak ada pageerror dan halaman tidak kosong (penting saat upgrade router)
+    ROUTES = ["/", "/login", "/register", "/karya", "/tim", "/info", "/kotak-surat", "/story",
+              "/announcement", "/division/graphics", "/division/video", "/division/writing",
+              "/division/meme", "/division/coding", "/studio", "/settings", "/profile/uji",
+              "/v5-launch", "/gate", "/admin", "/halaman-tidak-ada"]
+    sweep_ctx = b.new_context(viewport={"width": 1280, "height": 900})
+    bad = []
+    for r_ in ROUTES:
+        e_ = []
+        pgx = new_page(sweep_ctx, e_, [])
+        pgx.goto(BASE + r_, wait_until="load")
+        pgx.wait_for_timeout(1800)
+        txt_ = pgx.inner_text("body").strip()
+        if e_ or len(txt_) < 20:
+            bad.append(f"{r_} err={e_[:1]} len={len(txt_)}")
+        pgx.close()
+    check(f"sapu {len(ROUTES)} route: tanpa pageerror dan tidak kosong", not bad, "; ".join(bad))
+    sweep_ctx.close()
+
     tim(valid, "cache valid")
     tim("{bukan json", "cache rusak")
     tim(None, "tanpa cache")

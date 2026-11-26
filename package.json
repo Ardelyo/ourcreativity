@@ -41,7 +41,7 @@
     "react-dom": "^19.2.0",
     "react-dropzone": "^14.3.8",
     "react-hot-toast": "^2.6.0",
-    "react-router-dom": "^6.22.3",
+    "react-router-dom": "^7.18.7",
     "tailwind-merge": "^3.4.0",
     "web-haptics": "^0.0.6"
   },

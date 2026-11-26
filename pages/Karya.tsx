@@ -336,12 +336,23 @@ export const Karya = () => {
 
       return {
         likesCount: likesCount || 0,
-        isLiked: !!userLike?.data,
+        isLiked: !!userLike,
         comments: comments || []
       };
     },
     enabled: !!selectedId,
   });
+
+  // Kosongkan state sosial saat ganti karya supaya like/komentar karya lain tidak bocor.
+  // HARUS dideklarasikan SEBELUM effect sinkronisasi di bawah: effect jalan sesuai urutan,
+  // jadi data cache dari React Query tidak tertimpa kosong saat membuka ulang karya.
+  useEffect(() => {
+    setLikesCount(0);
+    setIsLiked(false);
+    setComments([]);
+    setNewComment('');
+    setIsSubmittingComment(false);
+  }, [selectedId]);
 
   // Sync social states with query result (for initial load)
   useEffect(() => {
@@ -355,16 +366,6 @@ export const Karya = () => {
   // Reset slide aktif pas ganti karya
   useEffect(() => {
     setActiveSlide(0);
-  }, [selectedId]);
-
-  // CRITICAL: Clear social states when switching posts to prevent showing wrong comments/likes
-  useEffect(() => {
-    // Reset to empty states when selectedId changes
-    setLikesCount(0);
-    setIsLiked(false);
-    setComments([]);
-    setNewComment('');
-    setIsSubmittingComment(false);
   }, [selectedId]);
 
   const handleToggleLike = async () => {

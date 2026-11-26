@@ -1,6 +1,6 @@
 # 🚀 Panduan Setup
 
-> **English:** This guide provides step-by-step setup instructions for running OurCreativity locally. You'll need Node.js 18+, npm/yarn, and a free Supabase account. Follow the sections below for database configuration and environment setup.
+> **English:** This guide provides step-by-step setup instructions for running OurCreativity locally. You'll need Node.js 20+, npm/yarn, and a free Supabase account. Follow the sections below for database configuration and environment setup.
 
 ---
 
@@ -8,7 +8,7 @@ Panduan lengkap untuk menjalankan OurCreativity di lingkungan lokal.
 
 ## 📋 Prasyarat
 
-- **Node.js** v18 atau lebih baru
+- **Node.js** v20 atau lebih baru
 - **npm** v9+ atau **yarn** v1.22+
 - Akun **Supabase** (gratis)
 

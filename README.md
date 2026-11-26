@@ -128,7 +128,7 @@ Proyek ini dibangun di atas fondasi teknologi web modern:
 ### Prasyarat
 
 Pastikan Anda telah menginstal:
-- **Node.js** v18 atau lebih baru
+- **Node.js** v20 atau lebih baru
 - **npm** atau **yarn**
 
 ### Instalasi

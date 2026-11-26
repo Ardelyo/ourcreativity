@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
@@ -28,6 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<User | null>(null);
     const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState(true);
+    const currentUserId = useRef<string | null>(null);
 
     useEffect(() => {
         if (import.meta.env.DEV) console.log('AuthProvider: Starting initialization...');
@@ -42,6 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const getInitialSession = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
+                currentUserId.current = session?.user?.id ?? null;
                 setSession(session);
                 setUser(session?.user ?? null);
 
@@ -61,14 +63,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         getInitialSession();
 
         // 2. Pantau perubahan auth (login/logout)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            const previousUser = user;
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            const previousId = currentUserId.current;
+            currentUserId.current = session?.user?.id ?? null;
             setSession(session);
             setUser(session?.user ?? null);
 
-            // Cek apakah user berubah beneran biar gak fetch ulang kalo cuma token refresh
-            if (session?.user && session.user.id !== previousUser?.id) {
-                await fetchProfile(session.user.id);
+            // Cek apakah user berubah beneran biar gak fetch ulang kalo cuma token refresh.
+            // Jangan await panggilan Supabase di dalam callback ini (bisa deadlock), jadi ditunda.
+            if (session?.user && session.user.id !== previousId) {
+                const userId = session.user.id;
+                setTimeout(() => { void fetchProfile(userId); }, 0);
             } else if (!session?.user) {
                 setProfile(null);
             }

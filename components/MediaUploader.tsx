@@ -59,10 +59,13 @@ const MediaUploader = ({
         disabled: uploading,
     });
 
+    // framer-motion punya tipe onDrag sendiri yang bentrok dengan react-dropzone
+    const { onDrag: _onDrag, onDragStart: _onDragStart, onDragEnd: _onDragEnd, onAnimationStart: _onAnimationStart, ...rootProps } = getRootProps();
+
     return (
         <div className="w-full">
             <motion.div
-                {...getRootProps()}
+                {...rootProps}
                 whileHover={{ scale: uploading ? 1 : 1.02 }}
                 className={`
           relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all

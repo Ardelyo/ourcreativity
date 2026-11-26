@@ -188,7 +188,7 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ files, t
             ref={iframeRef}
             srcDoc={getIframeContent()}
             className="w-full h-full border-none bg-black"
-            sandbox="allow-scripts allow-modals allow-same-origin"
+            sandbox="allow-scripts allow-modals"
             title="Preview"
         />
     );

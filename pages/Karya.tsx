@@ -29,6 +29,7 @@ import { useLoadingStatus } from '../components/LoadingTimeoutProvider';
 
 import { supabase } from '../lib/supabase';
 import { motionConfig } from '../lib/motion';
+import { sanitizeHtml } from '../lib/sanitize';
 
 // Helper buat generate pratinjau kode live (HTML)
 // Komponen Helper buat lihat Kode
@@ -488,7 +489,7 @@ export const Karya = () => {
             <AlignLeft className="absolute top-4 left-4 text-gray-300" size={24} />
             <div
               className="prose prose-sm prose-invert text-black line-clamp-6 pointer-events-none"
-              dangerouslySetInnerHTML={{ __html: art.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(art.content) }}
             />
             <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#f0f0f0] to-transparent group-hover:from-white transition-colors"></div>
           </div>
@@ -507,7 +508,7 @@ export const Karya = () => {
             {/* Iframe Pratinjau buat Kartu - Pake Data URI biar lebih kompatibel */}
             <iframe
               srcDoc={generateCodePreview(art.content, art.code_language || 'html')}
-              sandbox="allow-scripts allow-same-origin"
+              sandbox="allow-scripts"
               className="w-[200%] h-[200%] border-0 transform scale-50 origin-top-left pointer-events-none bg-white" // Paksa background putih buat konten iframe
               title="Code Preview"
             />
@@ -893,7 +894,7 @@ export const Karya = () => {
                     return (
                       <iframe
                         srcDoc={generateCodePreview(art.content, art.code_language || 'html')}
-                        sandbox="allow-scripts allow-same-origin"
+                        sandbox="allow-scripts"
                         className="w-full h-full border-0 bg-white"
                         style={{ touchAction: 'auto' }}
                         title="Interactive Code Preview"
@@ -957,7 +958,7 @@ export const Karya = () => {
                           prose-blockquote:border-l-4 prose-blockquote:border-rose-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:bg-gray-100 prose-blockquote:py-2 prose-blockquote:pr-2 rounded-r-lg
                           prose-a:text-rose-600 prose-a:no-underline hover:prose-a:underline
                           prose-img:rounded-xl prose-img:shadow-lg"
-                          dangerouslySetInnerHTML={{ __html: art.content }}
+                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(art.content) }}
                         />
                       </div>
                     </div>
@@ -1140,7 +1141,7 @@ export const Karya = () => {
                       <div className="w-full h-full bg-[#f0f0f0] text-black p-12 md:p-20 overflow-y-auto">
                         <div
                           className="prose prose-lg prose-p:text-black prose-headings:text-black prose-strong:text-black prose-em:text-black max-w-none font-serif leading-loose"
-                          dangerouslySetInnerHTML={{ __html: selectedArtwork.content }}
+                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedArtwork.content) }}
                         />
                       </div>
                     )}
@@ -1161,7 +1162,7 @@ export const Karya = () => {
                         ) : (
                           <iframe
                             srcDoc={generateCodePreview(selectedArtwork.content, selectedArtwork.code_language || 'html')}
-                            sandbox="allow-scripts allow-same-origin"
+                            sandbox="allow-scripts"
                             className="w-full h-full border-0 bg-white"
                             style={{ touchAction: 'manipulation' }}
                             title="Code Preview"

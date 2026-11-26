@@ -115,8 +115,11 @@ export const CreationStudio: React.FC<Props> = ({ isOpen, onClose, onPublish }) 
     };
 
     const uploadFile = async (file: File): Promise<string> => {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm'];
+        if (!allowedTypes.includes(file.type)) throw new Error('Tipe file tidak diizinkan.');
+        if (file.size > 50 * 1024 * 1024) throw new Error('Ukuran file maksimal 50MB.');
+        const fileExt = file.name.split('.').pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'bin';
+        const fileName = `${crypto.randomUUID()}.${fileExt}`;
         const filePath = `${fileName}`;
 
         const { error: uploadError } = await supabase.storage

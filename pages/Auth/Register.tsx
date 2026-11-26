@@ -36,7 +36,7 @@ export const Register = () => {
                 options: {
                     data: {
                         username: username,
-                        avatar_url: `https://ui-avatars.com/api/?name=${username}&background=random`
+                        avatar_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random`
                     }
                 }
             });

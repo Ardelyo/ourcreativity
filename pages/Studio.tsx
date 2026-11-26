@@ -33,6 +33,7 @@ import { StudioHeader } from '@/components/CreationStudio/StudioHeader';
 import { LogEntry } from '@/components/CreationStudio/ControlCenter/LogContainer';
 import { useSystemLog } from '@/components/SystemLogProvider';
 import { MobileStudio } from '@/components/CreationStudio/Mobile/MobileStudio';
+import { sanitizeHtml } from '../lib/sanitize';
 
 type Division = 'graphics' | 'tech' | 'music' | 'writing' | 'meme' | 'video';
 
@@ -691,7 +692,7 @@ export const Studio = () => {
                         </span>
                     </div>
                     <div className="prose prose-invert prose-xl max-w-none">
-                        {mode === 'text' && <div dangerouslySetInnerHTML={{ __html: content }} />}
+                        {mode === 'text' && <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }} />}
 
                         {mode === 'video' && mediaPreview && (
                             <video src={mediaPreview} controls className="rounded-3xl w-full" />

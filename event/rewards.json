@@ -1,0 +1,15 @@
+{
+  "_catatan": "Nominal usulan (Rupiah). Sesuaikan dengan budget. Reward diambil dari label issue yang ditutup PR; jika ada beberapa label, diambil yang tertinggi.",
+  "labels": {
+    "sev:critical": 200000,
+    "sev:high": 75000,
+    "sev:medium": 40000,
+    "sev:low": 15000,
+    "bounty:XL": 200000,
+    "bounty:L": 100000,
+    "bounty:M": 50000,
+    "bounty:S": 20000
+  },
+  "excludeUsers": ["Ardelyo", "DoctorThink"],
+  "maxPerUser": 500000
+}

@@ -1,0 +1,51 @@
+name: Event report
+
+on:
+  workflow_dispatch:
+    inputs:
+      since:
+        description: 'Tanggal mulai (YYYY-MM-DD)'
+        required: true
+      until:
+        description: 'Tanggal akhir (YYYY-MM-DD, kosong = hari ini)'
+        required: false
+  schedule:
+    - cron: '0 1 * * 1'   # tiap Senin 08:00 WIB
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Hitung periode
+        id: range
+        run: |
+          SINCE="${{ github.event.inputs.since }}"
+          if [ -z "$SINCE" ]; then SINCE="$(date -u -d '7 days ago' +%F)"; fi
+          echo "since=$SINCE" >> "$GITHUB_OUTPUT"
+          echo "until=${{ github.event.inputs.until }}" >> "$GITHUB_OUTPUT"
+      - name: Buat laporan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPO: ${{ github.repository }}
+          SINCE: ${{ steps.range.outputs.since }}
+          UNTIL: ${{ steps.range.outputs.until }}
+        run: |
+          if [ -n "$UNTIL" ]; then
+            node scripts/event-report.mjs --since "$SINCE" --until "$UNTIL" --out report
+          else
+            node scripts/event-report.mjs --since "$SINCE" --out report
+          fi
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: event-report
+          path: report.*

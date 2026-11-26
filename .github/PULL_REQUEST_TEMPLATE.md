@@ -4,7 +4,7 @@ Jelaskan perubahan yang kamu buat secara singkat.
 
 ## 🔗 Issue Terkait
 
-Fixes #(nomor issue)
+Closes #(nomor issue)
 
 ## 🔄 Tipe Perubahan
 
@@ -28,7 +28,13 @@ Fixes #(nomor issue)
 - [ ] Saya sudah menambahkan komentar di bagian yang kompleks
 - [ ] Saya sudah update dokumentasi yang terkait
 - [ ] Perubahan saya tidak menghasilkan warning baru
-- [ ] Saya sudah test perubahan saya secara lokal
+- [ ] Saya sudah test perubahan saya secara lokal (desktop dan mobile bila menyentuh UI)
+- [ ] `npx tsc --noEmit` dan `npm run build` lolos
+- [ ] Tidak ada secret atau data pribadi di diff
+
+## 🧪 Cara Verifikasi
+
+Langkah agar reviewer bisa memastikan perubahan bekerja.
 
 ## 📝 Catatan untuk Reviewer
 

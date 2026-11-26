@@ -1,3 +1,4 @@
+import { safeHttpUrl } from '../lib/safe-url';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -80,14 +81,10 @@ export const Settings = () => {
             throw new Error('Ukuran file terlalu besar (Maksimal 2MB)');
         }
 
-        console.log('DEBUG [uploadAvatar]: Starting...', { userId, file: avatarFile.name, size: avatarFile.size });
-
         try {
             const fileExt = avatarFile.name.split('.').pop();
             const fileName = `${userId}-${Date.now()}.${fileExt}`;
             const filePath = `${fileName}`;
-
-            console.log('DEBUG [uploadAvatar]: Uploading to "avatars" bucket at path:', filePath);
 
             const { data: uploadData, error: uploadError } = await supabase.storage
                 .from('avatars')
@@ -101,10 +98,7 @@ export const Settings = () => {
                 throw uploadError;
             }
 
-            console.log('DEBUG [uploadAvatar]: Upload Success:', uploadData);
-
             const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
-            console.log('DEBUG [uploadAvatar]: Public URL generated:', data.publicUrl);
             return data.publicUrl;
         } catch (error) {
             console.error('DEBUG [uploadAvatar]: Exception caught:', error);
@@ -114,7 +108,6 @@ export const Settings = () => {
 
     const handleSaveProfile = async () => {
         if (!user) return;
-        console.log('DEBUG [handleSaveProfile]: Started');
         setIsSaving(true);
         setToast(prev => ({ ...prev, isVisible: false }));
 
@@ -122,19 +115,15 @@ export const Settings = () => {
             let avatarUrl = formData.avatar_url;
 
             if (avatarFile) {
-                console.log('DEBUG [handleSaveProfile]: Avatar file detected, calling uploadAvatar');
                 const uploadedUrl = await uploadAvatar(user.id);
-                console.log('DEBUG [handleSaveProfile]: uploadAvatar returned:', uploadedUrl);
                 if (uploadedUrl) avatarUrl = uploadedUrl;
             }
-
-            console.log('DEBUG [handleSaveProfile]: Updating profiles table...', { avatarUrl, username: formData.username });
 
             const updates = {
                 id: user.id,
                 username: formData.username,
                 avatar_url: avatarUrl,
-                website: formData.website,
+                website: formData.website ? (safeHttpUrl(formData.website) ?? '') : '',
                 bio: formData.bio,
                 updated_at: new Date().toISOString(),
             };
@@ -147,8 +136,6 @@ export const Settings = () => {
                 console.error('DEBUG [handleSaveProfile]: Error upserting profile:', upsertError);
                 throw upsertError;
             }
-
-            console.log('DEBUG [handleSaveProfile]: Profile updated successfully');
 
             // Force global state refresh
             await refreshProfile();
@@ -178,7 +165,6 @@ export const Settings = () => {
                 isVisible: true
             });
         } finally {
-            console.log('DEBUG [handleSaveProfile]: Setting isSaving to false');
             setIsSaving(false);
         }
     };

@@ -3,7 +3,7 @@ GitHub di-mock; tidak ada request ke layanan produksi.
 
 Pakai: python smoke_ui.py <path_ke_repo>   (butuh `dist/` hasil vite build)
 """
-import http.server, json, mimetypes, socketserver, sys, threading
+import os, http.server, json, mimetypes, socketserver, sys, threading
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -66,7 +66,7 @@ def new_page(ctx, errors, requests_seen, github_fail=True):
 
 
 with sync_playwright() as p:
-    b = p.chromium.launch(channel="msedge", headless=True)
+    b = p.chromium.launch(channel=(os.environ.get("PW_CHANNEL", "msedge") or None), headless=True)
 
     # 1. Beranda: tanpa error, favicon ada, tanpa avatar palsu, angka anggota konsisten
     ctx = b.new_context(viewport={"width": 1440, "height": 900})

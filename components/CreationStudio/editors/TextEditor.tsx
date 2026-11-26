@@ -98,7 +98,10 @@ export const TextEditor: React.FC<TextEditorProps> = ({
     });
 
     useEffect(() => {
-        if (editor && content !== editor.getHTML()) {
+        // Setelah React menyambung ulang effect (Suspense / StrictMode), useEditor bisa memberi editor yang sudah
+        // di-destroy; getHTML() pada editor itu melempar "Cannot read properties of null (reading 'cached')" dan
+        // seluruh halaman Studio crash. Lewati bila editor sudah tidak aktif.
+        if (editor && !editor.isDestroyed && content !== editor.getHTML()) {
             editor.commands.setContent(content, { emitUpdate: false });
         }
     }, [content, editor]);

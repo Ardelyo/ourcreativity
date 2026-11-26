@@ -114,7 +114,7 @@ export const Login = () => {
                 </form>
 
                 <div className="mt-8 text-center text-sm text-gray-400">
-                    Belum punya akun? <Link to="/register" className="text-rose-500 hover:text-rose-400 font-bold transition-colors">Daftar disini</Link>
+                    Belum punya akun? <Link to="/register" className="text-rose-500 hover:text-rose-400 font-bold transition-colors">Daftar di sini</Link>
                 </div>
             </motion.div>
         </div>

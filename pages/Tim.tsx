@@ -250,11 +250,23 @@ export const Tim = () => {
 
     } catch (err: any) {
       console.error("❌ Error:", err);
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) {
-        const { data } = JSON.parse(cached);
-        setContributors(data);
-        console.log('⚠️ Menggunakan cache lama');
+      // Bentuk cache = { contributors, reporters, timestamp } (lihat setItem di atas).
+      let restored = false;
+      try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed?.contributors) && parsed.contributors.length > 0) {
+            setContributors(parsed.contributors);
+            setReporters(Array.isArray(parsed.reporters) ? parsed.reporters : []);
+            restored = true;
+          }
+        }
+      } catch {
+        // cache rusak: abaikan dan pakai data fallback
+      }
+      if (restored) {
+        console.log('Menggunakan cache lama');
       } else {
         const fallbackEnhanced: EnhancedContributor[] = FALLBACK_CONTRIBUTORS.map(c => {
           const mappedBio = BIO_MAPPING[c.login];

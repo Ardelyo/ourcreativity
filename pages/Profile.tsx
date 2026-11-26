@@ -91,7 +91,7 @@ const generateCodePreview = (content: string, language: string = 'html'): string
     const code = escapeScript(content || '');
     switch (language) {
         case 'p5js': case 'p5':
-            return `<!DOCTYPE html><html><head><style>${baseStyles}</style><script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script></head><body><script>${code}<\/script></body></html>`;
+            return `<!DOCTYPE html><html><head><style>${baseStyles}</style><script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script></head><body><script>${code}</script></body></html>`;
         case 'javascript': case 'js':
             return `<!DOCTYPE html><html><head><style>${baseStyles}</style></head><body><div id="app"></div><script>try{${code}}catch(e){document.body.innerHTML='<pre style="color:red">'+e.message+'</pre>'}</script></body></html>`;
         default:

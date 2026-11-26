@@ -88,7 +88,7 @@ export const Register = () => {
                 <div className="mb-8 text-center">
                     <h2 className="text-2xl font-serif font-bold text-white mb-6">Our Creativity.</h2>
                     <h1 className="text-3xl font-bold text-white mb-2">Bergabung</h1>
-                    <p className="text-gray-400">Dalisasikan imajinasimu bersama kami.</p>
+                    <p className="text-gray-400">Wujudkan imajinasimu bersama kami.</p>
                 </div>
 
                 {error && (

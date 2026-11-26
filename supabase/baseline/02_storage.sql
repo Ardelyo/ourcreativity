@@ -20,7 +20,7 @@ DROP POLICY IF EXISTS works_upload_authenticated ON storage.objects;
 CREATE POLICY works_upload_authenticated ON storage.objects FOR INSERT TO authenticated
   WITH CHECK (
     bucket_id = 'works'
-    AND ((storage.foldername(name))[1] = auth.uid()::text
+    AND ((storage.foldername(name))[1] IN (auth.uid()::text, 'images', 'videos')
          OR array_length(storage.foldername(name), 1) IS NULL)
   );
 

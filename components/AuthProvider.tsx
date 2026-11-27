@@ -17,6 +17,8 @@ interface AuthContextType {
     user: User | null;
     profile: Profile | null;
     loading: boolean;
+    /** true selama profil (role, is_approved) untuk user yang login masih diambil. Guard berbasis role wajib menunggu ini. */
+    profileLoading: boolean;
     signOut: () => Promise<void>;
     refreshProfile: () => Promise<void>;
 }
@@ -28,7 +30,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<User | null>(null);
     const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState(true);
+    const [profileLoading, setProfileLoading] = useState(false);
     const currentUserId = useRef<string | null>(null);
+    const profileLoadedFor = useRef<string | null>(null);
+    const fetchesInFlight = useRef(0);
 
     useEffect(() => {
         if (import.meta.env.DEV) console.log('AuthProvider: Starting initialization...');
@@ -50,6 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 // Optimasi: Jangan await fetchProfile di sini kalo bisa jalan parallel
                 // Tapi buat UX login, kita tunggu profil biar redirect bener
                 if (session?.user) {
+                    setProfileLoading(true);
                     await fetchProfile(session.user.id);
                 }
             } catch (err) {
@@ -71,10 +77,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             // Cek apakah user berubah beneran biar gak fetch ulang kalo cuma token refresh.
             // Jangan await panggilan Supabase di dalam callback ini (bisa deadlock), jadi ditunda.
-            if (session?.user && session.user.id !== previousId) {
+            // Profil (role) belum tentu sudah ada saat event ini tiba. Tandai "sedang memuat profil" di batch
+            // yang sama dengan setLoading(false), supaya guard berbasis role tidak sempat melihat profile=null
+            // dan mengalihkan admin yang sah (terjadi saat refresh langsung di /admin).
+            if (session?.user) {
                 const userId = session.user.id;
-                setTimeout(() => { void fetchProfile(userId); }, 0);
-            } else if (!session?.user) {
+                const needsProfile = profileLoadedFor.current !== userId;
+                if (needsProfile) setProfileLoading(true);
+                if (userId !== previousId || (needsProfile && fetchesInFlight.current === 0)) {
+                    setTimeout(() => { void fetchProfile(userId); }, 0);
+                }
+            } else {
+                profileLoadedFor.current = null;
+                setProfileLoading(false);
                 setProfile(null);
             }
 
@@ -88,6 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const fetchProfile = async (userId: string) => {
+        fetchesInFlight.current += 1;
         try {
             // Gunakan query simple dan cepat
             const { data, error } = await supabase
@@ -103,9 +119,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 }
             } else {
                 setProfile(data);
+                profileLoadedFor.current = userId;
             }
         } catch (err) {
             console.error('Error in fetchProfile:', err);
+        } finally {
+            fetchesInFlight.current -= 1;
+            if (fetchesInFlight.current === 0) setProfileLoading(false);
         }
     };
 
@@ -117,13 +137,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const signOut = async () => {
         await supabase.auth.signOut();
+        profileLoadedFor.current = null;
         setProfile(null);
         setUser(null);
         setSession(null);
     };
 
     return (
-        <AuthContext.Provider value={{ session, user, profile, loading, signOut, refreshProfile }}>
+        <AuthContext.Provider value={{ session, user, profile, loading, profileLoading, signOut, refreshProfile }}>
             {loading ? (
                 <div className="min-h-screen bg-black flex items-center justify-center">
                     <div className="w-10 h-10 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin"></div>

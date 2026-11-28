@@ -16,7 +16,11 @@ Dokumen ini menjelaskan tema baru untuk halaman `/` dan `/karya`, dan cara mempe
 | --- | --- |
 | `pages/Home.tsx` | Landing: hero globe, ticker, daftar edisi dengan pratinjau yang mengikuti kursor, program, ajakan gabung |
 | `pages/KaryaGaleri.tsx` | Katalog Karya (`/karya`): Bola, Peta, Daftar, Galeri, filter edisi, pencarian, lightbox |
-| `pages/Karya.tsx` | Halaman Karya lama, kini di `/karya/arsip`. Tidak ditautkan dari halaman baru. |
+| `pages/Edisi.tsx` | `/edisi` (daftar tujuh edisi) dan `/edisi/:key` (akun, program, karya, edisi sebelum/berikutnya) |
+| `pages/Tim.tsx`, `Info.tsx`, `KotakSurat.tsx`, `Cerita.tsx`, `Pengumuman.tsx`, `Gabung.tsx` | Halaman konten bertema Katalog |
+| `pages/NotFound.tsx` | 404 sungguhan |
+| `components/modern/ui.tsx` | Primitif bersama: `PageHeader`, `SectionRule`, `LinkButton`, `Em`, `LoadingMark`, `EmptyState`, `PAGE_X` |
+| `tools/import_works.mjs` | Impor karya kurasi Instagram ke Supabase (lihat di bawah) |
 | `components/modern/WorksGlobe.tsx` | Globe canvas 2D tanpa dependensi (lihat di bawah) |
 | `components/modern/WorkLightbox.tsx` | Detail karya: nomor katalog, kreator, edisi, sumber |
 | `components/modern/micro.tsx` | `RiseText`, `Magnet`, `useScrollSkew`, `HoverPreview` |
@@ -32,13 +36,15 @@ Dokumen ini menjelaskan tema baru untuk halaman `/` dan `/karya`, dan cara mempe
 ## Globe karya
 
 - Karya disebar rata di bola dengan spiral Fibonacci. Tile menghadap kamera, ukurannya mengikuti perspektif, dan yang di belakang memudar.
-- **Interaksi:** seret untuk memutar (dengan inersia), roda untuk zoom, klik untuk membuka, panah keyboard untuk memutar, `+` dan `-` untuk zoom. Saat tidak disentuh bola berputar pelan.
+- **Interaksi:** seret untuk memutar (dengan inersia), roda/cubit/klik ganda atau tombol − + untuk zoom (×0,55 sampai ×3,2), klik untuk membuka, panah keyboard untuk memutar, `+` dan `-` untuk zoom. Saat tidak disentuh bola berputar pelan.
 - **Hover:** tile membesar, tetangganya terdorong menjauh (riak), dan label kreator muncul.
 - **Peta:** tombol `[ Peta ]` membentangkan bola menjadi dinding yang bisa digeser tanpa ujung. Transisinya adalah morf, bukan lompat.
 - **Filter dan acak:** mengubah filter menyebar ulang karya ke seluruh bola. `Acak` mengacak penempatan lalu memutar bola.
 - **Intro:** tile terbang dari pusat ke posisinya, berurutan.
 - **Aksesibilitas:** canvas bisa difokus dan diputar dengan keyboard. Untuk pembaca layar, tersedia tampilan Daftar. `prefers-reduced-motion` mematikan putar otomatis, inersia, intro, dan kursor kustom.
 - **Performa:** loop berhenti saat canvas di luar layar atau tab tersembunyi. Gambar dimuat bertahap (maksimum 8 sekaligus) dan DPR dibatasi 2.
+
+- **Zoom semantik:** jauh = graticule dan titik warna edisi; dekat = tile memuat gambar resolusi tinggi, tanda sudut, dan keterangan nomor katalog. Klik memunculkan riak, bola bernapas pelan dan sedikit mengikuti kursor (paralaks).
 
 ## Intro dan scrolly di landing
 
@@ -55,9 +61,13 @@ Supabase tidak selalu terjangkau saat pengembangan. Untuk melihat UI dengan kary
 
 Karya di folder demo dikutip dari post publik Instagram. Karya itu milik masing-masing kreator, jadi jangan ditaruh di repo atau dipublikasikan tanpa izin mereka.
 
-## Perluasan ke halaman lain
+## Data nyata dan impor
 
-Halaman lain (login, studio, profil, divisi, tim, info, admin) masih memakai tema gelap lama dan `Navbar` lama. Pemilihan tema ada di `AppContent` pada `App.tsx` (`isModern`). Untuk memindahkan satu halaman ke tema baru, tambahkan rutenya ke `isModern` dan pakai token di atas.
+Karya kurasi Instagram ada di tabel `works` produksi dengan tag `katalog-ig` (gambar di bucket `works/katalog/`, thumbnail di `works/katalog/t/`). `hooks/useWorks.ts` memetakan baris bertag itu ke `username` dan `source`. Impor ulang dengan `node tools/import_works.mjs` (simulasi) lalu `--apply`; aman diulang karena baris yang tautannya sudah ada dilewati. Menarik kembali: `delete from public.works where 'katalog-ig' = any(tags);`.
+
+## Rute dan halaman
+
+Semua rute publik memakai shell modern. Alamat lama dialihkan: `/division/*` ke `/edisi/:key`, `/story` ke `/cerita`, `/announcement` ke `/pengumuman`, `/gate` dan `/v5-launch` ke `/gabung`, `/karya/arsip` ke `/karya`. Yang masih bertema lama hanya halaman akun (`LEGACY_PREFIXES` di `App.tsx`: login, daftar, studio, pengaturan, profil, admin); untuk memindahkannya, hapus prefiksnya dari daftar itu dan rakit halamannya dari `components/modern/ui.tsx`.
 
 ## Catatan
 

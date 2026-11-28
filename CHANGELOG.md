@@ -14,11 +14,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **Karya** (`/karya`) kini katalog dengan globe 2D tanpa dependensi (zoom, inersia, riak saat hover, morf ke peta tanpa ujung), tampilan Daftar dan Galeri, filter edisi (`?edisi=`), pencarian kreator, dan lightbox yang bisa dioperasikan lewat keyboard.
 - **Intro landing:** bola karya memenuhi layar dengan penghitung muat, lalu mendarat ke posisi header. Sekali per pemuatan halaman, bisa dilewati, dan dimatikan saat gerak berkurang.
 - **Scrolly:** pernyataan yang menyala kata demi kata dengan gambar sebaris, trek edisi horizontal yang disematkan dengan paralaks, baris karya yang digerakkan gulir, bola yang bereaksi pada gulir, garis progres gulir, dan navigasi yang sembunyi saat gulir turun.
-- Fitur sosial (suka, komentar) tidak ditampilkan di halaman baru. Halaman Karya lama tetap ada di `/karya/arsip` tanpa perubahan.
+- Fitur sosial (suka, komentar) tidak ditampilkan di halaman baru.
 - Micro-interaction: judul naik huruf demi huruf, tombol magnetik, kursor kustom dengan label, ticker yang miring mengikuti gulir, wordmark footer yang bereaksi pada kursor, dan reveal saat gulir. Semuanya menghormati `prefers-reduced-motion`.
 - Mode demo lokal lewat `VITE_DEMO_WORKS=1` (lihat docs/DESAIN_MODERNIS.md). `public/demo/` masuk `.gitignore`.
 - Modul murni `lib/globe.ts` dan `lib/works.ts` dengan uji unit. Logo dan ikon di `public/brand/` diekstrak dari header Instagram @ourcreativity.ofc.
-- Font baru: Archivo (variabel), Instrument Serif, JetBrains Mono. Halaman lain tetap memakai tema gelap lama.
+- Font baru: Archivo (variabel), Instrument Serif, JetBrains Mono.
+- **Zoom semantik** di Bola dan Peta: graticule dan titik edisi saat jauh, gambar resolusi tinggi dan nomor katalog saat dekat; cubit, klik ganda, tombol − +, riak klik, napas, dan paralaks kursor.
+- **Data nyata:** 165 karya kurasi Instagram diimpor ke Supabase produksi lewat `tools/import_works.mjs` (tag `katalog-ig`, kredit dan tautan sumber).
+- **Navigasi:** rute `/edisi` dan `/edisi/:key`, halaman 404 sungguhan, footer peta situs.
+- **Halaman konten** Tim, Info, Kotak Surat bertema Katalog; halaman baru `/cerita`, `/pengumuman`, `/gabung`.
+- **Dihapus dan dialihkan:** halaman Divisi, Karya arsip, Story, Announcement, Gate, V5 Launch (redirect ke halaman baru), serta komponen yang tak terpakai. Halaman akun (login, studio, profil, admin) masih bertema lama.
 - Dokumentasi: [docs/DESAIN_MODERNIS.md](docs/DESAIN_MODERNIS.md).
 
 ---

@@ -21,7 +21,8 @@ if (!URL_ || !KEY) {
   console.error('Set SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY dulu (lihat komentar di atas berkas ini).');
   process.exit(1);
 }
-const H = { apikey: KEY, Authorization: `Bearer ${KEY}` };
+// Kunci baru (sb_secret_...) bukan JWT: cukup di header apikey. Kunci lama (service_role JWT) juga dikirim sebagai Bearer.
+const H = KEY.startsWith('sb_') ? { apikey: KEY } : { apikey: KEY, Authorization: `Bearer ${KEY}` };
 
 const demo = JSON.parse(await readFile('public/demo/works.json', 'utf8'));
 console.log(`${demo.length} karya di manifest. Mode: ${APPLY ? 'TERAPKAN' : 'simulasi'}`);

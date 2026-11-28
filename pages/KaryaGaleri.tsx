@@ -152,7 +152,7 @@ export default function KaryaGaleri() {
           {edisi !== 'all' && <button type="button" onClick={() => setEdisi('all')} className="mx-auto border-b border-[#0E0E0F] pb-0.5">Tampilkan semua</button>}
         </div>
       ) : isGlobe ? (
-        <WorksGlobe ref={globe} items={pictured} mode={view === 'wall' ? 'wall' : 'globe'} onOpen={setOpenId} className="absolute inset-0" radiusScale={0.4} />
+        <WorksGlobe ref={globe} items={pictured} numbers={numbers} controls mode={view === 'wall' ? 'wall' : 'globe'} onOpen={setOpenId} className="absolute inset-0" radiusScale={0.4} />
       ) : view === 'list' ? (
         <ListView {...props} />
       ) : (
@@ -238,7 +238,7 @@ export default function KaryaGaleri() {
 
       {isGlobe && !isError && visible.length > 0 && (
         <p className="pointer-events-none absolute bottom-3 left-4 z-[5] font-mono text-[10px] text-[#8A8A8F] md:left-7">
-          {view === 'globe' ? 'Seret untuk memutar · roda untuk zoom · klik karya untuk membuka' : 'Seret untuk menggeser peta tanpa ujung · klik karya untuk membuka'}
+          {view === 'globe' ? 'Seret untuk memutar · roda, cubit, atau klik dua kali untuk zoom · klik karya untuk membuka' : 'Seret untuk menggeser peta tanpa ujung · Ctrl + roda atau cubit untuk zoom · klik karya untuk membuka'}
         </p>
       )}
 

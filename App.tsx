@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'r
 import { AnimatePresence } from 'framer-motion';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { ModernNav } from './components/modern/ModernNav';
+import { ModernFooter } from './components/modern/ModernFooter';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { AuthProvider } from './components/AuthProvider';
 // Halaman yang dimuat secara eager
@@ -12,6 +14,7 @@ import { Register } from './pages/Auth/Register';
 
 // Halaman yang dimuat secara lazy (biar enteng pas buka awal)
 const Karya = React.lazy(() => import('./pages/Karya'));
+const KaryaGaleri = React.lazy(() => import('./pages/KaryaGaleri'));
 const Tim = React.lazy(() => import('./pages/Tim').then(module => ({ default: module.Tim })));
 const Info = React.lazy(() => import('./pages/Info').then(module => ({ default: module.Info })));
 const Story = React.lazy(() => import('./pages/Story').then(module => ({ default: module.Story })));
@@ -90,7 +93,8 @@ const AnimatedRoutes = () => {
               <Route path="/" element={<MotionPage><Home /></MotionPage>} />
               <Route path="/login" element={<MotionPage><Login /></MotionPage>} />
               <Route path="/register" element={<MotionPage><Register /></MotionPage>} />
-              <Route path="/karya" element={<MotionPage><Karya /></MotionPage>} />
+              <Route path="/karya" element={<MotionPage><KaryaGaleri /></MotionPage>} />
+              <Route path="/karya/arsip" element={<MotionPage><Karya /></MotionPage>} />
               <Route path="/tim" element={<MotionPage><Tim /></MotionPage>} />
               <Route path="/info" element={<MotionPage><Info /></MotionPage>} />
               <Route path="/kotak-surat" element={<MotionPage><KotakSurat /></MotionPage>} />
@@ -153,9 +157,26 @@ const GlobalHaptics = () => {
 
 const AppContent = () => {
   const { pathname } = useLocation();
-  const isStudio = pathname.toLowerCase() === '/studio';
-  const isAdmin = pathname.toLowerCase().startsWith('/admin');
+  const path = pathname.toLowerCase();
+  const isStudio = path === '/studio';
+  const isAdmin = path.startsWith('/admin');
   const isZenMode = isStudio || isAdmin;
+  // Halaman bertema modernis (terang, grid kaku). Halaman lain masih memakai tema gelap lama.
+  const isModern = path === '/' || path === '/karya';
+  const isGallery = path === '/karya';
+
+  if (isModern) {
+    return (
+      <div className="relative flex min-h-screen flex-col bg-[#EDEDEB] font-sans text-[#0E0E0F] selection:bg-[#0E0E0F] selection:text-[#EDEDEB]">
+        <GlobalHaptics />
+        <ModernNav />
+        <main className="flex-grow">
+          <AnimatedRoutes />
+        </main>
+        {!isGallery && <ModernFooter />}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#030303] text-white selection:bg-rose-500/30 font-sans overflow-x-hidden flex flex-col relative">

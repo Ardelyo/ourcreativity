@@ -24,6 +24,8 @@ export default {
             },
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
+                display: ['Archivo', 'system-ui', 'sans-serif'],
+                editorial: ['Instrument Serif', 'Georgia', 'serif'],
                 serif: ['Playfair Display', 'serif'],
                 mono: ['JetBrains Mono', 'monospace'],
             },

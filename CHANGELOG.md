@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [Belum dirilis]
+
+### Desain modernis untuk Home dan Karya
+
+- **Home** ditulis ulang: grid 12 kolom, judul grotesk besar, hero dua baris karya terbaru, daftar tujuh edisi dengan miniatur karya, tabel program, dan ajakan gabung.
+- **Karya** (`/karya`) kini berupa galeri kanvas yang bisa digeser, dengan tampilan Daftar dan Galeri, filter divisi (`?divisi=`), pencarian kreator, dan lightbox yang bisa dioperasikan lewat keyboard.
+- Halaman Karya lama (suka, komentar, detail) dipindah ke `/karya/arsip` tanpa perubahan fitur.
+- Komponen baru: `ModernNav`, `ModernFooter`, `WorkImage`, hook `useWorks`, dan modul murni `lib/works.ts` dan `lib/karyaLayout.ts` dengan uji unit.
+- Aset logo dan ikon di `public/brand/` diekstrak dari header Instagram @ourcreativity.ofc.
+- Font baru: Archivo, Instrument Serif, JetBrains Mono. Halaman lain tetap memakai tema gelap lama.
+- Dokumentasi: [docs/DESAIN_MODERNIS.md](docs/DESAIN_MODERNIS.md).
+
+---
+
 ## [5.0.0] - 2025-11-01
 
 ### 🎨 Revolution Edition — Complete Design Overhaul

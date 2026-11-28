@@ -98,3 +98,198 @@ body {
 .pb-safe {
   padding-bottom: 0px;
 }
+/* ===== Tema modernis (Home dan Karya) ===== */
+:root {
+  --nav-h: 53px;
+}
+
+.oc-grid-paper {
+  background:
+    repeating-linear-gradient(90deg, transparent 0, transparent calc(100% / 12 - 1px), rgba(14, 14, 15, 0.055) calc(100% / 12 - 1px), rgba(14, 14, 15, 0.055) calc(100% / 12)),
+    #ededeb;
+}
+
+.oc-dots {
+  background: radial-gradient(rgba(14, 14, 15, 0.2) 1px, transparent 1.4px) 0 0 / 28px 28px;
+}
+
+.oc-karya {
+  height: calc(100svh - var(--nav-h));
+  min-height: 520px;
+}
+
+.oc-link,
+.oc-link-lg {
+  border-bottom: 2px solid #0e0e0f;
+  padding-bottom: 3px;
+  font-family: 'Archivo', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.oc-link {
+  font-size: 1.05rem;
+}
+
+.oc-link-lg {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.4rem;
+  padding-bottom: 6px;
+}
+
+.oc-arrow {
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+a:hover > .oc-arrow {
+  transform: translate(3px, -3px);
+}
+
+.oc-tile img,
+.oc-tile > div {
+  pointer-events: none;
+}
+
+.oc-tile:hover img,
+.oc-tile:focus-visible img {
+  outline: 2px solid #0e0e0f;
+  outline-offset: 2px;
+}
+
+.oc-tile:focus-visible {
+  outline: none;
+}
+
+.oc-marquee {
+  animation: oc-marquee 90s linear infinite;
+}
+
+.oc-marquee-rev {
+  animation-duration: 120s;
+  animation-direction: reverse;
+}
+
+.oc-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes oc-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oc-marquee {
+    animation: none;
+  }
+}
+
+.oc-rise {
+  animation: oc-rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes oc-rise {
+  from {
+    transform: translateY(110%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.oc-lightbox {
+  animation: oc-lightbox-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes oc-lightbox-in {
+  from {
+    opacity: 0;
+    clip-path: inset(6% 6% 6% 6%);
+  }
+
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oc-rise,
+  .oc-lightbox {
+    animation: none;
+  }
+}
+
+/* Nav disembunyikan selama intro Home, lalu turun saat bola mendarat. */
+html[data-intro='1'] .oc-nav {
+  transform: translateY(-100%);
+}
+
+/* Garis bawah yang menyapu dari kiri saat hover. */
+.oc-sweep {
+  position: relative;
+}
+
+.oc-sweep::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.oc-sweep:hover::after,
+.oc-sweep-on::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Garis judul bagian yang "tergambar" saat masuk layar. */
+.oc-rule {
+  position: relative;
+}
+
+.oc-rule::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: #0e0e0f;
+  transform-origin: left;
+  animation: oc-draw 1.1s 0.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes oc-draw {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oc-rule::before {
+    animation: none;
+  }
+
+  html[data-intro='1'] .oc-nav {
+    transform: none;
+  }
+}
+
+@keyframes oc-load {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}

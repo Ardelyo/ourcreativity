@@ -2,8 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://ourcreativity.vercel.app/</loc></url>
   <url><loc>https://ourcreativity.vercel.app/karya</loc></url>
-  <url><loc>https://ourcreativity.vercel.app/story</loc></url>
+  <url><loc>https://ourcreativity.vercel.app/edisi</loc></url>
+  <url><loc>https://ourcreativity.vercel.app/edisi/video</loc></url>
+  <url><loc>https://ourcreativity.vercel.app/edisi/foto</loc></url>
+  <url><loc>https://ourcreativity.vercel.app/edisi/grafis</loc></url>
+  <url><loc>https://ourcreativity.vercel.app/edisi/ilus</loc></url>
+  <url><loc>https://ourcreativity.vercel.app/edisi/tulis</loc></url>
+  <url><loc>https://ourcreativity.vercel.app/edisi/meme</loc></url>
+  <url><loc>https://ourcreativity.vercel.app/edisi/kode</loc></url>
+  <url><loc>https://ourcreativity.vercel.app/cerita</loc></url>
   <url><loc>https://ourcreativity.vercel.app/tim</loc></url>
   <url><loc>https://ourcreativity.vercel.app/info</loc></url>
-  <url><loc>https://ourcreativity.vercel.app/announcement</loc></url>
+  <url><loc>https://ourcreativity.vercel.app/gabung</loc></url>
+  <url><loc>https://ourcreativity.vercel.app/kotak-surat</loc></url>
+  <url><loc>https://ourcreativity.vercel.app/pengumuman</loc></url>
 </urlset>

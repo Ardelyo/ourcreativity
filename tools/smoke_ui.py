@@ -113,7 +113,7 @@ with sync_playwright() as p:
                         "totalAdditions": 0, "totalDeletions": 0, "bio": "x", "socials": {}}],
                         "reporters": [], "timestamp": 1})
     # 5. Sapu seluruh route: tidak ada pageerror dan halaman tidak kosong (penting saat upgrade router)
-    ROUTES = ["/", "/login", "/register", "/karya", "/tim", "/info", "/kotak-surat", "/story",
+    ROUTES = ["/", "/login", "/register", "/karya", "/tim", "/info", "/kotak-surat", "/cerita", "/pengumuman", "/gabung", "/story",
               "/announcement", "/division/graphics", "/division/video", "/division/writing",
               "/division/meme", "/division/coding", "/studio", "/settings", "/profile/uji",
               "/v5-launch", "/gate", "/admin", "/halaman-tidak-ada", "/edisi", "/edisi/grafis"]
@@ -125,6 +125,9 @@ with sync_playwright() as p:
     check("/edisi/<salah> menampilkan 404", "Halaman tidak ditemukan" in nf.inner_text("body"))
     nf.goto(BASE + "/division/graphics", wait_until="load"); nf.wait_for_timeout(1500)
     check("/division/graphics dialihkan ke /edisi/grafis", nf.url.endswith("/edisi/grafis") and "Desain Grafis" in nf.inner_text("body"), nf.url)
+    for lama, baru in [("/story", "/cerita"), ("/announcement", "/pengumuman"), ("/gate", "/gabung"), ("/v5-launch", "/gabung"), ("/karya/arsip", "/karya")]:
+        nf.goto(BASE + lama, wait_until="load"); nf.wait_for_timeout(1200)
+        check(f"{lama} dialihkan ke {baru}", nf.url.endswith(baru), nf.url)
     nf.close()
 
     sweep_ctx = b.new_context(viewport={"width": 1280, "height": 900})

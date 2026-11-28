@@ -16,20 +16,18 @@ import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
 
 // Halaman yang dimuat secara lazy (biar enteng pas buka awal)
-const Karya = React.lazy(() => import('./pages/Karya'));
 const KaryaGaleri = React.lazy(() => import('./pages/KaryaGaleri'));
 const EdisiIndex = React.lazy(() => import('./pages/Edisi').then(module => ({ default: module.EdisiIndex })));
 const EdisiDetail = React.lazy(() => import('./pages/Edisi').then(module => ({ default: module.EdisiDetail })));
 const NotFound = React.lazy(() => import('./pages/NotFound'));
 const Tim = React.lazy(() => import('./pages/Tim').then(module => ({ default: module.Tim })));
 const Info = React.lazy(() => import('./pages/Info').then(module => ({ default: module.Info })));
-const Story = React.lazy(() => import('./pages/Story').then(module => ({ default: module.Story })));
-const Announcement = React.lazy(() => import('./pages/Announcement').then(module => ({ default: module.Announcement })));
+const Cerita = React.lazy(() => import('./pages/Cerita'));
+const Pengumuman = React.lazy(() => import('./pages/Pengumuman'));
+const Gabung = React.lazy(() => import('./pages/Gabung'));
 const Studio = React.lazy(() => import('./pages/Studio').then(module => ({ default: module.Studio })));
 const Settings = React.lazy(() => import('./pages/Settings').then(module => ({ default: module.Settings })));
 const Profile = React.lazy(() => import('./pages/Profile').then(module => ({ default: module.Profile })));
-const V5Launch = React.lazy(() => import('./pages/V5Launch').then(module => ({ default: module.V5Launch })));
-const Gate = React.lazy(() => import('./pages/Gate').then(module => ({ default: module.default })));
 
 
 import { MotionPage } from './components/MotionPage';
@@ -95,15 +93,20 @@ const AnimatedRoutes = () => {
               <Route path="/login" element={<MotionPage><Login /></MotionPage>} />
               <Route path="/register" element={<MotionPage><Register /></MotionPage>} />
               <Route path="/karya" element={<MotionPage><KaryaGaleri /></MotionPage>} />
-              <Route path="/karya/arsip" element={<MotionPage><Karya /></MotionPage>} />
+              <Route path="/karya/arsip" element={<Navigate to="/karya" replace />} />
               <Route path="/edisi" element={<MotionPage><EdisiIndex /></MotionPage>} />
               <Route path="/edisi/:key" element={<MotionPage><EdisiDetail /></MotionPage>} />
               <Route path="/tim" element={<MotionPage><Tim /></MotionPage>} />
               <Route path="/info" element={<MotionPage><Info /></MotionPage>} />
               <Route path="/kotak-surat" element={<MotionPage><KotakSurat /></MotionPage>} />
-              <Route path="/story" element={<MotionPage><Story /></MotionPage>} />
-              <Route path="/announcement" element={<MotionPage><Announcement /></MotionPage>} />
-// ... rest of routes
+              <Route path="/cerita" element={<MotionPage><Cerita /></MotionPage>} />
+              <Route path="/pengumuman" element={<MotionPage><Pengumuman /></MotionPage>} />
+              <Route path="/gabung" element={<MotionPage><Gabung /></MotionPage>} />
+              {/* Alamat lama dialihkan, bukan 404. */}
+              <Route path="/story" element={<Navigate to="/cerita" replace />} />
+              <Route path="/announcement" element={<Navigate to="/pengumuman" replace />} />
+              <Route path="/v5-launch" element={<Navigate to="/gabung" replace />} />
+              <Route path="/gate" element={<Navigate to="/gabung" replace />} />
               {/* Halaman Divisi lama dilebur ke profil edisi baru. */}
               <Route path="/division/graphics" element={<Navigate to="/edisi/grafis" replace />} />
               <Route path="/division/video" element={<Navigate to="/edisi/video" replace />} />
@@ -113,8 +116,6 @@ const AnimatedRoutes = () => {
               <Route path="/studio" element={<MotionPage><Studio /></MotionPage>} />
               <Route path="/settings" element={<MotionPage><Settings /></MotionPage>} />
               <Route path="/profile/:username" element={<MotionPage><Profile /></MotionPage>} />
-              <Route path="/v5-launch" element={<MotionPage><V5Launch /></MotionPage>} />
-              <Route path="/gate" element={<MotionPage><Gate /></MotionPage>} />
 
               {/* Rute Admin */}
               <Route path="/admin" element={
@@ -159,10 +160,7 @@ const GlobalHaptics = () => {
   return null;
 };
 
-const LEGACY_PREFIXES = [
-  '/login', '/register', '/tim', '/info', '/kotak-surat', '/story', '/announcement', '/division',
-  '/studio', '/settings', '/profile', '/v5-launch', '/gate', '/admin', '/karya/arsip',
-];
+const LEGACY_PREFIXES = ['/login', '/register', '/studio', '/settings', '/profile', '/admin'];
 
 const AppContent = () => {
   const { pathname } = useLocation();

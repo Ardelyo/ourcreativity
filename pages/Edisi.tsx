@@ -121,7 +121,7 @@ export const EdisiDetail: React.FC = () => {
           <SectionRule label="(Program)" aside={`${programs.length} program`} />
           <ul>
             {programs.map((p, i) => (
-              <Reveal as="li" key={p.nama} delay={i * 0.05} className="grid grid-cols-1 gap-1 border-b border-[#0E0E0F]/15 py-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] md:gap-8">
+              <Reveal as="li" key={p.nama} delay={i * 50} className="grid grid-cols-1 gap-1 border-b border-[#0E0E0F]/15 py-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] md:gap-8">
                 <span className="font-display text-2xl font-bold tracking-tight">{p.nama}</span>
                 <span className="text-[#2B2B2E]">{p.ket}</span>
               </Reveal>
@@ -143,7 +143,7 @@ export const EdisiDetail: React.FC = () => {
         ) : (
           <div className="mt-6 columns-2 gap-3 md:columns-3 lg:columns-4">
             {mine.map((w, i) => (
-              <Reveal key={w.id} delay={(i % 4) * 0.05} className="mb-3 break-inside-avoid">
+              <Reveal key={w.id} delay={(i % 4) * 50} className="mb-3 break-inside-avoid">
                 <button type="button" onClick={() => setOpenId(w.id)} className="group block w-full text-left" data-cursor="Buka" aria-label={`Buka karya ${w.title} oleh ${w.author}`}>
                   <WorkImage work={w} className="w-full transition-transform duration-500 group-hover:-translate-y-1" />
                   <span className="mt-1 block font-mono text-[10px] text-[#55555A]">@{w.username ?? w.author}</span>

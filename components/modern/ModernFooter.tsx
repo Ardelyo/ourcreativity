@@ -35,9 +35,10 @@ export const ModernFooter = () => {
           <Link to={{ pathname: '/', hash: '#program' }} className="hover:underline">Program</Link>
           <Link to="/tim" className="hover:underline">Tim</Link>
           <Link to="/info" className="hover:underline">Info</Link>
-          <Link to="/story" className="hover:underline">Cerita</Link>
-          <Link to="/announcement" className="hover:underline">Pengumuman</Link>
+          <Link to="/cerita" className="hover:underline">Cerita</Link>
+          <Link to="/pengumuman" className="hover:underline">Pengumuman</Link>
           <Link to="/kotak-surat" className="hover:underline">Kotak surat</Link>
+          <Link to="/gabung" className="hover:underline">Gabung</Link>
           <a href="https://www.tiktok.com/@ourcreativity.ofc" target="_blank" rel="noopener noreferrer" className="hover:underline">TikTok</a>
           <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="mt-2 w-fit border-b border-[#EDEDEB] pb-0.5 text-left" data-cursor="Naik">
             Kembali ke atas ↑

@@ -1,10 +1,7 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { BrutalistCard } from '../components/BrutalistCard';
-import { ContributorModal } from '../components/ContributorModal';
-import { FetchErrorState } from '../components/FetchErrorState';
-import { Users, AlertCircle, Github } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { Reveal } from '../components/modern/Reveal';
+import { Arrow, Em, LinkButton, LoadingMark, PageHeader, PAGE_X, SectionRule } from '../components/modern/ui';
 
 // --- Tipe Data ---
 interface Contributor {
@@ -115,7 +112,6 @@ export const Tim = () => {
   const [reporters, setReporters] = useState<ReporterData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedContributor, setSelectedContributor] = useState<EnhancedContributor | null>(null);
 
   const fetchData = async () => { // Ambil data dari GitHub API
     try {
@@ -227,7 +223,7 @@ export const Tim = () => {
         };
       });
 
-      const sortedContribs = enhancedContributors.sort((a, b) => {
+      const sortedContribs = enhancedContributors.filter(c => !/\[bot\]$/i.test(c.login)).sort((a, b) => {
         if (a.login === OWNER_LOGIN) return -1;
         if (b.login === OWNER_LOGIN) return 1;
         return b.contributions - a.contributions;
@@ -294,132 +290,99 @@ export const Tim = () => {
   }, []);
 
   return (
-    <div className="pt-24 md:pt-36 pb-20 px-4 max-w-7xl mx-auto min-h-screen text-white font-sans relative overflow-hidden md:overflow-visible">
+    <>
+      <PageHeader
+        label="(Tim) Orang di balik katalog"
+        title={<>Dibuat bersama, <Em>terbuka</Em> untuk siapa saja.</>}
+        lede="Situs ini dikerjakan sukarela oleh anggota komunitas. Kodenya terbuka di GitHub: setiap kontribusi, dari kode sampai laporan bug, tercatat di sini."
+      />
 
-      {/* Background Blobs (Shadow Glows) - Adjusted opacity and position */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[10%] left-[-20%] md:left-[-10%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-rose-500/10 blur-[80px] md:blur-[120px] rounded-full" />
-        <div className="absolute bottom-[20%] right-[-20%] md:right-[-10%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-purple-500/10 blur-[80px] md:blur-[120px] rounded-full" />
-      </div>
-
-      {/* Header Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-16 md:mb-24 relative z-10 text-center"
-      >
-        <div className="flex items-center justify-center gap-4 mb-6">
-          <div className="h-px w-8 md:w-12 bg-rose-500/20" />
-          <span className="font-mono text-xs md:text-sm text-rose-500 tracking-[0.2em] uppercase">Kolektif Kreatif</span>
-          <div className="h-px w-8 md:w-12 bg-rose-500/20" />
-        </div>
-
-        <h1 className="text-5xl md:text-9xl font-serif font-light leading-none tracking-tight mb-6 md:mb-8">
-          Para <span className="italic">Kreator</span>
-        </h1>
-        <p className="text-gray-400 font-light text-base md:text-lg max-w-2xl mx-auto px-4">
-          Membangun masa depan OurCreativity melalui kode, seni, dan dedikasi.
-        </p>
-      </motion.div>
-
-      {/* Error Banner */}
       {error && !loading && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 relative z-10 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-4 flex items-center justify-between"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
-            <p className="text-yellow-200/90 text-sm">{error}</p>
+        <div className={`${PAGE_X} pb-6`}>
+          <div className="flex flex-wrap items-center justify-between gap-3 border border-[#0E0E0F]/30 px-4 py-3 font-mono text-[11px]" role="status">
+            <span>{error}</span>
+            <button type="button" onClick={fetchData} className="oc-link border-b border-[#0E0E0F]">
+              Coba lagi
+            </button>
           </div>
-          <button
-            onClick={fetchData}
-            className="text-yellow-400 hover:text-yellow-300 text-sm font-bold underline"
-          >
-            Coba Lagi
-          </button>
-        </motion.div>
+        </div>
       )}
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-40 relative z-10">
-          <div className="w-16 h-16 border-4 border-rose-500/20 border-t-rose-500 rounded-full animate-spin" />
-          <p className="mt-6 font-black uppercase tracking-widest text-rose-500 antialiased">Sinkronisasi Data...</p>
-        </div>
+        <LoadingMark label="Menyinkronkan data tim" />
       ) : (
-        <div className="space-y-24 md:space-y-40 relative z-10">
-          {/* Core Team Section */}
-          <section>
-            <div className="flex flex-col items-center mb-12 md:mb-16 text-center">
-              <h2 className="text-3xl md:text-5xl font-serif italic mb-4">Kontributor Kode</h2>
-              <div className="h-1 w-20 bg-gradient-to-r from-rose-500 to-indigo-500 rounded-full" />
-              <span className="font-mono text-gray-500 text-[10px] md:text-xs mt-4 uppercase tracking-[0.2em]">Membangun arsitektur inti platform</span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-              {contributors.map(c => (
-                <BrutalistCard
-                  key={c.login}
-                  login={c.login}
-                  avatar_url={c.avatar_url}
-                  html_url={c.html_url}
-                  contributions={c.contributions}
-                  bio={c.bio}
-                  isOwner={c.login === OWNER_LOGIN}
-                  socials={c.socials}
-                />
+        <>
+          <section className={`${PAGE_X} pb-[clamp(36px,6vw,80px)]`}>
+            <SectionRule label="(Kontributor kode)" aside={`${contributors.length} orang`} />
+            <ul>
+              {contributors.map((c, i) => (
+                <Reveal as="li" key={c.login} delay={Math.min(i, 6) * 40} className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2 border-b border-[#0E0E0F]/15 py-5 md:grid-cols-[3rem_4.5rem_minmax(0,1fr)_minmax(0,1.3fr)_auto] md:gap-x-8">
+                  <span className="hidden font-mono text-[11px] text-[#8A8A8F] md:block">{String(i + 1).padStart(2, '0')}</span>
+                  {c.avatar_url ? (
+                    <img src={c.avatar_url} alt="" width={72} height={72} loading="lazy" className="h-14 w-14 object-cover grayscale transition-[filter] duration-500 hover:grayscale-0 md:h-[4.5rem] md:w-[4.5rem]" />
+                  ) : (
+                    <span className="grid h-14 w-14 place-content-center bg-[#0E0E0F] font-display text-xl font-bold text-[#EDEDEB] md:h-[4.5rem] md:w-[4.5rem]">{c.login.slice(0, 1).toUpperCase()}</span>
+                  )}
+                  <span className="min-w-0 md:col-auto">
+                    <span className="block font-display text-[clamp(1.5rem,3vw,2.4rem)] font-bold leading-none tracking-[-0.04em]">{c.login}</span>
+                    <span className="mt-1 block font-mono text-[11px] text-[#55555A]">
+                      {c.login === OWNER_LOGIN ? 'Pendiri · ' : ''}
+                      {c.contributions} kontribusi
+                    </span>
+                  </span>
+                  <p className="col-span-2 text-[15px] leading-relaxed text-[#2B2B2E] md:col-span-1">{c.bio}</p>
+                  <span className="col-span-2 flex flex-wrap gap-x-5 gap-y-1 md:col-span-1 md:justify-end">
+                    <LinkButton href={c.html_url || `https://github.com/${c.login}`}>
+                      GitHub <Arrow />
+                    </LinkButton>
+                    {c.socials?.website && (
+                      <LinkButton href={c.socials.website}>
+                        Situs <Arrow />
+                      </LinkButton>
+                    )}
+                  </span>
+                </Reveal>
               ))}
-            </div>
+            </ul>
           </section>
 
-          {/* Issue Reporters Section */}
           {reporters.length > 0 && (
-            <section>
-              <div className="flex flex-col items-center mb-12 md:mb-16 text-center">
-                <h2 className="text-3xl md:text-5xl font-serif italic mb-4 text-purple-400">Pelapor Masalah</h2>
-                <div className="h-1 w-20 bg-purple-500/30 rounded-full" />
-                <p className="font-mono text-[10px] md:text-xs text-purple-400/60 mt-4 uppercase tracking-widest px-4">Pahlawan Komunitas & Pelapor Masalah</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-                {reporters.map(r => (
-                  <BrutalistCard
-                    key={r.login}
-                    login={r.login}
-                    avatar_url={r.avatar_url}
-                    html_url={r.html_url}
-                    isReporter={true}
-                    issueCount={r.issueCount}
-                    issueTitle={r.issueTitle}
-                    bio={`Dedikasi luar biasa melalui laporan masalah yang membantu stabilitas platform.`}
-                  />
+            <section className={`${PAGE_X} pb-[clamp(36px,6vw,80px)]`}>
+              <SectionRule label="(Pelapor masalah)" aside="Laporan yang menjaga situs tetap sehat" />
+              <ul className="grid grid-cols-1 gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
+                {reporters.map((r) => (
+                  <li key={r.login} className="flex items-center gap-3 border-b border-[#0E0E0F]/15 py-3">
+                    {r.avatar_url ? (
+                      <img src={r.avatar_url} alt="" width={36} height={36} loading="lazy" className="h-9 w-9 object-cover grayscale" />
+                    ) : (
+                      <span className="grid h-9 w-9 place-content-center bg-[#0E0E0F] font-mono text-xs text-[#EDEDEB]">{r.login.slice(0, 1).toUpperCase()}</span>
+                    )}
+                    <a href={r.html_url} target="_blank" rel="noopener noreferrer" className="min-w-0 flex-1 truncate font-display font-semibold tracking-tight hover:underline">
+                      {r.login}
+                    </a>
+                    <span className="font-mono text-[11px] text-[#55555A]">{r.issueCount} laporan</span>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </section>
           )}
 
-          {/* Call to Action */}
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="border-2 md:border-4 border-rose-500 bg-rose-500/5 backdrop-blur-sm p-8 md:p-12 text-center relative overflow-hidden group rounded-3xl"
-          >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 blur-3xl -z-10 group-hover:bg-rose-500/20 transition-all" />
-            <h3 className="text-3xl md:text-6xl font-black uppercase mb-4 md:mb-6 tracking-tighter">Bentuk Masa Depan Kita</h3>
-            <p className="font-mono text-sm md:text-lg text-white/60 mb-8 md:mb-10 max-w-2xl mx-auto leading-relaxed px-2">
-              Setiap baris kode atau laporan bug membawa kita satu langkah lebih dekat ke kesempurnaan. Bergabunglah dalam kolektif kreatif ini.
-            </p>
-            <a
-              href={`https://github.com/${REPO_OWNER}/${REPO_NAME}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex w-full md:w-auto justify-center items-center gap-3 md:gap-4 bg-rose-600 text-white px-6 md:px-10 py-4 md:py-5 font-black uppercase text-base md:text-xl border-2 md:border-4 border-black shadow-brutalist-rose hover:bg-rose-500 transition-all transform hover:translate-x-1 hover:translate-y-1 hover:shadow-none rounded-xl md:rounded-none"
-            >
-              <Github size={20} className="md:w-6 md:h-6" /> Mulai Berkontribusi
-            </a>
-          </motion.div>
-        </div>
+          <section className={`${PAGE_X} pb-[clamp(48px,8vw,120px)]`}>
+            <div className="border-t-2 border-[#0E0E0F] pt-6">
+              <h2 className="max-w-[18ch] text-balance font-display text-[clamp(2rem,5vw,4.6rem)] font-bold leading-[0.92] tracking-[-0.05em]">
+                Mau ikut <Em>membangun</Em>?
+              </h2>
+              <p className="mt-4 max-w-[52ch] text-[#2B2B2E]">Setiap baris kode atau laporan bug membawa katalog ini selangkah lebih matang. Bukan pemrogram pun bisa ikut lewat edisi yang kamu suka.</p>
+              <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3">
+                <LinkButton href={`https://github.com/${REPO_OWNER}/${REPO_NAME}`} cursor="Buka">
+                  Mulai berkontribusi di GitHub <Arrow />
+                </LinkButton>
+                <LinkButton to="/gabung">Gabung komunitas</LinkButton>
+              </div>
+            </div>
+          </section>
+        </>
       )}
-    </div>
+    </>
   );
 };

@@ -217,7 +217,7 @@ export const WorksGlobe = forwardRef<GlobeHandle, Props>(function WorksGlobe(
     };
 
     const load = (t: Tile) => {
-      if (t.state !== 'idle' || loading >= 8) return;
+      if (t.state !== 'idle' || loading >= 16) return;
       const src = t.work.image;
       if (!src) {
         t.state = 'failed';

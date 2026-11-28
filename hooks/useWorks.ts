@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { toPublicWork, type PublicWork, type WorkRow } from '../lib/works';
 
-const COLUMNS = 'id, title, author, author_id, division, type, image_url, thumbnail_url, created_at';
+const COLUMNS = 'id, title, author, author_id, division, type, image_url, thumbnail_url, link, tags, created_at';
 
 /**
  * Karya terbaru untuk tampilan publik (landing dan galeri Karya).
@@ -26,7 +26,11 @@ export function useWorks(limit = 120) {
         .limit(limit);
       if (error) throw error;
 
-      const rows = (data ?? []) as WorkRow[];
+      // Karya hasil impor katalog Instagram: author berisi username, link berisi tautan postingan asli.
+      const rows = ((data ?? []) as (WorkRow & { link?: string | null; tags?: string[] | null })[]).map((r) => {
+        const fromIg = !!r.tags?.includes('katalog-ig');
+        return fromIg ? { ...r, username: r.author, source: r.link ?? undefined } : r;
+      }) as WorkRow[];
       const authorIds = [...new Set(rows.map((r) => r.author_id).filter((id): id is string => !!id))];
       const usernames = new Map<string, string>();
       if (authorIds.length > 0) {

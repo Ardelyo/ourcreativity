@@ -124,7 +124,8 @@ export const WorksGlobe = forwardRef<GlobeHandle, Props>(function WorksGlobe(
     let sOffY = live.current.offsetY;
     let lastProgress = '';
     const R = () => Math.min(W, H) * sRadius * zoom;
-    const tileBase = (n: number) => clamp(Math.sqrt((4 * Math.PI * Math.pow(R(), 2)) / Math.max(1, n)) * 0.85, 40, 170);
+    // Batas atas ikut radius supaya katalog yang masih sedikit tidak menghasilkan tile raksasa.
+    const tileBase = (n: number) => clamp(Math.sqrt((4 * Math.PI * Math.pow(R(), 2)) / Math.max(1, n)) * 0.85, 40, Math.min(170, R() * 0.3));
 
     const sync = () => {
       const list = live.current.items;
@@ -530,7 +531,7 @@ export const WorksGlobe = forwardRef<GlobeHandle, Props>(function WorksGlobe(
         tabIndex={0}
         role="img"
         aria-label={`Bola berisi ${items.length} karya. Seret untuk memutar, klik karya untuk membuka, panah untuk memutar lewat keyboard. Untuk menjelajah dengan pembaca layar, pakai tampilan Daftar.`}
-        className="block touch-none outline-none focus-visible:ring-2 focus-visible:ring-[#0E0E0F]"
+        className={`block outline-none focus-visible:ring-2 focus-visible:ring-[#0E0E0F] ${captureWheel ? 'touch-none' : 'touch-pan-y'}`}
       />
     </div>
   );

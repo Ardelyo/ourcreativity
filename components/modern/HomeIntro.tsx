@@ -12,7 +12,7 @@ interface Props {
 }
 
 const MIN_MS = 2600;
-const MAX_MS = 8000;
+const MAX_MS = 4500; // di koneksi lambat, jangan tahan pengunjung lebih lama; sisa gambar muat sambil jalan
 
 // Lapisan intro: bola karya memenuhi layar sementara penghitung memuat naik dari 000 ke 100.
 // Saat selesai, onDock dipanggil dan bola meluncur ke tempatnya di header. Halaman tidak bisa digulir selama intro.
@@ -44,7 +44,8 @@ export const HomeIntro: React.FC<Props> = ({ progress, settled, hasWorks, totalW
     const tick = (now: number) => {
       const el = now - t0;
       const { done: d, total } = progress.current;
-      const loadP = total > 0 ? d / total : settled && !hasWorks ? 1 : 0;
+      // 80% gambar termuat sudah cukup untuk bola yang meyakinkan
+      const loadP = total > 0 ? Math.min(1, d / (total * 0.8)) : settled && !hasWorks ? 1 : 0;
       const timeP = Math.min(1, el / MIN_MS);
       const p = Math.min(timeP, 0.08 + loadP * 0.92);
       setCount(Math.round(p * 100));

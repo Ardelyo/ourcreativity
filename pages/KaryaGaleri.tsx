@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useWorks } from '../hooks/useWorks';
 import { EDISI } from '../lib/edisi';
@@ -23,7 +23,7 @@ interface ViewProps {
 const ListView: React.FC<ViewProps> = ({ items, numbers, onOpen }) => {
   const [hover, setHover] = useState<{ w: PublicWork; x: number; y: number } | null>(null);
   return (
-    <div className="absolute inset-0 overflow-auto px-4 pb-10 pt-[84px] md:px-7" onPointerLeave={() => setHover(null)}>
+    <div className="absolute inset-0 overflow-auto px-4 pb-10 pt-[116px] md:px-7 md:pt-[84px]" onPointerLeave={() => setHover(null)}>
       <div className="grid grid-cols-[44px_1fr_28px] gap-4 border-b-2 border-[#0E0E0F] pb-2 font-mono text-[11px] text-[#8A8A8F] md:grid-cols-[64px_3fr_2fr_40px]">
         <span>No.</span><span>Kreator</span><span className="hidden md:block">Edisi</span><span />
       </div>
@@ -54,7 +54,7 @@ const ListView: React.FC<ViewProps> = ({ items, numbers, onOpen }) => {
 /* ---------------------------------- Galeri ---------------------------------- */
 
 const GalleryView: React.FC<ViewProps> = ({ items, numbers, onOpen }) => (
-  <div className="absolute inset-0 flex snap-x snap-mandatory items-center gap-[clamp(18px,3vw,48px)] overflow-x-auto px-4 pb-6 pt-24 md:px-7">
+  <div className="absolute inset-0 flex snap-x snap-mandatory items-center gap-[clamp(18px,3vw,48px)] overflow-x-auto px-4 pb-6 pt-[132px] md:px-7 md:pt-24">
     {items.map((w) => (
       <figure key={w.id} className="m-0 flex h-full max-h-[calc(100%-40px)] flex-none snap-center flex-col gap-2.5">
         <button type="button" onClick={() => onOpen(w.id)} className="min-h-0 flex-1 text-left" aria-label={`Buka karya ${formatNo(numbers.get(w.id) ?? 0)}: ${w.title}`}>
@@ -87,6 +87,12 @@ export default function KaryaGaleri() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
   const globe = useRef<GlobeHandle>(null);
+
+  // Tautan bagikan lama (/karya?id=...) membuka karya terkait begitu datanya termuat.
+  const idParam = params.get('id');
+  useEffect(() => {
+    if (idParam && works.some((w) => w.id === idParam)) setOpenId(idParam);
+  }, [idParam, works]);
 
   // Nomor urut: karya paling lama = 001, seperti katalog.
   const numbers = useMemo(() => new Map([...works].reverse().map((w, i) => [w.id, i + 1] as [string, number])), [works]);
@@ -126,6 +132,8 @@ export default function KaryaGaleri() {
   const close = useCallback(() => setOpenId(null), []);
 
   const isGlobe = view === 'globe' || view === 'wall';
+  // Bola dan peta hanya menampilkan karya bergambar; karya tanpa gambar tetap ada di Daftar.
+  const pictured = useMemo(() => visible.filter((w) => w.image), [visible]);
   const props: ViewProps = { items: visible, numbers, onOpen: setOpenId };
   const chips = EDISI.filter((e) => (counts[e.key] ?? 0) > 0);
 
@@ -144,7 +152,7 @@ export default function KaryaGaleri() {
           {edisi !== 'all' && <button type="button" onClick={() => setEdisi('all')} className="mx-auto border-b border-[#0E0E0F] pb-0.5">Tampilkan semua</button>}
         </div>
       ) : isGlobe ? (
-        <WorksGlobe ref={globe} items={visible} mode={view === 'wall' ? 'wall' : 'globe'} onOpen={setOpenId} className="absolute inset-0" radiusScale={0.4} />
+        <WorksGlobe ref={globe} items={pictured} mode={view === 'wall' ? 'wall' : 'globe'} onOpen={setOpenId} className="absolute inset-0" radiusScale={0.4} />
       ) : view === 'list' ? (
         <ListView {...props} />
       ) : (
@@ -152,7 +160,7 @@ export default function KaryaGaleri() {
       )}
 
       {/* Bilah atas */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-[5] grid grid-cols-[1fr_auto] items-start gap-3 bg-gradient-to-b from-[#EDEDEB] from-55% to-transparent px-4 pt-3.5 md:grid-cols-[1fr_auto_1fr] md:px-7 [&>*]:pointer-events-auto">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-[5] grid grid-cols-1 items-start gap-1.5 bg-gradient-to-b from-[#EDEDEB] from-65% to-transparent px-4 pb-3 pt-3 md:grid-cols-[1fr_auto_1fr] md:gap-3 md:px-7 md:pb-0 md:pt-3.5 [&>*]:pointer-events-auto">
         <div className="hidden gap-1 font-mono text-[11px] md:grid">
           <b className="font-display text-base font-bold tracking-tight">OurCreativity Katalog</b>
           <span className="text-[#8A8A8F]">
@@ -160,34 +168,34 @@ export default function KaryaGaleri() {
             {edisi !== 'all' ? ` di ${edisiName(edisi)}` : ''}
           </span>
         </div>
-        <div className="flex gap-1 font-mono text-[11px]" role="group" aria-label="Tampilan">
+        <div className="flex flex-wrap gap-x-1 font-mono text-[11px]" role="group" aria-label="Tampilan">
           {VIEWS.map((v) => (
             <button
               key={v.key}
               type="button"
               aria-pressed={view === v.key}
               onClick={() => setView(v.key)}
-              className={`border-b px-1.5 py-1 transition-colors ${view === v.key ? 'border-[#0E0E0F] text-[#0E0E0F]' : 'border-transparent text-[#8A8A8F] hover:text-[#0E0E0F]'}`}
+              className={`whitespace-nowrap border-b px-1.5 py-1 transition-colors ${view === v.key ? 'border-[#0E0E0F] text-[#0E0E0F]' : 'border-transparent text-[#8A8A8F] hover:text-[#0E0E0F]'}`}
             >
               [ {v.label} ]
             </button>
           ))}
         </div>
-        <div className="flex items-start justify-end gap-3.5 font-mono text-[11px]">
+        <div className="flex items-start justify-between gap-3 font-mono text-[11px] md:justify-end md:gap-3.5">
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Cari kreator"
             aria-label="Cari kreator atau judul"
-            className="w-[clamp(80px,12vw,160px)] border-b border-[#0E0E0F] bg-transparent px-0.5 py-1 outline-none placeholder:text-[#8A8A8F]"
+            className="w-[38vw] min-w-0 border-b md:w-[clamp(80px,12vw,160px)] border-[#0E0E0F] bg-transparent px-0.5 py-1 outline-none placeholder:text-[#8A8A8F]"
           />
           {isGlobe && (
-            <button type="button" onClick={() => globe.current?.shuffle()} className="py-1 text-[#8A8A8F] transition-colors hover:text-[#0E0E0F]" data-cursor="Acak">
+            <button type="button" onClick={() => globe.current?.shuffle()} className="whitespace-nowrap py-1 text-[#8A8A8F] transition-colors hover:text-[#0E0E0F]" data-cursor="Acak">
               Acak ↻
             </button>
           )}
-          <button type="button" aria-expanded={filterOpen} onClick={() => setFilterOpen((v) => !v)} className="py-1 text-[#8A8A8F] transition-colors hover:text-[#0E0E0F]">
+          <button type="button" aria-expanded={filterOpen} onClick={() => setFilterOpen((v) => !v)} className="whitespace-nowrap py-1 text-[#8A8A8F] transition-colors hover:text-[#0E0E0F]">
             Filter [{filterOpen ? '−' : '+'}]
           </button>
         </div>
@@ -195,7 +203,7 @@ export default function KaryaGaleri() {
 
       {/* Filter edisi */}
       <div
-        className={`absolute inset-x-0 top-[52px] z-[5] flex flex-wrap gap-1.5 border-b border-[#0E0E0F]/15 bg-[#EDEDEB] px-4 py-3 transition-all duration-300 md:px-7 ${filterOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-2 opacity-0'}`}
+        className={`absolute inset-x-0 top-[92px] z-[5] flex flex-wrap md:top-[52px] gap-1.5 border-b border-[#0E0E0F]/15 bg-[#EDEDEB] px-4 py-3 transition-all duration-300 md:px-7 ${filterOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-2 opacity-0'}`}
         aria-hidden={!filterOpen}
       >
         <button type="button" tabIndex={filterOpen ? 0 : -1} aria-pressed={edisi === 'all'} onClick={() => setEdisi('all')} className={`border px-3 py-1.5 font-mono text-[11px] transition-colors ${edisi === 'all' ? 'border-[#0E0E0F] bg-[#0E0E0F] text-[#EDEDEB]' : 'border-[#0E0E0F]/15 hover:border-[#0E0E0F]'}`}>

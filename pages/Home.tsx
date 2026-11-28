@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom';
 import { useWorks } from '../hooks/useWorks';
 import { EDISI, EDISI_ASOF, PROGRAM, DISCORD_URL, IG_UTAMA } from '../lib/edisi';
+import { MEMBER_COUNT_LABEL } from '../lib/community';
 import { WorksGlobe, type GlobeHandle } from '../components/modern/WorksGlobe';
 import { WorkLightbox } from '../components/modern/WorkLightbox';
 import { CountUp, HoverPreview, Magnet, ProximityText, ScrollBadge } from '../components/modern/micro';
@@ -54,7 +55,6 @@ export const Home = () => {
   const withImage = useMemo(() => works.filter((w) => w.image), [works]);
   const globeItems = useMemo(() => withImage.slice(0, 150), [withImage]);
   const numbers = useMemo(() => new Map([...works].reverse().map((w, i) => [w.id, i + 1] as [string, number])), [works]);
-  const creators = useMemo(() => new Set(works.map((w) => w.username ?? w.author)).size, [works]);
   const openIndex = openId ? withImage.findIndex((w) => w.id === openId) : -1;
   const step = (d: number) =>
     setOpenId((cur) => {
@@ -97,9 +97,9 @@ export const Home = () => {
   const intro = phase === 'intro';
   const docked = phase !== 'intro';
   // Posisi bola: penuh di tengah saat intro, lalu mendarat di sisi kanan header (atau di atas pada layar sempit).
-  const radius = intro ? (wide ? 0.47 : 0.42) : wide ? 0.37 : 0.34;
+  const radius = intro ? (wide ? 0.47 : 0.42) : wide ? 0.37 : 0.3;
   const offX = intro ? 0 : wide ? 0.27 : 0;
-  const offY = intro ? 0 : wide ? -0.03 : -0.14;
+  const offY = intro ? 0 : wide ? -0.03 : -0.2;
 
   const statement = useMemo<StatementToken[]>(() => {
     const pick = (i: number) => withImage[(i * 23 + 5) % Math.max(1, withImage.length)]?.image;
@@ -154,7 +154,7 @@ export const Home = () => {
           </div>
           <div>
             {docked && (
-              <h1 className="max-w-[11ch] font-display text-[clamp(3rem,8.4vw,9rem)] leading-[0.86] tracking-[-0.055em]">
+              <h1 className="max-w-[11ch] font-display text-[clamp(2.6rem,12.4vw,3.8rem)] leading-[0.86] md:text-[clamp(3rem,8.4vw,9rem)] tracking-[-0.055em]">
                 <ProximityText text="Para member yang" riseDelay={200} />
                 <br />
                 <span className="font-editorial font-normal italic tracking-[-0.03em]"><ProximityText text="berkarya." riseDelay={640} baseWght={400} maxWght={400} baseWdth={100} maxWdth={100} /></span>
@@ -185,15 +185,15 @@ export const Home = () => {
 
       {/* Angka */}
       <section className="mx-auto max-w-[1560px] px-4 pb-[clamp(60px,9vw,140px)] md:px-8">
-        <dl className="grid grid-cols-2 border-t border-[#0E0E0F]/20 md:grid-cols-4">
+        <dl className="grid grid-cols-2 border-t border-[#0E0E0F]/20 md:grid-cols-5">
           {[
+            { k: 'Anggota komunitas', v: <span className="tabular-nums">{MEMBER_COUNT_LABEL}</span> },
             { k: 'Pengikut @' + IG_UTAMA, v: <CountUp to={31.3} decimals={1} suffix="K" /> },
             { k: 'Karya terbit di Instagram', v: <CountUp to={8402} /> },
             { k: 'Karya di katalog ini', v: <CountUp to={works.length} /> },
-            { k: 'Kreator yang tampil', v: <CountUp to={creators} /> },
-          ].map((s, i) => (
+                      ].map((s, i) => (
             <Reveal key={s.k} delay={i * 80} className="border-b border-[#0E0E0F]/20 py-5 pr-4 md:border-b-0 md:[&:not(:first-child)]:border-l md:[&:not(:first-child)]:pl-5">
-              <dd className="font-display text-[clamp(2.6rem,6.6vw,6.2rem)] font-bold leading-[0.9] tracking-[-0.06em]">{s.v}</dd>
+              <dd className="font-display text-[clamp(2.2rem,4.6vw,4.8rem)] font-bold leading-[0.9] tracking-[-0.06em]">{s.v}</dd>
               <dt className="mt-2 font-mono text-[11px] text-[#55555A]">{s.k}</dt>
             </Reveal>
           ))}

@@ -40,6 +40,15 @@ Dokumen ini menjelaskan tema baru untuk halaman `/` dan `/karya`, dan cara mempe
 - **Aksesibilitas:** canvas bisa difokus dan diputar dengan keyboard. Untuk pembaca layar, tersedia tampilan Daftar. `prefers-reduced-motion` mematikan putar otomatis, inersia, intro, dan kursor kustom.
 - **Performa:** loop berhenti saat canvas di luar layar atau tab tersembunyi. Gambar dimuat bertahap (maksimum 8 sekaligus) dan DPR dibatasi 2.
 
+## Intro dan scrolly di landing
+
+- **Intro:** saat Home dibuka, bola karya memenuhi layar dengan penghitung muat 000 sampai 100 yang mengikuti kemajuan muat gambar sebenarnya. Setelah selesai, bola meluncur ke sisi kanan header sementara judul naik huruf demi huruf dan navigasi turun. Intro hanya diputar sekali per pemuatan halaman, bisa dilewati lewat tombol `Lewati` atau Enter/Esc, dan tidak diputar bila pengguna meminta gerak berkurang. Halaman dikunci dari gulir selama intro.
+- **Bola dan gulir:** bola terdorong naik, mengecil, dan berputar sesuai kecepatan gulir.
+- **Pernyataan:** kata demi kata menyala mengikuti gulir, dengan gambar karya sebaris yang melebar saat gilirannya (`ScrollStatement`).
+- **Edisi:** bagian ini disematkan dan gulir vertikal menggeser trek ke samping, dengan paralaks gambar di tiap kartu (`EdisiTrack`). Di layar sempit menjadi carousel geser biasa.
+- **Sorotan:** dua baris karya bergeser berlawanan arah mengikuti gulir (`ScrollRows`).
+- **Micro-interaction lain:** judul dan "Gabung." menebal mengikuti kursor (`ProximityText`), tombol magnetik, kursor kustom dengan label dan denyut saat klik, garis progres gulir, navigasi yang sembunyi saat gulir turun, garis bawah yang menyapu, garis judul bagian yang tergambar, angka yang menghitung naik, dan pratinjau program yang mengikuti kursor.
+
 ## Mode demo lokal
 
 Supabase tidak selalu terjangkau saat pengembangan. Untuk melihat UI dengan karya nyata, buat `.env.local` berisi `VITE_DEMO_WORKS=1` dan taruh manifest di `public/demo/works.json` (baris bentuk tabel `works` plus `edisi`, `username`, `source`) dengan gambar di `public/demo/t/` dan `public/demo/m/`. Folder `public/demo/` ada di `.gitignore`, jadi tidak ikut ter-commit, dan tanpa flag itu aplikasi selalu membaca Supabase.

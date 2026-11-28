@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - **Home** ditulis ulang: hero globe karya yang bisa diputar, ticker akun, daftar tujuh edisi dengan pratinjau yang mengikuti kursor, tabel program, dan ajakan gabung.
 - **Karya** (`/karya`) kini katalog dengan globe 2D tanpa dependensi (zoom, inersia, riak saat hover, morf ke peta tanpa ujung), tampilan Daftar dan Galeri, filter edisi (`?edisi=`), pencarian kreator, dan lightbox yang bisa dioperasikan lewat keyboard.
+- **Intro landing:** bola karya memenuhi layar dengan penghitung muat, lalu mendarat ke posisi header. Sekali per pemuatan halaman, bisa dilewati, dan dimatikan saat gerak berkurang.
+- **Scrolly:** pernyataan yang menyala kata demi kata dengan gambar sebaris, trek edisi horizontal yang disematkan dengan paralaks, baris karya yang digerakkan gulir, bola yang bereaksi pada gulir, garis progres gulir, dan navigasi yang sembunyi saat gulir turun.
 - Fitur sosial (suka, komentar) tidak ditampilkan di halaman baru. Halaman Karya lama tetap ada di `/karya/arsip` tanpa perubahan.
 - Micro-interaction: judul naik huruf demi huruf, tombol magnetik, kursor kustom dengan label, ticker yang miring mengikuti gulir, wordmark footer yang bereaksi pada kursor, dan reveal saat gulir. Semuanya menghormati `prefers-reduced-motion`.
 - Mode demo lokal lewat `VITE_DEMO_WORKS=1` (lihat docs/DESAIN_MODERNIS.md). `public/demo/` masuk `.gitignore`.

@@ -6,6 +6,7 @@ import { Footer } from './components/Footer';
 import { ModernNav } from './components/modern/ModernNav';
 import { ModernFooter } from './components/modern/ModernFooter';
 import { Cursor } from './components/modern/Cursor';
+import { ScrollProgress } from './components/modern/ScrollProgress';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { AuthProvider } from './components/AuthProvider';
 // Halaman yang dimuat secara eager
@@ -171,8 +172,9 @@ const AppContent = () => {
       <div className="relative flex min-h-screen flex-col bg-[#EDEDEB] font-sans text-[#0E0E0F] selection:bg-[#0E0E0F] selection:text-[#EDEDEB]">
         <GlobalHaptics />
         <Cursor />
+        {!isGallery && <ScrollProgress />}
         <ModernNav />
-        <main className="flex-grow">
+        <main className={`flex-grow ${isGallery ? 'pt-[var(--nav-h)]' : ''}`}>
           <AnimatedRoutes />
         </main>
         {!isGallery && <ModernFooter />}

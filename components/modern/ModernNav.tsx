@@ -1,20 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAuth } from '../AuthProvider';
 
 // Navigasi untuk halaman bertema modernis (Home dan Karya). Tinggi tetap 53px (var --nav-h di index.css).
 const linkCls = ({ isActive }: { isActive: boolean }) =>
-  `font-mono text-[11px] border-b pb-0.5 transition-colors ${isActive ? 'border-[#0E0E0F]' : 'border-transparent hover:border-[#0E0E0F]'}`;
+  `oc-sweep font-mono text-[11px] pb-0.5 ${isActive ? 'oc-sweep-on' : ''}`;
 
 export const ModernNav = () => {
   const { user, profile } = useAuth();
   const [open, setOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
+
+  // Sembunyi saat gulir turun, muncul lagi saat gulir naik.
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (Math.abs(y - last) < 6) return;
+      setHidden(y > 240 && y > last);
+      last = y;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#0E0E0F]/15 bg-[#EDEDEB]/95 backdrop-blur" style={{ height: 'var(--nav-h)' }}>
+    <header
+      className={`oc-nav fixed inset-x-0 top-0 z-40 border-b border-[#0E0E0F]/15 bg-[#EDEDEB]/85 backdrop-blur transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${hidden && !open ? '-translate-y-full' : 'translate-y-0'}`}
+      style={{ height: 'var(--nav-h)' }}
+    >
       <div className="mx-auto flex h-full max-w-[1560px] items-center justify-between gap-4 px-4 md:px-8">
-        <Link to="/" className="flex items-center gap-2.5 font-display text-[15px] font-bold tracking-tight" onClick={() => setOpen(false)}>
-          <img src="/brand/oc-mark.png" alt="" width={40} height={22} className="h-[22px] w-auto" />
+        <Link to="/" className="group/logo flex items-center gap-2.5 font-display text-[15px] font-bold tracking-tight" onClick={() => setOpen(false)}>
+          <img src="/brand/oc-mark.png" alt="" width={40} height={22} className="h-[22px] w-auto transition-transform duration-500 group-hover/logo:-rotate-12 group-hover/logo:scale-110" />
           OurCreativity
         </Link>
 

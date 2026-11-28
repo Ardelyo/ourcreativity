@@ -20,6 +20,8 @@ export type GlobeMode = 'globe' | 'wall';
 export interface GlobeHandle {
   /** Acak penempatan karya di bola dan beri dorongan putar. */
   shuffle: () => void;
+  /** Beri dorongan putar (positif = ke kanan). Dipakai untuk menautkan putaran dengan gulir halaman. */
+  kick: (impulse: number) => void;
 }
 
 interface Props {
@@ -34,6 +36,10 @@ interface Props {
   radiusScale?: number;
   /** Geser pusat bola secara horizontal, dalam fraksi lebar (mis. 0.18 = ke kanan). */
   offsetX?: number;
+  /** Geser pusat bola secara vertikal, dalam fraksi tinggi (positif = ke bawah). */
+  offsetY?: number;
+  /** Dilaporkan saat gambar selesai dimuat: (sudah, total). Dipakai untuk penghitung intro. */
+  onProgress?: (done: number, total: number) => void;
 }
 
 interface Tile {
@@ -62,16 +68,16 @@ interface Tile {
 const FONT_MONO = '500 11px "JetBrains Mono", ui-monospace, monospace';
 
 export const WorksGlobe = forwardRef<GlobeHandle, Props>(function WorksGlobe(
-  { items, mode, onOpen, captureWheel = true, autoRotate = true, className = '', radiusScale = 0.4, offsetX = 0 },
+  { items, mode, onOpen, captureWheel = true, autoRotate = true, className = '', radiusScale = 0.4, offsetX = 0, offsetY = 0, onProgress },
   ref,
 ) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const live = useRef({ items, mode, onOpen, autoRotate, radiusScale, offsetX, captureWheel });
-  live.current = { items, mode, onOpen, autoRotate, radiusScale, offsetX, captureWheel };
-  const api = useRef<{ sync: () => void; shuffle: () => void } | null>(null);
+  const live = useRef({ items, mode, onOpen, autoRotate, radiusScale, offsetX, offsetY, captureWheel, onProgress });
+  live.current = { items, mode, onOpen, autoRotate, radiusScale, offsetX, offsetY, captureWheel, onProgress };
+  const api = useRef<{ sync: () => void; shuffle: () => void; kick: (v: number) => void } | null>(null);
 
-  useImperativeHandle(ref, () => ({ shuffle: () => api.current?.shuffle() }), []);
+  useImperativeHandle(ref, () => ({ shuffle: () => api.current?.shuffle(), kick: (v: number) => api.current?.kick(v) }), []);
 
   // Sinkronkan tile setiap kali kumpulan karya berubah.
   useEffect(() => {
@@ -112,7 +118,12 @@ export const WorksGlobe = forwardRef<GlobeHandle, Props>(function WorksGlobe(
     let lastT = performance.now();
     const t0 = performance.now();
 
-    const R = () => Math.min(W, H) * live.current.radiusScale * zoom;
+    // Ukuran dan posisi bola menyesuaikan diri dengan mulus (dipakai untuk transisi intro ke header).
+    let sRadius = live.current.radiusScale;
+    let sOffX = live.current.offsetX;
+    let sOffY = live.current.offsetY;
+    let lastProgress = '';
+    const R = () => Math.min(W, H) * sRadius * zoom;
     const tileBase = (n: number) => clamp(Math.sqrt((4 * Math.PI * Math.pow(R(), 2)) / Math.max(1, n)) * 0.85, 40, 170);
 
     const sync = () => {
@@ -195,6 +206,9 @@ export const WorksGlobe = forwardRef<GlobeHandle, Props>(function WorksGlobe(
 
     api.current = {
       sync,
+      kick: (v: number) => {
+        vyaw += v;
+      },
       shuffle: () => {
         const active = order.filter((t) => t.visT > 0);
         const pts = fibonacciSphere(active.length);
@@ -237,6 +251,10 @@ export const WorksGlobe = forwardRef<GlobeHandle, Props>(function WorksGlobe(
       const time = (now - t0) / 1000;
       const L = live.current;
       const wallMode = L.mode === 'wall';
+      const sk = reduceMotion ? 1 : 0.06;
+      sRadius += (L.radiusScale - sRadius) * sk;
+      sOffX += (L.offsetX - sOffX) * sk;
+      sOffY += (L.offsetY - sOffY) * sk;
 
       // Fisika masukan.
       if (!dragging) {
@@ -254,8 +272,8 @@ export const WorksGlobe = forwardRef<GlobeHandle, Props>(function WorksGlobe(
 
       const r = R();
       const cam = r * 3.6;
-      const cx = W / 2 + L.offsetX * W;
-      const cy = H / 2;
+      const cx = W / 2 + sOffX * W;
+      const cy = H / 2 + sOffY * H;
       const n = order.filter((t) => t.visT > 0).length;
       const base = tileBase(n);
       const period = Math.max(1, Math.round(Math.sqrt(Math.max(1, n) * 2.2))) * base * 1.75;
@@ -277,6 +295,22 @@ export const WorksGlobe = forwardRef<GlobeHandle, Props>(function WorksGlobe(
         const target = hovered === t ? 1 : 0;
         t.hv += (target - t.hv) * (reduceMotion ? 1 : 0.18);
         if (t.vis > 0.05) load(t);
+      }
+
+      // Laporkan kemajuan pemuatan gambar (untuk penghitung intro).
+      if (L.onProgress) {
+        let done = 0;
+        let total = 0;
+        for (const t of order) {
+          if (t.visT === 0) continue;
+          total++;
+          if (t.state === 'ready' || t.state === 'failed') done++;
+        }
+        const key = `${done}/${total}`;
+        if (key !== lastProgress) {
+          lastProgress = key;
+          L.onProgress(done, total);
+        }
       }
 
       // Posisi dan ukuran di layar.

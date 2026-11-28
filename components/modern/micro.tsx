@@ -145,3 +145,146 @@ export const HoverPreview: React.FC<PreviewProps> = ({ images }) => {
     </div>
   );
 };
+
+interface ProximityProps {
+  text: string;
+  className?: string;
+  /** Jeda animasi naik (ms). Tanpa ini huruf langsung tampil. */
+  riseDelay?: number;
+  baseWght?: number;
+  maxWght?: number;
+  baseWdth?: number;
+  maxWdth?: number;
+  /** Jangkauan pengaruh kursor dalam px. */
+  range?: number;
+}
+
+/**
+ * Teks yang hurufnya menebal dan melebar saat kursor mendekat (sumbu wght dan wdth Archivo variabel).
+ * Dengan `riseDelay`, huruf juga naik dari balik garis saat pertama muncul.
+ */
+export const ProximityText: React.FC<ProximityProps> = ({
+  text, className = '', riseDelay, baseWght = 700, maxWght = 900, baseWdth = 100, maxWdth = 118, range = 260,
+}) => {
+  const box = useRef<HTMLSpanElement>(null);
+  const words = text.split(' ');
+  let n = 0;
+
+  useEffect(() => {
+    const host = box.current;
+    if (!host) return;
+    const spans = Array.from(host.querySelectorAll<HTMLSpanElement>('span[data-l]'));
+    const set = (i: number, k: number) => {
+      spans[i].style.fontVariationSettings = `"wght" ${Math.round(baseWght + k * (maxWght - baseWght))}, "wdth" ${Math.round(baseWdth + k * (maxWdth - baseWdth))}`;
+    };
+    spans.forEach((_, i) => set(i, 0));
+    if (prefersReducedMotion() || !window.matchMedia('(hover: hover)').matches) return;
+    const cur = spans.map(() => 0);
+    let px: number | null = null;
+    let py = 0;
+    let raf = 0;
+    let visible = true;
+    const io = new IntersectionObserver((e) => { visible = e[0]?.isIntersecting ?? true; });
+    io.observe(host);
+    const onMove = (e: PointerEvent) => {
+      px = e.clientX;
+      py = e.clientY;
+    };
+    const loop = () => {
+      raf = requestAnimationFrame(loop);
+      if (!visible) return;
+      spans.forEach((s, i) => {
+        let target = 0;
+        if (px !== null) {
+          const b = s.getBoundingClientRect();
+          target = Math.max(0, 1 - Math.hypot(px - (b.left + b.width / 2), (py - (b.top + b.height / 2)) * 0.5) / range);
+        }
+        cur[i] += (target - cur[i]) * 0.14;
+        if (Math.abs(target - cur[i]) > 0.002 || target > 0) set(i, cur[i]);
+      });
+    };
+    window.addEventListener('pointermove', onMove);
+    raf = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      window.removeEventListener('pointermove', onMove);
+    };
+  }, [text, baseWght, maxWght, baseWdth, maxWdth, range]);
+
+  return (
+    <span ref={box} className={className} aria-label={text}>
+      {words.map((w, wi) => (
+        <span key={wi} aria-hidden className="inline-block overflow-hidden pb-[0.24em] -mb-[0.14em] align-bottom">
+          {w.split('').map((c) => {
+            const i = n++;
+            return (
+              <span
+                key={i}
+                data-l
+                className={`inline-block ${riseDelay !== undefined ? 'oc-rise' : ''}`}
+                style={riseDelay !== undefined ? { animationDelay: `${riseDelay + i * 28}ms` } : undefined}
+              >
+                {c}
+              </span>
+            );
+          })}
+          {wi < words.length - 1 ? '\u00A0' : ''}
+        </span>
+      ))}
+    </span>
+  );
+};
+
+/** Angka yang menghitung naik saat pertama terlihat. */
+export const CountUp: React.FC<{ to: number; decimals?: number; suffix?: string; className?: string }> = ({ to, decimals = 0, suffix = '', className = '' }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [v, setV] = useState(to);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || prefersReducedMotion() || typeof IntersectionObserver === 'undefined') return;
+    setV(0);
+    const io = new IntersectionObserver((e) => {
+      if (!e[0]?.isIntersecting) return;
+      io.disconnect();
+      const t0 = performance.now();
+      const tick = (now: number) => {
+        const k = Math.min(1, (now - t0) / 1500);
+        setV(to * (1 - Math.pow(1 - k, 4)));
+        if (k < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, { threshold: 0.6 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [to]);
+  const shown = decimals ? v.toFixed(decimals) : Math.round(v).toLocaleString('en-US');
+  return <span ref={ref} className={`tabular-nums ${className}`}>{shown}{suffix}</span>;
+};
+
+/** Lencana bulat dengan teks melingkar yang berputar mengikuti gulir. Klik untuk turun ke bagian berikutnya. */
+export const ScrollBadge: React.FC<{ onClick: () => void; label?: string }> = ({ onClick, label = 'Gulir ke bawah • Gulir ke bawah • ' }) => {
+  const ring = useRef<SVGSVGElement>(null);
+  useEffect(() => {
+    const el = ring.current;
+    if (!el || prefersReducedMotion()) return;
+    let raf = 0;
+    let cur = 0;
+    const loop = () => {
+      raf = requestAnimationFrame(loop);
+      cur += (window.scrollY * 0.35 - cur) * 0.1;
+      el.style.transform = `rotate(${(cur + performance.now() * 0.012).toFixed(1)}deg)`;
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return (
+    <button type="button" onClick={onClick} aria-label="Gulir ke bawah" data-cursor="Turun" className="group relative grid h-[88px] w-[88px] place-items-center rounded-full">
+      <svg ref={ring} viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden>
+        <defs><path id="oc-badge-path" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0" /></defs>
+        <text className="fill-current font-mono text-[9.5px] uppercase tracking-[0.18em]"><textPath href="#oc-badge-path">{label.repeat(2)}</textPath></text>
+      </svg>
+      <span className="text-xl transition-transform duration-300 group-hover:translate-y-1" aria-hidden>↓</span>
+    </button>
+  );
+};

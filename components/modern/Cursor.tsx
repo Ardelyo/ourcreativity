@@ -36,6 +36,9 @@ export const Cursor: React.FC = () => {
       target = next ? 3.2 : interactive ? 1.9 : 1;
       el.style.opacity = '1';
     };
+    const onDown = () => {
+      scale *= 0.55;
+    };
     const onLeave = () => {
       el.style.opacity = '0';
     };
@@ -49,11 +52,13 @@ export const Cursor: React.FC = () => {
       text.style.opacity = current ? '1' : '0';
     };
     window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerdown', onDown);
     document.addEventListener('pointerleave', onLeave);
     raf = requestAnimationFrame(loop);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerdown', onDown);
       document.removeEventListener('pointerleave', onLeave);
     };
   }, []);

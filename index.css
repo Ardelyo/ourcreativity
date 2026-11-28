@@ -185,3 +185,40 @@ a:hover > .oc-arrow {
     animation: none;
   }
 }
+
+.oc-rise {
+  animation: oc-rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes oc-rise {
+  from {
+    transform: translateY(110%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.oc-lightbox {
+  animation: oc-lightbox-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes oc-lightbox-in {
+  from {
+    opacity: 0;
+    clip-path: inset(6% 6% 6% 6%);
+  }
+
+  to {
+    opacity: 1;
+    clip-path: inset(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oc-rise,
+  .oc-lightbox {
+    animation: none;
+  }
+}

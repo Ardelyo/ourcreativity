@@ -31,3 +31,6 @@ dist-ssr
 *.sw?
 event/report.*
 private/
+
+# Data demo lokal (karya dari Instagram untuk pratinjau, tidak untuk di-commit)
+public/demo/

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { PublicWork } from '../../lib/works';
 
 interface Props {
@@ -7,31 +7,36 @@ interface Props {
   /** Lebar/tinggi yang dipaksakan. Tanpa ini gambar memakai rasio aslinya. */
   ratio?: number;
   eager?: boolean;
-  /** Dipanggil sekali gambar termuat, dengan rasio asli (lebar/tinggi). */
-  onNaturalRatio?: (ratio: number) => void;
+  /** Pakai gambar resolusi penuh (untuk lightbox) alih-alih thumbnail. */
+  full?: boolean;
 }
 
 // Menampilkan gambar karya. Karya tanpa pratinjau gambar (tulisan, kode) atau gambar yang gagal dimuat
-// tampil sebagai kartu tipografi.
-export const WorkImage: React.FC<Props> = ({ work, className = '', ratio, eager, onNaturalRatio }) => {
+// tampil sebagai kartu tipografi. Gambar masuk dengan efek "fokus" halus (blur ke tajam) saat selesai dimuat.
+export const WorkImage: React.FC<Props> = ({ work, className = '', ratio, eager, full }) => {
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const src = full ? work.full ?? work.image : work.image;
 
-  if (work.image && !failed) {
+  // Gambar yang sudah ada di cache bisa selesai dimuat sebelum handler terpasang.
+  useEffect(() => {
+    const el = imgRef.current;
+    if (el && el.complete && el.naturalWidth > 0) setLoaded(true);
+  }, [src]);
+
+  if (src && !failed) {
     return (
       <img
-        src={work.image}
+        ref={imgRef}
+        src={src}
         alt={`${work.title} oleh ${work.author}`}
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
         draggable={false}
-        className={`block bg-[#D6D6D3] object-cover ${className}`}
+        className={`block bg-[#D6D6D3] object-cover transition-[filter,opacity] duration-700 ${loaded ? 'blur-0 opacity-100' : 'opacity-0 blur-md'} ${className}`}
         style={ratio ? { aspectRatio: String(ratio) } : undefined}
-        onLoad={(e) => {
-          const el = e.currentTarget;
-          if (onNaturalRatio && el.naturalWidth > 0 && el.naturalHeight > 0) {
-            onNaturalRatio(el.naturalWidth / el.naturalHeight);
-          }
-        }}
+        onLoad={() => setLoaded(true)}
         onError={() => setFailed(true)}
       />
     );

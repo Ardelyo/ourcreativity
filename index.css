@@ -288,3 +288,8 @@ html[data-intro='1'] .oc-nav {
     transform: none;
   }
 }
+
+@keyframes oc-load {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}

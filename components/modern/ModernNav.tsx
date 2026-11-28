@@ -37,7 +37,7 @@ export const ModernNav = () => {
 
         <nav aria-label="Navigasi utama" className="hidden items-center gap-8 md:flex">
           <NavLink to="/karya" className={linkCls}>Karya</NavLink>
-          <Link to={{ pathname: '/', hash: '#edisi' }} className={linkCls({ isActive: false })}>Edisi</Link>
+          <NavLink to="/edisi" className={linkCls}>Edisi</NavLink>
           <Link to={{ pathname: '/', hash: '#program' }} className={linkCls({ isActive: false })}>Program</Link>
           <NavLink to="/tim" className={linkCls}>Tim</NavLink>
           <NavLink to="/info" className={linkCls}>Info</NavLink>
@@ -70,7 +70,7 @@ export const ModernNav = () => {
       {open && (
         <nav id="modern-nav-menu" aria-label="Menu" className="absolute inset-x-0 top-full grid gap-1 border-b border-[#0E0E0F]/15 bg-[#EDEDEB] px-4 py-3 font-display text-2xl font-bold tracking-tight md:hidden">
           <Link to="/karya" onClick={() => setOpen(false)} className="py-1.5">Karya</Link>
-          <Link to={{ pathname: '/', hash: '#edisi' }} onClick={() => setOpen(false)} className="py-1.5">Edisi</Link>
+          <Link to="/edisi" onClick={() => setOpen(false)} className="py-1.5">Edisi</Link>
           <Link to={{ pathname: '/', hash: '#program' }} onClick={() => setOpen(false)} className="py-1.5">Program</Link>
           <Link to="/tim" onClick={() => setOpen(false)} className="py-1.5">Tim</Link>
           <Link to="/info" onClick={() => setOpen(false)} className="py-1.5">Info</Link>

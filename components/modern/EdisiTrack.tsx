@@ -114,7 +114,7 @@ export const EdisiTrack: React.FC<Props> = ({ works, loading }) => {
         return (
           <Link
             key={e.key}
-            to={`/karya?edisi=${e.key}`}
+            to={`/edisi/${e.key}`}
             data-card
             data-cursor="Lihat"
             className="group relative mx-3 flex h-[min(72svh,620px)] w-[min(78vw,640px)] flex-none snap-center flex-col justify-between overflow-hidden border border-[#0E0E0F]/15 bg-[#E4E4E1] p-4 transition-colors duration-300 hover:bg-[#0E0E0F] hover:text-[#EDEDEB] md:p-6"
@@ -151,8 +151,8 @@ export const EdisiTrack: React.FC<Props> = ({ works, loading }) => {
       })}
 
       <div data-card className="flex h-[min(72svh,620px)] w-[min(70vw,520px)] flex-none snap-center flex-col justify-end px-6 md:px-10">
-        <Link to="/karya" data-cursor="Masuk" className="font-display text-[clamp(2.4rem,5vw,4.4rem)] font-bold leading-[0.92] tracking-[-0.05em] underline decoration-2 underline-offset-8">
-          Buka seluruh katalog <span className="oc-arrow inline-block">↗</span>
+        <Link to="/edisi" data-cursor="Masuk" className="font-display text-[clamp(2.4rem,5vw,4.4rem)] font-bold leading-[0.92] tracking-[-0.05em] underline decoration-2 underline-offset-8">
+          Lihat semua edisi <span className="oc-arrow inline-block">↗</span>
         </Link>
       </div>
     </div>

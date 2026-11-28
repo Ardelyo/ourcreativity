@@ -7,6 +7,7 @@ import { ModernNav } from './components/modern/ModernNav';
 import { ModernFooter } from './components/modern/ModernFooter';
 import { Cursor } from './components/modern/Cursor';
 import { ScrollProgress } from './components/modern/ScrollProgress';
+import { LoadingMark } from './components/modern/ui';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { AuthProvider } from './components/AuthProvider';
 // Halaman yang dimuat secara eager
@@ -17,15 +18,13 @@ import { Register } from './pages/Auth/Register';
 // Halaman yang dimuat secara lazy (biar enteng pas buka awal)
 const Karya = React.lazy(() => import('./pages/Karya'));
 const KaryaGaleri = React.lazy(() => import('./pages/KaryaGaleri'));
+const EdisiIndex = React.lazy(() => import('./pages/Edisi').then(module => ({ default: module.EdisiIndex })));
+const EdisiDetail = React.lazy(() => import('./pages/Edisi').then(module => ({ default: module.EdisiDetail })));
+const NotFound = React.lazy(() => import('./pages/NotFound'));
 const Tim = React.lazy(() => import('./pages/Tim').then(module => ({ default: module.Tim })));
 const Info = React.lazy(() => import('./pages/Info').then(module => ({ default: module.Info })));
 const Story = React.lazy(() => import('./pages/Story').then(module => ({ default: module.Story })));
 const Announcement = React.lazy(() => import('./pages/Announcement').then(module => ({ default: module.Announcement })));
-const Graphics = React.lazy(() => import('./pages/divisions/Graphics').then(module => ({ default: module.Graphics })));
-const VideoPage = React.lazy(() => import('./pages/divisions/Video').then(module => ({ default: module.VideoPage })));
-const Writing = React.lazy(() => import('./pages/divisions/Writing').then(module => ({ default: module.Writing })));
-const Meme = React.lazy(() => import('./pages/divisions/Meme').then(module => ({ default: module.Meme })));
-const Coding = React.lazy(() => import('./pages/divisions/Coding').then(module => ({ default: module.Coding })));
 const Studio = React.lazy(() => import('./pages/Studio').then(module => ({ default: module.Studio })));
 const Settings = React.lazy(() => import('./pages/Settings').then(module => ({ default: module.Settings })));
 const Profile = React.lazy(() => import('./pages/Profile').then(module => ({ default: module.Profile })));
@@ -65,7 +64,7 @@ const Loading = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
       <GlobalLoadingTracker />
-      <div className="w-10 h-10 border-4 border-rose-500/30 border-t-rose-500 rounded-full animate-spin"></div>
+      <LoadingMark />
     </div>
   );
 };
@@ -97,17 +96,20 @@ const AnimatedRoutes = () => {
               <Route path="/register" element={<MotionPage><Register /></MotionPage>} />
               <Route path="/karya" element={<MotionPage><KaryaGaleri /></MotionPage>} />
               <Route path="/karya/arsip" element={<MotionPage><Karya /></MotionPage>} />
+              <Route path="/edisi" element={<MotionPage><EdisiIndex /></MotionPage>} />
+              <Route path="/edisi/:key" element={<MotionPage><EdisiDetail /></MotionPage>} />
               <Route path="/tim" element={<MotionPage><Tim /></MotionPage>} />
               <Route path="/info" element={<MotionPage><Info /></MotionPage>} />
               <Route path="/kotak-surat" element={<MotionPage><KotakSurat /></MotionPage>} />
               <Route path="/story" element={<MotionPage><Story /></MotionPage>} />
               <Route path="/announcement" element={<MotionPage><Announcement /></MotionPage>} />
 // ... rest of routes
-              <Route path="/division/graphics" element={<MotionPage><Graphics /></MotionPage>} />
-              <Route path="/division/video" element={<MotionPage><VideoPage /></MotionPage>} />
-              <Route path="/division/writing" element={<MotionPage><Writing /></MotionPage>} />
-              <Route path="/division/meme" element={<MotionPage><Meme /></MotionPage>} />
-              <Route path="/division/coding" element={<MotionPage><Coding /></MotionPage>} />
+              {/* Halaman Divisi lama dilebur ke profil edisi baru. */}
+              <Route path="/division/graphics" element={<Navigate to="/edisi/grafis" replace />} />
+              <Route path="/division/video" element={<Navigate to="/edisi/video" replace />} />
+              <Route path="/division/writing" element={<Navigate to="/edisi/tulis" replace />} />
+              <Route path="/division/meme" element={<Navigate to="/edisi/meme" replace />} />
+              <Route path="/division/coding" element={<Navigate to="/edisi/kode" replace />} />
               <Route path="/studio" element={<MotionPage><Studio /></MotionPage>} />
               <Route path="/settings" element={<MotionPage><Settings /></MotionPage>} />
               <Route path="/profile/:username" element={<MotionPage><Profile /></MotionPage>} />
@@ -126,7 +128,7 @@ const AnimatedRoutes = () => {
                 <Route path="announcements" element={<AdminAnnouncements />} />
                 <Route path="settings" element={<AdminSettings />} />
               </Route>
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<MotionPage><NotFound /></MotionPage>} />
             </Routes>
           </Suspense>
         </ErrorBoundary>
@@ -157,6 +159,11 @@ const GlobalHaptics = () => {
   return null;
 };
 
+const LEGACY_PREFIXES = [
+  '/login', '/register', '/tim', '/info', '/kotak-surat', '/story', '/announcement', '/division',
+  '/studio', '/settings', '/profile', '/v5-launch', '/gate', '/admin', '/karya/arsip',
+];
+
 const AppContent = () => {
   const { pathname } = useLocation();
   const path = pathname.toLowerCase();
@@ -164,7 +171,9 @@ const AppContent = () => {
   const isAdmin = path.startsWith('/admin');
   const isZenMode = isStudio || isAdmin;
   // Halaman bertema modernis (terang, grid kaku). Halaman lain masih memakai tema gelap lama.
-  const isModern = path === '/' || path === '/karya';
+  // Rute yang belum dipindah ke desain baru. Semua selain ini (termasuk alamat tak dikenal -> 404) memakai shell modern.
+  const isLegacy = LEGACY_PREFIXES.some((p) => path === p || path.startsWith(p + '/'));
+  const isModern = !isLegacy;
   const isGallery = path === '/karya';
 
   if (isModern) {
@@ -174,7 +183,7 @@ const AppContent = () => {
         <Cursor />
         {!isGallery && <ScrollProgress />}
         <ModernNav />
-        <main className={`flex-grow ${isGallery ? 'pt-[var(--nav-h)]' : ''}`}>
+        <main className={`flex-grow ${path !== '/' ? 'pt-[var(--nav-h)]' : ''}`}>
           <AnimatedRoutes />
         </main>
         {!isGallery && <ModernFooter />}

@@ -116,7 +116,17 @@ with sync_playwright() as p:
     ROUTES = ["/", "/login", "/register", "/karya", "/tim", "/info", "/kotak-surat", "/story",
               "/announcement", "/division/graphics", "/division/video", "/division/writing",
               "/division/meme", "/division/coding", "/studio", "/settings", "/profile/uji",
-              "/v5-launch", "/gate", "/admin", "/halaman-tidak-ada"]
+              "/v5-launch", "/gate", "/admin", "/halaman-tidak-ada", "/edisi", "/edisi/grafis"]
+    # 404 sungguhan dan redirect Divisi lama -> profil edisi
+    nf = new_page(ctx, errs_nf := [], [])
+    nf.goto(BASE + "/halaman-tidak-ada", wait_until="load"); nf.wait_for_timeout(1200)
+    check("alamat tak dikenal menampilkan 404, bukan beranda", "Halaman tidak ditemukan" in nf.inner_text("body") and nf.url.endswith("/halaman-tidak-ada"), nf.url)
+    nf.goto(BASE + "/edisi/tidak-ada", wait_until="load"); nf.wait_for_timeout(1200)
+    check("/edisi/<salah> menampilkan 404", "Halaman tidak ditemukan" in nf.inner_text("body"))
+    nf.goto(BASE + "/division/graphics", wait_until="load"); nf.wait_for_timeout(1500)
+    check("/division/graphics dialihkan ke /edisi/grafis", nf.url.endswith("/edisi/grafis") and "Desain Grafis" in nf.inner_text("body"), nf.url)
+    nf.close()
+
     sweep_ctx = b.new_context(viewport={"width": 1280, "height": 900})
     bad = []
     for r_ in ROUTES:

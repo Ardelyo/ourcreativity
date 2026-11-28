@@ -31,8 +31,13 @@ export const ModernFooter = () => {
         </div>
         <div className="grid content-start gap-0.5 md:col-span-4">
           <Link to="/karya" className="hover:underline">Katalog karya</Link>
+          <Link to="/edisi" className="hover:underline">Edisi</Link>
+          <Link to={{ pathname: '/', hash: '#program' }} className="hover:underline">Program</Link>
           <Link to="/tim" className="hover:underline">Tim</Link>
           <Link to="/info" className="hover:underline">Info</Link>
+          <Link to="/story" className="hover:underline">Cerita</Link>
+          <Link to="/announcement" className="hover:underline">Pengumuman</Link>
+          <Link to="/kotak-surat" className="hover:underline">Kotak surat</Link>
           <a href="https://www.tiktok.com/@ourcreativity.ofc" target="_blank" rel="noopener noreferrer" className="hover:underline">TikTok</a>
           <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="mt-2 w-fit border-b border-[#EDEDEB] pb-0.5 text-left" data-cursor="Naik">
             Kembali ke atas ↑
